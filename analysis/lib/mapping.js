@@ -38,13 +38,29 @@ export const BANDS = {
   foliageState: { bare: 0.10, sparse: 0.30, normal: 0.50 },   // gaps at .07|.16, .24|.33, .49|.57
   // inkCoverage sorted: .04 .05 .05 .07 .07 | .11 .13 .14 .17 .18 .21 .24 .28 .29 .31 .37 .44 | .48 .53 .58 .72 .75 .80
   density:      { airy: 0.15, normal: 0.45 },
-  // design colourfulness (media-masked where masking applies)
-  flowers:      { none: 0.08, few: 0.20, medium: 0.40 },
+  // design colourfulness (media-masked where masking applies).
+  // RECALIBRATED 2026-09-20 (Lead ruling): the original .08/.20/.40 were derived from the
+  // UNMASKED corpus distribution and then applied to MASKED values, which run about half
+  // (median .205 unmasked vs .095 masked). Intended spread was 5/6/7/5; delivered was
+  // 12/6/3/2. These are the natural gaps in the MASKED distribution.
+  flowers:      { none: 0.03, few: 0.10, medium: 0.25 },
   skeleton:     { simple: 0.15, normal: 0.45 },
-  winter:       { authored: 0.60, colorfulness: 0.06, ink: 0.20, styling: 0.35 },
+  // WINTER means deliberate RESTRAINT. Added 2026-09-20 (Lead ruling): winter now also
+  // requires low UNMASKED colourfulness, so colour anywhere on the page blocks it even
+  // when we cannot credit that colour to design rather than content. Without this,
+  // figma.com — visibly colourful, but with its colour inside <img> brand illustration
+  // that the mask strips — rendered as the restraint state.
+  // Threshold 0.10 chosen from live measurement: craigslist 0.03 and vercel 0.00 (the
+  // only legitimate wild WINTER cases) keep a 3x margin; figma at 0.165 is excluded.
+  winter:       { authored: 0.60, colorfulness: 0.06, unmaskedColorfulness: 0.10, ink: 0.20, styling: 0.35 },
   autumn:       { warmShare: 0.55, chromatic: 0.05 },
   fruitRate:    0.10,
-  accentFloor:  0.01    // below this chromatic coverage there is no meaningful accent
+  // below this chromatic coverage there is no meaningful accent.
+  // RECALIBRATED 2026-09-20 (Lead ruling): 0.01 was set by judgment, never from the
+  // distribution, and gated out 12 of 23 sites before colourfulness was consulted —
+  // tailwindcss.com excluded by 0.0002 despite a real brand colour, while genuinely
+  // colourless sites sit an order of magnitude lower (4 at exactly 0, 9 below 0.002).
+  accentFloor:  0.002
 };
 
 // ---------------------------------------------------------------- flower conditioning
@@ -155,9 +171,10 @@ export function buildDna(fp, domain){
   // --- botanical state
   let botanicalState = 'normal';
   if (fp.authored >= B.winter.authored && fp.designColorfulness < B.winter.colorfulness
+      && (fp.colorfulness ?? fp.designColorfulness) < B.winter.unmaskedColorfulness
       && fp.inkCoverage < B.winter.ink && fp.stylingRichness >= B.winter.styling) {
     botanicalState = 'winter';
-    why.botanicalState = `authored ${fp.authored} >= ${B.winter.authored} AND stylingRichness ${fp.stylingRichness} >= ${B.winter.styling} (clearly authored) AND design colourfulness ${fp.designColorfulness} < ${B.winter.colorfulness} AND inkCoverage ${fp.inkCoverage} < ${B.winter.ink} → WINTER (restraint, not absence — distinct from BARE)`;
+    why.botanicalState = `authored ${fp.authored} >= ${B.winter.authored} AND stylingRichness ${fp.stylingRichness} >= ${B.winter.styling} (clearly authored) AND design colourfulness ${fp.designColorfulness} < ${B.winter.colorfulness} AND inkCoverage ${fp.inkCoverage} < ${B.winter.ink} AND unmasked colourfulness ${fp.colorfulness} < ${B.winter.unmaskedColorfulness} (no colour anywhere on the page, not merely none we can credit to design) → WINTER (restraint, not absence — distinct from BARE)`;
   } else if (fp.warmShareOfChroma >= B.autumn.warmShare && fp.designChromaticRatio >= B.autumn.chromatic
              && fp.canvasArea < 0.5) {
     botanicalState = 'autumn';
