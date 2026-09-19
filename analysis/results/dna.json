@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-19T22:18:55.180Z",
+  "generated": "2026-09-19T22:28:30.865Z",
   "provenance": {
     "run": "run-full-2026-09-19T22-00-44-587Z.json",
     "corpusSize": 25,
@@ -391,7 +391,7 @@
     {
       "domain": "vercel.com",
       "corpusId": "vercel",
-      "role": "dark / monochrome",
+      "role": "light monochrome, restrained (WINTER case)",
       "synthetic": false,
       "sourceUrl": "https://vercel.com/",
       "fingerprint": {
@@ -444,6 +444,64 @@
         "botanicalState": "authored 0.7 >= 0.6 AND stylingRichness 0.437 >= 0.35 (clearly authored) AND design colourfulness 0 < 0.06 AND inkCoverage 0.053 < 0.2 → WINTER (restraint, not absence — distinct from BARE)",
         "terrain": "follows foliage state NORMAL and botanical state WINTER → WINTER",
         "background": "derived from rendered ground #fbfbfb (achromatic, so hue borrowed from the design accent null); light/dark character preserved, saturation held low → #e6e6e6"
+      }
+    },
+    {
+      "domain": "linear.app",
+      "corpusId": "linear",
+      "role": "genuinely dark ground (#08090a at 72% coverage) — exercises the dark background branch",
+      "synthetic": false,
+      "sourceUrl": "https://linear.app/",
+      "fingerprint": {
+        "authored": 1,
+        "stylingRichness": 0.614,
+        "inkCoverage": 0.276,
+        "colorfulness": 0.025,
+        "designColorfulness": 0.016,
+        "designChromaticRatio": 0,
+        "warmShareOfChroma": 0,
+        "imageArea": 0.541,
+        "canvasArea": 0,
+        "textDensity": 0.202,
+        "palette": {
+          "ground": "#08090a",
+          "primary": null,
+          "secondary": null
+        },
+        "paletteSource": "media-masked"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "normal"
+        },
+        "foliage": {
+          "state": "lush",
+          "density": "normal"
+        },
+        "botanicalState": "normal",
+        "flowers": {
+          "amount": "none",
+          "primary": null,
+          "secondary": null
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "lush",
+        "background": "#191c1f",
+        "seed": 896593017,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.614 >= 0.5 → LUSH (top of the corpus; 4 of 23 sites)",
+        "density": "inkCoverage 0.276 → NORMAL",
+        "flowers": "design chromatic coverage 0 < 0.01 — no meaningful accent colour exists, so no flowers are forced (flowerless is a valid result)",
+        "skeleton": "0.7·inkCoverage(0.276) + 0.3·textDensity(0.202) = 0.254 → NORMAL; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "no special state qualifies → NORMAL",
+        "terrain": "follows foliage state LUSH → LUSH",
+        "background": "derived from rendered ground #08090a (own hue kept); light/dark character preserved, saturation held low → #191c1f"
       }
     },
     {

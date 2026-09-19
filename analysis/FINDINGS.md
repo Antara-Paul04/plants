@@ -494,3 +494,55 @@ achromatic sites neutral.
 `gov.uk`'s capture includes a **cookie/consent banner** across the top of the frame. It
 does not dominate, but it is being measured as part of the page. First observed instance
 of that documented edge case.
+
+---
+
+## 17. Dark grounds — correction, and a product-level finding
+
+### Correction to §16
+
+I wrote "19 of 23 corpus grounds are pure white". **That was wrong.** Measured properly:
+
+| | count | sites |
+| --- | --- | --- |
+| genuinely dark (L < 0.5) | **5 of 23** | nasa `#000000`, apple `#010101`, spacejam-1996 `#030303`, linear `#08090a`, bruno-simon `#2b113d` |
+| near-white (L >= 0.9) | 18 of 23 | the rest |
+
+The corpus was never as monotone as I claimed. `linear.app` has a dark ground at **72%
+coverage** — as unambiguous a dark site as exists.
+
+### The dark background branch is now exercised
+
+`linear.app` added to the DNA test set (added, not swapped, so `vercel.com` keeps the only
+WINTER case). It produces background `#191c1f` against `#e5e5eb`-ish for the light sites:
+lightness spread across the set goes from ~0.03 to **0.800**, and 10 of 12 backgrounds are
+now distinct. The dark branch is no longer an untested assertion.
+
+### The finding underneath it: "what a website looks like" is not single-valued
+
+`vercel.com` was chosen as the dark/monochrome site and measured `#fbfbfb` — light. The
+cause is not the site and not the metric. **It is a setting in my own harness.**
+
+| site | `colorScheme: light` | `colorScheme: dark` | |
+| --- | --- | --- | --- |
+| vercel.com | `rgb(250,250,250)` | `rgb(0,0,0)` | **changes completely** |
+| linear.app | `rgb(8,9,10)` | `rgb(8,9,10)` | dark by design |
+| github.com | `rgb(13,17,23)` | `rgb(13,17,23)` | dark by design |
+
+The probe pins `colorScheme: 'light'`. For any site that respects
+`prefers-color-scheme`, **that single harness setting decides what the website *is*** —
+and in production it would be decided by the visitor's OS preference, which we do not
+control and the site owner did not choose.
+
+**This is a product question, not a probe bug.** It belongs with the existing OPEN edge
+cases (dark-mode-by-default sites; mobile vs desktop width). The same URL has more than
+one true appearance, and something has to pick one.
+
+**ASSUMPTION, now explicit:** every number in this document was measured in light mode.
+That was never stated before and it should have been.
+
+**Caveat this places on the WINTER result:** `vercel.com` is the only corpus site
+reaching WINTER, and it reaches it *in light mode*. In dark mode its ground is pure black
+and its ink and colour measures would differ. The one triggered WINTER case is therefore
+partly an artefact of a harness choice. It still demonstrates the state for the renderer,
+but it should not be read as "vercel.com is a winter website" without qualification.

@@ -232,7 +232,8 @@ const PICK = {
   'yale-art':       'maximalist / experimental',
   'unsplash':       'image-heavy (photography)',
   'wikipedia':      'text-heavy editorial',
-  'vercel':         'dark / monochrome',
+  'vercel':         'light monochrome, restrained (WINTER case)',
+  'linear':         'genuinely dark ground (#08090a at 72% coverage) — exercises the dark background branch',
   'threejs-example':'WebGL / canvas',
   'gov-uk':         'systematised, high chroma, plain',
   'figma':          'colourful, illustration-led'
