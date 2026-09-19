@@ -54,16 +54,28 @@ const fade = (t) => t * t * (3 - 2 * t);
  * Wind sway, injected into any instanced MeshStandardMaterial.
  * The offset is applied AFTER instanceMatrix, so it displaces in world-ish
  * space rather than twisting each instance around its own axis.
+ *
+ * The tuning values are UNIFORMS, not literals baked into the source. They used
+ * to be interpolated into the GLSL, which meant every differently-sized tree
+ * compiled its own shader — a hitch per tree and an unbounded program cache.
+ * The cache key now varies only on `local`, so exactly two programs ever exist
+ * no matter how many trees are on screen.
  */
 export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo = 1.4, yHi = 4.4, local = false } = {}) {
   material.onBeforeCompile = (shader) => {
     shader.uniforms.uTime = uniforms.time;
-    shader.vertexShader = 'uniform float uTime;\n' + shader.vertexShader;
+    shader.uniforms.uSwayAmp = { value: amp };
+    shader.uniforms.uSwaySpeed = { value: speed };
+    shader.uniforms.uSwayLo = { value: yLo };
+    shader.uniforms.uSwayHi = { value: yHi };
+    shader.vertexShader =
+      'uniform float uTime;\nuniform float uSwayAmp;\nuniform float uSwaySpeed;\n' +
+      'uniform float uSwayLo;\nuniform float uSwayHi;\n' + shader.vertexShader;
     const mask = local
       // grass: bend from the blade's own root, scaled by local height
       ? `float m = clamp(position.y, 0.0, 1.0); m = m * m;`
       // canopy: only the upper part of the tree moves, and it eases in
-      : `float m = smoothstep(${yLo.toFixed(2)}, ${yHi.toFixed(2)}, wp.y);`;
+      : `float m = smoothstep(uSwayLo, uSwayHi, wp.y);`;
     shader.vertexShader = shader.vertexShader.replace(
       '#include <project_vertex>',
       /* glsl */ `
@@ -73,15 +85,47 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
       #endif
       ${mask}
       float ph = wp.x * 0.9 + wp.z * 1.25;
-      float s = sin( uTime * ${speed.toFixed(2)} + ph ) * 0.6
-              + sin( uTime * ${(speed * 1.57).toFixed(2)} + ph * 1.7 ) * 0.4;
-      float c = cos( uTime * ${(speed * 0.77).toFixed(2)} + ph * 0.8 );
-      wp.x += s * ${amp.toFixed(3)} * m;
-      wp.z += c * ${(amp * 0.7).toFixed(3)} * m;
+      float s = sin( uTime * uSwaySpeed + ph ) * 0.6
+              + sin( uTime * uSwaySpeed * 1.57 + ph * 1.7 ) * 0.4;
+      float c = cos( uTime * uSwaySpeed * 0.77 + ph * 0.8 );
+      wp.x += s * uSwayAmp * m;
+      wp.z += c * uSwayAmp * 0.7 * m;
       vec4 mvPosition = modelViewMatrix * wp;
       gl_Position = projectionMatrix * mvPosition;
       `
     );
   };
-  material.customProgramCacheKey = () => 'sway' + amp + speed + yLo + yHi + local;
+  material.customProgramCacheKey = () => (local ? 'sway-local' : 'sway-world');
+}
+
+/**
+ * Free everything under a root object exactly once.
+ *
+ * `scene.remove()` releases no GPU memory at all, and a naive
+ * traverse-and-dispose double-frees: the leaf material is shared across three
+ * instanced meshes, the rock material across seven, and the petal geometry
+ * across two. Disposing a resource twice is not merely wasteful — the second
+ * call acts on an already-released handle. Hence the Sets.
+ */
+export function disposeObject(root) {
+  const geoms = new Set();
+  const mats = new Set();
+  root.traverse((o) => {
+    if (o.geometry) geoms.add(o.geometry);
+    const m = o.material;
+    if (m) (Array.isArray(m) ? m : [m]).forEach((x) => mats.add(x));
+    if (o.isInstancedMesh) {
+      o.dispose(); // releases the instance colour/matrix buffers
+    }
+  });
+  for (const g of geoms) g.dispose();
+  for (const m of mats) {
+    for (const k in m) {
+      const v = m[k];
+      if (v && v.isTexture) v.dispose();
+    }
+    m.dispose();
+  }
+  root.parent?.remove(root);
+  return { geometries: geoms.size, materials: mats.size };
 }

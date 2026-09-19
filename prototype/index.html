@@ -15,6 +15,14 @@
         transition: opacity 600ms ease;
       }
       body.ready #scene { opacity: 1; }
+      /* Internal label, only present when viewing a specific site's DNA. */
+      #tag {
+        position: fixed; left: 10px; top: 10px; z-index: 2;
+        font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: #33302c; background: #ffffffcc; padding: 5px 8px; border: 1px solid #0002;
+      }
+      #tag a { color: inherit; }
+      #tag .synthetic { color: #a23; font-weight: 700; }
     </style>
     <script type="importmap">
       {
@@ -27,6 +35,36 @@
   </head>
   <body>
     <canvas id="scene"></canvas>
-    <script type="module" src="./src/main.js"></script>
+    <script type="module">
+      // Bootstrap only. main.js is a library now — it exports a mount function
+      // and runs nothing on import, so a frontend can drive it later.
+      import { mountTree } from './src/main.js';
+      import { DEFAULT_DNA, describeDNA } from './src/dna.js';
+      import { DNA_SITES } from './src/dna-data.js';
+
+      const want = new URLSearchParams(location.search).get('site');
+      const site = want ? DNA_SITES.find((s) => s.domain === want) : null;
+
+      // No ?site= means the NORMAL baseline: the DNA that should reproduce the
+      // hand-authored tree the second visual pass left behind.
+      mountTree(document.getElementById('scene'), site ? site.dna : DEFAULT_DNA);
+      document.body.classList.add('ready');
+
+      if (site) {
+        const tag = document.createElement('div');
+        tag.id = 'tag';
+        tag.innerHTML =
+          `<strong></strong><br><span class="d"></span><br><a href="./compare.html">← all trees</a>`;
+        tag.querySelector('strong').textContent = site.domain;
+        tag.querySelector('.d').textContent = describeDNA(site.dna);
+        if (site.synthetic) {
+          const s = document.createElement('div');
+          s.className = 'synthetic';
+          s.textContent = 'SYNTHETIC — not a real website';
+          tag.prepend(s);
+        }
+        document.body.appendChild(tag);
+      }
+    </script>
   </body>
 </html>

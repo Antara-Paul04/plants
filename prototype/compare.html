@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DNA comparison — internal</title>
+    <style>
+      /* Internal debug page. Deliberately not designed: it must not be mistaken
+         for product UI, and anything decorative here competes with the trees,
+         which are the only thing being judged. */
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      /* No background on body, .page or .cell: the shared canvas sits BEHIND
+         the page and shows through the .view boxes, so any opaque ancestor
+         would hide the trees. The canvas clears itself to the page colour. */
+      body {
+        margin: 0;
+        font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: #222;
+      }
+      #gl {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .page { position: relative; z-index: 1; padding: 16px; }
+      h1 { font-size: 14px; margin: 0 0 4px; }
+      #meta { margin: 0 0 12px; color: #555; }
+      label { user-select: none; cursor: pointer; }
+      #grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 14px;
+        margin-top: 14px;
+      }
+      .cell { border: 1px solid #ccc; padding: 8px; }
+      .cell header { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+      .cell h2 { font-size: 13px; margin: 0; font-weight: 600; }
+      .synthetic { color: #a23; font-size: 11px; font-weight: 700; }
+      /* The 3D is rendered into this box's screen rect by one shared renderer,
+         so the element itself stays empty on purpose. */
+      .view { aspect-ratio: 1 / 1; margin: 6px 0; cursor: pointer; }
+      .dna { margin: 0; color: #333; word-break: break-word; }
+      .stat { margin: 3px 0 0; color: #888; font-size: 11px; }
+      .warn { margin: 3px 0 0; color: #a23; font-size: 11px; }
+
+      /* Thumbnail test: roughly social-feed size. Same render, smaller box. */
+      body.thumbs #grid { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); }
+      body.thumbs .cell { padding: 4px; }
+      body.thumbs .dna, body.thumbs .stat, body.thumbs .warn { display: none; }
+      body.thumbs .cell h2 { font-size: 10px; }
+      body.thumbs .synthetic { font-size: 9px; }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="gl"></canvas>
+    <div class="page">
+      <h1>Botanical DNA — comparison grid (internal)</h1>
+      <p id="meta"></p>
+      <label><input type="checkbox" id="thumbs" /> thumbnail test (social-feed size)</label>
+      <div id="grid"></div>
+    </div>
+    <script type="module" src="./src/compare.js"></script>
+  </body>
+</html>

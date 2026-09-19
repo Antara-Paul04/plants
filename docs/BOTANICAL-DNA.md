@@ -194,4 +194,108 @@ sufficient foliage. Fruit represents nothing analytical. That is intentional.
 To be filled in by the specialists as the round proceeds — which mappings worked, which
 failed, which thresholds moved, and what remains an open human decision.
 
-- _pending_
+### Analysis — fingerprint → DNA (2026-09-20)
+
+**EXPERIMENT.** `analysis/results/dna.json`: 10 real sites + 1 synthetic, validating
+clean against this contract and deterministic across runs. Full detail in
+`analysis/FINDINGS.md` §16.
+
+**Bands are corpus-derived.** Boundaries sit at natural gaps in the sorted 23-site
+`stylingRichness` distribution (`.07|.16`, `.24|.33`, `.49|.57`), not round numbers.
+NORMAL holds 12 of 23 sites, matching "the canonical tree is roughly NORMAL".
+
+**The BARE/WINTER distinction holds through the mapping.** BARE is a *two-condition*
+gate — low `authored` AND low `stylingRichness` — so designed minimalism cannot fall in:
+info.cern.ch (authored 0.00 / styling 0.02) → BARE, bettermotherfuckingwebsite.com
+(0.20 / 0.16) → SPARSE. This neutralises the linear-mapping risk this file records: the
+distinction is carried by a gate, not by a point on a magnitude.
+
+**WINTER: exactly one site qualifies** — vercel.com (authored 0.70, styling 0.44, ink
+0.05, colourfulness 0.00). linear.app is a near-miss failing only on inkCoverage
+(0.28 vs a 0.20 ceiling); five more fail only on colourfulness. The winter gate is
+currently carried almost entirely by its colourfulness condition. **OPEN.**
+
+**AUTUMN: not decidable from the V1 inputs, and no real site reaches it.** Three hex
+colours cannot express hue *coverage*. Measured from full hue histograms, every autumn
+candidate collapses once photographic media is masked (unsplash warm share 0.897 → 0.177;
+apple 0.391 → 0.000; sive.rs 0.474 → 0.000). Zero of 23 sites has a warm-dominant
+*design* palette. One clearly-labelled `synthetic: true` record is included so 3D can
+test the state. **A fourth fingerprint value would make autumn decidable but would buy an
+untriggered state — that is a contract question for Lead, not a change made here.**
+
+**Threshold cliff found and flagged:** gov.uk `stylingRichness` 0.494 sits **0.006** below
+the NORMAL|LUSH boundary.
+
+**Deviation surfaced (R2):** flower amount and colour are taken from the **media-masked**
+palette rather than the whole-frame `colorfulness`. Unmasked, unsplash.com reads
+colourfulness 0.44 with primary `#8e7148` — a colour from a photograph someone uploaded;
+masked it reads 0.01. Masking also *recovered* art.yale.edu's true accent
+(`#95aedb` → `#f72f2d`). Consequence: **unsplash.com gets no flowers.** Lead's call.
+
+**`textDensity` is not weak.** Range 0.87 across the corpus and the **lowest** confounder
+correlation of any V1 signal (worst |r| 0.42, against 0.78 for `stylingRichness` and 0.97
+for `imageArea`). Its *effect* is nonetheless kept small by deliberate choice, per the
+human's instruction that text-heavy sites must not become gigantic trees.
+
+**Background is a weak differentiator** — 19 of 23 corpus grounds are pure white. The
+rule preserves light/dark character and borrows the design accent's hue when the ground
+is achromatic. **ASSUMPTION.**
+
+### 3D / renderer — DNA → tree (2026-09-20)
+
+**EXPERIMENT. Nothing here is DECIDED.** The renderer expresses the contract, and
+`prototype/compare.html` renders every record in `dna.json` side by side at one fixed
+camera angle. All 12 records parsed with no fallbacks.
+
+**Fields that produce a difference which survives a thumbnail:**
+
+| Field | What it does visibly |
+| --- | --- |
+| `foliage.state` | The strongest lever by a wide margin. bare / sparse / normal / lush are four obviously different trees. |
+| `botanicalState` autumn, winter | The strongest *colour* lever. Autumn is unmistakable at any size. |
+| `background` — **only when dark** | linear.app (`#191c1f`) is the most instantly distinguishable tree in the set. |
+| `flowers.primary` | Visible, but **conditionally** — see finding 1. |
+
+**Fields that produce little or nothing:**
+
+| Field | Why |
+| --- | --- |
+| `skeleton.complexity` | Essentially invisible on any foliated tree; the canopy covers the branches. It reads only on BARE, so it is doing almost no work for 11 of 12 sites. |
+| `foliage.density` | `airy` reads clearly; `normal` vs `dense` barely separates. Half a lever. |
+| `fruit` | At ~8–12% a tree gets about 12 fruit, near-invisible at any size. Either it wants to be far more abundant and larger, or it is decoration nobody will notice. |
+| `background`, the other 11 sites | All landed in `#e5e5eb`–`#ebe9e5`. Indistinguishable. Independently matches analysis's "19 of 23 grounds are pure white". |
+
+**BARE vs WINTER reads as clearly distinct.** Bare is a leafless sculptural silhouette;
+winter is a muted, sparse, sage-green tree with visible structure. They do not read as
+degrees of the same thing.
+
+#### Needing a decision — surfaced, not resolved (R2, R7)
+
+1. **Flower legibility depends on hue contrast against foliage, not on `amount`.**
+   gov.uk is `abundant` (663 blossoms) in brand blue `#2d7abc` and its flowers
+   **vanish entirely at thumbnail size** — blue sits too close to canopy green in
+   value. art.yale.edu is only `medium` (333 blossoms) in red `#f62e2b` and reads
+   instantly at the same size. A cool-branded site therefore gets a weaker colour
+   signal than a warm-branded one at identical `amount`. This bears directly on
+   **D5**: flowers-as-carrier holds for warm palettes and partly fails for cool ones.
+
+2. **AUTUMN and WINTER sites express no website colour at all.** Both impose a fixed
+   palette and carry no flowers, so the site's accent never appears anywhere.
+   vercel.com's tree carries nothing site-derived except a background
+   indistinguishable from everyone else's. A real hole in D5 for those two states.
+
+3. **The renderer suppresses flowers in autumn and winter even when the contract says
+   `few`.** synthetic-autumn.example asks for `few` and renders zero. This was a
+   renderer judgement — a flowering autumn tree is botanically odd — but it overrides
+   a contract field. Either the contract should say `botanicalState` dominates
+   `flowers.amount`, or the renderer should stop doing it. **Lead's call.**
+
+4. **A dark `background` is not matched by the lighting rig.** linear.app renders a
+   brightly day-lit tree against a night sky. It is the most distinctive tree in the
+   set and arguably the best-looking, but the light does not belong to the scene.
+   Whether the rig follows the background is art direction, and a human's.
+
+5. **`skeleton.complexity` is nearly inert.** To carry real signal it would need to
+   affect something that survives having leaves on it — crown width or limb angle
+   rather than branch count. Reported rather than changed, because altering what the
+   field *means* is a contract question.

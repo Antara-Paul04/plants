@@ -96,6 +96,47 @@ side and the full list of what changed; this is what it taught us about *look*.
   experiment, not an approved decision.
 - Untested on mobile, and not profiled on low-end hardware.
 
+### What parameterising the tree taught us about the look — EXPERIMENT
+
+**Status: EXPERIMENT, and most of it is waiting on human taste (R7).** The renderer now
+varies with [BOTANICAL-DNA.md](BOTANICAL-DNA.md); the per-field results live there and
+the geometry in [TREE-SYSTEM.md](TREE-SYSTEM.md). This is what it taught about *look*.
+
+- **Colour is the only difference that reliably survives a thumbnail.** Autumn is
+  unmistakable at social-feed size. So is a dark background. Every structural
+  difference — branch count, crown density, even fairly large changes in foliage
+  amount — is weaker than a hue shift, and some vanish entirely. If the project wants
+  sites to look different at a glance, colour is where that gets spent.
+- **Flower colour is legible in proportion to its contrast against the foliage green,
+  not to how much of it there is.** A brand red at `medium` reads instantly; a brand
+  blue at `abundant` disappears at the same size. This is the first real evidence
+  bearing on **D5**, and it says flowers-as-carrier is a partial answer rather than a
+  wrong one. The obvious follow-up — letting foliage hue shift away from an accent that
+  is too close to it — is a real art-direction decision and is **not** taken here.
+- **A leafless tree is a different art-direction problem from a foliated one.** With no
+  canopy, everything the leaves were hiding becomes the subject: blunt limb ends read
+  as amputation, and a branch structure that is perfectly adequate under leaves reads
+  as bare and thin without them. BARE needed finer tips and two generations of
+  ramification before it stopped looking like damage. Whether it now looks *beautiful*,
+  which the concept requires, is not something an agent should answer.
+- **The lighting rig does not follow the background.** The one dark-mode site in the
+  corpus renders a brightly day-lit tree against a night sky. It is the most
+  distinctive tree in the set and arguably the best-looking one, and it is also
+  internally inconsistent. Whether the key, rim and hemisphere should shift with the
+  site's ground colour is an open art-direction question — appealing, not free, and a
+  human's to answer.
+- **The background gradient is art direction, not analysis.** The contract supplies one
+  colour; a flat fill of it makes the island look pasted onto a wall, which the first
+  pass already established. The given colour is therefore pulled a limited distance
+  toward a fixed cool sky and a fixed warm ground, so the vertical warm/cool that lets
+  the island sit is preserved while the colour stays recognisably the site's.
+
+**Still needs a human to look at it:**
+
+- Is BARE beautiful, or does it still read as a dead tree?
+- Do twelve trees from one family read as *one project* — or as one tree with settings?
+- Is a blue-flowered or green-flowered tree charming or wrong? gov.uk is the test case.
+
 ---
 
 ## Overall art direction

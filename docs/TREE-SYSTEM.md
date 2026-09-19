@@ -138,6 +138,70 @@ What it cost and what it taught:
 - The sprigs reaching past the crown edge give it a slightly windswept, weeping-cherry
   character. Intentional, but a character choice, not a neutral one.
 
+### Pass 3: parameterised against the Botanical DNA contract — EXPERIMENT
+
+**Status: EXPERIMENT.** The renderer now consumes
+[BOTANICAL-DNA.md](BOTANICAL-DNA.md) instead of being one fixed tree. Per-field
+results are in that document's Findings; this records what it did to the *tree*.
+
+**Structure.** `prototype/src/dna.js` is the only module that knows the contract's
+vocabulary — it turns discrete states into plain numbers, and there is deliberately
+nowhere in it to put a fingerprint. The hand-authored limb tables were not replaced by
+rules: `skeleton.complexity` selects a SUBSET of them, so every tuned number survives.
+
+**New modules.** `dna.js` (contract → parameters), `build.js` (one DNA → a Group plus
+`dispose()` and measured extents), `viewer.js` (renderer, lights, background, framing,
+shared by both pages so neither can light a tree differently), `compare.html` +
+`compare.js` (the comparison grid), `dna-data.js` (a snapshot of `dna.json`, because
+the prototype is served from `prototype/` and `../analysis/` is not reachable over
+HTTP — regenerate it whenever analysis rewrites the file).
+
+**Plumbing fixed in passing, all previously on record:**
+
+- `applySway` now passes its tuning as **uniforms** rather than interpolating them into
+  the GLSL. Twelve differently-tuned trees used to mean twelve shader compiles and an
+  unbounded program cache keyed by bare string concatenation; there are now exactly two
+  programs, and the key no longer collides.
+- `disposeObject` frees geometries and materials through a **Set**. The leaf material
+  is shared across three instanced meshes, the rock material across seven and the
+  litter geometry across two, so a naive traverse-and-dispose double-frees.
+- `main.js` **exports a mount function and runs nothing at import**, so more than one
+  tree can exist and a frontend can drive it.
+- The build **reports its own extents** and the camera solves its framing from them.
+  The old `FIT_H`/`FIT_W`/`DIST0` constants were tuned to one tree and would have
+  cropped a tall one and stranded a squat one.
+
+**What parameterisation cost:**
+
+- **The NORMAL baseline is no longer byte-identical to the reviewed tree.** Seeded
+  branch wander is required by the brief (the seed drives branch bends), and consuming
+  those draws shifts the whole RNG stream, so leaf and blossom placement moved.
+  Proportion, silhouette, palette and character are preserved — but the artefact the
+  human is reviewing has moved under them, and that is worth knowing.
+- **BARE needed real work and is the weakest state.** The first attempt rendered
+  info.cern.ch as an amputated stump: thick limbs ending in blunt caps, which reads as
+  damage, not structure. Two compensations, both EXPERIMENT: limbs taper to a far finer
+  tip when unfoliated (nothing hides a blunt branch end with no leaves on it), and
+  extra ramification runs in **two generations** hosted on primaries and secondaries as
+  well as twigs. Hosting it only on twigs put every fine branch at the outer tips,
+  which read as a bottle-brush on a club — what was missing was the middle of the tree.
+  It is now recognisably a bare tree rather than a broken one. **Whether it is
+  *beautiful* is a human call and is not yet answered.**
+- Nothing was done about the recorded weaknesses (leaf-size distribution, soil facets,
+  edge-on blossoms). None got worse.
+
+**Blossom distribution — the observation recorded in STATUS, in this domain's words.**
+After the RNG stream shifted it is **reduced but not gone**: blossom still favours the
+lower and outer crown, and the top of the canopy reads noticeably greener than the
+underside. It is no longer the hard horizontal band it was. It is a consequence of the
+cluster placement being volume-weighted over lobes whose mass sits low, not of anything
+deliberate. **Not a verdict — it may well be charm.**
+
+**Performance.** At grid detail 0.35, twelve trees measure 66k–282k triangles each
+(~2.2M total); full detail is roughly 3× that. Frame rate was **not** reliably measured
+— `requestAnimationFrame` is throttled while the preview pane is hidden, so no number
+is quoted here rather than a fabricated one. Mobile remains untested.
+
 ---
 
 ## Invariant characteristics
