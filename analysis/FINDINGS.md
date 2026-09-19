@@ -351,3 +351,146 @@ Median **7.8 s**, p90 **14.8 s**, max **24.6 s** (craigslist). DOM measurement m
 
 Unchanged from §11 except: **drop `roundness`** (tested, fails as defined) and
 **drop `embedArea`** (0.00 everywhere). `graphicArea` is weak but real — Lead's call.
+
+---
+
+## 16. Botanical DNA round — fingerprint → DNA
+
+**EXPERIMENT.** `results/dna.json`, 10 real sites + 1 synthetic. Validates clean against
+the frozen contract (`probe/validate-dna.js`, 0 errors) and is deterministic — re-running
+produces a byte-identical file.
+
+### Where the bands came from
+
+Boundaries sit at **natural gaps in the sorted 23-site distribution**, not round numbers:
+
+```
+stylingRichness: .02 .02 .07 | .16 .17 .18 .24 | .33 .38 .42 .42 .43 .44 .45 .45 .48 .49 .49 .49 | .57 .58 .59 .61
+                  BARE ≤0.10 |    SPARSE <0.30 |                        NORMAL <0.50            |   LUSH ≥0.50
+```
+
+The gaps `.07|.16`, `.24|.33` and `.49|.57` are real features of the corpus. NORMAL holds
+12 of 23 sites, which matches the contract's "the canonical tree is roughly NORMAL".
+
+### The crux survives into DNA
+
+The thing this whole phase was built to protect:
+
+| | authored | stylingRichness | → foliage |
+| --- | --- | --- | --- |
+| info.cern.ch (no CSS) | 0.00 | 0.02 | **BARE** |
+| bettermotherfuckingwebsite.com (designed minimal) | 0.20 | 0.16 | **SPARSE** |
+
+BARE requires **both** low `authored` and low `stylingRichness`, so designed minimalism
+cannot fall into it. The 0.02-vs-0.16 magnitude risk flagged earlier is neutralised by
+making BARE a two-condition gate rather than a point on a line.
+
+### AUTUMN is not decidable from the V1 fingerprint — and no real site reaches it
+
+Lead's §4(b), answered with measurement rather than eyeballing hexes. I recomputed full
+24-bin hue histograms from the saved screenshots (`probe/hue.js`, no re-crawl).
+
+**Three hex colours cannot express hue *coverage*.** `#c96a2b` tells you a colour is
+warm; it cannot tell you whether warm hues *dominate the chromatic character*. So autumn
+is not decidable from the contract's V1 fields. It **is** decidable from pixels with one
+extra value — warm-hue share of chromatic coverage.
+
+**But adding that field would buy an untriggered state.** Measuring it, every apparent
+autumn candidate collapses once photographic media is masked out:
+
+| site | warm share (raw pixels) | warm share (media masked) |
+| --- | --- | --- |
+| unsplash.com | 0.897 over 0.47 coverage | **0.177 over 0.0013** |
+| apple.com | 0.391 | **0.000** |
+| sive.rs | 0.474 | **0.000** |
+| threejs.org | 0.246 | **0.000** |
+| stripe.com | 0.401 | 0.690 over only 0.030 coverage |
+
+The warmth was always photographs. **Zero of 23 sites has a warm-dominant *design*
+palette.** Per contract §"Do not force a state", one clearly-labelled `synthetic: true`
+record is included so 3D can test autumn rendering.
+
+**A false positive worth recording.** Before gating, `threejs.org/examples` triggered
+AUTUMN on accents `#a67f69` / `#ac6153` / `#b79e78` — the **skin tones of a rendered 3D
+character**. That is reading content, not design, and is exactly what **D3** forbids.
+Autumn now additionally requires `canvasArea < 0.5`, because on a canvas-dominated page
+the pixels are rendered content rather than design language. **ASSUMPTION** — one case.
+
+### WINTER: exactly one site qualifies
+
+`vercel.com` — authored 0.70, stylingRichness 0.44, inkCoverage 0.05, colourfulness 0.00.
+Clearly authored, highly restrained, colourless, sparse. It is distinct from BARE by
+construction (winter requires *high* authored; bare requires low).
+
+**Near-miss worth Lead's attention:** `linear.app` fails on one condition only —
+inkCoverage 0.28 against a 0.20 ceiling — while being the most colourless authored site
+in the corpus (colourfulness 0.02, authored 1.00). Five further sites fail on
+colourfulness alone. The winter gate is currently carried almost entirely by the
+colourfulness condition.
+
+### Threshold cliffs (Lead's "no cliffs" constraint)
+
+One genuine cliff found:
+
+- **gov.uk `stylingRichness` 0.494 is 0.006 below the NORMAL|LUSH boundary (0.50).**
+  A hair's difference flips its foliage state. Flagged, not silently rounded.
+
+Softer proximities: stripe inkCoverage 0.171 (+0.021 over airy|normal); wikipedia
+inkCoverage 0.211 (+0.011 over the winter ink ceiling); figma and cern sit ~0.04 from the
+flowers none|few edge.
+
+### Deviation from the brief, surfaced rather than absorbed (AGENTS.md R2)
+
+**The brief says `colorfulness` drives flower amount. I used the *media-masked*
+colourfulness instead**, and flower colour from the masked palette.
+
+Justification is this phase's own evidence: unmasked, unsplash.com reads colourfulness
+0.44 with primary `#8e7148` — a brown taken from *a photograph someone else uploaded*.
+Masked, it reads 0.01. Conversely masking **recovered** art.yale.edu's true accent
+(`#95aedb` → `#f72f2d`). Under D3 and D5, a site whose colour is entirely other people's
+photographs arguably has no brand colour to carry into flowers.
+
+**Consequence:** unsplash.com gets **no flowers**. That is the "flowerless tree is a
+valid result" case, reached on the most photographically colourful site in the corpus.
+**This is Lead's call to accept or reject** — it changes which sites flower.
+
+### `textDensity` is not a weak signal (Lead's §4(a))
+
+The brief lists it as weak/experimental. **The corpus disagrees, and I am saying so
+plainly as asked.** Across 23 sites:
+
+- **Range 0.87** (wikipedia 0.87, motherfuckingwebsite 0.82, craigslist 0.56 against
+  0.01–0.07 for image-led sites) — among the widest of any signal measured.
+- **The lowest confounder correlation of any signal** — worst |r| 0.42 against every
+  page-size proxy, where `stylingRichness` is 0.78 and `imageArea` is 0.97. It is the
+  *least* likely of all V1 signals to be a disguised page-size metric.
+
+By both of this phase's own quality tests it is one of the **strongest** signals we have.
+
+I have nonetheless kept its *effect* deliberately small in the DNA (weight 0.3 in
+skeleton complexity, against 0.7 for inkCoverage), because the human's instruction was
+explicit that text-heavy sites must not become gigantic trees. **The measurement being
+strong and the effect being small is a deliberate choice, not an oversight** — but if the
+human wants text character to show, the evidence supports giving it more room than
+"weak/experimental" implies.
+
+### `imageArea` confirmed weak, as suspected
+
+Used only to modulate nothing in this round. Its r=0.97 with `docHeight` stands. It
+earns no role in DNA and I have not manufactured one.
+
+### Background is a weak differentiator, and that is a fact about the web
+
+**19 of 23 corpus grounds are pure white.** Deriving background from `palette.ground`
+alone gives every site an identical page. The current rule preserves the site's
+light/dark decision and, when the ground is achromatic, borrows the *design accent's*
+hue at low saturation — giving 9 distinct backgrounds across 11 records. Even so the
+spread is subtle by construction: a background that competes with the tree has failed.
+**ASSUMPTION** — that borrowing the accent hue is the right move rather than leaving
+achromatic sites neutral.
+
+### Observed failure case
+
+`gov.uk`'s capture includes a **cookie/consent banner** across the top of the frame. It
+does not dominate, but it is being measured as part of the page. First observed instance
+of that documented edge case.

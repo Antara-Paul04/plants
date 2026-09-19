@@ -1,0 +1,662 @@
+{
+  "generated": "2026-09-19T22:18:55.180Z",
+  "provenance": {
+    "run": "run-full-2026-09-19T22-00-44-587Z.json",
+    "corpusSize": 25,
+    "valid": 23,
+    "bands": {
+      "foliageState": {
+        "bare": 0.1,
+        "sparse": 0.3,
+        "normal": 0.5
+      },
+      "density": {
+        "airy": 0.15,
+        "normal": 0.45
+      },
+      "flowers": {
+        "none": 0.08,
+        "few": 0.2,
+        "medium": 0.4
+      },
+      "skeleton": {
+        "simple": 0.15,
+        "normal": 0.45
+      },
+      "winter": {
+        "authored": 0.6,
+        "colorfulness": 0.06,
+        "ink": 0.2,
+        "styling": 0.35
+      },
+      "autumn": {
+        "warmShare": 0.55,
+        "chromatic": 0.05
+      },
+      "fruitRate": 0.1,
+      "accentFloor": 0.01
+    },
+    "note": "EXPERIMENT. Thresholds derived from the 23-site corpus distribution; see analysis/FINDINGS.md."
+  },
+  "sites": [
+    {
+      "domain": "info.cern.ch",
+      "corpusId": "cern-first-web",
+      "role": "raw / unstyled HTML",
+      "synthetic": false,
+      "sourceUrl": "https://info.cern.ch/hypertext/WWW/TheProject.html",
+      "fingerprint": {
+        "authored": 0,
+        "stylingRichness": 0.017,
+        "inkCoverage": 0.05,
+        "colorfulness": 0.118,
+        "designColorfulness": 0.118,
+        "designChromaticRatio": 0.0156,
+        "warmShareOfChroma": 0,
+        "imageArea": 0,
+        "canvasArea": 0,
+        "textDensity": 0.296,
+        "palette": {
+          "ground": "#ffffff",
+          "primary": "#9999f7",
+          "secondary": null
+        },
+        "paletteSource": "whole-frame"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "simple"
+        },
+        "foliage": {
+          "state": "bare",
+          "density": "airy"
+        },
+        "botanicalState": "normal",
+        "flowers": {
+          "amount": "none",
+          "primary": null,
+          "secondary": null
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "sparse",
+        "background": "#e5e5eb",
+        "seed": 446285954,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.017 < 0.1 AND authored 0 <= 0.15 → BARE (unstyled: the page has no authored design to express as foliage)",
+        "density": "inkCoverage 0.05 → AIRY",
+        "flowers": "design colourfulness 0.118 in [0.08, 0.2) → FEW",
+        "skeleton": "0.7·inkCoverage(0.05) + 0.3·textDensity(0.296) = 0.124 → SIMPLE; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "no special state qualifies → NORMAL",
+        "terrain": "follows foliage state BARE → SPARSE",
+        "background": "derived from rendered ground #ffffff (achromatic, so hue borrowed from the design accent #9999f7); light/dark character preserved, saturation held low → #e5e5eb"
+      }
+    },
+    {
+      "domain": "bettermotherfuckingwebsite.com",
+      "corpusId": "better-mfw",
+      "role": "intentionally minimalist, designed",
+      "synthetic": false,
+      "sourceUrl": "http://bettermotherfuckingwebsite.com/",
+      "fingerprint": {
+        "authored": 0.2,
+        "stylingRichness": 0.158,
+        "inkCoverage": 0.071,
+        "colorfulness": 0.042,
+        "designColorfulness": 0.042,
+        "designChromaticRatio": 0.0024,
+        "warmShareOfChroma": 0,
+        "imageArea": 0,
+        "canvasArea": 0,
+        "textDensity": 0.36,
+        "palette": {
+          "ground": "#ffffff",
+          "primary": "#a1a1f8",
+          "secondary": null
+        },
+        "paletteSource": "whole-frame"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "normal"
+        },
+        "foliage": {
+          "state": "sparse",
+          "density": "airy"
+        },
+        "botanicalState": "normal",
+        "flowers": {
+          "amount": "none",
+          "primary": null,
+          "secondary": null
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "sparse",
+        "background": "#e5e5eb",
+        "seed": 3600337157,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.158 in [0.1, 0.3) → SPARSE; authored 0.2 > 0.15 keeps it out of BARE (restraint, not absence)",
+        "density": "inkCoverage 0.071 → AIRY",
+        "flowers": "design chromatic coverage 0.0024 < 0.01 — no meaningful accent colour exists, so no flowers are forced (flowerless is a valid result)",
+        "skeleton": "0.7·inkCoverage(0.071) + 0.3·textDensity(0.36) = 0.158 → NORMAL; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "no special state qualifies → NORMAL",
+        "terrain": "follows foliage state SPARSE → SPARSE",
+        "background": "derived from rendered ground #ffffff (achromatic, so hue borrowed from the design accent #a1a1f8); light/dark character preserved, saturation held low → #e5e5eb"
+      }
+    },
+    {
+      "domain": "stripe.com",
+      "corpusId": "stripe",
+      "role": "colourful polished marketing",
+      "synthetic": false,
+      "sourceUrl": "https://stripe.com/in",
+      "fingerprint": {
+        "authored": 1,
+        "stylingRichness": 0.587,
+        "inkCoverage": 0.171,
+        "colorfulness": 0.418,
+        "designColorfulness": 0.138,
+        "designChromaticRatio": 0.0303,
+        "warmShareOfChroma": 0.69,
+        "imageArea": 0.427,
+        "canvasArea": 0.273,
+        "textDensity": 0.225,
+        "palette": {
+          "ground": "#ffffff",
+          "primary": "#fcdfb0",
+          "secondary": "#735ffd"
+        },
+        "paletteSource": "media-masked"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "normal"
+        },
+        "foliage": {
+          "state": "lush",
+          "density": "normal"
+        },
+        "botanicalState": "normal",
+        "flowers": {
+          "amount": "few",
+          "primary": "#fcdfb0",
+          "secondary": "#735ffd"
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "lush",
+        "background": "#ebe9e5",
+        "seed": 3876993847,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.587 >= 0.5 → LUSH (top of the corpus; 4 of 23 sites)",
+        "density": "inkCoverage 0.171 → NORMAL",
+        "flowers": "design colourfulness 0.138 in [0.08, 0.2) → FEW; colour taken from the media-masked palette (photography excluded from the accent)",
+        "skeleton": "0.7·inkCoverage(0.171) + 0.3·textDensity(0.225) = 0.187 → NORMAL; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "no special state qualifies → NORMAL",
+        "terrain": "follows foliage state LUSH → LUSH",
+        "background": "derived from rendered ground #ffffff (achromatic, so hue borrowed from the design accent #fcdfb0); light/dark character preserved, saturation held low → #ebe9e5"
+      }
+    },
+    {
+      "domain": "art.yale.edu",
+      "corpusId": "yale-art",
+      "role": "maximalist / experimental",
+      "synthetic": false,
+      "sourceUrl": "https://art.yale.edu/",
+      "fingerprint": {
+        "authored": 0.7,
+        "stylingRichness": 0.446,
+        "inkCoverage": 0.306,
+        "colorfulness": 0.26,
+        "designColorfulness": 0.263,
+        "designChromaticRatio": 0.0237,
+        "warmShareOfChroma": 0,
+        "imageArea": 0.221,
+        "canvasArea": 0,
+        "textDensity": 0.409,
+        "palette": {
+          "ground": "#ffffff",
+          "primary": "#f62e2b",
+          "secondary": "#81a7ed"
+        },
+        "paletteSource": "media-masked"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "normal"
+        },
+        "foliage": {
+          "state": "normal",
+          "density": "normal"
+        },
+        "botanicalState": "flowering",
+        "flowers": {
+          "amount": "medium",
+          "primary": "#f62e2b",
+          "secondary": "#81a7ed"
+        },
+        "fruit": {
+          "enabled": true,
+          "color": "#f62e2b"
+        },
+        "terrain": "normal",
+        "background": "#ebe5e5",
+        "seed": 3843938839,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.446 in [0.3, 0.5) → NORMAL (the corpus midband, 12 of 23 sites)",
+        "density": "inkCoverage 0.306 → NORMAL",
+        "flowers": "design colourfulness 0.263 in [0.2, 0.4) → MEDIUM; colour taken from the media-masked palette (photography excluded from the accent)",
+        "skeleton": "0.7·inkCoverage(0.306) + 0.3·textDensity(0.409) = 0.337 → NORMAL; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "flower amount MEDIUM → FLOWERING",
+        "fruit": "seeded trait: seed 3843938839 → roll 0.041 < 0.1 and the tree is eligible (not bare, not winter, foliage normal). Represents nothing about the website, deliberately.",
+        "terrain": "follows foliage state NORMAL → NORMAL",
+        "background": "derived from rendered ground #ffffff (achromatic, so hue borrowed from the design accent #f62e2b); light/dark character preserved, saturation held low → #ebe5e5"
+      }
+    },
+    {
+      "domain": "unsplash.com",
+      "corpusId": "unsplash",
+      "role": "image-heavy (photography)",
+      "synthetic": false,
+      "sourceUrl": "https://unsplash.com/",
+      "fingerprint": {
+        "authored": 0.9,
+        "stylingRichness": 0.446,
+        "inkCoverage": 0.72,
+        "colorfulness": 0.443,
+        "designColorfulness": 0.02,
+        "designChromaticRatio": 0.0013,
+        "warmShareOfChroma": 0.177,
+        "imageArea": 0.706,
+        "canvasArea": 0,
+        "textDensity": 0.037,
+        "palette": {
+          "ground": "#ffffff",
+          "primary": "#7aa7b2",
+          "secondary": "#7095a4"
+        },
+        "paletteSource": "media-masked"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "rich"
+        },
+        "foliage": {
+          "state": "normal",
+          "density": "dense"
+        },
+        "botanicalState": "normal",
+        "flowers": {
+          "amount": "none",
+          "primary": null,
+          "secondary": null
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "normal",
+        "background": "#e5eaeb",
+        "seed": 3301026998,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.446 in [0.3, 0.5) → NORMAL (the corpus midband, 12 of 23 sites)",
+        "density": "inkCoverage 0.72 → DENSE",
+        "flowers": "design chromatic coverage 0.0013 < 0.01 — no meaningful accent colour exists, so no flowers are forced (flowerless is a valid result)",
+        "skeleton": "0.7·inkCoverage(0.72) + 0.3·textDensity(0.037) = 0.515 → RICH; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "no special state qualifies → NORMAL",
+        "terrain": "follows foliage state NORMAL → NORMAL",
+        "background": "derived from rendered ground #ffffff (achromatic, so hue borrowed from the design accent #7aa7b2); light/dark character preserved, saturation held low → #e5eaeb"
+      }
+    },
+    {
+      "domain": "en.wikipedia.org",
+      "corpusId": "wikipedia",
+      "role": "text-heavy editorial",
+      "synthetic": false,
+      "sourceUrl": "https://en.wikipedia.org/wiki/Tree",
+      "fingerprint": {
+        "authored": 0.8,
+        "stylingRichness": 0.423,
+        "inkCoverage": 0.211,
+        "colorfulness": 0.127,
+        "designColorfulness": 0.099,
+        "designChromaticRatio": 0.0253,
+        "warmShareOfChroma": 0,
+        "imageArea": 0.072,
+        "canvasArea": 0,
+        "textDensity": 0.866,
+        "palette": {
+          "ground": "#ffffff",
+          "primary": "#a2b9e7",
+          "secondary": "#cf9393"
+        },
+        "paletteSource": "media-masked"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "normal"
+        },
+        "foliage": {
+          "state": "normal",
+          "density": "normal"
+        },
+        "botanicalState": "normal",
+        "flowers": {
+          "amount": "few",
+          "primary": "#a2b9e7",
+          "secondary": "#cf9393"
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "normal",
+        "background": "#e5e7eb",
+        "seed": 2038796851,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.423 in [0.3, 0.5) → NORMAL (the corpus midband, 12 of 23 sites)",
+        "density": "inkCoverage 0.211 → NORMAL",
+        "flowers": "design colourfulness 0.099 in [0.08, 0.2) → FEW; colour taken from the media-masked palette (photography excluded from the accent)",
+        "skeleton": "0.7·inkCoverage(0.211) + 0.3·textDensity(0.866) = 0.407 → NORMAL; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "no special state qualifies → NORMAL",
+        "terrain": "follows foliage state NORMAL → NORMAL",
+        "background": "derived from rendered ground #ffffff (achromatic, so hue borrowed from the design accent #a2b9e7); light/dark character preserved, saturation held low → #e5e7eb"
+      }
+    },
+    {
+      "domain": "vercel.com",
+      "corpusId": "vercel",
+      "role": "dark / monochrome",
+      "synthetic": false,
+      "sourceUrl": "https://vercel.com/",
+      "fingerprint": {
+        "authored": 0.7,
+        "stylingRichness": 0.437,
+        "inkCoverage": 0.053,
+        "colorfulness": 0,
+        "designColorfulness": 0,
+        "designChromaticRatio": 0,
+        "warmShareOfChroma": 0,
+        "imageArea": 0.237,
+        "canvasArea": 0.2,
+        "textDensity": 0.062,
+        "palette": {
+          "ground": "#fbfbfb",
+          "primary": null,
+          "secondary": null
+        },
+        "paletteSource": "media-masked"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "simple"
+        },
+        "foliage": {
+          "state": "normal",
+          "density": "airy"
+        },
+        "botanicalState": "winter",
+        "flowers": {
+          "amount": "none",
+          "primary": null,
+          "secondary": null
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "winter",
+        "background": "#e6e6e6",
+        "seed": 1666752833,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.437 in [0.3, 0.5) → NORMAL (the corpus midband, 12 of 23 sites)",
+        "density": "inkCoverage 0.053 → AIRY",
+        "flowers": "design chromatic coverage 0 < 0.01 — no meaningful accent colour exists, so no flowers are forced (flowerless is a valid result)",
+        "skeleton": "0.7·inkCoverage(0.053) + 0.3·textDensity(0.062) = 0.056 → SIMPLE; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "authored 0.7 >= 0.6 AND stylingRichness 0.437 >= 0.35 (clearly authored) AND design colourfulness 0 < 0.06 AND inkCoverage 0.053 < 0.2 → WINTER (restraint, not absence — distinct from BARE)",
+        "terrain": "follows foliage state NORMAL and botanical state WINTER → WINTER",
+        "background": "derived from rendered ground #fbfbfb (achromatic, so hue borrowed from the design accent null); light/dark character preserved, saturation held low → #e6e6e6"
+      }
+    },
+    {
+      "domain": "threejs.org",
+      "corpusId": "threejs-example",
+      "role": "WebGL / canvas",
+      "synthetic": false,
+      "sourceUrl": "https://threejs.org/examples/webgl_animation_keyframes.html",
+      "fingerprint": {
+        "authored": 0.5,
+        "stylingRichness": 0.237,
+        "inkCoverage": 0.526,
+        "colorfulness": 0.296,
+        "designColorfulness": 0.296,
+        "designChromaticRatio": 0.1676,
+        "warmShareOfChroma": 0.575,
+        "imageArea": 0,
+        "canvasArea": 1,
+        "textDensity": 0.029,
+        "palette": {
+          "ground": "#e9e6e6",
+          "primary": "#a67f69",
+          "secondary": "#ac6153"
+        },
+        "paletteSource": "whole-frame"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "normal"
+        },
+        "foliage": {
+          "state": "sparse",
+          "density": "normal"
+        },
+        "botanicalState": "flowering",
+        "flowers": {
+          "amount": "medium",
+          "primary": "#a67f69",
+          "secondary": "#ac6153"
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "sparse",
+        "background": "#e7e4e4",
+        "seed": 3612164152,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.237 in [0.1, 0.3) → SPARSE; authored 0.5 > 0.15 keeps it out of BARE (restraint, not absence)",
+        "density": "inkCoverage 0.526 alone reads DENSE, but stylingRichness 0.237 < 0.30 — visible mass without much authored design → damped to NORMAL (restrained foliage despite mass)",
+        "flowers": "design colourfulness 0.296 in [0.2, 0.4) → MEDIUM",
+        "skeleton": "0.7·inkCoverage(0.526) + 0.3·textDensity(0.029) = 0.377 → NORMAL; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "flower amount MEDIUM → FLOWERING",
+        "terrain": "follows foliage state SPARSE → SPARSE",
+        "background": "derived from rendered ground #e9e6e6 (own hue kept); light/dark character preserved, saturation held low → #e7e4e4"
+      }
+    },
+    {
+      "domain": "gov.uk",
+      "corpusId": "gov-uk",
+      "role": "systematised, high chroma, plain",
+      "synthetic": false,
+      "sourceUrl": "https://www.gov.uk/",
+      "fingerprint": {
+        "authored": 0.7,
+        "stylingRichness": 0.494,
+        "inkCoverage": 0.242,
+        "colorfulness": 0.544,
+        "designColorfulness": 0.544,
+        "designChromaticRatio": 0.1963,
+        "warmShareOfChroma": 0,
+        "imageArea": 0.007,
+        "canvasArea": 0,
+        "textDensity": 0.208,
+        "palette": {
+          "ground": "#ffffff",
+          "primary": "#2d7abc",
+          "secondary": "#2b8765"
+        },
+        "paletteSource": "whole-frame"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "normal"
+        },
+        "foliage": {
+          "state": "normal",
+          "density": "normal"
+        },
+        "botanicalState": "flowering",
+        "flowers": {
+          "amount": "abundant",
+          "primary": "#2d7abc",
+          "secondary": "#2b8765"
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "normal",
+        "background": "#e5e8eb",
+        "seed": 884767395,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.494 in [0.3, 0.5) → NORMAL (the corpus midband, 12 of 23 sites)",
+        "density": "inkCoverage 0.242 → NORMAL",
+        "flowers": "design colourfulness 0.544 >= 0.4 → ABUNDANT",
+        "skeleton": "0.7·inkCoverage(0.242) + 0.3·textDensity(0.208) = 0.232 → NORMAL; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "flower amount ABUNDANT → FLOWERING",
+        "terrain": "follows foliage state NORMAL → NORMAL",
+        "background": "derived from rendered ground #ffffff (achromatic, so hue borrowed from the design accent #2d7abc); light/dark character preserved, saturation held low → #e5e8eb"
+      }
+    },
+    {
+      "domain": "figma.com",
+      "corpusId": "figma",
+      "role": "colourful, illustration-led",
+      "synthetic": false,
+      "sourceUrl": "https://www.figma.com/",
+      "fingerprint": {
+        "authored": 0.9,
+        "stylingRichness": 0.43,
+        "inkCoverage": 0.127,
+        "colorfulness": 0.127,
+        "designColorfulness": 0.127,
+        "designChromaticRatio": 0.0482,
+        "warmShareOfChroma": 0.092,
+        "imageArea": 0,
+        "canvasArea": 0,
+        "textDensity": 0.063,
+        "palette": {
+          "ground": "#ffffff",
+          "primary": "#7c78b6",
+          "secondary": "#392b17"
+        },
+        "paletteSource": "whole-frame"
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "simple"
+        },
+        "foliage": {
+          "state": "normal",
+          "density": "airy"
+        },
+        "botanicalState": "normal",
+        "flowers": {
+          "amount": "few",
+          "primary": "#7c78b6",
+          "secondary": "#392b17"
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "normal",
+        "background": "#e5e5eb",
+        "seed": 238067588,
+        "rareCat": false
+      },
+      "why": {
+        "foliage": "stylingRichness 0.43 in [0.3, 0.5) → NORMAL (the corpus midband, 12 of 23 sites)",
+        "density": "inkCoverage 0.127 → AIRY",
+        "flowers": "design colourfulness 0.127 in [0.08, 0.2) → FEW",
+        "skeleton": "0.7·inkCoverage(0.127) + 0.3·textDensity(0.063) = 0.108 → SIMPLE; text weighted lower so text-heavy sites do not become oversized trees",
+        "botanicalState": "no special state qualifies → NORMAL",
+        "terrain": "follows foliage state NORMAL → NORMAL",
+        "background": "derived from rendered ground #ffffff (achromatic, so hue borrowed from the design accent #7c78b6); light/dark character preserved, saturation held low → #e5e5eb"
+      }
+    },
+    {
+      "domain": "synthetic-autumn.example",
+      "corpusId": null,
+      "role": "SYNTHETIC — renderer capability test for AUTUMN",
+      "synthetic": true,
+      "sourceUrl": null,
+      "fingerprint": {
+        "note": "HAND-AUTHORED. Not a measurement of any website. No corpus site legitimately reached AUTUMN — see FINDINGS.md §16."
+      },
+      "dna": {
+        "morphology": "broad",
+        "skeleton": {
+          "complexity": "normal"
+        },
+        "foliage": {
+          "state": "normal",
+          "density": "normal"
+        },
+        "botanicalState": "autumn",
+        "flowers": {
+          "amount": "few",
+          "primary": "#c96a2b",
+          "secondary": "#8c4a1f"
+        },
+        "fruit": {
+          "enabled": false,
+          "color": null
+        },
+        "terrain": "autumn",
+        "background": "#e8e2d8",
+        "seed": 1186965417,
+        "rareCat": false
+      },
+      "why": {
+        "synthetic": "Hand-authored so 3D can test AUTUMN rendering. Zero of 23 corpus sites qualified: every site whose raw pixels looked warm-dominant lost it once photographic media was masked out, proving the warmth was content, not design.",
+        "botanicalState": "SET BY HAND, not measured."
+      }
+    }
+  ]
+}
