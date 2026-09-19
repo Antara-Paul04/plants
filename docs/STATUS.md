@@ -10,17 +10,17 @@
 
 ## Phase
 
-**Pre-implementation / concept definition.**
-
-No application code exists. No framework, renderer or 3D library has been chosen or
-installed. This is deliberate.
+**Art-direction prototyping.** One hand-built tree exists to test the look. The
+product specification is still unfinished, and no product code has been written.
 
 ---
 
 ## Working
 
-- Repository infrastructure — documentation structure, agent operating manual,
-  reference directories
+- Repository infrastructure — docs, agent operating manual, reference directories
+- **Tree prototype** (`prototype/`) — one hand-authored tree on a small island,
+  running in the browser. Marked **EXPERIMENT**; awaiting human visual review.
+  Run it: `cd prototype && python3 -m http.server 5188`
 
 ---
 
@@ -35,29 +35,32 @@ installed. This is deliberate.
 
 - Frontend
 - Website analysis
-- 3D tree
+- Tree generator (the prototype is hand-authored, not procedural)
 - Integration
 
 ---
 
 ## Current questions
 
-Open and waiting on human decisions. Several are taste judgments and cannot be resolved
-by an agent alone (AGENTS.md R7).
+Open and waiting on human decisions. Several are taste judgments and cannot be
+resolved by an agent alone (AGENTS.md R7).
 
-1. What should the base / default tree look like?
-2. Which properties of a website should affect it?
-3. How should website colour map into the tree?
+1. **Does the prototype tree look right?** Is this the visual direction, or a
+   starting point to push? Nothing in it is approved.
+2. Which properties of a website should affect the tree?
+3. How should website colour map into the tree? (DECISIONS D5 — flowers as the
+   carrier is still TENTATIVE and untested.)
 4. How should minimal websites differ from expressive ones?
-5. Do we need terrain or a base?
-6. What 3D implementation approach should we use?
+5. Is the island the right base? The prototype assumes one; that was never decided.
+6. What 3D implementation approach should we commit to? The prototype's three.js
+   setup was chosen to be disposable.
+7. Should wind sway and drifting petals stay? Motion is still OPEN.
 
 ---
 
 ## Next
 
-**Finalize the V0 creative and product specification before implementation begins.**
+**Human visual review of the prototype**, then finish the V0 creative specification.
 
-The most useful thing to settle first is question 1 — what the default tree looks like.
-Almost everything else is a variation on it, so it is hard to decide what varies before
-knowing what is being varied.
+The generator should not be started until question 1 is answered — what varies is
+only meaningful once we agree on what is being varied.

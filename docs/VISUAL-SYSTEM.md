@@ -13,6 +13,61 @@ polished**. That is a feeling, not a system. Everything below is how we turn it 
 
 ---
 
+## First prototype — EXPERIMENT
+
+**Status: EXPERIMENT. Nothing here is approved, and none of it is DECIDED.**
+
+`prototype/` contains one hand-authored tree on a small island, built purely to test
+whether this look is achievable in a browser. It is an art-direction probe, not a
+proposal, and it must not be read as the visual system. Everything below is a record
+of what was tried and what it taught us — it is deliberately written as findings, not
+as rules. Promotion of any of it is a human call (AGENTS.md R7).
+
+### Approach attempted
+
+- three.js, no framework, no build step, no post-processing. Geometry, vertex colour
+  and three lights only. The look should survive being ported elsewhere later.
+- Foliage as ~19,000 instanced cupped leaf cards scattered over ~25 overlapping
+  ellipsoid "lobes" that sit on the real branch tips, rather than spheres of leaf
+  texture.
+- Grass as ~30,000 instanced blades, not a green surface.
+- Blossoms as small five-petal meshes grown in clusters through the canopy.
+- One key light, a cool rim, a hemisphere fill and a dim shadowless front fill.
+
+### What appears to work
+
+- **Lobe-scattered instanced cards.** Layering, irregular edges and real depth, at
+  ~640k triangles in 19 draw calls. This answers the "not three green spheres"
+  requirement convincingly.
+- **Orienting each leaf's normal outward from its lobe.** This is what makes the
+  crown shade as one soft volume instead of a glitter of separately-lit cards. It is
+  probably the single most important technique found.
+- **Thinning the crown's underside.** Dropping most downward-facing leaves is what
+  lets the trunk and branches read. Without it the tree is a shrub on a stick.
+- **Instanced grass blades.** Far more charm than a textured surface, and cheap.
+- **A narrow field of view (~30°).** The main lever for the miniature-diorama feel.
+- **Irregular, non-circular limb cross-sections with swelling junctions.** Keeps the
+  trunk from reading as a cylinder or as intersecting tubes.
+
+### What remains unresolved
+
+- Everything in the sections below is still **OPEN**. The prototype demonstrates one
+  point in the space; it does not define the space.
+- Whether green foliage plus pink blossom is the right palette at all, or just the
+  first thing tried.
+- Crown silhouette still reads a little dense and cauliflower-like; it wants more air
+  and larger gaps.
+- A few leaves and blossoms at the silhouette edge still shade to dark flecks against
+  the sky. Mitigated with an emissive floor, not solved.
+- No ambient occlusion where the trunk meets the turf, so the tree looks slightly
+  *placed on* the ground rather than growing out of it.
+- Soil colour is muddy and reads heavy at the bottom of the frame.
+- Wind sway and drifting petals are in, and **Motion is still OPEN** — they are an
+  experiment, not an approved decision.
+- Untested on mobile, and not profiled on low-end hardware.
+
+---
+
 ## Overall art direction
 
 **OPEN.**
@@ -147,7 +202,12 @@ Reference material lives in [`references/`](../references/README.md):
 
 Do not fabricate references or cite from memory. Only list things actually collected.
 
-- _none collected yet_
+- **A low-poly cherry-blossom-tree-on-an-island render**, supplied by the human as the
+  structure/composition/proportion benchmark for the first prototype. It has not been
+  saved into `references/tree-style/` yet — **it should be**, so later agents can see
+  what was actually being aimed at. Referenced for: canopy-to-island proportion, the
+  crown overhanging its base, chunky stone placement, and the dark-trunk-against-bright-
+  canopy contrast. It was explicitly a quality benchmark, not something to reproduce.
 
 ---
 

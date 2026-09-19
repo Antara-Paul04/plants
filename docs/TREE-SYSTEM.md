@@ -9,6 +9,78 @@
 
 ---
 
+## How the prototype tree is built — EXPERIMENT
+
+**Status: EXPERIMENT.** `prototype/` holds one hand-authored tree. It is **not** the
+generator, and its numbers are not defaults — they were tuned by eye until the render
+looked right. Read this as a description of one artefact, not a specification.
+
+### Construction
+
+| Part | How |
+| --- | --- |
+| **Trunk** | 5 hand-placed control points forming a lazy S, swept as a tapered tube |
+| **Branches** | 4 primaries → 8 secondaries → 7 twigs, each an explicit entry in a table of `(azimuth, start elevation, end elevation, length, radius, twist)` |
+| **Roots** | 3 short buttresses angled down into the turf |
+| **Crown** | ~25 ellipsoid lobes: one per branch tip, plus 12 hand-placed fillers |
+| **Leaves** | ~19,000 instanced cupped cards in 3 shape variants, scattered on the lobes |
+| **Blossoms** | ~190 clusters of 2–5 five-petal meshes, plus instanced warm centres |
+| **Petals** | ~130 resting on the turf, 16 drifting (animated) |
+
+### Techniques worth keeping regardless of what the generator becomes
+
+These are the findings, as distinct from the numbers:
+
+1. **Leaf normals point outward from the lobe**, not along the card's own face. This
+   is what makes the canopy shade as a volume. Without it the crown is tinsel.
+2. **Limb cross-sections are never circular** — a slow radial wobble that drifts along
+   the limb — and **every junction swells**, with child limbs starting *inside* the
+   parent. Together these stop the tree reading as intersecting tubes.
+3. **The crown's underside is deliberately thinned** so branch structure reads through.
+4. **Cards are double-faced geometrically, not via `DoubleSide`.** `DoubleSide` flips
+   the normal on back faces, which turned leaves black and blossoms dead brown.
+5. **Tubes must be capped at BOTH ends.** three.js renders back faces into the shadow
+   map for front-side materials, which only cancels self-shadowing on closed solids.
+   Open-based limbs produced severe shadow acne at exactly the branch junctions.
+6. **A narrow camera FOV** does more for the miniature feel than any material choice.
+
+### Currently hardcoded
+
+Effectively everything: branch table, lobe positions and radii, all counts, every
+colour, leaf and blossom sizes, lighting, camera, island shape, rock placement. One
+seed constant in `main.js` drives all randomness, so the scene is reproducible.
+
+### Observations about what could later become variable
+
+**Speculative — not proposals, and not approved.** Noted only because building the
+prototype made them visible:
+
+- Crown proportions (width vs height) and lobe spread changed the tree's character
+  more than any other single lever tried.
+- Branch elevation — whether limbs spread outward or climb upward — was the second
+  strongest.
+- Blossom density and colour are trivially separable from everything else, which is
+  mildly encouraging for DECISIONS D5, though it proves nothing about whether flowers
+  are the right colour carrier.
+- Leaf size and count trade silhouette detail against fill; both look acceptable
+  across a reasonably wide range.
+- Trunk thickness, taper and lean are independent of the crown and read clearly.
+- Island radius and depth are independent of the tree entirely.
+
+What has **not** been tested is whether these can vary *together* without producing
+ugly trees. That is the real question for the generator, and the prototype says
+nothing about it.
+
+### Known weaknesses in the prototype
+
+- Crown silhouette is dense; it wants more air and larger gaps.
+- A few leaves and blossoms still shade to dark flecks at the silhouette edge.
+- No contact occlusion where trunk meets turf.
+- Leaf size distribution is narrow, so it looks slightly repetitive up close.
+- Not profiled on mobile or low-end hardware.
+
+---
+
 ## Invariant characteristics
 
 **OPEN.**
@@ -157,11 +229,16 @@ Key questions:
 
 **OPEN.**
 
-Nothing chosen. No renderer, no library, no framework, no authoring pipeline, no
-procedural-vs-authored decision. Deliberately left open — see
-[PRODUCT.md](PRODUCT.md).
+Still undecided. The prototype uses three.js from a CDN with no build step, no
+framework and no post-processing — but that was chosen as the *smallest thing that
+could prove the visual*, not as an architecture. It commits us to nothing.
 
-Do not install 3D libraries or scaffold a renderer before this is settled.
+What the prototype does establish is a feasibility floor: this look runs in a browser
+at ~640k triangles in 19 draw calls using nothing but instanced geometry, vertex
+colour and three lights. Any approach we pick should clear that bar.
+
+Open: whether to stay on raw three.js or adopt a framework layer; whether geometry is
+authored, procedural, or a mix; whether generation happens on the client or server.
 
 - _unresolved_
 
@@ -179,4 +256,9 @@ Worth settling reasonably early — performance limits shape what the generator 
 and discovering the constraint late usually means flattening the visual idea to fit it,
 which AGENTS.md R6 exists to prevent.
 
-- _unresolved_
+**One measurement exists.** The prototype renders ~640k triangles in 19 draw calls on
+desktop: ~30,000 grass blades, ~19,000 leaves, ~630 blossoms, all instanced. Geometry
+builds in well under a second. Mobile and low-end hardware are **untested**, and the
+4096² shadow map is the most likely first casualty there.
+
+- _target devices, budgets and time-to-tree still unresolved_
