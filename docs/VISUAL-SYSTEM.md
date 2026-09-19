@@ -218,7 +218,17 @@ background derives from the website or stays constant.
 
 ## Terrain / base
 
-**OPEN.**
+**OPEN**, with one principle now settled by evidence.
+
+**Dormancy is a scene property, not a tree property.** A bare tree standing in vivid
+summer turf reads as *dead*, not as *wintering* — leaflessness is judged against its
+surroundings rather than on its own. When the tree goes dormant the ground goes with
+it, including the stones: quieting only the turf promotes whatever is left at full
+summer value to the brightest thing in a frame whose whole point is to be quiet.
+
+Established by `taste` from live renders and implemented for the bare and winter
+states. Full statement and its second-order corollary in
+[TASTE.md](TASTE.md) — this is a pointer, not a second copy.
 
 Whether the tree sits on anything at all — soil, a pot, a floating island, a disc, a
 shadow, nothing. Closely tied to the same question in
