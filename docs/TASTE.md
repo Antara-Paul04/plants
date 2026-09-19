@@ -91,6 +91,10 @@ place by being observed, not assumed.
   judged against its surroundings, not on its own. Standing in vivid summer turf, the
   same skeleton that would look architectural reads as the one dead thing in a healthy
   garden. If the tree goes dormant, the scene goes dormant with it.
+- **A seasonal state has to reach every element of the scene, or the ones it misses
+  become the loudest thing in the frame.** Quieting the turf under a bare tree works,
+  and it immediately promotes whatever was left at full summer value — stones, sky —
+  to the brightest object in a picture whose whole point was to be quiet.
 - **A difference must be exaggerated to the magnitude that survives a thumbnail, and
   the corpus itself says what that magnitude is.** Wherever one generated tree *does*
   read as distinct at feed size, that is the calibration — anything subtler than the
