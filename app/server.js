@@ -63,16 +63,24 @@ async function cachedDna(domain) {
 }
 
 // --- helpers --------------------------------------------------------------
-function normalizeUrl(raw) {
+function normalizeUrl(raw, scheme) {
   let s = String(raw || '').trim();
   if (!s) return null;
-  if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
+  const hadScheme = /^https?:\/\//i.test(s);
+  if (!hadScheme) s = `${scheme || 'https'}://${s}`;
   let u;
   try { u = new URL(s); } catch { return null; }
   if (!/^https?:$/.test(u.protocol)) return null;
   if (!u.hostname.includes('.') || /\s/.test(u.hostname)) return null;
+  u.hadScheme = hadScheme;
   return u;
 }
+
+// Connection-level failures only. A site that resets on https may still serve
+// plain http — bettermotherfuckingwebsite.com is exactly this case, and it is
+// one of our clearest examples of deliberate minimalism, so it is worth the
+// retry. Never downgrades a URL the user explicitly typed as https.
+const RETRYABLE = new Set(['UNREACHABLE', 'CONNECTION_RESET', 'DNS', 'NAV_FAILED', 'TIMEOUT']);
 
 const send = (res, code, body, type = 'application/json; charset=utf-8') => {
   res.writeHead(code, { 'content-type': type, 'cache-control': 'no-store' });
@@ -127,7 +135,20 @@ async function grow(req, res) {
 
   if (mod) {
     try {
-      const result = await mod.analyzeUrl(u.toString());
+      let result = await mod.analyzeUrl(u.toString());
+
+      if ((!result || result.ok === false) && !u.hadScheme) {
+        const code = String(result?.failure?.code || '').toUpperCase();
+        if (RETRYABLE.has(code)) {
+          const httpUrl = normalizeUrl(payload.url, 'http');
+          if (httpUrl) {
+            console.log(`  ${domain}: https ${code} — retrying over http`);
+            const retry = await mod.analyzeUrl(httpUrl.toString());
+            if (retry && retry.ok !== false) result = retry;
+          }
+        }
+      }
+
       if (!result || result.ok === false) {
         const f = (result && result.failure) || { code: 'analysis_failed', message: 'We could not read that website.' };
         return send(res, 200, { ok: false, live: true, domain, failure: f });
