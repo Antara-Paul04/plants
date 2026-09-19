@@ -1,0 +1,4319 @@
+{
+  "meta": {
+    "viewport": {
+      "VW": 1440,
+      "VH": 900
+    },
+    "settleMs": 1800,
+    "motionGapMs": 700,
+    "when": "2026-09-19T21:38:17.956Z"
+  },
+  "sites": [
+    {
+      "id": "control-raw",
+      "url": "file:///Users/antarapaul/Desktop/plants/analysis/fixtures/raw.html",
+      "tags": [
+        "near-raw-html",
+        "control"
+      ],
+      "note": "Synthetic zero-CSS control. Ground truth for \"unstyled\".",
+      "ok": true,
+      "failures": [],
+      "httpStatus": 200,
+      "finalUrl": "file:///Users/antarapaul/Desktop/plants/analysis/fixtures/raw.html",
+      "pixels": {
+        "v3": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9633,
+            "whitespaceRatio": 0.9633,
+            "neutralRatio": 0.9997,
+            "chromaticRatio": 0.0003,
+            "colorfulnessRaw": 1.72,
+            "colorfulness": 0.0157,
+            "accents": [
+              {
+                "hex": "#9898f7",
+                "hue": 240,
+                "coverage": 0.0003
+              }
+            ],
+            "primary": "#9898f7",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 50,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": null
+        },
+        "v1": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9633,
+            "whitespaceRatio": 0.9633,
+            "neutralRatio": 0.9997,
+            "chromaticRatio": 0.0003,
+            "colorfulnessRaw": 1.72,
+            "colorfulness": 0.0157,
+            "accents": [
+              {
+                "hex": "#9898f7",
+                "hue": 240,
+                "coverage": 0.0003
+              }
+            ],
+            "primary": "#9898f7",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 50,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": null
+        }
+      },
+      "motion": {
+        "diff12": 0,
+        "diff23": 0,
+        "sustained": 0,
+        "oneShot": 0,
+        "diff12ExMedia": 0,
+        "diff23ExMedia": 0,
+        "sustainedExMedia": 0,
+        "excludedCells": 0,
+        "gridCells": 5760
+      },
+      "dom": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "docHeight": 900,
+        "title": "Raw HTML control",
+        "url": "file:///Users/antarapaul/Desktop/plants/analysis/fixtures/raw.html",
+        "scopes": {
+          "v1": {
+            "scope": "viewport1",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 14,
+              "landmarkCount": 4,
+              "medianDepth": 2,
+              "maxDepth": 3,
+              "bandCount": 5,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.015240187026120943,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0.005804847951658557,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.018518518518518455,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0.5833333333333333,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9988350887431191,
+              "visualDensity": 0.2668453896604938
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.025,
+              "controlCount": 1
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 25,
+              "paintedElements": 18,
+              "domNodes": 28,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          },
+          "v3": {
+            "scope": "viewport3",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 14,
+              "landmarkCount": 4,
+              "medianDepth": 2,
+              "maxDepth": 3,
+              "bandCount": 5,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.015240187026120943,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0.005804847951658557,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.018518518518518455,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0.5833333333333333,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9988350887431191,
+              "visualDensity": 0.2668453896604938
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.025,
+              "controlCount": 1
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 25,
+              "paintedElements": 18,
+              "domNodes": 28,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          },
+          "full": {
+            "scope": "fullpage",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 14,
+              "landmarkCount": 4,
+              "medianDepth": 2,
+              "maxDepth": 3,
+              "bandCount": 5,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.015240187026120943,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0.005804847951658557,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.018518518518518455,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0.5833333333333333,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9988350887431191,
+              "visualDensity": 0.2668453896604938
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.025,
+              "controlCount": 1
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 25,
+              "paintedElements": 18,
+              "domNodes": 28,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          }
+        },
+        "mediaRects": [],
+        "overlays": {
+          "count": 0,
+          "suspects": []
+        },
+        "authorRules": 0,
+        "sheetErr": 0
+      },
+      "network": {
+        "requests": 1,
+        "contentLengthBytes": 0
+      },
+      "timingMs": {
+        "load": 37,
+        "settle": 2311,
+        "motionCapture": 1491,
+        "domEval": 6,
+        "screenshot": 54,
+        "pixels": 40,
+        "total": 4024
+      }
+    },
+    {
+      "id": "cern-first-web",
+      "url": "http://info.cern.ch/hypertext/WWW/TheProject.html",
+      "tags": [
+        "near-raw-html"
+      ],
+      "note": "The first website. Genuinely unstyled real page.",
+      "ok": true,
+      "failures": [],
+      "httpStatus": 200,
+      "finalUrl": "https://info.cern.ch/hypertext/WWW/TheProject.html",
+      "redirected": true,
+      "pixels": {
+        "v3": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9502,
+            "whitespaceRatio": 0.9502,
+            "neutralRatio": 0.9844,
+            "chromaticRatio": 0.0156,
+            "colorfulnessRaw": 12.98,
+            "colorfulness": 0.118,
+            "accents": [
+              {
+                "hex": "#9999f7",
+                "hue": 240,
+                "coverage": 0.0156
+              }
+            ],
+            "primary": "#9999f7",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 67,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": null
+        },
+        "v1": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9502,
+            "whitespaceRatio": 0.9502,
+            "neutralRatio": 0.9844,
+            "chromaticRatio": 0.0156,
+            "colorfulnessRaw": 12.98,
+            "colorfulness": 0.118,
+            "accents": [
+              {
+                "hex": "#9999f7",
+                "hue": 240,
+                "coverage": 0.0156
+              }
+            ],
+            "primary": "#9999f7",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 67,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": null
+        }
+      },
+      "motion": {
+        "diff12": 0,
+        "diff23": 0,
+        "sustained": 0,
+        "oneShot": 0,
+        "diff12ExMedia": 0,
+        "diff23ExMedia": 0,
+        "sustainedExMedia": 0,
+        "excludedCells": 0,
+        "gridCells": 5760
+      },
+      "dom": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "docHeight": 900,
+        "title": "The World Wide Web project",
+        "url": "https://info.cern.ch/hypertext/WWW/TheProject.html",
+        "scopes": {
+          "v1": {
+            "scope": "viewport1",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 23,
+              "landmarkCount": 1,
+              "medianDepth": 3,
+              "maxDepth": 3,
+              "bandCount": 4,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.017489711934156375,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.06481481481481477,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9982396913976647,
+              "visualDensity": 1
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0,
+              "controlCount": 0
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 2,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9611111111111111,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 48,
+              "paintedElements": 38,
+              "domNodes": 52,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          },
+          "v3": {
+            "scope": "viewport3",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 23,
+              "landmarkCount": 1,
+              "medianDepth": 3,
+              "maxDepth": 3,
+              "bandCount": 4,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.017489711934156375,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.06481481481481477,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9982396913976647,
+              "visualDensity": 1
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0,
+              "controlCount": 0
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 2,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9611111111111111,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 48,
+              "paintedElements": 38,
+              "domNodes": 52,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          },
+          "full": {
+            "scope": "fullpage",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 23,
+              "landmarkCount": 1,
+              "medianDepth": 3,
+              "maxDepth": 3,
+              "bandCount": 4,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.017489711934156375,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.06481481481481477,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9982396913976647,
+              "visualDensity": 1
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0,
+              "controlCount": 0
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 2,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9611111111111111,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 48,
+              "paintedElements": 38,
+              "domNodes": 52,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          }
+        },
+        "mediaRects": [],
+        "overlays": {
+          "count": 0,
+          "suspects": []
+        },
+        "authorRules": 0,
+        "sheetErr": 0
+      },
+      "network": {
+        "requests": 2,
+        "contentLengthBytes": 2217
+      },
+      "timingMs": {
+        "load": 1240,
+        "settle": 2305,
+        "motionCapture": 1517,
+        "domEval": 7,
+        "screenshot": 50,
+        "pixels": 35,
+        "total": 5259
+      }
+    },
+    {
+      "id": "better-mfw",
+      "url": "https://bettermotherfuckingwebsite.com/",
+      "tags": [
+        "intentional-minimal"
+      ],
+      "note": "Deliberate, argued minimalism. The crux-test twin of raw HTML.",
+      "ok": true,
+      "failures": [
+        "load:page.goto: net::ERR_CONNECTION_RESET at https://bettermotherfuckingwebsite.com/"
+      ],
+      "httpStatus": null,
+      "finalUrl": "about:blank",
+      "redirected": true,
+      "pixels": {
+        "v3": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9881,
+            "whitespaceRatio": 0.9881,
+            "neutralRatio": 0.9966,
+            "chromaticRatio": 0.0034,
+            "colorfulnessRaw": 7.44,
+            "colorfulness": 0.0677,
+            "accents": [
+              {
+                "hex": "#72a9f0",
+                "hue": 210,
+                "coverage": 0.0034
+              }
+            ],
+            "primary": "#72a9f0",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 113,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": null
+        },
+        "v1": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9881,
+            "whitespaceRatio": 0.9881,
+            "neutralRatio": 0.9966,
+            "chromaticRatio": 0.0034,
+            "colorfulnessRaw": 7.44,
+            "colorfulness": 0.0677,
+            "accents": [
+              {
+                "hex": "#72a9f0",
+                "hue": 210,
+                "coverage": 0.0034
+              }
+            ],
+            "primary": "#72a9f0",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 113,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": null
+        }
+      },
+      "motion": {
+        "diff12": 0,
+        "diff23": 0,
+        "sustained": 0,
+        "oneShot": 0,
+        "diff12ExMedia": 0,
+        "diff23ExMedia": 0,
+        "sustainedExMedia": 0,
+        "excludedCells": 0,
+        "gridCells": 5760
+      },
+      "dom": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "docHeight": 900,
+        "title": "bettermotherfuckingwebsite.com",
+        "url": "chrome-error://chromewebdata/",
+        "scopes": {
+          "v1": {
+            "scope": "viewport1",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 16,
+              "landmarkCount": 1,
+              "medianDepth": 6,
+              "maxDepth": 8,
+              "bandCount": 5,
+              "wrappersCollapsed": 1
+            },
+            "stylingRichness": 0.2917896772322184,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.03672763996501818,
+              "radiusArea": 0.07610709508996547,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0.03937945512494729,
+              "paddedArea": 0.07610709508996547,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.5,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0.9238929049100345,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 0.3,
+              "ornament": 0.05
+            },
+            "unstyledScore": 0.3,
+            "layout": {
+              "verticality": 0.5,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9989349851338933,
+              "visualDensity": 0.047919511959876544
+            },
+            "roundness": 0.07610709508996547,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.05,
+              "controlCount": 2
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 2
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 3,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.3888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 21,
+              "paintedElements": 8,
+              "domNodes": 49,
+              "docHeight": 900,
+              "styleSheets": 3
+            }
+          },
+          "v3": {
+            "scope": "viewport3",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 16,
+              "landmarkCount": 1,
+              "medianDepth": 6,
+              "maxDepth": 8,
+              "bandCount": 5,
+              "wrappersCollapsed": 1
+            },
+            "stylingRichness": 0.2917896772322184,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.03672763996501818,
+              "radiusArea": 0.07610709508996547,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0.03937945512494729,
+              "paddedArea": 0.07610709508996547,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.5,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0.9238929049100345,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 0.3,
+              "ornament": 0.05
+            },
+            "unstyledScore": 0.3,
+            "layout": {
+              "verticality": 0.5,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9989349851338933,
+              "visualDensity": 0.047919511959876544
+            },
+            "roundness": 0.07610709508996547,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.05,
+              "controlCount": 2
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 2
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 3,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.3888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 21,
+              "paintedElements": 8,
+              "domNodes": 49,
+              "docHeight": 900,
+              "styleSheets": 3
+            }
+          },
+          "full": {
+            "scope": "fullpage",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 16,
+              "landmarkCount": 1,
+              "medianDepth": 6,
+              "maxDepth": 8,
+              "bandCount": 5,
+              "wrappersCollapsed": 1
+            },
+            "stylingRichness": 0.2917896772322184,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.03672763996501818,
+              "radiusArea": 0.07610709508996547,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0.03937945512494729,
+              "paddedArea": 0.07610709508996547,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.5,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0.9238929049100345,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 0.3,
+              "ornament": 0.05
+            },
+            "unstyledScore": 0.3,
+            "layout": {
+              "verticality": 0.5,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9989349851338933,
+              "visualDensity": 0.047919511959876544
+            },
+            "roundness": 0.07610709508996547,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.05,
+              "controlCount": 2
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 2
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 3,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.3888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 21,
+              "paintedElements": 8,
+              "domNodes": 49,
+              "docHeight": 900,
+              "styleSheets": 3
+            }
+          }
+        },
+        "mediaRects": [],
+        "overlays": {
+          "count": 0,
+          "suspects": []
+        },
+        "authorRules": 148,
+        "sheetErr": 0
+      },
+      "network": {
+        "requests": 0,
+        "contentLengthBytes": 0
+      },
+      "timingMs": {
+        "load": 2381,
+        "settle": 2314,
+        "motionCapture": 2226,
+        "domEval": 9,
+        "screenshot": 41,
+        "pixels": 25,
+        "total": 7099
+      }
+    },
+    {
+      "id": "lings-cars",
+      "url": "https://www.lingscars.com/",
+      "tags": [
+        "maximalist",
+        "animation-heavy"
+      ],
+      "note": "Canonical maximalist chaos.",
+      "ok": true,
+      "failures": [],
+      "httpStatus": 403,
+      "finalUrl": "https://www.lingscars.com/",
+      "pixels": {
+        "v3": {
+          "imageSize": {
+            "w": 1440,
+            "h": 1021
+          },
+          "sampled": {
+            "w": 420,
+            "h": 298
+          },
+          "maskedFraction": 0.2975,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.7027,
+            "whitespaceRatio": 0.7027,
+            "neutralRatio": 0.9878,
+            "chromaticRatio": 0.0122,
+            "colorfulnessRaw": 18.05,
+            "colorfulness": 0.1641,
+            "accents": [
+              {
+                "hex": "#bf2c2e",
+                "hue": 345,
+                "coverage": 0.0112
+              },
+              {
+                "hex": "#a6c2ea",
+                "hue": 210,
+                "coverage": 0.0007
+              },
+              {
+                "hex": "#ecc1c1",
+                "hue": 0,
+                "coverage": 0.0003
+              }
+            ],
+            "primary": "#bf2c2e",
+            "secondary": "#a6c2ea",
+            "tertiary": "#ecc1c1",
+            "distinctBuckets": 97,
+            "sampledPixels": 125160
+          },
+          "mediaMasked": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.6445,
+            "whitespaceRatio": 0.6445,
+            "neutralRatio": 0.999,
+            "chromaticRatio": 0.001,
+            "colorfulnessRaw": 2.06,
+            "colorfulness": 0.0187,
+            "accents": [
+              {
+                "hex": "#a6c2ea",
+                "hue": 210,
+                "coverage": 0.001
+              }
+            ],
+            "primary": "#a6c2ea",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 54,
+            "sampledPixels": 87920
+          }
+        },
+        "v1": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0.3371,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.6654,
+            "whitespaceRatio": 0.6654,
+            "neutralRatio": 0.987,
+            "chromaticRatio": 0.013,
+            "colorfulnessRaw": 19.16,
+            "colorfulness": 0.1742,
+            "accents": [
+              {
+                "hex": "#c02d2f",
+                "hue": 345,
+                "coverage": 0.0128
+              },
+              {
+                "hex": "#eabcbc",
+                "hue": 0,
+                "coverage": 0.0003
+              }
+            ],
+            "primary": "#c02d2f",
+            "secondary": "#eabcbc",
+            "tertiary": null,
+            "distinctBuckets": 74,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.5766,
+            "whitespaceRatio": 0.5766,
+            "neutralRatio": 1,
+            "chromaticRatio": 0,
+            "colorfulnessRaw": 0,
+            "colorfulness": 0,
+            "accents": [],
+            "primary": null,
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 24,
+            "sampledPixels": 73220
+          }
+        }
+      },
+      "motion": {
+        "diff12": 0,
+        "diff23": 0,
+        "sustained": 0,
+        "oneShot": 0,
+        "diff12ExMedia": 0,
+        "diff23ExMedia": 0,
+        "sustainedExMedia": 0,
+        "excludedCells": 1984,
+        "gridCells": 5760
+      },
+      "dom": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "docHeight": 1021,
+        "title": "Attention Required! | Cloudflare",
+        "url": "https://www.lingscars.com/",
+        "scopes": {
+          "v1": {
+            "scope": "viewport1",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 19,
+              "landmarkCount": 4,
+              "medianDepth": 5,
+              "maxDepth": 7,
+              "bandCount": 5,
+              "wrappersCollapsed": 1
+            },
+            "stylingRichness": 0.3884743884137488,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.5128896419097323,
+              "radiusArea": 0.30193503285914064,
+              "shadowArea": 0,
+              "gradientArea": 0.5128896419097323,
+              "borderArea": 0,
+              "paddedArea": 0.814824674768873,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.5,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 0.1,
+              "ornament": 0
+            },
+            "unstyledScore": 0.2,
+            "layout": {
+              "verticality": 0.5333333333333334,
+              "regularity": 0.9473684210526315,
+              "contentWidthRatio": 1,
+              "centredness": 0.9974046930287049,
+              "visualDensity": 1
+            },
+            "roundness": 0.006665232513446814,
+            "media": {
+              "imageArea": 0.3595910493827161,
+              "imageCount": 2,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 1
+            },
+            "controls": {
+              "controlDensity": 0,
+              "controlCount": 0
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 3,
+              "authoredSizes": 3,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.3177083333333333,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 20,
+              "paintedElements": 10,
+              "domNodes": 48,
+              "docHeight": 1021,
+              "styleSheets": 2
+            }
+          },
+          "v3": {
+            "scope": "viewport3",
+            "scopeHeightPx": 1021,
+            "structure": {
+              "blockCount": 21,
+              "landmarkCount": 4,
+              "medianDepth": 5,
+              "maxDepth": 7,
+              "bandCount": 6,
+              "wrappersCollapsed": 1
+            },
+            "stylingRichness": 0.415527617548527,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.47455286582048956,
+              "radiusArea": 0.2793664044401323,
+              "shadowArea": 0,
+              "gradientArea": 0.47455286582048956,
+              "borderArea": 0.06506215379345244,
+              "paddedArea": 0.8192961593322553,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.6666666666666666,
+              "weightVariety": 0.5,
+              "letterSpaced": 0,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 0.2,
+              "ornament": 0
+            },
+            "unstyledScore": 0.2,
+            "layout": {
+              "verticality": 0.5833333333333333,
+              "regularity": 0.9523809523809523,
+              "contentWidthRatio": 1,
+              "centredness": 0.9976628168308344,
+              "visualDensity": 1
+            },
+            "roundness": 0.006167028795587909,
+            "media": {
+              "imageArea": 0.31697545978887803,
+              "imageCount": 2,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 1
+            },
+            "controls": {
+              "controlDensity": 0.022037218413320278,
+              "controlCount": 1
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 1
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 4,
+              "distinctWeights": 3,
+              "medianTextWidthRatio": 0.3177083333333333,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 31,
+              "paintedElements": 19,
+              "domNodes": 48,
+              "docHeight": 1021,
+              "styleSheets": 2
+            }
+          },
+          "full": {
+            "scope": "fullpage",
+            "scopeHeightPx": 1021,
+            "structure": {
+              "blockCount": 21,
+              "landmarkCount": 4,
+              "medianDepth": 5,
+              "maxDepth": 7,
+              "bandCount": 6,
+              "wrappersCollapsed": 1
+            },
+            "stylingRichness": 0.415527617548527,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.47455286582048956,
+              "radiusArea": 0.2793664044401323,
+              "shadowArea": 0,
+              "gradientArea": 0.47455286582048956,
+              "borderArea": 0.06506215379345244,
+              "paddedArea": 0.8192961593322553,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.6666666666666666,
+              "weightVariety": 0.5,
+              "letterSpaced": 0,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 0.2,
+              "ornament": 0
+            },
+            "unstyledScore": 0.2,
+            "layout": {
+              "verticality": 0.5833333333333333,
+              "regularity": 0.9523809523809523,
+              "contentWidthRatio": 1,
+              "centredness": 0.9976628168308344,
+              "visualDensity": 1
+            },
+            "roundness": 0.006167028795587909,
+            "media": {
+              "imageArea": 0.31697545978887803,
+              "imageCount": 2,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 1
+            },
+            "controls": {
+              "controlDensity": 0.022037218413320278,
+              "controlCount": 1
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 1
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 4,
+              "distinctWeights": 3,
+              "medianTextWidthRatio": 0.3177083333333333,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 31,
+              "paintedElements": 19,
+              "domNodes": 48,
+              "docHeight": 1021,
+              "styleSheets": 2
+            }
+          }
+        },
+        "mediaRects": [
+          {
+            "x": 240,
+            "y": 235.984375,
+            "w": 960,
+            "h": 453
+          },
+          {
+            "x": 631,
+            "y": 409.984375,
+            "w": 178,
+            "h": 175
+          }
+        ],
+        "overlays": {
+          "count": 0,
+          "suspects": []
+        },
+        "authorRules": 143,
+        "sheetErr": 0
+      },
+      "network": {
+        "requests": 9,
+        "contentLengthBytes": 3928
+      },
+      "timingMs": {
+        "load": 600,
+        "settle": 2783,
+        "motionCapture": 1551,
+        "domEval": 16,
+        "screenshot": 101,
+        "pixels": 53,
+        "total": 5233
+      }
+    },
+    {
+      "id": "threejs",
+      "url": "https://threejs.org/",
+      "tags": [
+        "canvas-webgl"
+      ],
+      "note": "WebGL-dominant page; DOM under-represents the visual.",
+      "ok": true,
+      "failures": [],
+      "httpStatus": 200,
+      "finalUrl": "https://threejs.org/",
+      "pixels": {
+        "v3": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0.7929,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.2019,
+            "whitespaceRatio": 0.2019,
+            "neutralRatio": 0.6377,
+            "chromaticRatio": 0.3623,
+            "colorfulnessRaw": 56.73,
+            "colorfulness": 0.5157,
+            "accents": [
+              {
+                "hex": "#589dcb",
+                "hue": 195,
+                "coverage": 0.0548
+              },
+              {
+                "hex": "#aa7a5b",
+                "hue": 15,
+                "coverage": 0.047
+              },
+              {
+                "hex": "#a7895d",
+                "hue": 30,
+                "coverage": 0.0307
+              }
+            ],
+            "primary": "#589dcb",
+            "secondary": "#aa7a5b",
+            "tertiary": "#a7895d",
+            "distinctBuckets": 9130,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9358,
+            "whitespaceRatio": 0.9358,
+            "neutralRatio": 0.984,
+            "chromaticRatio": 0.016,
+            "colorfulnessRaw": 11.74,
+            "colorfulness": 0.1067,
+            "accents": [
+              {
+                "hex": "#a3dbfa",
+                "hue": 195,
+                "coverage": 0.016
+              }
+            ],
+            "primary": "#a3dbfa",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 54,
+            "sampledPixels": 22881
+          }
+        },
+        "v1": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0.7929,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.2019,
+            "whitespaceRatio": 0.2019,
+            "neutralRatio": 0.6377,
+            "chromaticRatio": 0.3623,
+            "colorfulnessRaw": 56.73,
+            "colorfulness": 0.5157,
+            "accents": [
+              {
+                "hex": "#589dcb",
+                "hue": 195,
+                "coverage": 0.0548
+              },
+              {
+                "hex": "#aa7a5b",
+                "hue": 15,
+                "coverage": 0.047
+              },
+              {
+                "hex": "#a7895d",
+                "hue": 30,
+                "coverage": 0.0307
+              }
+            ],
+            "primary": "#589dcb",
+            "secondary": "#aa7a5b",
+            "tertiary": "#a7895d",
+            "distinctBuckets": 9130,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9358,
+            "whitespaceRatio": 0.9358,
+            "neutralRatio": 0.984,
+            "chromaticRatio": 0.016,
+            "colorfulnessRaw": 11.74,
+            "colorfulness": 0.1067,
+            "accents": [
+              {
+                "hex": "#a3dbfa",
+                "hue": 195,
+                "coverage": 0.016
+              }
+            ],
+            "primary": "#a3dbfa",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 54,
+            "sampledPixels": 22881
+          }
+        }
+      },
+      "motion": {
+        "diff12": 0,
+        "diff23": 0,
+        "sustained": 0,
+        "oneShot": 0,
+        "diff12ExMedia": 0,
+        "diff23ExMedia": 0,
+        "sustainedExMedia": 0,
+        "excludedCells": 4560,
+        "gridCells": 5760
+      },
+      "dom": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "docHeight": 900,
+        "title": "Three.js – JavaScript 3D Library",
+        "url": "https://threejs.org/",
+        "scopes": {
+          "v1": {
+            "scope": "viewport1",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 78,
+              "landmarkCount": 7,
+              "medianDepth": 5,
+              "maxDepth": 6,
+              "bandCount": 8,
+              "wrappersCollapsed": 44
+            },
+            "stylingRichness": 0.3339483043736919,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 1,
+              "bgColorArea": 0,
+              "radiusArea": 0.02342803476279466,
+              "shadowArea": 0.021593166746471784,
+              "gradientArea": 0,
+              "borderArea": 0.7565563437272969,
+              "paddedArea": 0.15949193348989127,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.5,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 0.30000000000000004,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 0.3,
+            "layout": {
+              "verticality": 0,
+              "regularity": 0.6282051282051282,
+              "contentWidthRatio": 1,
+              "centredness": 0.9696772815658109,
+              "visualDensity": 0.2907130835262346
+            },
+            "roundness": 0.022408663642615286,
+            "media": {
+              "imageArea": 0.7916666666666666,
+              "imageCount": 42,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0,
+              "controlCount": 0
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 42
+            },
+            "typography": {
+              "distinctSizes": 3,
+              "authoredSizes": 3,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.11529947916666666,
+              "webfontsLoaded": 2,
+              "webfontsTotal": 2
+            },
+            "confounders": {
+              "visibleElements": 140,
+              "paintedElements": 27,
+              "domNodes": 558,
+              "docHeight": 900,
+              "styleSheets": 1
+            }
+          },
+          "v3": {
+            "scope": "viewport3",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 78,
+              "landmarkCount": 7,
+              "medianDepth": 5,
+              "maxDepth": 6,
+              "bandCount": 8,
+              "wrappersCollapsed": 44
+            },
+            "stylingRichness": 0.3339483043736919,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 1,
+              "bgColorArea": 0,
+              "radiusArea": 0.02342803476279466,
+              "shadowArea": 0.021593166746471784,
+              "gradientArea": 0,
+              "borderArea": 0.7565563437272969,
+              "paddedArea": 0.15949193348989127,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.5,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 0.30000000000000004,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 0.3,
+            "layout": {
+              "verticality": 0,
+              "regularity": 0.6282051282051282,
+              "contentWidthRatio": 1,
+              "centredness": 0.9696772815658109,
+              "visualDensity": 0.2907130835262346
+            },
+            "roundness": 0.022408663642615286,
+            "media": {
+              "imageArea": 0.7916666666666666,
+              "imageCount": 42,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0,
+              "controlCount": 0
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 42
+            },
+            "typography": {
+              "distinctSizes": 3,
+              "authoredSizes": 3,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.11529947916666666,
+              "webfontsLoaded": 2,
+              "webfontsTotal": 2
+            },
+            "confounders": {
+              "visibleElements": 140,
+              "paintedElements": 27,
+              "domNodes": 558,
+              "docHeight": 900,
+              "styleSheets": 1
+            }
+          },
+          "full": {
+            "scope": "fullpage",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 78,
+              "landmarkCount": 7,
+              "medianDepth": 5,
+              "maxDepth": 6,
+              "bandCount": 8,
+              "wrappersCollapsed": 44
+            },
+            "stylingRichness": 0.3339483043736919,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 1,
+              "bgColorArea": 0,
+              "radiusArea": 0.02342803476279466,
+              "shadowArea": 0.021593166746471784,
+              "gradientArea": 0,
+              "borderArea": 0.7565563437272969,
+              "paddedArea": 0.15949193348989127,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.5,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 0.30000000000000004,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 0.3,
+            "layout": {
+              "verticality": 0,
+              "regularity": 0.6282051282051282,
+              "contentWidthRatio": 1,
+              "centredness": 0.9696772815658109,
+              "visualDensity": 0.2907130835262346
+            },
+            "roundness": 0.022408663642615286,
+            "media": {
+              "imageArea": 0.7916666666666666,
+              "imageCount": 42,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0,
+              "controlCount": 0
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 42
+            },
+            "typography": {
+              "distinctSizes": 3,
+              "authoredSizes": 3,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.11529947916666666,
+              "webfontsLoaded": 2,
+              "webfontsTotal": 2
+            },
+            "confounders": {
+              "visibleElements": 140,
+              "paintedElements": 27,
+              "domNodes": 558,
+              "docHeight": 900,
+              "styleSheets": 1
+            }
+          }
+        },
+        "mediaRects": [
+          {
+            "x": 300,
+            "y": 0,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 0,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 0,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 0,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 0,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 0,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 142.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 142.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 142.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 142.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 142.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 142.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 285,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 285,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 285,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 285,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 285,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 285,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 427.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 427.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 427.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 427.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 427.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 427.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 570,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 570,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 570,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 570,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 570,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 570,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 712.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 712.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 712.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 712.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 712.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 712.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 855,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 855,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 855,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 855,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 855,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 855,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 997.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 997.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 997.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 997.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 997.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 997.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 1140,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 1140,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 1140,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 1140,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 1140,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 1140,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 1282.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 1282.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 1282.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 1282.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 1282.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 1282.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 1425,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 1425,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 1425,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 1425,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 1425,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 1425,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 1567.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 1567.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 1567.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 1567.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 1567.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 1567.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 1710,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 1710,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 1710,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 1710,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 1710,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 1710,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 1852.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 1852.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 1852.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 1852.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 1852.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 1852.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 1995,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 1995,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 1995,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 1995,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 1995,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 1995,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 2137.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 2137.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 2137.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 2137.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 2137.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 2137.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 2280,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 2280,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 2280,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 2280,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 2280,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 2280,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 2422.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 2422.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 2422.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 2422.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 2422.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 2422.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 2565,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 2565,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 2565,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 2565,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 2565,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 2565,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 2707.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 2707.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 2707.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 2707.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 2707.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 2707.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 2850,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 2850,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 2850,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 2850,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 2850,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 2850,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 2992.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 2992.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 2992.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 2992.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 2992.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 2992.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 3135,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 3135,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 3135,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 3135,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 3135,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 3135,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 3277.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 3277.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 3277.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 3277.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 3277.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 3277.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 3420,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 3420,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 3420,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 3420,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 3420,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 3420,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 3562.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 3562.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 3562.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 3562.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 3562.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 3562.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 3705,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 3705,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 3705,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 3705,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 3705,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 3705,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 3847.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 3847.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 3847.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 3847.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 3847.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 3847.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 3990,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 3990,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 3990,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 3990,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 3990,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 3990,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 4132.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 4132.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 4132.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 4132.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 4132.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 4132.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 4275,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 4275,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 4275,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 4275,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 4275,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 4275,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 4417.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 4417.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 4417.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 4417.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 4417.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 4417.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 4560,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 4560,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 4560,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 4560,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 4560,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 4560,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 4702.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 4702.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 4702.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 4702.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 4702.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 4702.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 4845,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 4845,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 4845,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 4845,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 4845,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 4845,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 4987.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 4987.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 4987.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 4987.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 4987.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 4987.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 5130,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 5130,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 5130,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 5130,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 5130,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 5130,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 5272.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 5272.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 5272.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 5272.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 5272.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 5272.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 5415,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 5415,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 5415,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 5415,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 5415,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 5415,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 5557.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 490,
+            "y": 5557.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 680,
+            "y": 5557.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 870,
+            "y": 5557.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1060,
+            "y": 5557.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 1250,
+            "y": 5557.5,
+            "w": 190,
+            "h": 142.5
+          },
+          {
+            "x": 300,
+            "y": 5700,
+            "w": 190,
+            "h": 142.5
+          }
+        ],
+        "overlays": {
+          "count": 1,
+          "suspects": [
+            {
+              "tag": "DIV",
+              "z": "100",
+              "w": 300,
+              "h": 900,
+              "pos": "fixed"
+            }
+          ]
+        },
+        "authorRules": 84,
+        "sheetErr": 0
+      },
+      "network": {
+        "requests": 250,
+        "contentLengthBytes": 5957230
+      },
+      "timingMs": {
+        "load": 1726,
+        "settle": 4121,
+        "motionCapture": 1952,
+        "domEval": 17,
+        "screenshot": 176,
+        "pixels": 234,
+        "total": 8342
+      }
+    },
+    {
+      "id": "unsplash",
+      "url": "https://unsplash.com/",
+      "tags": [
+        "photography-heavy"
+      ],
+      "note": "Photography grid; palette-corruption test.",
+      "ok": true,
+      "failures": [],
+      "httpStatus": 200,
+      "finalUrl": "https://unsplash.com/",
+      "pixels": {
+        "v3": {
+          "imageSize": {
+            "w": 1440,
+            "h": 2700
+          },
+          "sampled": {
+            "w": 420,
+            "h": 788
+          },
+          "maskedFraction": 0.7076,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.2807,
+            "whitespaceRatio": 0.2807,
+            "neutralRatio": 0.5365,
+            "chromaticRatio": 0.4635,
+            "colorfulnessRaw": 48.37,
+            "colorfulness": 0.4398,
+            "accents": [
+              {
+                "hex": "#7f563a",
+                "hue": 15,
+                "coverage": 0.2198
+              },
+              {
+                "hex": "#8e7047",
+                "hue": 30,
+                "coverage": 0.1896
+              },
+              {
+                "hex": "#759fa7",
+                "hue": 180,
+                "coverage": 0.0243
+              }
+            ],
+            "primary": "#7f563a",
+            "secondary": "#8e7047",
+            "tertiary": "#759fa7",
+            "distinctBuckets": 3903,
+            "sampledPixels": 330960
+          },
+          "mediaMasked": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9024,
+            "whitespaceRatio": 0.9024,
+            "neutralRatio": 0.9992,
+            "chromaticRatio": 0.0008,
+            "colorfulnessRaw": 1.33,
+            "colorfulness": 0.0121,
+            "accents": [
+              {
+                "hex": "#90a4bf",
+                "hue": 210,
+                "coverage": 0.0006
+              },
+              {
+                "hex": "#d8d3f9",
+                "hue": 240,
+                "coverage": 0.0002
+              },
+              {
+                "hex": "#33546d",
+                "hue": 195,
+                "coverage": 0.0001
+              }
+            ],
+            "primary": "#90a4bf",
+            "secondary": "#d8d3f9",
+            "tertiary": "#33546d",
+            "distinctBuckets": 89,
+            "sampledPixels": 96788
+          }
+        },
+        "v1": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0.4533,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.4978,
+            "whitespaceRatio": 0.4978,
+            "neutralRatio": 0.6837,
+            "chromaticRatio": 0.3163,
+            "colorfulnessRaw": 35.2,
+            "colorfulness": 0.32,
+            "accents": [
+              {
+                "hex": "#634624",
+                "hue": 30,
+                "coverage": 0.1431
+              },
+              {
+                "hex": "#62412a",
+                "hue": 15,
+                "coverage": 0.1171
+              },
+              {
+                "hex": "#685f0e",
+                "hue": 45,
+                "coverage": 0.0148
+              }
+            ],
+            "primary": "#634624",
+            "secondary": "#62412a",
+            "tertiary": "#685f0e",
+            "distinctBuckets": 2432,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.842,
+            "whitespaceRatio": 0.842,
+            "neutralRatio": 1,
+            "chromaticRatio": 0,
+            "colorfulnessRaw": 0.02,
+            "colorfulness": 0.0001,
+            "accents": [],
+            "primary": null,
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 30,
+            "sampledPixels": 60386
+          }
+        }
+      },
+      "motion": {
+        "diff12": 0.0028,
+        "diff23": 0,
+        "sustained": 0,
+        "oneShot": 0.0028,
+        "diff12ExMedia": 0,
+        "diff23ExMedia": 0,
+        "sustainedExMedia": 0,
+        "excludedCells": 2756,
+        "gridCells": 5760
+      },
+      "dom": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "docHeight": 4932,
+        "title": "Beautiful Free Images & Pictures | Unsplash",
+        "url": "https://unsplash.com/",
+        "scopes": {
+          "v1": {
+            "scope": "viewport1",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 77,
+              "landmarkCount": 5,
+              "medianDepth": 14,
+              "maxDepth": 21,
+              "bandCount": 7,
+              "wrappersCollapsed": 35
+            },
+            "stylingRichness": 0.3978908216337477,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.5601478248270915,
+              "radiusArea": 0.0943655679509195,
+              "shadowArea": 0.1044121592234046,
+              "gradientArea": 0.16743423473945498,
+              "borderArea": 0.14245381379148211,
+              "paddedArea": 0.07655452220843983,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0.6666666666666666,
+              "weightVariety": 0.75,
+              "letterSpaced": 0,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 0.5,
+              "ornament": 0.1
+            },
+            "unstyledScore": 0.1,
+            "layout": {
+              "verticality": 0,
+              "regularity": 0.5194805194805194,
+              "contentWidthRatio": 1,
+              "centredness": 0.968275344717364,
+              "visualDensity": 0.7397344245439694
+            },
+            "roundness": 0.0859622247000186,
+            "media": {
+              "imageArea": 0.4664074074074074,
+              "imageCount": 9,
+              "graphicArea": 0,
+              "svgCount": 16,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.325,
+              "controlCount": 13
+            },
+            "declared": {
+              "declaredAnim": 6,
+              "declaredTrans": 34
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 4,
+              "distinctWeights": 4,
+              "medianTextWidthRatio": 0.09319661458333334,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 178,
+              "paintedElements": 31,
+              "domNodes": 1472,
+              "docHeight": 4932,
+              "styleSheets": 5
+            }
+          },
+          "v3": {
+            "scope": "viewport3",
+            "scopeHeightPx": 2700,
+            "structure": {
+              "blockCount": 168,
+              "landmarkCount": 5,
+              "medianDepth": 17,
+              "maxDepth": 24,
+              "bandCount": 20,
+              "wrappersCollapsed": 70
+            },
+            "stylingRichness": 0.4456349293446299,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.8031783535043517,
+              "radiusArea": 0.02717765634554491,
+              "shadowArea": 0.03007111431942966,
+              "gradientArea": 0.11519081766070667,
+              "borderArea": 0.041027261112345406,
+              "paddedArea": 0.022048004812099373,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 1,
+              "weightVariety": 0.75,
+              "letterSpaced": 0.03273552044886015,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 1,
+              "ornament": 0.2
+            },
+            "unstyledScore": 0.1,
+            "layout": {
+              "verticality": 0,
+              "regularity": 0.625,
+              "contentWidthRatio": 1,
+              "centredness": 0.9680949234771576,
+              "visualDensity": 0.8561623589786482
+            },
+            "roundness": 0.024757460293257882,
+            "media": {
+              "imageArea": 0.7055267489711934,
+              "imageCount": 22,
+              "graphicArea": 0,
+              "svgCount": 18,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.10833333333333334,
+              "controlCount": 13
+            },
+            "declared": {
+              "declaredAnim": 6,
+              "declaredTrans": 53
+            },
+            "typography": {
+              "distinctSizes": 6,
+              "authoredSizes": 6,
+              "distinctWeights": 4,
+              "medianTextWidthRatio": 0.09319661458333334,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 326,
+              "paintedElements": 47,
+              "domNodes": 1472,
+              "docHeight": 4932,
+              "styleSheets": 5
+            }
+          },
+          "full": {
+            "scope": "fullpage",
+            "scopeHeightPx": 4932,
+            "structure": {
+              "blockCount": 261,
+              "landmarkCount": 5,
+              "medianDepth": 18,
+              "maxDepth": 24,
+              "bandCount": 37,
+              "wrappersCollapsed": 104
+            },
+            "stylingRichness": 0.45167683444679885,
+            "stylingParts": {
+              "nonDefaultFontArea": 1,
+              "webfontsPresent": 0,
+              "bgColorArea": 0.8490828529003854,
+              "radiusArea": 0.014811569176299399,
+              "shadowArea": 0.01638847677988437,
+              "gradientArea": 0.10469964121005315,
+              "borderArea": 0.022359474575489497,
+              "paddedArea": 0.012015956943517836,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 1,
+              "weightVariety": 0.75,
+              "letterSpaced": 0.06082504845674967,
+              "lineHeightSet": 1,
+              "constrainedMeasure": 1,
+              "nonUaLinks": 1,
+              "colorVariety": 1,
+              "ornament": 0.3
+            },
+            "unstyledScore": 0.2,
+            "layout": {
+              "verticality": 0,
+              "regularity": 0.6896551724137931,
+              "contentWidthRatio": 1,
+              "centredness": 0.9666845052700188,
+              "visualDensity": 0.8600184297007334
+            },
+            "roundness": 0.013492584905069839,
+            "media": {
+              "imageArea": 0.7403012216139497,
+              "imageCount": 34,
+              "graphicArea": 0,
+              "svgCount": 20,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.05930656934306569,
+              "controlCount": 13
+            },
+            "declared": {
+              "declaredAnim": 6,
+              "declaredTrans": 75
+            },
+            "typography": {
+              "distinctSizes": 6,
+              "authoredSizes": 6,
+              "distinctWeights": 4,
+              "medianTextWidthRatio": 0.09319661458333334,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 477,
+              "paintedElements": 63,
+              "domNodes": 1472,
+              "docHeight": 4932,
+              "styleSheets": 5
+            }
+          }
+        },
+        "mediaRects": [
+          {
+            "x": 1021,
+            "y": 407.0438232421875,
+            "w": 136,
+            "h": 181
+          },
+          {
+            "x": 1088,
+            "y": 201.97079467773438,
+            "w": 136,
+            "h": 181
+          },
+          {
+            "x": 1353,
+            "y": 346.9561767578125,
+            "w": 136,
+            "h": 181
+          },
+          {
+            "x": 1021,
+            "y": 162.02044677734375,
+            "w": 136,
+            "h": 181
+          },
+          {
+            "x": 1187,
+            "y": 271.9707946777344,
+            "w": 136,
+            "h": 181
+          },
+          {
+            "x": 1287,
+            "y": 32.029205322265625,
+            "w": 136,
+            "h": 181
+          },
+          {
+            "x": 104,
+            "y": 534,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 124,
+            "y": 1107.984375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 104,
+            "y": 1182,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 124,
+            "y": 1755.984375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 104,
+            "y": 1830,
+            "w": 416,
+            "h": 277.875
+          },
+          {
+            "x": 124,
+            "y": 2057.859375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 104,
+            "y": 2131.875,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 124,
+            "y": 2705.859375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 104,
+            "y": 2779.875,
+            "w": 416,
+            "h": 277.828125
+          },
+          {
+            "x": 124,
+            "y": 3007.6875,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 104,
+            "y": 3081.703125,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 124,
+            "y": 3655.6875,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 104,
+            "y": 3729.703125,
+            "w": 416,
+            "h": 623.90625
+          },
+          {
+            "x": 124,
+            "y": 4303.59375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 104,
+            "y": 4377.609375,
+            "w": 416,
+            "h": 554.6875
+          },
+          {
+            "x": 124,
+            "y": 4882.28125,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 544,
+            "y": 534,
+            "w": 416,
+            "h": 582.390625
+          },
+          {
+            "x": 564,
+            "y": 1066.375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 544,
+            "y": 1140.390625,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 564,
+            "y": 1714.375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 544,
+            "y": 1788.390625,
+            "w": 416,
+            "h": 277.046875
+          },
+          {
+            "x": 564,
+            "y": 2015.421875,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 544,
+            "y": 2089.4375,
+            "w": 416,
+            "h": 277.046875
+          },
+          {
+            "x": 564,
+            "y": 2316.46875,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 544,
+            "y": 2390.484375,
+            "w": 416,
+            "h": 277.328125
+          },
+          {
+            "x": 564,
+            "y": 2617.796875,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 544,
+            "y": 2691.8125,
+            "w": 416,
+            "h": 623.921875
+          },
+          {
+            "x": 564,
+            "y": 3263.734375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 544,
+            "y": 3339.734375,
+            "w": 416,
+            "h": 572.578125
+          },
+          {
+            "x": 564,
+            "y": 3862.296875,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 544,
+            "y": 3936.3125,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 564,
+            "y": 4510.296875,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 984,
+            "y": 534,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 1004,
+            "y": 1107.984375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 984,
+            "y": 1182,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 1004,
+            "y": 1754,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 984,
+            "y": 1830,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 1004,
+            "y": 2403.984375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 984,
+            "y": 2478,
+            "w": 416,
+            "h": 554.609375
+          },
+          {
+            "x": 1004,
+            "y": 2982.59375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 984,
+            "y": 3056.609375,
+            "w": 416,
+            "h": 623.9375
+          },
+          {
+            "x": 1004,
+            "y": 3630.53125,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 984,
+            "y": 3704.546875,
+            "w": 416,
+            "h": 277.296875
+          },
+          {
+            "x": 1004,
+            "y": 3929.84375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 984,
+            "y": 4005.84375,
+            "w": 416,
+            "h": 337.6875
+          },
+          {
+            "x": 1004,
+            "y": 4293.515625,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 984,
+            "y": 4367.53125,
+            "w": 416,
+            "h": 519.921875
+          },
+          {
+            "x": 1004,
+            "y": 4837.4375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 11.5,
+            "y": 12,
+            "w": 40,
+            "h": 40
+          },
+          {
+            "x": 124,
+            "y": 3101.703125,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 564,
+            "y": 554,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 564,
+            "y": 1808.390625,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 564,
+            "y": 2410.484375,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 564,
+            "y": 3956.3125,
+            "w": 32,
+            "h": 32
+          },
+          {
+            "x": 104,
+            "y": 534,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 104,
+            "y": 1182,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 104,
+            "y": 1830,
+            "w": 416,
+            "h": 277.875
+          },
+          {
+            "x": 104,
+            "y": 2131.875,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 104,
+            "y": 2779.875,
+            "w": 416,
+            "h": 277.828125
+          },
+          {
+            "x": 104,
+            "y": 3081.703125,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 104,
+            "y": 3729.703125,
+            "w": 416,
+            "h": 623.90625
+          },
+          {
+            "x": 104,
+            "y": 4377.609375,
+            "w": 416,
+            "h": 554.6875
+          },
+          {
+            "x": 544,
+            "y": 534,
+            "w": 416,
+            "h": 582.390625
+          },
+          {
+            "x": 544,
+            "y": 1140.390625,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 544,
+            "y": 1788.390625,
+            "w": 416,
+            "h": 277.046875
+          },
+          {
+            "x": 544,
+            "y": 2089.4375,
+            "w": 416,
+            "h": 277.046875
+          },
+          {
+            "x": 544,
+            "y": 2390.484375,
+            "w": 416,
+            "h": 277.328125
+          },
+          {
+            "x": 544,
+            "y": 2691.8125,
+            "w": 416,
+            "h": 623.921875
+          },
+          {
+            "x": 544,
+            "y": 3339.734375,
+            "w": 416,
+            "h": 572.578125
+          },
+          {
+            "x": 544,
+            "y": 3936.3125,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 984,
+            "y": 534,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 984,
+            "y": 1182,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 984,
+            "y": 1830,
+            "w": 416,
+            "h": 624
+          },
+          {
+            "x": 984,
+            "y": 2478,
+            "w": 416,
+            "h": 554.609375
+          },
+          {
+            "x": 984,
+            "y": 3056.609375,
+            "w": 416,
+            "h": 623.9375
+          },
+          {
+            "x": 984,
+            "y": 3704.546875,
+            "w": 416,
+            "h": 277.296875
+          },
+          {
+            "x": 984,
+            "y": 4005.84375,
+            "w": 416,
+            "h": 337.6875
+          },
+          {
+            "x": 984,
+            "y": 4367.53125,
+            "w": 416,
+            "h": 519.921875
+          }
+        ],
+        "overlays": {
+          "count": 0,
+          "suspects": []
+        },
+        "authorRules": 1393,
+        "sheetErr": 0
+      },
+      "network": {
+        "requests": 51,
+        "contentLengthBytes": 1256401
+      },
+      "timingMs": {
+        "load": 968,
+        "settle": 4240,
+        "motionCapture": 1883,
+        "domEval": 15,
+        "screenshot": 556,
+        "pixels": 245,
+        "total": 8009
+      }
+    }
+  ]
+}

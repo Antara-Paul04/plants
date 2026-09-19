@@ -1,0 +1,12 @@
+{
+  "name": "plants-analysis-probe",
+  "private": true,
+  "type": "module",
+  "description": "EXPERIMENT: disposable research probe for website visual fingerprinting. Not product code.",
+  "scripts": {
+    "probe": "node probe/run.js"
+  },
+  "dependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}

@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>motion fixture</title>
+<style>
+ body{margin:0;background:#111}
+ .box{width:200px;height:200px;background:#e94560;animation:slide 1s linear infinite}
+ @keyframes slide{from{transform:translateX(0)}to{transform:translateX(600px)}}
+ #c{display:block}
+</style>
+<div class="box"></div>
+<canvas id="c" width="800" height="200"></canvas>
+<script>
+ let n=0; const ctx=document.getElementById('c').getContext('2d');
+ function loop(){ n++; ctx.fillStyle='#111'; ctx.fillRect(0,0,800,200);
+   ctx.fillStyle='#4ecdc4'; ctx.fillRect((n*7)%760,40,40,120);
+   window.__frames=n; requestAnimationFrame(loop); }
+ loop();
+</script>

@@ -1,0 +1,373 @@
+{
+  "meta": {
+    "viewport": {
+      "VW": 1440,
+      "VH": 900
+    },
+    "settleMs": 1800,
+    "motionGapMs": 700,
+    "when": "2026-09-19T21:37:32.076Z"
+  },
+  "sites": [
+    {
+      "id": "control-raw",
+      "url": "file:///Users/antarapaul/Desktop/plants/analysis/fixtures/raw.html",
+      "tags": [
+        "near-raw-html",
+        "control"
+      ],
+      "note": "Synthetic zero-CSS control. Ground truth for \"unstyled\".",
+      "ok": true,
+      "failures": [],
+      "httpStatus": 200,
+      "finalUrl": "file:///Users/antarapaul/Desktop/plants/analysis/fixtures/raw.html",
+      "pixels": {
+        "v3": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9633,
+            "whitespaceRatio": 0.9633,
+            "neutralRatio": 0.9997,
+            "chromaticRatio": 0.0003,
+            "colorfulnessRaw": 1.72,
+            "colorfulness": 0.0157,
+            "accents": [
+              {
+                "hex": "#9898f7",
+                "hue": 240,
+                "coverage": 0.0003
+              }
+            ],
+            "primary": "#9898f7",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 50,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": null
+        },
+        "v1": {
+          "imageSize": {
+            "w": 1440,
+            "h": 900
+          },
+          "sampled": {
+            "w": 420,
+            "h": 263
+          },
+          "maskedFraction": 0,
+          "all": {
+            "background": "#ffffff",
+            "backgroundCoverage": 0.9633,
+            "whitespaceRatio": 0.9633,
+            "neutralRatio": 0.9997,
+            "chromaticRatio": 0.0003,
+            "colorfulnessRaw": 1.72,
+            "colorfulness": 0.0157,
+            "accents": [
+              {
+                "hex": "#9898f7",
+                "hue": 240,
+                "coverage": 0.0003
+              }
+            ],
+            "primary": "#9898f7",
+            "secondary": null,
+            "tertiary": null,
+            "distinctBuckets": 50,
+            "sampledPixels": 110460
+          },
+          "mediaMasked": null
+        }
+      },
+      "motion": {
+        "diff12": 0,
+        "diff23": 0,
+        "sustained": 0,
+        "oneShot": 0,
+        "diff12ExMedia": 0,
+        "diff23ExMedia": 0,
+        "sustainedExMedia": 0,
+        "excludedCells": 0,
+        "gridCells": 5760
+      },
+      "dom": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "docHeight": 900,
+        "title": "Raw HTML control",
+        "url": "file:///Users/antarapaul/Desktop/plants/analysis/fixtures/raw.html",
+        "scopes": {
+          "v1": {
+            "scope": "viewport1",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 14,
+              "landmarkCount": 4,
+              "medianDepth": 2,
+              "maxDepth": 3,
+              "bandCount": 5,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.015240187026120943,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0.005804847951658557,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.018518518518518455,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0.5833333333333333,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9988350887431191,
+              "visualDensity": 0.2668453896604938
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.025,
+              "controlCount": 1
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 25,
+              "paintedElements": 18,
+              "domNodes": 28,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          },
+          "v3": {
+            "scope": "viewport3",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 14,
+              "landmarkCount": 4,
+              "medianDepth": 2,
+              "maxDepth": 3,
+              "bandCount": 5,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.015240187026120943,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0.005804847951658557,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.018518518518518455,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0.5833333333333333,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9988350887431191,
+              "visualDensity": 0.2668453896604938
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.025,
+              "controlCount": 1
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 25,
+              "paintedElements": 18,
+              "domNodes": 28,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          },
+          "full": {
+            "scope": "fullpage",
+            "scopeHeightPx": 900,
+            "structure": {
+              "blockCount": 14,
+              "landmarkCount": 4,
+              "medianDepth": 2,
+              "maxDepth": 3,
+              "bandCount": 5,
+              "wrappersCollapsed": 0
+            },
+            "stylingRichness": 0.015240187026120943,
+            "stylingParts": {
+              "nonDefaultFontArea": 0,
+              "webfontsPresent": 0,
+              "bgColorArea": 0,
+              "radiusArea": 0,
+              "shadowArea": 0,
+              "gradientArea": 0,
+              "borderArea": 0,
+              "paddedArea": 0.005804847951658557,
+              "transformArea": 0,
+              "maskFilterArea": 0,
+              "authoredTypeScale": 0,
+              "weightVariety": 0.25,
+              "letterSpaced": 0,
+              "lineHeightSet": 0,
+              "constrainedMeasure": 0.018518518518518455,
+              "nonUaLinks": 0,
+              "colorVariety": 0,
+              "ornament": 0
+            },
+            "unstyledScore": 1,
+            "layout": {
+              "verticality": 0.5833333333333333,
+              "regularity": 1,
+              "contentWidthRatio": 1,
+              "centredness": 0.9988350887431191,
+              "visualDensity": 0.2668453896604938
+            },
+            "roundness": 0,
+            "media": {
+              "imageArea": 0,
+              "imageCount": 0,
+              "graphicArea": 0,
+              "svgCount": 0,
+              "bigSvgCount": 0,
+              "videoArea": 0,
+              "videoCount": 0,
+              "canvasArea": 0,
+              "canvasCount": 0,
+              "embedArea": 0,
+              "embedCount": 0,
+              "hiddenFrames": 0
+            },
+            "controls": {
+              "controlDensity": 0.025,
+              "controlCount": 1
+            },
+            "declared": {
+              "declaredAnim": 0,
+              "declaredTrans": 0
+            },
+            "typography": {
+              "distinctSizes": 4,
+              "authoredSizes": 0,
+              "distinctWeights": 2,
+              "medianTextWidthRatio": 0.9888888888888889,
+              "webfontsLoaded": 0,
+              "webfontsTotal": 0
+            },
+            "confounders": {
+              "visibleElements": 25,
+              "paintedElements": 18,
+              "domNodes": 28,
+              "docHeight": 900,
+              "styleSheets": 0
+            }
+          }
+        },
+        "mediaRects": [],
+        "overlays": {
+          "count": 0,
+          "suspects": []
+        },
+        "authorRules": 0,
+        "sheetErr": 0
+      },
+      "network": {
+        "requests": 1,
+        "contentLengthBytes": 0
+      },
+      "timingMs": {
+        "load": 44,
+        "settle": 2313,
+        "motionCapture": 1732,
+        "domEval": 8,
+        "screenshot": 62,
+        "pixels": 56,
+        "total": 4317
+      }
+    }
+  ]
+}
