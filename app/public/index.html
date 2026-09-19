@@ -52,6 +52,20 @@
 
       main { width: 100%; max-width: 760px; flex: 1; display: flex; flex-direction: column; align-items: center; }
 
+      .examples {
+        display: flex; flex-wrap: wrap; gap: 6px;
+        justify-content: center; align-items: baseline;
+        font-size: 13px; color: var(--muted);
+        max-width: 480px;
+      }
+      .examples button {
+        padding: 3px 9px; font: inherit;
+        color: var(--muted); background: transparent;
+        border: 1px solid var(--line); border-radius: 20px;
+        cursor: pointer; font-weight: 400;
+      }
+      .examples button:hover:not(:disabled) { color: var(--ink); border-color: #c9c2b7; background: #fdfbf7; }
+
       .stage {
         width: 100%; aspect-ratio: 1 / 1; max-height: 62vh;
         margin-top: 14px;
@@ -117,6 +131,14 @@
         <input id="url" type="text" placeholder="stripe.com" autocomplete="off" spellcheck="false" autofocus />
         <button id="go" type="submit">Grow my website</button>
       </form>
+
+      <div class="examples" id="examples">
+        <span>or try</span>
+        <button type="button" data-site="info.cern.ch" title="essentially unstyled HTML">info.cern.ch</button>
+        <button type="button" data-site="bettermotherfuckingwebsite.com" title="deliberately minimal, but designed">bettermotherfucking…</button>
+        <button type="button" data-site="stripe.com" title="richly designed">stripe.com</button>
+        <button type="button" data-site="github.com" title="dark">github.com</button>
+      </div>
 
       <div class="stage">
         <canvas id="scene"></canvas>
