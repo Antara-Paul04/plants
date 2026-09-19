@@ -10,83 +10,71 @@
 
 ## Phase
 
-**Two things are built and both are waiting on human review.** Nothing is blocked on
-an agent. The project cannot move until questions 1 and 2 below are answered.
+**Working V0.** The whole chain runs end to end. Paste a URL, get your tree.
+
+```bash
+node app/server.js     # → http://localhost:5170
+```
 
 ---
 
 ## Working
 
-- Repository infrastructure, docs, and the Lead + specialist operating model
-  (four specialists: `analysis`, `visual-3d`, `web`, `taste`)
-- **Tree prototype** (`prototype/`) — one hand-authored tree, two visual passes, build
-  stable. EXPERIMENT. `cd prototype && python3 -m http.server 5188`
-- **Analysis probe** (`analysis/`) — Playwright research probe, 25-URL corpus, 23
-  valid. EXPERIMENT. Findings in [WEBSITE-ANALYSIS.md](WEBSITE-ANALYSIS.md) and
-  `analysis/FINDINGS.md`. Screenshots kept local, gitignored.
+- **The pipeline.** URL → live headless-Chrome analysis → fingerprint → Botanical
+  DNA → 3D tree, in the browser. Verified against real sites, not fixtures.
+- **The crux, live.** `info.cern.ch` grows a bare sculptural tree;
+  `bettermotherfuckingwebsite.com` grows a sparse leafy one. Unstyled HTML and
+  deliberate minimalism produce visibly different trees — the claim the whole
+  project rests on.
+- **Validity gate.** Invalid URLs, unreachable hosts, HTTP ≥400, error pages and
+  interstitials are rejected with readable messages. No tree is ever grown from a
+  Cloudflare challenge.
+- **Comparison grid** at `/compare.html` — 12 corpus trees, thumbnail toggle.
+- Browser reuse: ~3–8s warm, ~14–21s cold.
 
 ---
 
 ## Not started
 
-- Tree generator (the prototype is hand-authored; two seeds give near-identical trees)
-- Fingerprint → tree mapping (deliberately not designed yet)
-- Frontend / product UI
-- Integration
+- Forest, sharing, accounts, deployment, mobile
+- Additional tree species — one broad family only
+- Cat
+
+---
+
+## Known limitations
+
+- **The middle collapses.** Sites in the NORMAL band render near-identically at
+  thumbnail size, and NORMAL holds 12 of 23 corpus sites. The single biggest
+  threat to "your tree is yours".
+- `linear.app` times out on the live path (it measured fine in the corpus).
+- Analysis runs in **light mode only**. For sites respecting
+  `prefers-color-scheme` that decides what the site *is* — vercel.com measures
+  white in light mode and black in dark. Same URL, more than one true appearance.
+- `motion` is excluded: never repeatable (0.291/0.015/0.028/0.016 on one URL).
+- `imageArea` earns no role; `roundness`, `regularity`, `embedArea` were cut.
+- Autumn is reachable but **no real site triggers it** — warm dominance in the
+  corpus was always photographs, never design. One synthetic record exists.
+- No `dispose` audit under repeated growth; leaks unproven either way.
 
 ---
 
 ## Current questions
 
-Waiting on human decisions. Most are taste or product calls an agent cannot settle (R7).
-
-1. **Does the prototype tree look right?** Gates the generator and therefore the
-   product. Three specific calls from the second pass: is the looser crown better or
-   now too airy; does the ground contact read as occlusion or as a smudge; is the
-   windswept character of the edge sprigs wanted?
-2. **Is the proposed V1 fingerprint accepted?** Eight values, TENTATIVE:
-   `authored`, `stylingRichness`, `inkCoverage`, `colorfulness`, `imageArea`,
-   `textDensity`, `motion`, `palette{ground,primary,secondary}`.
-3. **Motion is not repeatable** — 0.291 / 0.015 / 0.028 / 0.016 across four runs of
-   the same URL. Same URL must give the same tree. Keep it, fix it, or cut it?
-4. **`roundness` fails as defined.** Area-weighted sampling ranks visibly rounded
-   sites at 0.02–0.07. Adopt the control-scoped method from the first probe, or cut.
-5. **What does "verticality" mean?** Three reasonable definitions rank the same sites
-   in three different orders. It cannot be measured until someone picks one.
-6. **Sites with no accent colour exist** (paulgraham.com: zero chromatic hue bins).
-   Bears directly on D5's flowers-as-carrier idea.
-7. Is the island the right base? Also decides the teardown boundary between trees.
-8. Should wind sway and drifting petals stay? Motion is still OPEN.
-9. Bundle vs CDN for three.js.
-
----
-
-## Known, recorded, not yet acted on
-
-- Blossoms read as a horizontal band across the crown. Observation, not a verdict.
-- No `dispose()` anywhere in the prototype; several materials and geometries are
-  shared between meshes, so naive teardown would double-free.
-- `applySway` bakes options into GLSL as literals and builds its program-cache key by
-  bare concatenation — a fresh shader compile per differently-sized tree.
-- `main.js` runs at import time and exports nothing, so a frontend cannot drive it.
-- The build must report its own extents; camera framing is tuned to this one tree.
-- Analysis must run **server-side**: cross-origin `fetch` and iframe access both fail,
-  and `cssRules` throws on cross-origin stylesheets (zero CSS readable from Stripe).
-- Analysis cost: median 7.8s, p90 14.8s, max 24.6s per site.
+1. **Does the tree look right?** Still the open art-direction question, now
+   answerable against many real sites rather than one.
+2. Is the V0 fingerprint accepted? `authored`, `stylingRichness`, `inkCoverage`,
+   `colorfulness`, `palette{ground,primary,secondary}`, weak `imageArea` /
+   `textDensity`.
+3. `textDensity` measured as one of our *strongest* signals but is deliberately
+   weighted weak on instruction. Give it more room?
+4. Which measurement conditions are canonical — light mode? desktop width?
+5. Should the lighting rig follow a dark background? Currently a day-lit tree
+   against a night sky.
 
 ---
 
 ## Next
 
-**Human review of the Taste operating model**, then the tree (Q1) and the
-fingerprint (Q2).
-
-`taste` is the new art-director specialist: it makes routine visual decisions without
-the human so that only consequential creative forks escalate. Constitution in
-[TASTE.md](TASTE.md), authority and Taste Session mechanics in
-[AGENTS.md](../AGENTS.md) §6. Not yet exercised — a dry-run critique is pending.
-
-**Original next steps, still open:**
-
-The mapping from fingerprint to tree is deliberately undesigned — that is the next
-piece of work, and it needs both answers first.
+**Human review**, then the middle-collapse problem — making NORMAL sites
+distinguishable is worth more than any new feature.
