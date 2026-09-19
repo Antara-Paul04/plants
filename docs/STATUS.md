@@ -18,6 +18,7 @@ an agent. The project cannot move until questions 1 and 2 below are answered.
 ## Working
 
 - Repository infrastructure, docs, and the Lead + specialist operating model
+  (four specialists: `analysis`, `visual-3d`, `web`, `taste`)
 - **Tree prototype** (`prototype/`) — one hand-authored tree, two visual passes, build
   stable. EXPERIMENT. `cd prototype && python3 -m http.server 5188`
 - **Analysis probe** (`analysis/`) — Playwright research probe, 25-URL corpus, 23
@@ -77,7 +78,15 @@ Waiting on human decisions. Most are taste or product calls an agent cannot sett
 
 ## Next
 
-**Human review of the tree (Q1) and the fingerprint (Q2).**
+**Human review of the Taste operating model**, then the tree (Q1) and the
+fingerprint (Q2).
+
+`taste` is the new art-director specialist: it makes routine visual decisions without
+the human so that only consequential creative forks escalate. Constitution in
+[TASTE.md](TASTE.md), authority and Taste Session mechanics in
+[AGENTS.md](../AGENTS.md) §6. Not yet exercised — a dry-run critique is pending.
+
+**Original next steps, still open:**
 
 The mapping from fingerprint to tree is deliberately undesigned — that is the next
 piece of work, and it needs both answers first.

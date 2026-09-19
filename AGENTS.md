@@ -22,6 +22,7 @@ context. The documentation *is* the shared memory. Treat it as such.
 | If your task is about… | Read |
 | --- | --- |
 | Art direction, materials, lighting, look and feel | [docs/VISUAL-SYSTEM.md](docs/VISUAL-SYSTEM.md) |
+| Judging whether a render is good | [docs/TASTE.md](docs/TASTE.md) — the visual constitution |
 | Tree geometry, generation, parameters, botany | [docs/TREE-SYSTEM.md](docs/TREE-SYSTEM.md) |
 | Extracting or interpreting a website | [docs/WEBSITE-ANALYSIS.md](docs/WEBSITE-ANALYSIS.md) |
 
@@ -113,12 +114,13 @@ Promotion to `DECIDED` is a human call and gets an entry in `DECISIONS.md`.
                   CLAUDE LEAD
              Project / Technical Lead
                        |
-        +--------------+--------------+
-        v              v              v
-    VISUAL-3D         WEB          ANALYSIS
+        +--------+--------+--------+
+        v        v        v        v
+    VISUAL-3D   WEB   ANALYSIS   TASTE
 ```
 
-**Codex** sits outside this, on demand and by human approval only.
+**TASTE** sits alongside the builders rather than under them: it judges their output.
+**Codex** sits outside the whole structure, on demand and by human approval only.
 
 ### Claude Lead
 
@@ -161,6 +163,7 @@ repeatedly — the human may be sitting in any of them.
 | `visual-3d` | Tree geometry, foliage, flowers, terrain, materials, lighting, camera, 3D motion, render performance, eventual tree parameters |
 | `analysis` | Website capture, DOM/CSS inspection, palette extraction, measurable characteristics, normalization |
 | `web` | Frontend experience, URL input, page states, responsive behaviour, wiring analysis output to the renderer |
+| `taste` | Aesthetic judgment and art direction. Judges renders; does not build them |
 
 ### The ownership principle
 
@@ -235,7 +238,86 @@ report is a claim, not a fact.
 
 ---
 
-## 6. Leaving the repository
+## 6. Taste
+
+`taste` is the art director. It exists so routine visual decisions get made **without
+the human**, and so the builder is not its own only critic — `visual-3d` has
+implementation ownership and naturally becomes invested in its solution.
+
+**`visual-3d` builds. `taste` judges.** Taste does not implement, and does not edit
+renderer source.
+
+Its constitution is [docs/TASTE.md](docs/TASTE.md). Its full authority, boundaries and
+working method are in `.claude/agents/taste.md` and are not duplicated here.
+
+### What Taste decides alone
+
+Composition, proportion, hierarchy, density, silhouette, foliage scale and
+distribution, flower clustering, trunk character, terrain restraint, materials,
+lighting, shadow, camera framing, legibility, thumbnail readability, family
+resemblance, and routine polish. It may direct `visual-3d` to change any of these
+without asking.
+
+**The test:** *if the human dislikes this, can we cheaply undo it without changing the
+product concept?* If yes, Taste decides.
+
+### What Taste cannot decide
+
+Product and metaphor questions are not Taste's. It may say "the flowers create too
+much visual noise"; it may **not** decide "flowers should stop representing website
+colour". It may refine how a bare tree looks; it may not decide raw HTML should stop
+producing bare trees.
+
+Analysis is not Taste's either. It may observe "these two trees look nearly
+identical"; it may **not** touch analysis metrics. It reports insufficient
+differentiation to Lead, who decides whether the fault lies in the DNA mapping, in 3D
+parameterisation, or in analysis.
+
+### Taste Sessions
+
+An autonomous visual refinement loop. The human is not involved in routine passes.
+
+```
+visual-3d renders → taste critiques → visual-3d revises → taste verifies → repeat if justified
+```
+
+**Limits, both hard:** at most **3 critique→revision cycles** per session, and at most
+**3 FIX items** per pass. These exist to stop endless aesthetic iteration and the
+token burn that comes with it. A twenty-five item design critique is a failure to
+prioritise.
+
+**Stopping early is correct** when the problems are resolved, what remains is
+low-impact, further iteration risks overworking the design, or progress needs a human
+decision. *"Nothing important needs changing"* is a valid result.
+
+After each revision Taste **verifies the change actually improved the render** — and
+may revert its own recommendation if it did not.
+
+### Sign-off
+
+`PASS` · `PASS WITH MINOR ISSUES` · `REVISE` · `ESCALATE`. Workflow states, not
+scores. No percentages, no letter grades.
+
+### When Taste and visual-3d disagree
+
+`visual-3d` may push back when a request causes serious performance problems,
+conflicts with renderer architecture, substantially increases scope, is infeasible, or
+conflicts with an approved constraint. It explains the constraint to Lead.
+
+**Taste owns aesthetic judgment. `visual-3d` owns technical feasibility. Neither
+silently overrides the other.** Lead mediates, and decides whether a remaining
+trade-off is routine or needs the human.
+
+### Lead's role in visual work
+
+Lead does **not** become the art director. Lead gives objective and constraints to
+`visual-3d`, Taste reviews, `visual-3d` iterates, Taste signs off or escalates. Lead
+keeps scope controlled, keeps specialist boundaries intact, stops Taste requests from
+quietly becoming product features, and stops iteration when returns diminish.
+
+---
+
+## 7. Leaving the repository
 
 When you finish a piece of work, leave the repository in a state where the next agent
 — who was not present for your session — can continue. That means:
