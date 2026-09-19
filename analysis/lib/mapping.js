@@ -47,6 +47,32 @@ export const BANDS = {
   accentFloor:  0.01    // below this chromatic coverage there is no meaningful accent
 };
 
+// ---------------------------------------------------------------- flower conditioning
+// Raw accent hexes are emitted straight from rendered pixels, and a dark one produces a
+// blossom indistinguishable from bark (github.com: #0b0d40, a near-black navy, at
+// `medium` amount). Flower legibility tracks hue CONTRAST, not amount — independently
+// observed by visual-3d from the renderer side.
+//
+// Same treatment `background` already gets under Rule 11: display-safe and aesthetically
+// controlled rather than raw. HUE IS PRESERVED EXACTLY — that is the site's colour and
+// the whole of D5. Only lightness and chroma move, and only far enough that a blossom
+// reads as a blossom against green foliage and against its own bark.
+function conditionFlower(hexIn, role) {
+  if (!hexIn) return null;
+  const [h, s, l] = rgb2hsl(...hex2rgb(hexIn));
+  // A near-grey accent has no hue worth preserving; give it a gentle tint rather than
+  // inventing a colour it does not have.
+  const sat = s < 0.08
+    ? (role === 'secondary' ? 0.22 : 0.30)
+    : Math.max(role === 'secondary' ? 0.38 : 0.48, Math.min(s, 0.92));
+  // Petals sit ABOVE foliage in lightness so they separate from it; centres sit below
+  // the petals so the flower still reads as a flower rather than a flat dot.
+  const lit = role === 'secondary'
+    ? Math.max(0.40, Math.min(0.62, l < 0.40 ? 0.44 : l))
+    : Math.max(0.60, Math.min(0.82, l < 0.60 ? 0.66 : l));
+  return rgb2hex(...hsl2rgb(h, sat, lit));
+}
+
 // ---------------------------------------------------------------- background
 // Not the raw ground hex: aesthetically controlled and display-safe so the tree stays
 // legible against it. Keeps the site's hue, tames saturation and lightness extremes.
@@ -164,6 +190,9 @@ export function buildDna(fp, domain){
   why.terrain = `follows foliage state ${state.toUpperCase()}${botanicalState!=='normal'&&botanicalState!=='flowering'?` and botanical state ${botanicalState.toUpperCase()}`:''} → ${terrain.toUpperCase()}`;
 
   const background = backgroundFrom(fp.palette.ground, botanicalState, fp.palette.primary);
+  if (amount !== 'none' && fp.palette.primary) {
+    why.flowers += `; colour conditioned for legibility — hue preserved exactly from ${fp.palette.primary}, lightness and chroma lifted so the blossom reads against foliage`;
+  }
   why.background = `derived from rendered ground ${fp.palette.ground} (${fp.palette.ground.toLowerCase()==='#ffffff'||fp.palette.ground.toLowerCase()==='#fbfbfb'?'achromatic, so hue borrowed from the design accent '+fp.palette.primary:'own hue kept'}); light/dark character preserved, saturation held low → ${background}`;
 
   return {
@@ -174,10 +203,10 @@ export function buildDna(fp, domain){
       botanicalState,
       flowers: {
         amount,
-        primary:   amount === 'none' ? null : fp.palette.primary,
-        secondary: amount === 'none' ? null : fp.palette.secondary
+        primary:   amount === 'none' ? null : conditionFlower(fp.palette.primary, 'primary'),
+        secondary: amount === 'none' ? null : conditionFlower(fp.palette.secondary, 'secondary')
       },
-      fruit: { enabled: fruitOn, color: fruitOn ? (fp.palette.primary || '#c0392b') : null },
+      fruit: { enabled: fruitOn, color: fruitOn ? (conditionFlower(fp.palette.primary, 'primary') || '#c0392b') : null },
       terrain,
       background,
       seed,

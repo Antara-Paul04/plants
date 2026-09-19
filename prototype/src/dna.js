@@ -135,6 +135,29 @@ const TERRAIN = {
   },
 };
 
+// --- dormancy --------------------------------------------------------------
+//
+// Taste's finding, and it reframes the bare state entirely: **a bare tree in a
+// living scene reads as death, not as winter.** Leaflessness is judged against
+// its surroundings, not on its own. The same skeleton that looks architectural
+// on out-of-season turf becomes the one dead thing in a healthy garden when the
+// grass around it is vivid summer green.
+//
+// So dormancy keys off THE TREE, not off `terrain`. That is deliberate and it is
+// what Taste actually said — "if the tree goes dormant, the scene goes dormant
+// with it". Keying it off `terrain: "sparse"` instead would have been wrong:
+// three sites share that terrain, and one of them (threejs.org) is FLOWERING
+// with 329 blossoms. A flowering tree on dead winter ground is a worse
+// incoherence than the one being fixed.
+const DORMANT = {
+  lo: C(0x6b6f54), mid: C(0x838661), hi: C(0x9d9d79),
+  soilHi: C(0x8a7d6d), soilLo: C(0x5d5859),
+};
+
+// Straw-olive, not brown. The reading wanted is "out of season", and brown turf
+// reads as dead just as loudly as green turf reads as summer.
+const DORMANCY = { bare: 0.82, winter: 0.4 };
+
 // --- skeleton --------------------------------------------------------------
 //
 // Silhouette variation, not literal content quantity. The hand-authored branch
@@ -199,6 +222,12 @@ export function resolveDNA(input) {
     : (warn.push(`foliage.state "${fState}" unknown, using normal`), 1);
 
   const bare = fState === 'bare';
+
+  // How dormant the SCENE is. Driven by the tree's own state: a leafless tree
+  // needs the ground to be out of season with it, or it reads as the only dead
+  // thing in a living garden. A tree in leaf never triggers this, whatever its
+  // terrain state says.
+  const dormancy = bare ? DORMANCY.bare : bState === 'winter' ? DORMANCY.winter : 0;
 
   // Leaf volume. Winter applies a floor so it can never reach zero — that
   // distinction is the whole concept, and a thin winter site must not silently
@@ -305,10 +334,15 @@ export function resolveDNA(input) {
     fruit: { enabled: fruitOn, color: fruitCol, count: fruitOn ? 34 : 0 },
 
     terrain: {
-      grass: terrain.grass,
-      height: terrain.height,
-      lo: terrain.lo, mid: terrain.mid, hi: terrain.hi,
-      soilHi: terrain.soilHi, soilLo: terrain.soilLo,
+      // Dormancy is applied here, on top of whatever terrain state the contract
+      // asked for, so it shifts tone and growth without replacing the state.
+      grass: Math.round(terrain.grass * (1 - 0.18 * dormancy)),
+      height: terrain.height * (1 - 0.25 * dormancy),
+      lo: terrain.lo.clone().lerp(DORMANT.lo, dormancy),
+      mid: terrain.mid.clone().lerp(DORMANT.mid, dormancy),
+      hi: terrain.hi.clone().lerp(DORMANT.hi, dormancy),
+      soilHi: terrain.soilHi.clone().lerp(DORMANT.soilHi, dormancy),
+      soilLo: terrain.soilLo.clone().lerp(DORMANT.soilLo, dormancy),
       // Fallen petals only exist where there is blossom to fall. Autumn gets
       // fallen leaf instead, in the canopy's own colour.
       litter: clusters > 0 ? 'petal' : bState === 'autumn' ? 'leaf' : 'none',
