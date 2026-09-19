@@ -49,10 +49,15 @@ const STATE_AMOUNT = { bare: 0, sparse: 0.3, normal: 1, lush: 1.42 };
 // This is deliberately a SEPARATE lever from amount. A developed-but-airy crown
 // has to read differently from a lush-and-dense one, and it only does if the
 // gaps are structural rather than the whole canopy being thinned evenly.
+//
+// Deliberately EXAGGERATED beyond what the measurement implies. At the first
+// tuning, `normal` and `dense` were indistinguishable at thumbnail size, and a
+// difference that only exists close up has failed. The ordering and meaning of
+// the signal are unchanged — only its amplitude.
 const DENSITY_AIR = {
-  airy: { e0: 0.08, e1: -0.12, lobe: 0.9, spread: 1.16 },
-  normal: { e0: 0.24, e1: 0.05, lobe: 1.0, spread: 1.0 },
-  dense: { e0: 0.5, e1: 0.26, lobe: 1.1, spread: 0.88 },
+  airy: { e0: 0.06, e1: -0.16, lobe: 0.82, spread: 1.3, leafMul: 0.8 },
+  normal: { e0: 0.24, e1: 0.05, lobe: 1.0, spread: 1.0, leafMul: 1.0 },
+  dense: { e0: 0.58, e1: 0.3, lobe: 1.22, spread: 0.76, leafMul: 1.3 },
 };
 
 // --- botanical state -------------------------------------------------------
@@ -135,10 +140,24 @@ const TERRAIN = {
 // Silhouette variation, not literal content quantity. The hand-authored branch
 // tables stay exactly as tuned; complexity selects a SUBSET of them, and only
 // `rich` adds anything. Subsetting preserves the tuning, generating would not.
+// Branch COUNT is the part nobody can see — measured: simple / normal / rich
+// were indistinguishable at thumbnail size on every foliated tree, because the
+// canopy covers the branches. So complexity now drives the tree's SHAPE as well:
+// `simple` is spare and upright, `rich` is broad and spreading. Same family,
+// different posture — which is what survives being shrunk.
 const SKELETON = {
-  simple: { primaries: 3, secondaries: [0, 2, 4, 6], twigs: [0, 1, 2], extra: 0 },
-  normal: { primaries: 4, secondaries: null, twigs: null, extra: 0 },
-  rich: { primaries: 4, secondaries: null, twigs: null, extra: 8 },
+  simple: {
+    primaries: 3, secondaries: [0, 2, 4, 6], twigs: [0, 1, 2], extra: 0,
+    spread: 0.84, rise: 10, crownW: 0.86, crownH: 1.14,
+  },
+  normal: {
+    primaries: 4, secondaries: null, twigs: null, extra: 0,
+    spread: 1, rise: 0, crownW: 1, crownH: 1,
+  },
+  rich: {
+    primaries: 4, secondaries: null, twigs: null, extra: 8,
+    spread: 1.18, rise: -8, crownW: 1.16, crownH: 0.93,
+  },
 };
 
 /** Parse a '#rrggbb' from the contract, tolerating null. */
@@ -184,7 +203,7 @@ export function resolveDNA(input) {
   // Leaf volume. Winter applies a floor so it can never reach zero — that
   // distinction is the whole concept, and a thin winter site must not silently
   // become a bare one.
-  let amount = stateAmt * botany.amount;
+  let amount = stateAmt * botany.amount * (air.leafMul ?? 1);
   if (!bare && botany.amountFloor != null) amount = Math.max(amount, botany.amountFloor);
 
   // BARE is a headline state and it has to be BEAUTIFUL, not punished. The
@@ -212,10 +231,17 @@ export function resolveDNA(input) {
   // chromatic accent (paulgraham.com has literally zero) must render flowerless
   // rather than borrow a colour it does not have, or the comparison is showing
   // the renderer's taste instead of the website's.
-  const flowersOff = bare || bState === 'winter' || bState === 'autumn' || !fp;
+  //
+  // Autumn and winter are NOT suppressed here. The renderer used to zero them on
+  // the grounds that a flowering autumn tree is botanically odd; Lead ruled that
+  // autumn abundance decreases rather than vanishes, and that winter needs no
+  // override because analysis already sends it `none`. The contract decides how
+  // many flowers there are; the renderer only decides how they look.
+  const flowersOff = bare || !fp;
+  const stateMul = bState === 'flowering' ? 1.25 : bState === 'autumn' ? 0.4 : 1;
   const clusters = flowersOff
     ? 0
-    : Math.round((FLOWER_CLUSTERS[flowerAmt] ?? FLOWER_CLUSTERS.medium) * (bState === 'flowering' ? 1.25 : 1));
+    : Math.round((FLOWER_CLUSTERS[flowerAmt] ?? FLOWER_CLUSTERS.medium) * stateMul);
 
   const flowerCols = clusters > 0
     ? [fp, fs || fp.clone().offsetHSL(0.02, -0.06, -0.08), fp.clone().offsetHSL(0, -0.22, 0.2)]
@@ -256,6 +282,8 @@ export function resolveDNA(input) {
       extraTwigs,
       subTwigs,
       tipTaper,
+      spread: skel.spread,
+      rise: skel.rise,
     },
 
     foliage: {
@@ -264,6 +292,8 @@ export function resolveDNA(input) {
       airE1: air.e1,
       lobeScale: air.lobe,
       lobeSpread: air.spread,
+      crownW: skel.crownW,
+      crownH: skel.crownH,
       palette: botany.leaf,
       emissive: botany.emissive,
       // Winter foliage clings closer to the branch: restraint reads as tidy,
@@ -285,6 +315,68 @@ export function resolveDNA(input) {
       litterColor: bState === 'autumn' ? botany.leaf.mid : (flowerCols ? flowerCols[0] : null),
     },
   };
+}
+
+/**
+ * Roughly name a colour so a panel can say "the site's blue" rather than
+ * "#2d7abc". Coarse on purpose — this is prose, not a colour picker.
+ */
+function colourWord(c) {
+  const hsl = c.getHSL({ h: 0, s: 0, l: 0 });
+  if (hsl.s < 0.12) return hsl.l > 0.6 ? 'pale grey' : 'grey';
+  const h = hsl.h * 360;
+  const name =
+    h < 15 ? 'red' : h < 40 ? 'orange' : h < 65 ? 'yellow' : h < 160 ? 'green' :
+    h < 200 ? 'teal' : h < 250 ? 'blue' : h < 290 ? 'violet' : h < 335 ? 'pink' : 'red';
+  return (hsl.l > 0.72 ? 'pale ' : hsl.l < 0.3 ? 'deep ' : '') + name;
+}
+
+/**
+ * Short human phrases describing THE TREE, for a "Why this tree?" panel.
+ *
+ * Boundary note, and it matters: these describe the tree, never the website.
+ * This module cannot see a fingerprint, so it cannot honestly say *why* a site
+ * produced this DNA — that half of the sentence lives in each record's `why`
+ * field, which analysis writes and which is deliberately stripped out of the
+ * renderer's snapshot. A panel that wants "sparse foliage BECAUSE the styling is
+ * restrained" must join these phrases to `why`; the renderer inventing the
+ * causal half would be fabricating the one thing the contract exists to prove.
+ */
+export function explainDNA(dna) {
+  const out = [];
+  const f = dna.foliage || {};
+  const b = dna.botanicalState || 'normal';
+  const fl = dna.flowers || {};
+
+  if (f.state === 'bare') {
+    out.push('No leaves — the bare structure is the whole tree');
+  } else {
+    const amount = { sparse: 'Sparse foliage', normal: 'An even canopy', lush: 'Lush foliage' }[f.state] || 'An even canopy';
+    const dens = { airy: 'open and full of gaps', normal: null, dense: 'packed tight' }[f.density];
+    out.push(dens ? `${amount}, ${dens}` : amount);
+  }
+
+  if (b === 'winter') out.push('Muted winter colour, foliage held back');
+  else if (b === 'autumn') out.push('Turned to autumn colour');
+  else if (b === 'flowering') out.push('In flower');
+
+  const primary = hex(fl.primary);
+  if (primary && fl.amount && fl.amount !== 'none' && f.state !== 'bare') {
+    const many = { few: 'A scattering of', medium: 'Blossom in', abundant: 'Heavy blossom in' }[fl.amount] || 'Blossom in';
+    out.push(`${many} the site's ${colourWord(primary)}`);
+  } else if (f.state !== 'bare') {
+    out.push('No flowers — this site has no accent colour to carry');
+  }
+
+  const shape = { simple: 'A spare, upright crown', normal: null, rich: 'A broad, heavily branched crown' }[dna.skeleton?.complexity];
+  if (shape) out.push(shape);
+
+  if (dna.fruit?.enabled) out.push('Carrying fruit');
+
+  const ground = { sparse: 'Thin ground cover', lush: 'Thick grass', autumn: 'Autumn ground', winter: 'Winter ground' }[dna.terrain];
+  if (ground) out.push(ground);
+
+  return out;
 }
 
 /** A one-line human summary, for the comparison view's caption. */

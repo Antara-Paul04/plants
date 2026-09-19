@@ -85,7 +85,7 @@ function orient(obj, pos, dir, roll, scale) {
  * that round out the top of the silhouette.
  */
 export function canopyLobes(tips, r, params = {}) {
-  const { lobeScale = 1, lobeSpread = 1 } = params;
+  const { lobeScale = 1, lobeSpread = 1, crownW = 1, crownH = 1 } = params;
   const lobes = [];
   // Where the crown radiates from. Only used to push clumps outward along
   // their own limb, so the canopy hangs off branches instead of forming a ball.
@@ -108,9 +108,14 @@ export function canopyLobes(tips, r, params = {}) {
     // Spreading the lobes for air made the canopy read as a wide flat parasol;
     // this puts the dome back without adding filler lobes, which is what made
     // it a cauliflower in the first place.
-    c.x *= 0.9;
-    c.z *= 0.9;
-    c.y = hub.y + (c.y - hub.y) * 1.16;
+    //
+    // crownW / crownH ride on the same transform. This is the one crown change
+    // that survives being shrunk to a thumbnail: a narrow upright tree and a
+    // broad spreading one are different SHAPES, where more or fewer branches is
+    // just more or less of the same shape.
+    c.x *= 0.9 * crownW;
+    c.z *= 0.9 * crownW;
+    c.y = hub.y + (c.y - hub.y) * 1.16 * crownH;
 
     lobes.push({
       c,
@@ -132,7 +137,7 @@ export function canopyLobes(tips, r, params = {}) {
   ];
   for (const f of fill) {
     lobes.push({
-      c: new THREE.Vector3(f[0], f[1], f[2]),
+      c: new THREE.Vector3(f[0] * crownW, hub.y + (f[1] - hub.y) * crownH, f[2] * crownW),
       rx: f[3] * rr(r, 0.9, 1.1) * lobeScale,
       ry: f[4] * rr(r, 0.9, 1.1) * lobeScale,
       rz: f[5] * rr(r, 0.9, 1.1) * lobeScale,

@@ -143,6 +143,15 @@ export function buildTree(r, params = {}) {
     twigs: twigSel = null,
     extraTwigs = 0,
     subTwigs = 0,
+    // Silhouette levers. Branch COUNT is invisible once the canopy covers it —
+    // measured, not assumed: simple / normal / rich were indistinguishable at
+    // thumbnail size on every foliated tree. What does survive is the shape the
+    // limbs put the crown in, so complexity drives these instead:
+    //   spread — limb length, so the crown is narrow or broad
+    //   rise   — limb elevation, so limbs climb upright or reach outward
+    // TREE-SYSTEM.md already recorded these as the two strongest levers tried.
+    spread = 1,
+    rise = 0,
     // How fine every limb ends. A foliated tree hides its branch ends under
     // leaves; a leafless one does not, and a limb that stops at 40% of its base
     // radius ends in a visible blunt cap. Twelve blunt caps read as a tree that
@@ -179,7 +188,14 @@ export function buildTree(r, params = {}) {
     const p = primaries[i];
     // Seeded personality: a couple of degrees of wander, nothing more. The
     // website has to stay the thing that decides what this tree is.
-    const pts = branchPath(primRoot, p.az + rr(r, -4, 4), p.e0, p.e1 + rr(r, -3, 3), p.len + 0.2, p.tw);
+    const pts = branchPath(
+      primRoot,
+      p.az + rr(r, -4, 4),
+      clamp(p.e0 + rise, 6, 80),
+      clamp(p.e1 + rise + rr(r, -3, 3), 12, 84),
+      (p.len + 0.2) * spread,
+      p.tw
+    );
     primPaths.push(pts);
     geos.push(limbGeometry(pts, p.r0, p.r0 * 0.42 * tipTaper, { startFlare: 0.42, seed: 2 + i * 1.7 }));
   }
@@ -194,7 +210,14 @@ export function buildTree(r, params = {}) {
     if (secSel && !secSel.includes(i)) continue;
     if (s.p >= primPaths.length) continue; // its primary was not built
     const base = new THREE.CatmullRomCurve3(primPaths[s.p], false, 'catmullrom', 0.5).getPointAt(s.at);
-    const pts = branchPath(base, s.az + rr(r, -5, 5), s.e0, s.e1, s.len, s.tw);
+    const pts = branchPath(
+      base,
+      s.az + rr(r, -5, 5),
+      clamp(s.e0 + rise * 0.7, 8, 80),
+      clamp(s.e1 + rise * 0.7, 14, 84),
+      s.len * spread,
+      s.tw
+    );
     secPaths[i] = pts;
     geos.push(limbGeometry(pts, s.r0, s.r0 * 0.4 * tipTaper, { startFlare: 0.5, seed: 9 + i * 2.3, radial: 8, steps: 20 }));
   }

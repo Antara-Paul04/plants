@@ -21,8 +21,12 @@ const VW = 1440, VH = 900;
 const BUDGET_MS   = 20000;   // hard ceiling for the whole analysis
 const NAV_MS      = 8000;    // domcontentloaded, not load: 'load' waits on every
                              // subresource and was timing linear.app out entirely
-const IDLE_MS     = 2500;    // networkidle never fires on many SPAs — cap it low
-const SETTLE_MS   = 700;     // fixed settle after DOM is ready
+const LOAD_MS     = 4500;    // bounded wait for subresources AFTER dom-ready. Needed:
+                             // without it figma.com measured before its imagery painted
+                             // and classified as WINTER — a colourful site read as
+                             // colourless. A fast wrong tree is worse than a slow one.
+const IDLE_MS     = 1500;    // networkidle never fires on many SPAs — cap it low
+const SETTLE_MS   = 600;     // fixed settle after that
 const SHOT_MS     = 5000;
 
 const now = () => Number(process.hrtime.bigint() / 1000000n);
@@ -192,8 +196,10 @@ async function runAnalysis(u, domain, budget, T0, left) {
     // Settle is best-effort and strictly bounded. If the page never goes quiet we
     // measure what is on screen at the deadline: a slightly-early tree beats no tree.
     const tSettle = now();
-    const idleBudget = Math.max(300, Math.min(IDLE_MS, left() - 8000));
-    await page.waitForLoadState('networkidle', { timeout: idleBudget }).catch(() => {});
+    // 'load' as a BOUNDED wait rather than the navigation condition: we get images and
+    // fonts when they are quick, and give up on them when they are not.
+    await page.waitForLoadState('load', { timeout: Math.max(500, Math.min(LOAD_MS, left() - 7000)) }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: Math.max(300, Math.min(IDLE_MS, left() - 6500)) }).catch(() => {});
     await Promise.race([
       page.evaluate(() => document.fonts ? document.fonts.ready : null).catch(() => {}),
       page.waitForTimeout(800)

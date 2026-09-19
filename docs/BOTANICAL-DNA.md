@@ -237,9 +237,31 @@ correlation of any V1 signal (worst |r| 0.42, against 0.78 for `stylingRichness`
 for `imageArea`). Its *effect* is nonetheless kept small by deliberate choice, per the
 human's instruction that text-heavy sites must not become gigantic trees.
 
-**Background is a weak differentiator** — 19 of 23 corpus grounds are pure white. The
-rule preserves light/dark character and borrows the design accent's hue when the ground
-is achromatic. **ASSUMPTION.**
+**Background — corrected.** This section originally read "background is a weak
+differentiator — 19 of 23 corpus grounds are pure white". **That figure was wrong and is
+retracted.** Measured properly: **5 of 23 grounds are genuinely dark** (nasa `#000000`,
+apple `#010101`, spacejam-1996 `#030303`, linear `#08090a` at 72% coverage, bruno-simon
+`#2b113d`); 18 of 23 are near-white (L >= 0.9).
+
+The retraction is left visible rather than silently rewritten because the wrong number was
+**load-bearing**: it was the evidence for calling the background rule weak and for
+defending its output as "deliberately subtle". Both conclusions rested on a corpus that
+was more monotone than the corpus actually is.
+
+What the rule does: preserves the site's light/dark decision, and borrows the design
+accent's hue at low saturation when the ground is achromatic. **ASSUMPTION** — that
+hue-borrowing is preferable to leaving achromatic sites neutral.
+
+**The renderer has since strengthened this.** With one dark-ground site in the set,
+`visual-3d` reports linear.app as the single most instantly distinguishable tree in the
+12-record grid at thumbnail size — a dark background differentiating harder than any
+structural lever available to the renderer. So the rule was not weak; it was **starved by
+a corpus assumption that turned out to be false**. If dark grounds are roughly a fifth of
+the web rather than a curiosity, background is a stronger channel than this section first
+claimed, and the lighting-rig question `visual-3d` raises below stops being an edge case.
+
+**Every ground figure above was measured in light mode** — see the colour-scheme
+assumption in [WEBSITE-ANALYSIS.md](WEBSITE-ANALYSIS.md#measurement-conditions-colour-scheme-is-pinned-to-light).
 
 ### 3D / renderer — DNA → tree (2026-09-20)
 
@@ -260,10 +282,10 @@ camera angle. All 12 records parsed with no fallbacks.
 
 | Field | Why |
 | --- | --- |
-| `skeleton.complexity` | Essentially invisible on any foliated tree; the canopy covers the branches. It reads only on BARE, so it is doing almost no work for 11 of 12 sites. |
-| `foliage.density` | `airy` reads clearly; `normal` vs `dense` barely separates. Half a lever. |
+| ~~`skeleton.complexity`~~ **addressed** | *Was* invisible on any foliated tree — the canopy covers the branches, so branch count is the one thing nobody can see. It now drives crown **shape** as well: `simple` is spare and upright, `rich` broad and spreading. Posture survives a thumbnail where branch count does not. |
+| ~~`foliage.density`~~ **addressed** | `normal` vs `dense` was half a lever. The bands were exaggerated and now also move lobe size and crown spread. Ordering and meaning unchanged; amplitude raised. |
 | `fruit` | At ~8–12% a tree gets about 12 fruit, near-invisible at any size. Either it wants to be far more abundant and larger, or it is decoration nobody will notice. |
-| `background`, the other 11 sites | All landed in `#e5e5eb`–`#ebe9e5`. Indistinguishable. Independently matches analysis's "19 of 23 grounds are pure white". |
+| `background`, the other 11 sites | All landed in `#e5e5eb`–`#ebe9e5`. Indistinguishable from each other. |
 
 **BARE vs WINTER reads as clearly distinct.** Bare is a leafless sculptural silhouette;
 winter is a muted, sparse, sage-green tree with visible structure. They do not read as
@@ -279,23 +301,39 @@ degrees of the same thing.
    signal than a warm-branded one at identical `amount`. This bears directly on
    **D5**: flowers-as-carrier holds for warm palettes and partly fails for cool ones.
 
-2. **AUTUMN and WINTER sites express no website colour at all.** Both impose a fixed
-   palette and carry no flowers, so the site's accent never appears anywhere.
-   vercel.com's tree carries nothing site-derived except a background
-   indistinguishable from everyone else's. A real hole in D5 for those two states.
+2. **~~AUTUMN and WINTER sites express no website colour at all.~~ Partly closed.**
+   Both used to impose a fixed palette and carry no flowers, so the site's accent
+   never appeared. Lead ruled that autumn abundance *decreases* rather than vanishes,
+   so **autumn now carries the site's accent in its flowers** (synthetic-autumn renders
+   38 clusters where it rendered 0). **Winter is still colourless** — analysis sends it
+   `flowers: none`, so nothing site-derived reaches a winter tree at all. vercel.com
+   carries nothing but a background indistinguishable from everyone else's. Still a
+   hole in D5, now a smaller one.
 
-3. **The renderer suppresses flowers in autumn and winter even when the contract says
-   `few`.** synthetic-autumn.example asks for `few` and renders zero. This was a
-   renderer judgement — a flowering autumn tree is botanically odd — but it overrides
-   a contract field. Either the contract should say `botanicalState` dominates
-   `flowers.amount`, or the renderer should stop doing it. **Lead's call.**
+3. **RESOLVED — the renderer no longer suppresses flowers by botanical state.** It
+   used to zero them for autumn and winter even when the contract asked for `few`, on
+   the grounds that a flowering autumn tree is botanically odd. Lead ruled against it:
+   autumn abundance decreases rather than vanishes, and winter needs no override
+   because analysis already sends it `none`. The contract now decides how many flowers
+   there are and the renderer only decides how they look. Autumn is scaled to 0.4.
 
 4. **A dark `background` is not matched by the lighting rig.** linear.app renders a
    brightly day-lit tree against a night sky. It is the most distinctive tree in the
    set and arguably the best-looking, but the light does not belong to the scene.
    Whether the rig follows the background is art direction, and a human's.
 
-5. **`skeleton.complexity` is nearly inert.** To carry real signal it would need to
-   affect something that survives having leaves on it — crown width or limb angle
-   rather than branch count. Reported rather than changed, because altering what the
-   field *means* is a contract question.
+   Scope note: exactly **one of the 12 DNA records** has a dark ground, which is all
+   this domain can verify for itself. Analysis has since reported that its earlier
+   "19 of 23 grounds are pure white" was wrong and that 5 of 23 are genuinely dark —
+   that figure is theirs, not measured here, and an earlier draft of this section
+   cited the retracted number as corroboration. If it holds, dark grounds are roughly
+   a fifth of the corpus rather than a curiosity, and the lighting question above stops
+   being an edge case.
+
+5. **RESOLVED — `skeleton.complexity` now affects crown shape, not just branch count.**
+   It was nearly inert: branch count is invisible under foliage. It now also drives
+   limb length and elevation, so `simple` reads as a spare upright tree and `rich` as a
+   broad spreading one. The field's *meaning* is unchanged — still "silhouette
+   variation, not literal content quantity" — but it is now actually visible, which is
+   what the contract always said it was for. **EXPERIMENT**; deliberately exaggerated
+   under Lead's authorisation, and Taste has not seen it.

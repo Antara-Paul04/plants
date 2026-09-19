@@ -593,6 +593,46 @@ above, using a different instrument: **headless Chrome 152 driven by Playwright*
 Where the two probes overlap they **agree**. This section records what the second probe
 adds, and the two places it corrects the first.
 
+### Measurement conditions: colour scheme is pinned to light
+
+**ASSUMPTION — and it was never stated before, which it should have been.**
+
+Every number produced by this probe was measured with the browser pinned to
+`colorScheme: 'light'`. Nothing in this document was measured in dark mode.
+
+That is not a neutral harness detail. **For any site that respects
+`prefers-color-scheme`, this one setting decides what the website *is*:**
+
+| site | `colorScheme: light` | `colorScheme: dark` | |
+| --- | --- | --- | --- |
+| vercel.com | `rgb(250, 250, 250)` | `rgb(0, 0, 0)` | **changes completely** |
+| linear.app | `rgb(8, 9, 10)` | `rgb(8, 9, 10)` | dark by design |
+| github.com | `rgb(13, 17, 23)` | `rgb(13, 17, 23)` | dark by design |
+
+In production this would not be our setting at all — it would be **the visitor's OS
+preference**, which neither we nor the site's owner chose. The same URL would produce
+different trees for different people.
+
+**This is the same shape of problem as two edge cases already listed below** —
+dark-mode-by-default sites, and sites whose appearance differs at mobile versus desktop
+width. In each, *the same URL has more than one true appearance and something has to
+choose one*. It is a product question, not a measurement bug.
+
+**What it costs us right now.** `vercel.com` is the only corpus site reaching **WINTER**,
+and it reaches it *in light mode*. In dark mode its ground is pure black and its ink and
+colour measures would differ. The rendered grid cell demonstrates the state for the
+renderer, but **"vercel.com is a winter website" is not a claim this measurement supports
+unqualified.**
+
+**OPEN — what the product should do.** Pin one scheme, follow the visitor's, or offer
+both. Lead's recorded recommendation is to keep pinning light and document it: for
+something people share, determinism beats fidelity — the same URL must give everyone the
+same tree — and the pin only affects sites that genuinely adapt. That reasoning is sound
+and it is *not* recorded here as settled: it changes what a user receives, so it is a
+human call (AGENTS.md R7).
+
+---
+
 ### The crux test: unstyled HTML vs intentional minimalism
 
 The first probe had no raw-HTML control, so this was untested. It is the single most
@@ -815,7 +855,10 @@ Inputs that will break naive approaches. An initial list to expand, not to solve
 - extremely minimal sites (a single line of text on white)
 - extremely maximalist or deliberately chaotic sites
 - sites that are one full-bleed image or video
-- dark-mode-by-default sites
+- dark-mode-by-default sites — **partly measured**: see
+  [Measurement conditions](#measurement-conditions-colour-scheme-is-pinned-to-light).
+  The probe pins light, so adaptive sites are currently recorded in one of their two
+  appearances without that being stated in the result
 - sites that render nothing without JavaScript
 - non-website URLs (a PDF, an image, a raw file)
 - invalid, malformed or non-existent URLs

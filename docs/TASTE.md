@@ -87,6 +87,14 @@ place by being observed, not assumed.
   and stretched up. Spread is what domes a crown.
 - **A leaf's shading normal should follow the mass it belongs to, not its own face.**
   Otherwise a canopy reads as tinsel instead of a volume.
+- **A bare tree in a living scene reads as death, not as winter.** Leaflessness is
+  judged against its surroundings, not on its own. Standing in vivid summer turf, the
+  same skeleton that would look architectural reads as the one dead thing in a healthy
+  garden. If the tree goes dormant, the scene goes dormant with it.
+- **A difference must be exaggerated to the magnitude that survives a thumbnail, and
+  the corpus itself says what that magnitude is.** Wherever one generated tree *does*
+  read as distinct at feed size, that is the calibration — anything subtler than the
+  thing that already works will not survive either.
 
 ---
 
