@@ -195,6 +195,14 @@ const server = createServer(async (req, res) => {
   // app can never drift from the prototype.
   if (path.startsWith('/tree/')) return serveStatic(res, join(ROOT, 'prototype/src'), path.slice('/tree/'.length));
 
+  // The 3D domain's internal comparison grid, mounted as-is. It is a debug
+  // view, not product UI — but it is the fastest way to see every corpus tree
+  // at once, so it earns a route.
+  if (path === '/compare.html' || path === '/compare') {
+    return serveStatic(res, join(ROOT, 'prototype'), 'compare.html');
+  }
+  if (path.startsWith('/src/')) return serveStatic(res, join(ROOT, 'prototype/src'), path.slice('/src/'.length));
+
   return serveStatic(res, join(ROOT, 'app/public'), path === '/' ? 'index.html' : path);
 });
 

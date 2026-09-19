@@ -5,19 +5,35 @@ appearance is derived from that website's *visual design*.
 
 This is a small creative internet experiment, not a SaaS product.
 
-## Status
-
-**Art-direction prototyping.** There is one hand-built tree in `prototype/`, made to
-test whether the look is achievable in a browser. It is marked **EXPERIMENT** and is
-awaiting human review — nothing in it is an approved decision.
-
-There is still no frontend, no website analysis, no tree generator and no framework,
-and that is deliberate. The creative and product specification is being settled first,
-so that the thing we build is the thing we actually want.
+## Run it
 
 ```bash
-cd prototype && python3 -m http.server 5188
+node app/server.js
 ```
+
+Then open **http://localhost:5170**, paste a website address, and press *Grow my
+website*. A real headless browser measures the site, the measurements become a
+fingerprint, the fingerprint becomes Botanical DNA, and the DNA grows a tree.
+
+Try `info.cern.ch` first — essentially unstyled HTML, so it grows a bare
+sculptural tree. Then `stripe.com` for the contrast.
+
+`http://localhost:5170/compare.html` shows every corpus tree at once, with a
+thumbnail toggle. That view is for us, not for users.
+
+Requires Node and a local Chrome. First run of a given site takes ~8–20s; the
+browser is reused, so later ones are faster.
+
+---
+
+## Status
+
+**Working V0.** The whole chain runs end to end — paste a URL, get your tree.
+
+It is rough on purpose. The analysis is a research probe promoted to a service,
+the tree is one hand-authored family with parameters rather than a general
+generator, and there is no Forest, no sharing and no accounts. See
+[docs/STATUS.md](docs/STATUS.md) for what is and is not done.
 
 ## Conceptual pipeline (V0)
 
