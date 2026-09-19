@@ -158,6 +158,14 @@ const DORMANT = {
 // reads as dead just as loudly as green turf reads as summer.
 const DORMANCY = { bare: 0.82, winter: 0.4 };
 
+// Stone. Quieting the turf had a second-order effect: whatever stays at full
+// value becomes the loudest thing in the frame, and the cream stones promoted
+// themselves to the brightest objects in a picture whose whole point is to be
+// quiet. They pull focus off the tree, which is the hero. So they mute in step
+// with the turf — same factor, one more material.
+const ROCK = { hi: C(0xf0e0c2), lo: C(0xb5a07f) };
+const ROCK_DORMANT = { hi: C(0xc2bcab), lo: C(0x8b867b) };
+
 // --- skeleton --------------------------------------------------------------
 //
 // Silhouette variation, not literal content quantity. The hand-authored branch
@@ -343,6 +351,8 @@ export function resolveDNA(input) {
       hi: terrain.hi.clone().lerp(DORMANT.hi, dormancy),
       soilHi: terrain.soilHi.clone().lerp(DORMANT.soilHi, dormancy),
       soilLo: terrain.soilLo.clone().lerp(DORMANT.soilLo, dormancy),
+      rockHi: ROCK.hi.clone().lerp(ROCK_DORMANT.hi, dormancy),
+      rockLo: ROCK.lo.clone().lerp(ROCK_DORMANT.lo, dormancy),
       // Fallen petals only exist where there is blossom to fall. Autumn gets
       // fallen leaf instead, in the canopy's own colour.
       litter: clusters > 0 ? 'petal' : bState === 'autumn' ? 'leaf' : 'none',

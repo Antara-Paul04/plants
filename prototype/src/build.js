@@ -29,7 +29,7 @@ export function buildTreeScene(dna, uniforms, opts = {}) {
 
   group.add(buildIsland(r, terrain));
   group.add(buildGrass(r, uniforms, terrain));
-  group.add(buildRocks(r));
+  group.add(buildRocks(r, terrain));
 
   const tree = buildTree(r, { ...p.skeleton, bark: p.bark });
   group.add(tree.mesh);

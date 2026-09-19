@@ -314,8 +314,10 @@ export function buildRocks(r, params = {}) {
     { a: 2.85, rad: 1.52, s: 0.15, sq: 0.9 },
   ];
 
-  const hi = new THREE.Color(0xf0e0c2);
-  const lo = new THREE.Color(0xb5a07f);
+  // Defaults are the full-value summer stone; a dormant scene passes muted ones
+  // so the rocks do not become the brightest thing in a quiet frame.
+  const hi = params.rockHi || new THREE.Color(0xf0e0c2);
+  const lo = params.rockLo || new THREE.Color(0xb5a07f);
 
   for (const pl of placements) {
     // Seeded personality only: the stones shuffle a little around the trunk

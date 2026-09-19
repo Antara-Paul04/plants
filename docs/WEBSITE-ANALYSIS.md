@@ -593,6 +593,42 @@ above, using a different instrument: **headless Chrome 152 driven by Playwright*
 Where the two probes overlap they **agree**. This section records what the second probe
 adds, and the two places it corrects the first.
 
+### The corpus is a snapshot, and websites drift under it
+
+**ASSUMPTION, observed 2026-09-20.** Every committed fingerprint is a measurement of a
+page *as it was on the day it was captured*. Sites redesign, and a stored fingerprint
+goes stale silently — nothing in the pipeline notices.
+
+Observed, not hypothesised: **figma.com** redesigned its homepage between the corpus run
+and the live V0 build. Its title changed to a newer tagline and its design chromatic
+coverage fell from **0.0482 to 0.0001**, because the new page carries its colour inside
+`<img>` brand illustration rather than in styled chrome. Re-running it under the *exact
+original capture settings* reproduced the new numbers, confirming the change was the
+website's and not the probe's.
+
+The consequence was not cosmetic: under the media-masked palette the redesigned page read
+as colourless and tripped the WINTER gate — a visibly colourful site rendered as the
+*restraint* state. The winter gate was subsequently tightened to require low **unmasked**
+colourfulness as well, so that colour anywhere on the page blocks winter even when it
+cannot be credited to design.
+
+**What follows from this:**
+
+- A corpus-derived threshold is calibrated against pages that no longer exist in that
+  form. Bands should be re-checked against fresh captures periodically, not treated as
+  permanent.
+- Any regression test comparing live output against committed fingerprints will produce
+  false failures as sites change. A diff means "the site changed OR the code changed",
+  and the two are not distinguishable without re-measuring under the old settings.
+- **OPEN:** whether stored fingerprints should carry a capture date and a staleness
+  policy. Nothing currently records when a measurement stopped being true.
+
+This also bears on the repeatability finding recorded above: structural measures were
+stable across runs, and content-derived colour slots were not. Drift is the same problem
+on a longer timescale.
+
+---
+
 ### Measurement conditions: colour scheme is pinned to light
 
 **ASSUMPTION — and it was never stated before, which it should have been.**
