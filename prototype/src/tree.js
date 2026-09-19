@@ -10,7 +10,7 @@
 
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
-import { DEG, lerp, easeOut, rr } from './util.js';
+import { DEG, lerp, clamp, smoothstep, easeOut, rr } from './util.js';
 
 /**
  * Walk a branch outward from an origin, curling toward `elev1` as it goes.
@@ -203,8 +203,38 @@ export function buildTree(r) {
   const merged = BufferGeometryUtils.mergeGeometries(geos, false);
   merged.computeVertexNormals();
 
+  // --- contact occlusion -------------------------------------------------
+  // The other half of making the tree grow out of the ground rather than
+  // stand on it: the bark darkens into the turf line, deepest down in the
+  // crevices between the root buttresses where no light could reach anyway.
+  // Painted as vertex colour, so the bark colour lives here and the material
+  // stays white — otherwise the two multiply and the whole trunk goes dark.
+  {
+    const bark = new THREE.Color(0xa8806a);
+    const barkDark = new THREE.Color(0x3d2b21);
+    const pos = merged.attributes.position;
+    const col = new Float32Array(pos.count * 3);
+    const c = new THREE.Color();
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i);
+      const rad = Math.hypot(pos.getX(i), pos.getZ(i));
+      // Gone by knee height, and weaker out along the roots than in the hollow
+      // between them — an even band of dark around the base reads as a painted
+      // stripe rather than as occlusion.
+      const low = 1 - smoothstep(-0.02, 0.58, y);
+      const tuck = 1 - smoothstep(0.3, 0.92, rad);
+      const ao = clamp(low * lerp(0.5, 1.0, tuck), 0, 1);
+      c.copy(bark).lerp(barkDark, ao * 0.85);
+      col[i * 3] = c.r;
+      col[i * 3 + 1] = c.g;
+      col[i * 3 + 2] = c.b;
+    }
+    merged.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  }
+
   const material = new THREE.MeshStandardMaterial({
-    color: 0xa8806a,
+    color: 0xffffff,
+    vertexColors: true,
     roughness: 0.86,
     metalness: 0.0,
     flatShading: false,

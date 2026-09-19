@@ -22,9 +22,9 @@ looked right. Read this as a description of one artefact, not a specification.
 | **Trunk** | 5 hand-placed control points forming a lazy S, swept as a tapered tube |
 | **Branches** | 4 primaries → 8 secondaries → 7 twigs, each an explicit entry in a table of `(azimuth, start elevation, end elevation, length, radius, twist)` |
 | **Roots** | 3 short buttresses angled down into the turf |
-| **Crown** | ~25 ellipsoid lobes: one per branch tip, plus 12 hand-placed fillers |
-| **Leaves** | ~19,000 instanced cupped cards in 3 shape variants, scattered on the lobes |
-| **Blossoms** | ~190 clusters of 2–5 five-petal meshes, plus instanced warm centres |
+| **Crown** | ~24 ellipsoid lobes: one per branch tip, plus 5 hand-placed fillers |
+| **Leaves** | ~17,000 instanced cupped cards in 3 shape variants, scattered on the lobes, with air carved out by a noise field |
+| **Blossoms** | ~215 clusters of 2–5 five-petal meshes, plus instanced warm centres |
 | **Petals** | ~130 resting on the turf, 16 drifting (animated) |
 
 ### Techniques worth keeping regardless of what the generator becomes
@@ -43,6 +43,23 @@ These are the findings, as distinct from the numbers:
    map for front-side materials, which only cancels self-shadowing on closed solids.
    Open-based limbs produced severe shadow acne at exactly the branch junctions.
 6. **A narrow camera FOV** does more for the miniature feel than any material choice.
+7. **Air has to be carved through the whole crown, not left between lobes.** Gaps
+   built out of lobe spacing get filled the moment there are enough lobes to make a
+   convincing mass. A low-frequency noise field applied to leaf placement cuts across
+   lobe boundaries, so the holes belong to the crown. Frequency matters far more than
+   amount: high frequency thins the canopy evenly and reads moth-eaten; low frequency
+   gives a few window-sized gaps with dense leaf between them.
+8. **Lobe sizes have to vary hard, not narrowly.** Many similarly-sized bumps tiling a
+   convex hull *is* the cauliflower. A roughly bimodal draw — a few large masses with
+   small satellites — reads as a tree at the same lobe count.
+9. **Nothing in the canopy may end up isolated against the sky.** The dark flecks were
+   almost entirely blossoms whose jitter had thrown them clear of the leaf shell. Kept
+   nested in leaves, the same blossoms read fine. See VISUAL-SYSTEM.md for the
+   lighting half of that finding.
+10. **Contact occlusion needs two falloffs, not one.** A single radius is either tight
+    (reads as a painted ring) or wide (reads as a second cast shadow). A tight crevice
+    term plus a wide soft pool reads as occlusion. The tight term's inner radius must
+    clear the root flare, or the darkest part of it hides under the trunk.
 
 ### Currently hardcoded
 
@@ -73,11 +90,53 @@ nothing about it.
 
 ### Known weaknesses in the prototype
 
-- Crown silhouette is dense; it wants more air and larger gaps.
-- A few leaves and blossoms still shade to dark flecks at the silhouette edge.
-- No contact occlusion where trunk meets turf.
+Three earlier entries — dense crown, dark flecks, no ground contact — were worked on
+in a later pass; what changed and what is left is in the section below.
+
 - Leaf size distribution is narrow, so it looks slightly repetitive up close.
 - Not profiled on mobile or low-end hardware.
+- The soil body's flat-shaded facets read as a light/dark patchwork from low angles.
+- Blossoms seen exactly edge-on are thin slivers. Rare, and no longer dark, but
+  visible.
+
+### Pass 2: crown density, silhouette flecks, ground contact — EXPERIMENT
+
+**Status: EXPERIMENT. Hand-tuned by eye, nothing here is DECIDED, and the open
+questions below need a human (AGENTS.md R7).**
+
+Three recorded weaknesses were addressed. What was actually changed:
+
+| Weakness | What was done |
+| --- | --- |
+| Crown too dense / cauliflower | Filler lobes cut 12 → 5; lobe sizes redrawn roughly bimodally instead of in a narrow band; lobes pushed out along their own limb; a low-frequency noise field carves air through the crown; a few leaves reach past the shell as sprigs so the edge is not a clean scallop |
+| Dark flecks at the silhouette | Blossoms pulled back inside the leaf shell (they were being thrown clear of the canopy by jitter and hanging in the sky unlit); blossom normals now dominated by the up term and floored; outer-shell leaf normals tipped toward the sky and floored; blossom emissive floor warmed |
+| No contact occlusion at the turf | Trunk bark darkens into the ground line via vertex colour; grass-dome rings bunched toward the centre so the shading has somewhere to live; grass blades flatten and go to duff in the crevice, with a collar of taller shaded tufts lapping the root flare; a wide soft pool around it all |
+
+What it cost and what it taught:
+
+- **Leaf count fell 19,000 → ~17,000; triangles 640k → 626k; draw calls unchanged at
+  19.** The leaf loop now counts *attempts*, not leaves, because most of its
+  rejections exist to remove leaves rather than to relocate them.
+- **Opening the crown up immediately flattened it into a wide parasol.** Spreading
+  lobes for air removes the thing that was doming the crown. Recovered with a small
+  squeeze-inward / stretch-upward about a hub point rather than by adding fillers back
+  — adding fillers is what made it a cauliflower.
+- **Blossoms read as fewer once the leaves opened up**, so cluster count went 190 → 215
+  to hold the same apparent amount of pink.
+- **Flattening the grass all the way to the trunk made the contact *worse*.** With
+  nothing lapping over the root flare, the bark still ended in a clean line. The taller
+  shaded collar is what reads as contact; the bare duff alone does not.
+
+**OPEN — needs human taste judgement:**
+
+- Is the crown now *right*, or too airy? It is deliberately looser and scruffier than
+  before. It is less "polished", and whether that is better is exactly the kind of call
+  AGENTS.md R7 reserves for a human.
+- Does the ground contact read as occlusion, or as a dirty smudge? It is subtle from
+  the default hero angle, where the turf dome's shoulder hides much of it, and much
+  clearer from lower angles.
+- The sprigs reaching past the crown edge give it a slightly windswept, weeping-cherry
+  character. Intentional, but a character choice, not a neutral one.
 
 ---
 

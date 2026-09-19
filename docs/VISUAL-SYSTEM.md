@@ -49,19 +49,49 @@ as rules. Promotion of any of it is a human call (AGENTS.md R7).
 - **Irregular, non-circular limb cross-sections with swelling junctions.** Keeps the
   trunk from reading as a cylinder or as intersecting tubes.
 
+### A second pass on three of the weaknesses — EXPERIMENT
+
+**Status: EXPERIMENT, and explicitly waiting on human taste (AGENTS.md R7).** Three
+weaknesses recorded above — the cauliflower crown, the dark flecks at the silhouette
+and the missing ground contact — were worked on in a later pass, and have been taken
+out of the unresolved list below. [TREE-SYSTEM.md](TREE-SYSTEM.md) has the geometry
+side and the full list of what changed; this is what it taught us about *look*.
+
+- **The dark flecks were not a lighting problem.** They were blossoms that jitter had
+  thrown clear of the leaf shell, hanging alone against the sky with no canopy around
+  them. Keeping foliage nested fixed most of it; the emissive floor only ever hid it.
+- **What remains of the problem is a real constraint on the lighting rig.** With a
+  fixed key, a fixed rim and an orbiting camera, any surface whose normal points
+  horizontally outward is unlit at *some* azimuth. The fix used is to bias outward
+  normals skyward — strongly for blossoms, gently and only on the outer shell for
+  leaves — because a sky-facing normal catches the key and the hemisphere from every
+  direction. This costs a little of the canopy's volume shading, which is the
+  technique we most want to keep, so it was applied only where it was needed.
+- **Contact occlusion is two effects, not one.** A tight dark crevice reads as a
+  painted ring on its own; a wide soft pool reads as a second cast shadow on its own.
+  Together they read as occlusion. Both are painted into vertex colour — no AO pass,
+  no post-processing.
+- **Opening the crown for air also flattens it.** The lobe spread that creates gaps is
+  the same thing that was doming the silhouette, so the two have to be retuned
+  together.
+
+**Still needs a human to look at it:**
+
+- Whether the crown is now correctly airy or has gone scruffy. It is deliberately
+  looser and less polished than it was.
+- Whether the contact shading reads as occlusion or as dirt.
+
 ### What remains unresolved
 
 - Everything in the sections below is still **OPEN**. The prototype demonstrates one
   point in the space; it does not define the space.
 - Whether green foliage plus pink blossom is the right palette at all, or just the
   first thing tried.
-- Crown silhouette still reads a little dense and cauliflower-like; it wants more air
-  and larger gaps.
-- A few leaves and blossoms at the silhouette edge still shade to dark flecks against
-  the sky. Mitigated with an emissive floor, not solved.
-- No ambient occlusion where the trunk meets the turf, so the tree looks slightly
-  *placed on* the ground rather than growing out of it.
-- Soil colour is muddy and reads heavy at the bottom of the frame.
+- Soil colour is muddy and reads heavy at the bottom of the frame, and its flat-shaded
+  facets read as a light/dark patchwork from low angles.
+- A broad ambient darkening of the turf under the whole canopy footprint (as opposed to
+  just at the trunk) was considered and **not** tried, to avoid making the bottom of
+  the frame heavier still. Worth testing once the soil colour is resolved.
 - Wind sway and drifting petals are in, and **Motion is still OPEN** — they are an
   experiment, not an approved decision.
 - Untested on mobile, and not profiled on low-end hardware.

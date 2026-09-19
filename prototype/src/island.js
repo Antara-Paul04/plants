@@ -25,27 +25,83 @@ export function topY(rad) {
   return TOP_DOME * (1 - t * t);
 }
 
+/**
+ * Contact occlusion at the foot of the trunk: 1 down in the crevice where
+ * bark, root and turf meet, 0 out on the open lawn.
+ *
+ * Without this the tree reads as *placed on* the island — the turf runs
+ * cleanly up to the bark and stops, which is what a prop on a table does, not
+ * what a trunk growing out of soil does. A cast shadow does not substitute:
+ * it comes from one direction and leaves the other side of the trunk bright
+ * right at the seam, which is precisely where the eye looks for contact.
+ *
+ * Deliberately lobed rather than a circle, with the three maxima landing on
+ * the root buttresses in tree.js (azimuth 80, 200 and 325 degrees), so the
+ * shading follows the roots out instead of drawing a suspicious ring.
+ */
+function contactFalloff(x, z, r0, r1) {
+  const rad = Math.hypot(x, z);
+  const a = Math.atan2(z, x);
+  const lobe = 1 + 0.3 * Math.sin(3 * a - 2.618) + 0.11 * Math.sin(5 * a + 1.2);
+  return 1 - smoothstep(r0 * lobe, r1 * lobe, rad);
+}
+
+/**
+ * The tight, dark crevice itself: bare earth and deep shade.
+ *
+ * The inner radius has to clear the trunk's root flare (about 0.6 at the
+ * ground) or the darkest part of this is hidden under the trunk and nothing
+ * shows at all — which is exactly what the first attempt did.
+ */
+export const trunkContact = (x, z) => contactFalloff(x, z, 0.5, 1.05);
+
+/**
+ * The wide, soft pool around it. Two terms rather than one because a single
+ * falloff can only be tight (reads as a painted ring) or wide (reads as a
+ * second cast shadow); the pair reads as occlusion.
+ */
+export const trunkPool = (x, z) => contactFalloff(x, z, 0.7, 2.0);
+
 export function buildIsland(r) {
   const group = new THREE.Group();
   const SEG = 96;
 
   // --- grass dome --------------------------------------------------------
   const topPos = [], topNor = [], topIdx = [], topCol = [];
-  const RINGS = 9;
+  // More rings than the shape needs, bunched toward the centre, purely so the
+  // contact shading at the trunk has somewhere to live. On the old even rings
+  // the nearest vertex to the trunk was a quarter of a unit out, which is
+  // wider than the whole effect.
+  const RINGS = 14;
+  const ringF = (ri) => Math.pow(ri / RINGS, 1.75);
   const gDeep = new THREE.Color(0x4a8a33);
   const gMid = new THREE.Color(0x74b540);
+  // Bare earth under the tree. The blades go almost flat here (see buildGrass),
+  // so this is what actually shows, and it wants to read as duff, not lawn.
+  const duff = new THREE.Color(0x46341f);
+
+  const topColourAt = (x, z, f) => {
+    const c = gDeep.clone().lerp(gMid, clamp(0.35 + f * 0.75, 0, 1));
+    c.lerp(gDeep, trunkPool(x, z) * 0.7);
+    return c.lerp(duff, clamp(trunkContact(x, z) * 1.05, 0, 1) * 0.92);
+  };
+
   topPos.push(0, topY(0), 0);
   topNor.push(0, 1, 0);
-  topCol.push(gMid.r, gMid.g, gMid.b);
+  {
+    const c = topColourAt(0, 0, 0);
+    topCol.push(c.r, c.g, c.b);
+  }
   for (let ri = 1; ri <= RINGS; ri++) {
-    const f = ri / RINGS;
+    const f = ringF(ri);
     for (let i = 0; i < SEG; i++) {
       const a = (i / SEG) * Math.PI * 2;
       const rad = radiusAt(a) * f * 0.995;
       const y = topY(radiusAt(a) * f);
-      topPos.push(Math.cos(a) * rad, y, Math.sin(a) * rad);
+      const x = Math.cos(a) * rad, z = Math.sin(a) * rad;
+      topPos.push(x, y, z);
       topNor.push(0, 1, 0);
-      const c = gDeep.clone().lerp(gMid, clamp(0.35 + f * 0.75, 0, 1));
+      const c = topColourAt(x, z, f);
       topCol.push(c.r, c.g, c.b);
     }
   }
@@ -177,6 +233,8 @@ export function buildGrass(r, uniforms) {
   const lo = new THREE.Color(0x5e9e37);
   const mid = new THREE.Color(0x81c246);
   const hi = new THREE.Color(0xa8d95c);
+  const shadeG = new THREE.Color(0x2c5424); // grass in deep shade at the trunk
+  const duffG = new THREE.Color(0x46341f); // the earth showing through it
 
   for (let i = 0; i < COUNT; i++) {
     const a = r() * Math.PI * 2;
@@ -184,13 +242,22 @@ export function buildGrass(r, uniforms) {
     const rad = Math.sqrt(r()) * edgeR * 0.985;
     p.set(Math.cos(a) * rad, topY(rad) - 0.01, Math.sin(a) * rad);
 
-    // Shorter and darker right under the trunk — reads as shade, and stops the
-    // grass from fighting the roots for attention.
-    const shade = clamp((Math.hypot(p.x, p.z) - 0.25) / 0.85, 0, 1);
+    // Contact occlusion at the trunk. The blades do most of the work here:
+    // in the crevice they go nearly flat and drop to a shaded, earthy tone,
+    // so the lawn gives way to bare duff instead of running clean up to the
+    // bark, and the wider pool keeps the whole base from sitting in full sun.
+    const ao = trunkContact(p.x, p.z);
+    const pool = trunkPool(p.x, p.z);
+    // A collar of taller, shaded tufts right where the turf meets the bark.
+    // Flattening the grass all the way in was a mistake on its own: with
+    // nothing lapping over the root flare the trunk still ended in a clean
+    // line. Blades standing against the bark are what actually reads as
+    // contact. Peaks at the half-falloff, so it follows the same lobes.
+    const collar = 4 * ao * (1 - ao);
     // Shorter at the rim too, so the island silhouette is not a hairy fringe.
     const edge = 1 - smoothstep(0.82, 1.0, rad / edgeR);
 
-    const h = rr(r, 0.085, 0.155) * lerp(0.66, 1.0, shade) * lerp(0.55, 1.0, edge);
+    const h = rr(r, 0.085, 0.155) * lerp(1.0, 0.22, ao * ao) * (1 + collar * 0.42) * lerp(0.55, 1.0, edge);
     s.set(rr(r, 0.85, 1.25), h, 1);
     q.setFromAxisAngle(axis, r() * Math.PI * 2);
     m.compose(p, q, s);
@@ -199,7 +266,8 @@ export function buildGrass(r, uniforms) {
     const t = r();
     const c = lo.clone().lerp(mid, clamp(t * 1.4, 0, 1));
     c.lerp(hi, clamp((t - 0.62) * 2.2, 0, 1));
-    c.lerp(lo, (1 - shade) * 0.38);
+    c.lerp(shadeG, clamp(pool * 0.52 + ao * 0.62, 0, 1) * 0.84); // shade, then
+    c.lerp(duffG, clamp((ao - 0.58) * 2.4, 0, 1) * 0.7); // bare earth in the crevice
     c.lerp(lo, smoothstep(0.55, 1.0, rad / edgeR) * 0.3);
     if (r() < 0.14) c.lerp(lo, 0.45); // scattered darker tufts
     c.offsetHSL(rr(r, -0.02, 0.02), rr(r, -0.05, 0.05), rr(r, -0.03, 0.03));

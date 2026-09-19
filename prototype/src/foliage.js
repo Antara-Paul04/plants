@@ -4,14 +4,17 @@
 // scatter thousands of small cupped leaf cards over a set of overlapping
 // ellipsoid lobes that sit on the real branch tips.
 //
-// Two details do most of the work:
+// Three details do most of the work:
 //   - each leaf's normal points OUTWARD from its lobe, not along its own face,
 //     so the canopy shades like one soft volume instead of a glitter of cards
 //   - density is biased toward each lobe's surface, leaving the interior open
 //     so you can see through to the branches
+//   - a low-frequency noise field carves air straight through the whole crown,
+//     cutting across lobe boundaries. Without it, enough overlapping lobes to
+//     make a convincing mass also make a cauliflower.
 
 import * as THREE from 'three';
-import { rr, lerp, clamp, applySway } from './util.js';
+import { rr, lerp, clamp, smoothstep, noise3, applySway } from './util.js';
 
 /** Duplicate every triangle with reversed winding, keeping the normals. */
 function doubleFace(g) {
@@ -68,6 +71,7 @@ const _m = new THREE.Matrix4();
 const _q = new THREE.Quaternion();
 const _q2 = new THREE.Quaternion();
 const _up = new THREE.Vector3(0, 0, 1);
+const _upY = new THREE.Vector3(0, 1, 0); // world up, for tipping normals skyward
 function orient(obj, pos, dir, roll, scale) {
   _q.setFromUnitVectors(_up, dir);
   _q2.setFromAxisAngle(dir, roll);
@@ -82,35 +86,56 @@ function orient(obj, pos, dir, roll, scale) {
  */
 export function canopyLobes(tips, r) {
   const lobes = [];
+  // Where the crown radiates from. Only used to push clumps outward along
+  // their own limb, so the canopy hangs off branches instead of forming a ball.
+  const hub = new THREE.Vector3(0, 2.95, 0);
+
   for (const t of tips) {
+    // Size varies hard from lobe to lobe. Lots of similar-sized bumps tiling a
+    // convex hull is *exactly* what reads as cauliflower; a few big masses with
+    // small satellites between them reads as a tree. So the draw is roughly
+    // bimodal rather than a narrow band around 1.
+    const big = r() < 0.38;
+    const k = big ? rr(r, 1.2, 1.54) : rr(r, 0.5, 0.82);
+
+    const c = t.p.clone().add(new THREE.Vector3(rr(r, -0.16, 0.16), rr(r, 0.06, 0.54), rr(r, -0.18, 0.18)));
+    const away = c.clone().sub(hub);
+    away.y *= 0.62; // spread sideways a little more than upward, but not flat
+    if (away.lengthSq() > 1e-6) c.addScaledVector(away.normalize(), rr(r, -0.14, 0.2));
+
+    // Gently squeeze the crown inward and stretch it upward about the hub.
+    // Spreading the lobes for air made the canopy read as a wide flat parasol;
+    // this puts the dome back without adding filler lobes, which is what made
+    // it a cauliflower in the first place. The lobes drift a little off their
+    // branch tips as a result — under a tenth of a unit, and invisible.
+    c.x *= 0.9;
+    c.z *= 0.9;
+    c.y = hub.y + (c.y - hub.y) * 1.16;
+
     lobes.push({
-      c: t.p.clone().add(new THREE.Vector3(rr(r, -0.12, 0.12), rr(r, 0.1, 0.6), rr(r, -0.14, 0.14))),
-      rx: t.w * rr(r, 0.64, 1.02),
-      ry: t.w * rr(r, 0.58, 0.96),
-      rz: t.w * rr(r, 0.64, 1.02),
+      c,
+      rx: t.w * k * rr(r, 0.76, 1.1),
+      ry: t.w * k * rr(r, 0.62, 0.94), // a touch flattened: clumps, not balls
+      rz: t.w * k * rr(r, 0.76, 1.1),
     });
   }
-  // Fillers: close the gaps between limbs so the crown reads as one mass.
+
+  // Fillers. These used to close every gap between limbs so the crown read as
+  // one mass — which is what made it a cauliflower. Now there are five, and
+  // they only give the crown a top and two shoulders. The gaps stay open.
   const fill = [
-    [0.0, 3.62, -0.04, 0.94, 0.86, 0.9],
-    [-0.62, 3.44, 0.38, 0.82, 0.74, 0.78],
-    [0.66, 3.48, -0.32, 0.84, 0.74, 0.8],
-    [0.16, 3.26, 0.62, 0.74, 0.66, 0.7],
-    [-0.34, 3.22, -0.64, 0.72, 0.64, 0.68],
-    [0.0, 3.9, 0.02, 1.0, 0.76, 0.96],
-    [-0.3, 3.82, 0.26, 0.68, 0.58, 0.64],
-    [0.32, 3.84, -0.22, 0.7, 0.58, 0.66],
-    [-1.02, 3.04, -0.16, 0.6, 0.56, 0.58],
-    [0.98, 3.1, 0.2, 0.62, 0.56, 0.6],
-    [-0.5, 2.84, 0.8, 0.46, 0.42, 0.44],
-    [0.72, 2.78, -0.62, 0.44, 0.4, 0.42],
+    [-0.04, 3.96, 0.04, 0.96, 0.76, 0.92],
+    [-0.68, 3.5, 0.44, 0.78, 0.64, 0.74],
+    [0.74, 3.56, -0.38, 0.8, 0.64, 0.76],
+    [-1.0, 3.04, -0.2, 0.52, 0.46, 0.5],
+    [0.96, 3.1, 0.24, 0.54, 0.46, 0.52],
   ];
   for (const f of fill) {
     lobes.push({
       c: new THREE.Vector3(f[0], f[1], f[2]),
-      rx: f[3] * rr(r, 0.94, 1.06),
-      ry: f[4] * rr(r, 0.94, 1.06),
-      rz: f[5] * rr(r, 0.94, 1.06),
+      rx: f[3] * rr(r, 0.9, 1.1),
+      ry: f[4] * rr(r, 0.9, 1.1),
+      rz: f[5] * rr(r, 0.9, 1.1),
     });
   }
   return lobes;
@@ -132,15 +157,17 @@ export function buildFoliage(lobes, r, uniforms) {
   // lobe count (big lobes should not look sparse next to small ones).
   const vols = lobes.map((l) => l.rx * l.ry * l.rz);
   const totalVol = vols.reduce((a, b) => a + b, 0);
-  const LEAVES = 19000;
+  // Attempts, not leaves. Most of the rejections below exist to carve air out
+  // of the crown, so the accepted count has to be allowed to fall — refilling
+  // every rejected leaf elsewhere would just move the density around.
+  const ATTEMPTS = 41000;
 
   // Three leaf shapes, so the canopy is not a repeat of one silhouette.
   const variants = [leafGeometry(r, 7), leafGeometry(r, 8), leafGeometry(r, 6)];
   const buckets = variants.map(() => []);
 
-  const centre = new THREE.Vector3(0, 3.1, 0);
-
-  for (let i = 0; i < LEAVES; i++) {
+  let n = 0;
+  for (let i = 0; i < ATTEMPTS; i++) {
     // Pick a lobe weighted by volume.
     let pick = r() * totalVol, li = 0;
     while (li < lobes.length - 1 && (pick -= vols[li]) > 0) li++;
@@ -154,13 +181,28 @@ export function buildFoliage(lobes, r, uniforms) {
     // Drop most downward-facing leaves: an open underside is what lets the
     // branch structure show, and it is the main thing separating this from
     // a shrub on a stick.
-    if (d.y < -0.05 && r() < (0.34 - d.y * 0.92)) { i--; continue; }
-    const shell = Math.pow(r(), 0.32) * (r() < 0.1 ? rr(r, 1.0, 1.07) : 1.0);
+    if (d.y < -0.05 && r() < (0.34 - d.y * 0.92)) continue;
+    // A few sprigs reach well past the shell. Without them the crown edge is a
+    // clean scallop on every lobe, which is half of the cauliflower reading.
+    const reach = r() < 0.055 ? rr(r, 1.1, 1.34) : r() < 0.12 ? rr(r, 1.0, 1.08) : 1.0;
+    const shell = Math.pow(r(), 0.32) * reach;
     const p = new THREE.Vector3(
       L.c.x + d.x * L.rx * shell,
       L.c.y + d.y * L.ry * shell,
       L.c.z + d.z * L.rz * shell
     );
+
+    // Carve air. A slow noise field punches channels and windows right through
+    // the canopy, cutting across lobe boundaries so the holes belong to the
+    // crown rather than to any one lobe. Soft-edged on purpose — a hard cut
+    // leaves a suspiciously clean rim around every gap.
+    //
+    // The frequency matters more than the amount: at a high frequency this
+    // thins the whole canopy evenly, which reads as moth-eaten rather than
+    // airy. Low frequency plus a fairly sharp cut gives a few window-sized
+    // gaps with dense leaf between them, which is what was wanted.
+    const airN = noise3(p.x * 0.92 + 4.2, p.y * 0.78, p.z * 0.92 - 1.7);
+    if (r() > smoothstep(0.24, 0.05, airN)) continue;
 
     // Outward normal of the lobe, jittered — this is what makes the canopy
     // shade as a volume. Straight card normals look like tinsel.
@@ -168,6 +210,14 @@ export function buildFoliage(lobes, r, uniforms) {
     out.x += rr(r, -0.42, 0.42);
     out.y += rr(r, -0.34, 0.5); // bias up: leaves present themselves to the sky
     out.z += rr(r, -0.42, 0.42);
+    out.normalize();
+    // Leaves out at the shell get tipped further toward the sky, and none of
+    // them is allowed to point steeply down. A normal that faces neither the
+    // key, the rim nor the sky is what produced the dark flecks along the
+    // silhouette: those leaves had nothing left to catch. Tipping only the
+    // outer shell keeps the interior's volume shading intact.
+    out.lerp(_upY, clamp((shell - 0.55) * 0.62, 0, 0.34));
+    if (out.y < -0.12) out.y = -0.12;
     out.normalize();
 
     const s = rr(r, 0.082, 0.142) * lerp(0.78, 1.16, shell);
@@ -180,8 +230,9 @@ export function buildFoliage(lobes, r, uniforms) {
     col.lerp(LEAF_LIT, clamp((expo - 0.52) * 1.7, 0, 1) * rr(r, 0.55, 1.0));
     col.offsetHSL(rr(r, -0.022, 0.022), rr(r, -0.05, 0.05), rr(r, -0.035, 0.035));
 
-    const v = (i * 7919) % 3;
+    const v = (n * 7919) % 3;
     buckets[v].push({ p, out, roll: r() * Math.PI * 2, scale, col });
+    n++;
   }
 
   const leafMat = new THREE.MeshStandardMaterial({
@@ -212,7 +263,9 @@ export function buildFoliage(lobes, r, uniforms) {
   // --- blossoms ----------------------------------------------------------
   // Grown in clusters, the way blossom actually appears, and pushed slightly
   // proud of the leaf shell so they read without floating free of the canopy.
-  const CLUSTERS = 190;
+  // A few more clusters than before, because the canopy around them is now
+  // thinner: the same number of blossoms read as fewer once the leaves opened up.
+  const CLUSTERS = 215;
   const blossoms = [];
   for (let c = 0; c < CLUSTERS; c++) {
     let pick = r() * totalVol, li = 0;
@@ -224,11 +277,16 @@ export function buildFoliage(lobes, r, uniforms) {
     if (d.y < -0.34) d.y = -0.34 + r() * 0.22;
     if (c % 3 === 0) d.y = Math.abs(d.y) * 0.9 + 0.25; // few blossoms on the underside
     d.normalize();
-    const n = 2 + Math.floor(r() * 4);
+    const nb = 2 + Math.floor(r() * 4);
     const tone = r();
-    for (let k = 0; k < n; k++) {
-      const shell = rr(r, 0.9, 1.1);
-      const jitter = new THREE.Vector3(rr(r, -0.34, 0.34), rr(r, -0.28, 0.28), rr(r, -0.34, 0.34));
+    for (let k = 0; k < nb; k++) {
+      // Sit just proud of the leaf shell — close enough to be nested in
+      // leaves, not out past them. The old jitter was large enough to throw
+      // blossoms clear of the canopy entirely, where they hung in the sky as
+      // unlit specks with nothing around them to bounce light or to read them
+      // against. That, not the material, was what made the dark flecks.
+      const shell = rr(r, 0.94, 1.06);
+      const jitter = new THREE.Vector3(rr(r, -0.2, 0.2), rr(r, -0.15, 0.15), rr(r, -0.2, 0.2));
       const p = new THREE.Vector3(
         L.c.x + d.x * L.rx * shell,
         L.c.y + d.y * L.ry * shell,
@@ -237,13 +295,16 @@ export function buildFoliage(lobes, r, uniforms) {
       // Tilt blossoms toward the sky rather than straight out of the lobe.
       // Purely outward-facing flowers on the shaded side rendered dead brown,
       // which reads as rot. A blossom wants to catch light from almost
-      // anywhere — and tilting up is what real blossom does anyway.
+      // anywhere — and tilting up is what real blossom does anyway. The up
+      // term now dominates: at the silhouette the outward direction is roughly
+      // perpendicular to every light in the scene, which is the whole problem.
       const out = new THREE.Vector3(d.x / L.rx, d.y / L.ry, d.z / L.rz).normalize();
-      out.multiplyScalar(0.72);
-      out.y += 0.6;
-      out.x += rr(r, -0.26, 0.26);
-      out.y += rr(r, -0.1, 0.3);
-      out.z += rr(r, -0.26, 0.26);
+      out.multiplyScalar(0.5);
+      out.y += 0.92;
+      out.x += rr(r, -0.2, 0.2);
+      out.y += rr(r, -0.05, 0.28);
+      out.z += rr(r, -0.2, 0.2);
+      if (out.y < 0.22) out.y = 0.22; // never face a blossom away from the sky
       out.normalize();
       const col = (tone < 0.46 ? BLOSSOM_A : tone < 0.86 ? BLOSSOM_B : BLOSSOM_C)
         .clone()
@@ -258,8 +319,13 @@ export function buildFoliage(lobes, r, uniforms) {
     metalness: 0,
     side: THREE.FrontSide,
     flatShading: true,
-    emissive: 0x96504f,
-    emissiveIntensity: 0.3,
+    // Warmer and a little stronger than before: this is the floor a blossom
+    // falls to when it is turned away from every light, so the floor has to be
+    // a plausible shaded pink rather than a brown. Not the fix on its own —
+    // the geometry above is what actually stopped them going dark — but it
+    // keeps the worst-case petal inside the palette.
+    emissive: 0xb0625f,
+    emissiveIntensity: 0.4,
   });
   applySway(blossomMat, uniforms, swayOpts);
   const bm = new THREE.InstancedMesh(blossomGeo, blossomMat, blossoms.length);
