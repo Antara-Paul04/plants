@@ -84,6 +84,10 @@ export async function analysePixels(arg) {
     }
     const accents = [...hueBins.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 3)
       .map(([hk, e]) => ({ hex: hex(e.r / e.n, e.g / e.n, e.b / e.n), hue: hk, coverage: +(e.n / n).toFixed(4) }));
+    // WARM share of chromatic coverage (bin centres 22.5/37.5/52.5 -> amber..rust).
+    // Same definition as probe/hue.js so live and batch agree. Feeds the AUTUMN gate.
+    let warm = 0;
+    for (const [hk, e] of hueBins) { const c = hk + 7.5; if (c >= 10 && c <= 55) warm += e.n; }
 
     return {
       background: bgHex,
@@ -97,6 +101,7 @@ export async function analysePixels(arg) {
       primary: accents[0] ? accents[0].hex : null,
       secondary: accents[1] ? accents[1].hex : null,
       tertiary: accents[2] ? accents[2].hex : null,
+      warmShare: chromatic ? +(warm / chromatic).toFixed(4) : 0,
       distinctBuckets: bins.size,
       sampledPixels: n
     };

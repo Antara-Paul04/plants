@@ -481,6 +481,10 @@ earns no role in DNA and I have not manufactured one.
 
 ### Background is a weak differentiator, and that is a fact about the web
 
+> **RETRACTED — see §17.** The "19 of 23" figure below is wrong: 5 of 23 grounds are
+> genuinely dark. The paragraph is left standing because the wrong number was
+> load-bearing for the "deliberately subtle" defence it supports.
+
 **19 of 23 corpus grounds are pure white.** Deriving background from `palette.ground`
 alone gives every site an identical page. The current rule preserves the site's
 light/dark decision and, when the ground is achromatic, borrows the *design accent's*

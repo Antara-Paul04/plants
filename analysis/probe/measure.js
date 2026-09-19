@@ -340,14 +340,19 @@ export function measurePage(opts) {
     }
   }
 
+  // opts.only === 'v3' -> skip the v1 and full passes (the live path needs only v3).
+  // Values are identical either way; this only avoids recomputing what nobody reads.
+  const onlyV3 = opts && opts.only === 'v3';
   return {
     viewport: { w: VW, h: VH }, docHeight: Math.round(docH),
     title: document.title || '', url: location.href,
-    scopes: {
-      v1: analyse(scopes.v1, 'viewport1'),
-      v3: analyse(scopes.v3, 'viewport3'),
-      full: analyse(scopes.full, 'fullpage')
-    },
+    scopes: onlyV3
+      ? { v3: analyse(scopes.v3, 'viewport3') }
+      : {
+          v1: analyse(scopes.v1, 'viewport1'),
+          v3: analyse(scopes.v3, 'viewport3'),
+          full: analyse(scopes.full, 'fullpage')
+        },
     mediaRects,
     overlays: { count: overlaySuspects.length, suspects: overlaySuspects.slice(0, 6) },
     authorRules, sheetErr
