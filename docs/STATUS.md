@@ -10,57 +10,72 @@
 
 ## Phase
 
-**Art-direction prototyping.** One hand-built tree exists to test the look. The
-product specification is still unfinished, and no product code has been written.
+**Website-analysis research.** Testing whether a useful visual fingerprint can be
+extracted from arbitrary sites, before committing to any website → tree rules.
+
+The 3D domain is deliberately idle during this phase.
 
 ---
 
 ## Working
 
-- Repository infrastructure — docs, agent operating manual, reference directories
-- **Tree prototype** (`prototype/`) — one hand-authored tree on a small island,
-  running in the browser. Marked **EXPERIMENT**; awaiting human visual review.
-  Run it: `cd prototype && python3 -m http.server 5188`
+- Repository infrastructure, docs, and the Lead + specialist operating model
+- **Tree prototype** (`prototype/`) — one hand-authored tree, two visual passes done,
+  build stable. Marked **EXPERIMENT**. Run: `cd prototype && python3 -m http.server 5188`
 
 ---
 
 ## In progress
 
-- Product specification
-- Visual mapping exploration
+- **Website analysis research** — probe under `analysis/` (untracked so far),
+  testing hypotheses A–N against a diverse corpus. Checkpoint due after ~5
+  extreme-spanning sites, before the full corpus.
 
 ---
 
 ## Not started
 
-- Frontend
-- Website analysis
-- Tree generator (the prototype is hand-authored, not procedural)
+- Tree generator (the prototype is hand-authored; two seeds produce near-identical trees)
+- Frontend / product UI
 - Integration
 
 ---
 
 ## Current questions
 
-Open and waiting on human decisions. Several are taste judgments and cannot be
-resolved by an agent alone (AGENTS.md R7).
+Waiting on human decisions. Several are taste judgments an agent cannot settle (R7).
 
-1. **Does the prototype tree look right?** Is this the visual direction, or a
-   starting point to push? Nothing in it is approved.
-2. Which properties of a website should affect the tree?
-3. How should website colour map into the tree? (DECISIONS D5 — flowers as the
-   carrier is still TENTATIVE and untested.)
-4. How should minimal websites differ from expressive ones?
-5. Is the island the right base? The prototype assumes one; that was never decided.
-6. What 3D implementation approach should we commit to? The prototype's three.js
-   setup was chosen to be disposable.
-7. Should wind sway and drifting petals stay? Motion is still OPEN.
+1. **Does the prototype tree look right?** This gates everything — the generator, and
+   therefore the product. Three specific taste calls are open from the second pass:
+   is the looser crown better or now too airy; does the ground contact read as
+   occlusion or as a smudge; is the windswept character of the edge sprigs wanted?
+2. Which website properties should affect the tree? (Research in progress.)
+3. How should website colour map into the tree? (D5 — flowers as carrier is TENTATIVE.)
+4. Is the island the right base? Also decides the teardown boundary when trees are
+   replaced.
+5. Should wind sway and drifting petals stay? Motion is still OPEN.
+6. Bundle vs CDN for three.js — the prototype deliberately avoided committing.
+
+---
+
+## Known, recorded, not yet acted on
+
+- Blossoms read as a horizontal band across the crown rather than distributing
+  through it. Observation only, not a verdict.
+- No `dispose()` anywhere in the prototype; several materials and geometries are
+  shared between meshes, so naive teardown would double-free.
+- `applySway` bakes options into GLSL as literals and builds its program-cache key by
+  bare concatenation — a fresh shader compile per differently-sized tree, and a
+  silent collision risk once sway varies.
+- `main.js` runs at import time and exports nothing, so a frontend cannot drive it.
+- The build must report its own extents; camera framing constants are tuned to this
+  one tree.
 
 ---
 
 ## Next
 
-**Human visual review of the prototype**, then finish the V0 creative specification.
+**Human visual review of the tree** (question 1), and the analysis checkpoint.
 
-The generator should not be started until question 1 is answered — what varies is
-only meaningful once we agree on what is being varied.
+The generator must not start until question 1 is answered — what varies is only
+meaningful once we agree what is being varied.
