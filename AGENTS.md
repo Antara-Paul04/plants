@@ -103,34 +103,123 @@ Promotion to `DECIDED` is a human call and gets an entry in `DECISIONS.md`.
 
 ---
 
-## 3. Agent roles
+## 3. Operating model
 
-Claude does most of the implementation, conceptually operating in several roles.
-These are hats, not separate repositories or branches — but say which one you are
-wearing, because it sets what you are allowed to decide.
+```
+                     HUMAN
+           Creative / Product Director
+                       |
+                       v
+                  CLAUDE LEAD
+             Project / Technical Lead
+                       |
+        +--------------+--------------+
+        v              v              v
+    VISUAL-3D         WEB          ANALYSIS
+```
 
-| Role | Owns | Primary docs |
-| --- | --- | --- |
-| **Lead / Architect** | Overall coherence, scope discipline, cross-cutting decisions, keeping the docs true | `PRODUCT.md`, `DECISIONS.md`, `STATUS.md` |
-| **Web / Frontend** | The page, URL input, loading/error states, the surrounding experience | `PRODUCT.md`, `VISUAL-SYSTEM.md` |
-| **3D / Generative** | Tree generation, geometry, materials, rendering, performance | `TREE-SYSTEM.md`, `VISUAL-SYSTEM.md` |
-| **Website analysis** | Fetching and interpreting a site, deriving visual characteristics | `WEBSITE-ANALYSIS.md` |
+**Codex** sits outside this, on demand and by human approval only.
 
-**Codex** is used sparingly and deliberately, for:
+### Claude Lead
 
-- difficult technical problems
-- debugging
-- architecture review
-- performance work
-- targeted, well-scoped implementations
-- second opinions on a Claude-authored approach
+The primary session for this repository is **Lead**, and it is the normal entry point
+for human instructions. Lead owns:
 
-Codex is subject to every rule above. A second opinion that quietly rewrites the
-specification is not a second opinion.
+understanding requests · breaking approved work into tasks · choosing the right
+specialist · delegating · coordinating cross-domain work · reviewing specialist
+output · integrating it · architectural coherence · keeping `STATUS.md` accurate ·
+preventing scope creep · spotting decisions that need human judgment · spotting where
+Codex would genuinely help.
+
+Lead should **not** reflexively implement every substantial task itself. Meaningful
+domain work goes to the specialist that owns it.
+
+### Specialists
+
+Defined as native Claude Code subagents in `.claude/agents/`. Each file names its
+domain, the files it may modify, and what it must not touch — that detail lives there,
+not here.
+
+| Agent | Owns |
+| --- | --- |
+| `visual-3d` | Tree geometry, foliage, flowers, terrain, materials, lighting, camera, 3D motion, render performance, eventual tree parameters |
+| `analysis` | Website capture, DOM/CSS inspection, palette extraction, measurable characteristics, normalization |
+| `web` | Frontend experience, URL input, page states, responsive behaviour, wiring analysis output to the renderer |
+
+### The ownership principle
+
+**Agents own domains. Lead owns boundaries.**
+
+If `analysis` decides it needs a `foliageDensity: 0–1` value to exist, it does not go
+and rewrite the 3D system. It reports the requirement to Lead, and Lead coordinates
+the interface with `visual-3d`. Likewise `web` consumes what the other domains expose
+rather than reaching into their internals. Every cross-domain change is Lead's call.
+
+### Human authority
+
+The human is final authority on product direction, scope, visual taste, art direction,
+interaction, any subjective design question, whether an experiment looks good, and
+whether Codex is used.
+
+Agents may experiment and recommend. They may **not** quietly turn a subjective
+experiment into a product decision (R1, R11). If it needs taste, show it and ask.
+
+### Codex
+
+A limited, on-demand specialist — not a fourth permanent worker. Potentially useful
+for: hard debugging, technical or architecture review, performance investigation,
+narrow targeted implementation, second opinions, and reviewing Claude's code for
+fragility or needless complexity.
+
+Lead **may** recommend Codex and prepare a narrow context package for it.
+Lead **may not** invoke Codex without explicit human approval.
+
+Codex usage is limited, so do not propose it for ordinary work Claude can handle.
+Codex is bound by every rule in this document; a second opinion that quietly rewrites
+the specification is not a second opinion.
 
 ---
 
-## 4. Handoff
+## 4. The loop
+
+```
+Human decides direction -> Lead -> specialist -> Lead reviews and integrates
+                        -> Human reviews result -> repeat
+```
+
+That is the whole process. No standing meetings, no ticket system, no ceremony. The
+role separation matters more than any machinery around it.
+
+---
+
+## 5. Delegation and reporting
+
+**When Lead delegates substantial work**, the specialist gets:
+
+1. objective
+2. relevant constraints
+3. relevant docs and files
+4. domain and files it may modify
+5. things it must not change
+6. expected deliverable
+7. stop condition
+
+**When a specialist finishes**, it reports:
+
+- what it attempted
+- what changed
+- files changed
+- experiments and assumptions made
+- unresolved issues
+- anything needing human review
+- anything another domain now needs
+
+Lead reviews the work before treating it as integrated project state. A specialist's
+report is a claim, not a fact.
+
+---
+
+## 6. Leaving the repository
 
 When you finish a piece of work, leave the repository in a state where the next agent
 — who was not present for your session — can continue. That means:

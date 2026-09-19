@@ -7,11 +7,17 @@ This is a small creative internet experiment, not a SaaS product.
 
 ## Status
 
-**Pre-implementation.** Implementation has intentionally not begun.
+**Art-direction prototyping.** There is one hand-built tree in `prototype/`, made to
+test whether the look is achievable in a browser. It is marked **EXPERIMENT** and is
+awaiting human review — nothing in it is an approved decision.
 
-There is no frontend, no 3D code, no framework and no dependency install in this
-repository yet — and that is deliberate. The creative and product specification is
-being settled first, so that the thing we build is the thing we actually want.
+There is still no frontend, no website analysis, no tree generator and no framework,
+and that is deliberate. The creative and product specification is being settled first,
+so that the thing we build is the thing we actually want.
+
+```bash
+cd prototype && python3 -m http.server 5188
+```
 
 ## Conceptual pipeline (V0)
 
@@ -37,6 +43,8 @@ If you are an agent or a human joining this repository, read in this order:
 | [docs/TREE-SYSTEM.md](docs/TREE-SYSTEM.md) | Tree generation system (unresolved — placeholders) |
 | [docs/WEBSITE-ANALYSIS.md](docs/WEBSITE-ANALYSIS.md) | Website interpretation (unresolved — placeholders) |
 | [references/](references/README.md) | Visual references, test websites, experiment output |
+| [prototype/](prototype/README.md) | The 3D tree art-direction prototype (EXPERIMENT) |
+| `.claude/agents/` | Native subagent definitions for the three specialist roles |
 
 Most of the domain documents are deliberately structured-but-empty. They are
 scaffolding for decisions we have not made yet, not descriptions of decisions we have.
