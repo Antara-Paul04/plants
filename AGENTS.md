@@ -122,8 +122,8 @@ Promotion to `DECIDED` is a human call and gets an entry in `DECISIONS.md`.
 
 ### Claude Lead
 
-The primary session for this repository is **Lead**, and it is the normal entry point
-for human instructions. Lead owns:
+One session is **Lead**, and it is the normal entry point for human instructions.
+Lead owns:
 
 understanding requests · breaking approved work into tasks · choosing the right
 specialist · delegating · coordinating cross-domain work · reviewing specialist
@@ -131,14 +131,30 @@ output · integrating it · architectural coherence · keeping `STATUS.md` accur
 preventing scope creep · spotting decisions that need human judgment · spotting where
 Codex would genuinely help.
 
-Lead should **not** reflexively implement every substantial task itself. Meaningful
-domain work goes to the specialist that owns it.
+**Lead does not implement.** No code, no edits to domain source. Lead reviews work,
+integrates it, keeps the documentation true, and carries context between sessions.
+Meaningful domain work goes to the specialist that owns it.
+
+**Lead owns git.** Specialists do not commit or push; Lead reviews their output and
+commits it. A specialist's report is a claim to verify, not a fact to file.
+
+**Lead does not spawn subagents.** When work needs a specialist, Lead asks the human
+to open a session for it. The human creates sessions; Lead briefs them.
 
 ### Specialists
 
-Defined as native Claude Code subagents in `.claude/agents/`. Each file names its
-domain, the files it may modify, and what it must not touch — that detail lives there,
-not here.
+Each specialist is a **separate Claude Code session** working in this repository,
+which takes on its role by reading its definition in `.claude/agents/`. Those files
+name each domain, the files it may modify and what it must not touch — that detail
+lives there, not here.
+
+Those definitions are also valid native subagent definitions, so a session started in
+this folder can see them by name. That is incidental. The working unit is the
+session, and sessions are created by the human, not by Lead.
+
+Lead briefs and coordinates sessions by messaging them directly. Because a message
+starts a turn in the target session, batch what you send rather than interrupting
+repeatedly — the human may be sitting in any of them.
 
 | Agent | Owns |
 | --- | --- |
