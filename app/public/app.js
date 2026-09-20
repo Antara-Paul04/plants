@@ -197,6 +197,7 @@ async function grow(raw) {
   // marching cubes AFTER /api/grow returns, and that is the larger half of the
   // wait — reporting the analysis time told the user 2.9s while they sat for 13.
   const t0 = performance.now();
+  result.classList.remove('example');
   state('analyzing', 'Reading your website…');
 
   let data;
@@ -341,4 +342,67 @@ function setSky(name) {
 // takes the setDNA branch, which is the same swap the renderer uses everywhere.
 try { tree = mountIdle(sceneEl, { autoRotate: true, onEnv: setSky }); }
 catch (err) { console.error(err); }
+
+// THE OPENING FRAME IS A REAL TREE, and this is a reversal of the note above.
+//
+// That note is still right about what it rejects. What it rejected was a
+// DEFAULT tree: DEFAULT_DNA belonging to no website, which would draw a value
+// we never measured. This is not that. Every number in gallery.json came out of
+// the ordinary analyzer reading an ordinary site, and the panel that opens
+// underneath it is the same "Why this tree?" panel a live result gets, because
+// it is the same kind of object.
+//
+// What changed is that the empty island was looked at rather than reasoned
+// about. Framed for a tree and given none, it is a cropped brown disc filling
+// the lower third with an invitation card floating in dead centre — the same
+// place the status card sits. It does not read as a planter waiting for
+// something. It reads as a page that failed to load, which is the one thing a
+// first frame must never do: a visitor arriving from a link has no idea yet
+// that trees are the point, and the frame that is supposed to tell them says
+// nothing at all. It is also, exactly, what our FAILURE state looks like.
+//
+// The other objection — that a default tree competes with the one the user is
+// about to ask for — is answered by the renderer rather than by argument.
+// setDNA aborts a build in flight and keeps the old scene up until the new one
+// is whole, so a person who types while the example is still building simply
+// takes it over; their tree wins every race, and the UI guards below make sure
+// the example never writes over their result.
+//
+// It is LABELLED, always, and the label is the whole of its honesty: the panel
+// names the site and says "an example". It is never presented as the visitor's.
+const EXAMPLE_POOL = ['gov.uk', 'art.yale.edu', 'en.wikipedia.org', 'threejs.org'];
+
+async function showExample() {
+  let gallery;
+  // Cached DNA, shipped with the page: no analyzer, no network beyond this file,
+  // so the opening tree costs the wood build alone and cannot fail the way a
+  // live read can. An opening frame that depends on a site being up is not an
+  // opening frame.
+  try { gallery = await (await fetch('/gallery.json')).json(); }
+  catch { return; }                       // no gallery: the island stands, as before
+  const pool = EXAMPLE_POOL.filter((s) => gallery?.sites?.[s]);
+  if (!pool.length || busy || lastUrl) return;
+  const site = pool[Math.floor(Math.random() * pool.length)];
+
+  try {
+    await (tree ? tree.setDNA(gallery.sites[site])
+                : (tree = mountTree(sceneEl, gallery.sites[site], { autoRotate: true })).ready);
+  } catch (err) {
+    // AbortError is the expected outcome when the visitor beat us to it.
+    if (err?.name !== 'AbortError') console.error(err);
+    return;
+  }
+  if (busy || lastUrl) return;            // they got there first — leave their state alone
+
+  state('ready');
+  setSky(tree?.envName ?? null);
+  domainEl.textContent = site;
+  stampEl.textContent = 'an example — grow your own';
+  result.classList.add('example');
+  renderWhy(gallery.sites[site]);
+  cacheNote.hidden = true;
+  result.hidden = false;
+}
+
+if (!preset) showExample();
 

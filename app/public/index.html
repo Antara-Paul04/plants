@@ -73,6 +73,11 @@
         color: var(--muted);
         user-select: none;
       }
+      /* The promise, said once. A visitor arriving from a link meets a tree and
+         the word "Plants" and has no reason to connect them; this is the
+         sentence that does it. Quiet enough to ignore on every later visit. */
+      .wordmark b { display: block; font-weight: 400; font-size: 12px; opacity: 0.75; margin-top: 2px; }
+      @media (max-width: 640px) { .wordmark b { display: none; } }
 
       /* --- the dock: input, bottom-left ------------------------------------
          Bottom-LEFT rather than centre because the trunk and island occupy the
@@ -246,7 +251,7 @@
     <canvas id="scene"></canvas>
 
     <div class="ui">
-      <div class="wordmark">Plants</div>
+      <div class="wordmark">Plants<b>every website grows differently</b></div>
       <footer><a href="/compare.html">comparison grid</a></footer>
 
       <div class="overlay" id="overlay">
