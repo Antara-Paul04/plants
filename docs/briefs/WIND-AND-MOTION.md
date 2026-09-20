@@ -89,13 +89,24 @@ So L17 is a legibility bug with a measurable test (crown-versus-sky separation a
 not an aesthetic question needing permission. The standing ban still holds: **night comes
 from colour, direction and contrast, never from raising exposure.**
 
-### W3 — Open, and genuinely a taste question: does the WOOD sway?
+### W3 — The wood does NOT sway. Foliage only. DECIDED by the human, 2026-09-20.
 
-V0 moved only foliage. At V0's amplitude (0.045) nobody noticed that branches were rigid
-while leaves moved. The new tree has **chunky, readable limbs** — so the same trick may not
-survive. If the wood stays rigid, the leaves may look like they are sliding over it.
+> *"i think leaves swaying is enough."*
 
-Not mine to decide. Whoever holds taste should look at both.
+Asked as an open question — V0 moved only foliage, and at its amplitude nobody noticed the
+branches were rigid, but the new tree has chunky readable limbs so the same trick might not
+survive. The human answered it directly, which makes it settled rather than provisional: it
+is not a taste session's ruling to revisit.
+
+It also removes the whole dependency on `taste` being staffed for the wind work, and it
+keeps the SDF wood mesh untouched — no displacing an implicit surface, no risk to the root
+flare or the buttress contact.
+
+**The thing to watch, since the wood is now definitely rigid:** the crown is a hollow shell
+and only 7 of 146 attachment points face the camera at its centre, so the rim carries most of
+the visible foliage. A swinging rim against a rigid trunk is exactly the geometry where
+"leaves sliding over wood" would show. If it reads badly at the chosen amplitude, that is a
+**finding to report**, not a number to quietly tune away.
 
 ---
 
