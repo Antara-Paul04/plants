@@ -286,12 +286,16 @@ export function buildDna(fp, domain){
   const conc = fp.accentConcentration ?? 0;
   const canvasDominant = (fp.canvasArea ?? 0) >= 0.5;
   const concentrated = conc >= B.fruit.concentration && !canvasDominant;
-  const eligible = concentrated && state !== 'bare' && botanicalState !== 'winter'
-                && (state === 'normal' || state === 'lush');
-  const roll = rng();
-  const fruitOn = eligible && roll < B.fruit.rate;
+  // L10: winter expresses its accent AS fruit (persistent berries), and a sparse tree is
+  // still a styled site. Only BARE is excluded — an unstyled page carries no ornament by
+  // definition. L9: no coin-flip. Fruit is a MEASURED trait now, and a 50% roll silently
+  // discarded it on half of every eligible site (irs.gov: concentration 0.9, eligible,
+  // enabled false). This matters more since autumn's accent arrives as fruit rather than
+  // flowers — losing the roll now loses the site's colour, not just an ornament.
+  const eligible = concentrated && state !== 'bare';
+  const fruitOn = eligible;
   if (fruitOn) {
-    why.fruit = `accent concentration ${conc.toFixed(3)} >= ${B.fruit.concentration}: this site's colour sits in a few large areas rather than many small ones, which is what fruit represents (flowers represent the distributed case). Seeded personality then decides: seed ${seed} → roll ${roll.toFixed(3)} < ${B.fruit.rate}.`;
+    why.fruit = `accent concentration ${conc.toFixed(3)} >= ${B.fruit.concentration}: this site's colour sits in a few large areas rather than many small ones, which is what fruit represents (flowers represent the distributed case).`;
   } else if (concentrated && !eligible) {
     why.fruit = `accent is concentrated (${conc.toFixed(3)}) but the tree is not fruit-eligible (foliage ${state}, state ${botanicalState})`;
   }

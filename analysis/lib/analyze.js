@@ -102,6 +102,8 @@ export const FAILURES = {
   REDIRECTED:    'That address sent us somewhere else.',
   EMPTY_PAGE:    'There was nothing on that page to look at.',
   NOT_RENDERED:  'That website did not finish drawing for us.',
+  REFUSED:       'That website refused to let us look at it.',
+  OFFLINE:       'We could not reach the internet just now — this is our problem, not that site\'s.',
   INTERNAL:      'Something went wrong while looking at that website.'
 };
 const fail = (domain, code, detail) => ({ ok: false, domain, failure: { code, message: FAILURES[code] || FAILURES.INTERNAL, detail: detail || null } });
@@ -211,8 +213,24 @@ async function runAnalysis(u, domain, budget, T0, left) {
     })).catch(() => null);
 
     if (!probe || probe.isChromeError || !resp) {
-      const timedOut = /Timeout|timeout/.test(navErr || '');
-      return fail(domain, timedOut ? 'TIMEOUT' : 'UNREACHABLE', navErr);
+      const e = navErr || '';
+      // "we are offline" is not "your site is down". During a two-minute outage every
+      // site a user tried was blamed for it.
+      if (/ERR_INTERNET_DISCONNECTED|ERR_NETWORK_CHANGED|ERR_PROXY_CONNECTION_FAILED/.test(e)) {
+        return fail(domain, 'OFFLINE', e);
+      }
+      if (/Timeout|timeout/.test(e)) return fail(domain, 'TIMEOUT', e);
+      // a site that hangs up on us is REFUSING, not unreachable — telling a user
+      // "we could not reach reddit.com" invites a retry that can never work.
+      if (/ERR_CONNECTION_(RESET|REFUSED|CLOSED)|ERR_EMPTY_RESPONSE|ERR_HTTP2_PROTOCOL_ERROR|ERR_SSL/.test(e)) {
+        return fail(domain, 'REFUSED', e);
+      }
+      if (!probe && resp) {
+        // the document went away under us mid-probe: a post-response navigation, which
+        // is how the bot walls arrive
+        return fail(domain, 'REFUSED', 'page navigated away while being read' + (e ? ' — ' + e : ''));
+      }
+      return fail(domain, 'UNREACHABLE', e || 'no response and no error reported');
     }
     if (status >= 400) {
       const code = status === 404 || status === 410 ? 'NOT_FOUND'
@@ -287,6 +305,40 @@ async function runAnalysis(u, domain, budget, T0, left) {
       }
     }
     t.settle = now() - tSettle;
+
+    // ---- SECOND VALIDITY GATE, on the settled document.
+    // tesla.com, adidas.com and dribbble.com all grew trees and were told they are
+    // "essentially unstyled HTML" — they were Akamai block pages. The block arrives by a
+    // navigation after the first response, so the early gate matched an empty document.
+    const post = await page.evaluate(() => {
+      const txt = (document.body ? document.body.innerText || '' : '').trim();
+      let boxes = 0;
+      for (const el of document.querySelectorAll('body *')) {
+        const r = el.getBoundingClientRect(); if (r.width > 40 && r.height > 20) boxes++;
+      }
+      return { title: document.title || '', text: txt.slice(0, 600), chars: txt.length,
+               links: document.querySelectorAll('a[href]').length,
+               els: document.querySelectorAll('body *').length, boxes, url: location.href };
+    }).catch(() => null);
+
+    if (post) {
+      if (INTERSTITIAL.test(post.title) || INTERSTITIAL.test(post.text)) {
+        return fail(domain, 'BLOCKED', 'interstitial after load: ' + post.title.slice(0, 60));
+      }
+      const h2 = hostOf(post.url);
+      if (h2 && h2 !== domain && !h2.endsWith('.' + domain) && !domain.endsWith('.' + h2)) {
+        return fail(domain, 'REDIRECTED', 'navigated to ' + h2);
+      }
+      // A page with NO LINKS AT ALL is not a website. This is the discriminator that
+      // survives info.cern.ch, which is the case that must survive: cern is genuinely
+      // unstyled HTML and has 25 links, 49 elements, 983 characters. The block pages have
+      // ZERO links — tesla 3 elements / 191 chars, adidas 15 boxes / 1127 chars.
+      // "Small" cannot be the test; "not a site" can.
+      if (post.links === 0 && post.chars < 1500 && post.boxes < 20) {
+        return fail(domain, 'BLOCKED',
+          `no links, ${post.chars} chars, ${post.boxes} boxes — a notice page, not a website`);
+      }
+    }
 
     // Post-settle emptiness. The early gate runs before content has had a chance; this
     // one runs after. play.grafana.org delivers 20 elements, 25 characters and ZERO
