@@ -27,8 +27,12 @@ function state(s, text, retryable) {
   spinner.hidden = !(s === 'analyzing' || s === 'growing');
   msg.textContent = text || '';
   msg.className = s === 'error' ? 'err' : '';
-  go.disabled = busy = (s === 'analyzing' || s === 'growing');
-  for (const b of document.querySelectorAll('#examples button')) b.disabled = busy;
+  busy = (s === 'analyzing' || s === 'growing');
+  // NOT DISABLED WHILE BUSY. Locking the controls meant a second address typed
+  // during a 15s read was dropped in silence, and the input went on showing it
+  // while somebody else's tree arrived underneath — the interface asserting a
+  // site that did not grow this. A person who types a second address has
+  // changed their mind, so the second one supersedes the first (see grow()).
   go.textContent = busy ? 'Growing…' : 'Grow my website';
   if (s !== 'ready') result.hidden = true;
 }
@@ -191,7 +195,16 @@ function failureText(failure, domain) {
 
 // --- grow -----------------------------------------------------------------
 let lastUrl = null;
+// Which grow is the live one. A superseded grow must not write the UI when it
+// returns — otherwise the older request, arriving later, overwrites the newer
+// tree with its own and the page settles on the address the user abandoned.
+let growToken = 0;
+let inflight = null;
+
 async function grow(raw) {
+  const mine = ++growToken;
+  if (inflight) inflight.abort();       // stop waiting on the read they replaced
+  const ac = (inflight = new AbortController());
   lastUrl = raw;
   // Timed from here, not from the server's analysis alone. The wood is built by
   // marching cubes AFTER /api/grow returns, and that is the larger half of the
@@ -206,11 +219,15 @@ async function grow(raw) {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ url: raw }),
+      signal: ac.signal,
     });
     data = await res.json();
-  } catch {
+  } catch (err) {
+    // An abort is not a failure: the person asked for something else.
+    if (mine !== growToken || err?.name === 'AbortError') return;
     return state('error', 'Could not reach the Plants server. Is it still running?');
   }
+  if (mine !== growToken) return;
 
   if (!data.ok) {
     const [text, retryable] = failureText(data.failure, data.domain);
@@ -225,6 +242,7 @@ async function grow(raw) {
       if (tree) await tree.setEarth();
       else tree = mountEarth(sceneEl, { autoRotate: true });
     } catch (err) { console.error(err); }
+    if (mine !== growToken) return;     // superseded while the island came up
     return state('error', text, retryable);
   }
 
@@ -244,9 +262,13 @@ async function grow(raw) {
       : (tree = mountTree($('scene'), data.dna, { autoRotate: true })).ready;
     await settled;          // null/undefined for engines that build synchronously
   } catch (err) {
+    // The renderer aborts a build in flight when a newer setDNA arrives; that is
+    // the expected path when a second address superseded this one.
+    if (mine !== growToken || err?.name === 'AbortError') return;
     console.error(err);
     return state('error', 'The tree failed to grow. See the console.');
   }
+  if (mine !== growToken) return;
 
   state('ready');
   setSky(tree?.envName ?? null);
@@ -266,7 +288,7 @@ async function grow(raw) {
 // unstyled HTML against deliberate minimalism — so they sit first on purpose.
 $('examples').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-site]');
-  if (!b || busy) return;
+  if (!b) return;
   input.value = b.dataset.site;
   grow(b.dataset.site);
 });
@@ -274,7 +296,7 @@ $('examples').addEventListener('click', (e) => {
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const v = input.value.trim();
-  if (v && !busy) grow(v);
+  if (v) grow(v);
 });
 
 const preset = new URLSearchParams(location.search).get('site');
