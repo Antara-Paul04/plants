@@ -89,6 +89,17 @@ export function crownCloud(r, opts = {}) {
  * topology and cannot be known while growing.
  */
 export function growSkeleton(r, cloud, opts = {}, existing = null) {
+  const it = growSkeletonSteps(r, cloud, opts, existing);
+  for (;;) { const s = it.next(); if (s.done) return s.value; }
+}
+
+/**
+ * growSkeleton as a GENERATOR: the same operations in the same order, drawing the same
+ * numbers from the same stream — it only says where a host may take a breath (once the
+ * trunk is up, and after every colonization step). Driven straight through it IS
+ * growSkeleton. See buildSkeletonAsync.
+ */
+export function* growSkeletonSteps(r, cloud, opts = {}, existing = null) {
   const {
     D = 0.17,            // segment length; everything else is relative to it
     influence = 16,      // x D. Large => confident sweeps, small => gnarly
@@ -151,6 +162,7 @@ export function growSkeleton(r, cloud, opts = {}, existing = null) {
     tip.trunk = true;
     lean.multiplyScalar(0.93);
   }
+  yield 'trunk';
 
   // --- colonization --------------------------------------------------------
   // A uniform grid over the nodes. Naive nearest-node search is
@@ -223,6 +235,7 @@ export function growSkeleton(r, cloud, opts = {}, existing = null) {
         if (live[i].distanceTo(g.pos) < dk) { live.splice(i, 1); break; }
       }
     }
+    yield 'colonize';
   }
 
   return nodes;
@@ -760,6 +773,40 @@ export function ramifyLimbs(nodes, limbs, r, opts = {}) {
  * -> twig falls out of the two scales rather than being asserted.
  */
 export function buildSkeleton(r, opts = {}) {
+  const it = buildSkeletonSteps(r, opts);
+  for (;;) { const s = it.next(); if (s.done) return s.value; }
+}
+
+// A macrotask that is NOT a timer (timers are clamped to 4 ms nested, and to a second
+// or more in a background tab). The wood build's driver breathes the same way.
+const nextTask = () => new Promise((resolve) => {
+  const ch = new MessageChannel();
+  ch.port1.onmessage = () => { ch.port1.close(); resolve(); };
+  ch.port2.postMessage(0);
+});
+
+/**
+ * Time-sliced driver: works for `budgetMs` at a stretch, then hands the thread back.
+ * The skeleton was the one phase of a sliced build that never did: 35-92 ms in one task
+ * on a fast laptop, half a second on a phone six times slower — a frozen frame with the
+ * island already on screen. The result is buildSkeleton's, bit for bit (it is the same
+ * generator). `signal` abandons it with an AbortError: a newer tree was asked for.
+ */
+export async function buildSkeletonAsync(r, opts = {}, { budgetMs = 10, signal = null } = {}) {
+  const it = buildSkeletonSteps(r, opts);
+  let t = performance.now();
+  for (;;) {
+    const s = it.next();
+    if (s.done) return s.value;
+    if (performance.now() - t >= budgetMs) {
+      await nextTask();
+      if (signal && signal.aborted) throw new DOMException('tree build superseded', 'AbortError');
+      t = performance.now();
+    }
+  }
+}
+
+export function* buildSkeletonSteps(r, opts = {}) {
   const g = opts.grow || {};
   const D = g.D ?? 0.17;
 
@@ -778,7 +825,7 @@ export function buildSkeleton(r, opts = {}) {
   // PASS 1 — architecture. Few, widely spaced attractors so a tip runs a long
   // way before anything pulls it apart.
   const coarseCloud = crownCloud(r, { ...opts.cloud, count: opts.coarseCount ?? 190 });
-  let nodes = growSkeleton(r, coarseCloud, {
+  let nodes = yield* growSkeletonSteps(r, coarseCloud, {
     ...g,
     kill: opts.coarseKill ?? 5.5,
     influence: opts.coarseInfluence ?? 20,
@@ -790,7 +837,7 @@ export function buildSkeleton(r, opts = {}) {
     count: opts.fineCount ?? 950,
     shell: opts.fineShell ?? 0,   // shell bias belongs to the unconverged twig work; off by default
   });
-  nodes = growSkeleton(r, fineCloud, {
+  nodes = yield* growSkeletonSteps(r, fineCloud, {
     ...g,
     kill: opts.fineKill ?? 2.0,
     influence: opts.fineInfluence ?? 7,
@@ -816,7 +863,7 @@ export function buildSkeleton(r, opts = {}) {
       count: opts.tipCount ?? 0,
       shell: opts.tipShell ?? 0.72,
     });
-    nodes = growSkeleton(r, tipCloud, {
+    nodes = yield* growSkeletonSteps(r, tipCloud, {
       ...g,
       D: D * (opts.tipD ?? 0.62),
       kill: opts.tipKill ?? 1.5,
@@ -830,8 +877,10 @@ export function buildSkeleton(r, opts = {}) {
     }, nodes);
   }
 
+  yield 'grown';
   nodes = pruneStubs(nodes, opts.minStub ?? 0.3);
   smoothChains(nodes, opts.smooth ?? 3);
+  yield 'smoothed';
   if (opts.radiusLaw === 'davinci') {
     assignRadii(nodes, opts.radii);
     return { nodes, limbs: extractLimbs(nodes), cloud: fineCloud };
@@ -844,6 +893,7 @@ export function buildSkeleton(r, opts = {}) {
     assignRadiiRatio(limbs, opts.ratio, r);
     return { nodes, limbs, cloud: fineCloud };
   }
+  yield 'limbs';
   const ram = ramifyLimbs(nodes, limbs, r, { ...opts.ratio, D, ...opts.ramify, cloudAsked });
   return { nodes: ram.nodes, limbs: ram.limbs, cloud: fineCloud, ramify: { dropped: ram.dropped, raised: ram.raised, forked: ram.forked } };
 }

@@ -29,21 +29,15 @@
 
 import * as THREE from 'three';
 import { edgeTable, triTable } from 'three/addons/objects/MarchingCubes.js';
-import { clamp, smoothstep, rr } from './util.js';
-import { groove, grooveFreq, relaxedRadii } from './limbmesh.js';
+import { clamp, rr } from './util.js';
+import { grooveFreq, relaxedRadii } from './limbmesh.js';
+import { slabSteps, slabRanges, slabRangesBalanced } from './woodfield.js';
 
 // Below the chunky tips' minimum radius, so in the chunky style EVERY limb lives
 // in the field to its tip: each tip is a smooth dome and there is no hand-over to
 // a tube at all. (The hand-over showed as a chisel cut and a notch near the tips.)
 // Tubes remain only for genuinely thin wood, which the chunky style does not have.
 export const CUT = 0.02;
-const BIG = 1e9;
-
-/** Polynomial smooth minimum; k is the blend width in world units. */
-function smin(a, b, k) {
-  const h = Math.max(k - Math.abs(a - b), 0) / k;
-  return Math.min(a, b) - h * h * k * 0.25;
-}
 
 /** Parallel-transported frames along a polyline, so theta is stable along it. */
 function frames(pts) {
@@ -63,24 +57,23 @@ function frames(pts) {
 }
 
 /**
- * The build, as a GENERATOR that yields at cheap, frequent checkpoints (after
- * every capsule segment of the field fill, after every z-slab of the marching
- * cubes). It is the single implementation; the two drivers below only differ in
- * what they do at a yield.
+ * Everything about a build that needs three, the limbs or the RNG: the capsule chains,
+ * the buttress roots, the grid. Runs once, on the main thread, and draws from `r`
+ * exactly what the build always drew, in the same order — so which thread then fills
+ * the field cannot change a tree.
  *
- * Why: this build is 1.5-2.5 s and, once the tree is in the product, it is on the
- * critical path of a page with a "growing" state. Run in one go it freezes the
- * tab for that long. A worker would be the other answer, but module workers do
- * not see the page's import map, and this file leans on three and its
- * marching-cubes tables — time-slicing costs nothing and changes no output.
+ * The numeric part is woodfield.js (`slabSteps`): ONE implementation, run either here in
+ * slices or in workers. This build used to be a single generator over the whole grid;
+ * why it is slabs now — 329 MB of arrays for an ordinary tree, and a main thread that a
+ * phone needs for drawing — is written at the top of that file.
  *
- * @returns { geometry, cuts } — cuts maps each limb to the number of its chain
- *   nodes covered by the field, so the tube mesher can pick up where it stops.
+ * @returns { cuts, job } — cuts maps each limb to the number of its chain nodes covered
+ *   by the field, so the tube mesher can pick up where it stops. job is null when no
+ *   limb is thick enough to need a field at all.
  */
-function* thickWoodSteps(limbs, r, opts = {}) {
+function setup(limbs, r, opts = {}) {
   const { voxel = 0.026 } = opts;
   const h = voxel;
-  const t0 = performance.now();
 
   // --- 1. the capsule chains -------------------------------------------------
   const chains = [];
@@ -149,7 +142,7 @@ function* thickWoodSteps(limbs, r, opts = {}) {
       });
     }
   }
-  if (!chains.length) return { geometry: null, cuts };
+  if (!chains.length) return { cuts, job: null };
 
   // --- 2. grid ---------------------------------------------------------------
   const lo = new THREE.Vector3(Infinity, Infinity, Infinity), hi = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
@@ -159,185 +152,57 @@ function* thickWoodSteps(limbs, r, opts = {}) {
     hi.max(c.pts[i].clone().addScalar(pad));
   }
   const nx = Math.ceil((hi.x - lo.x) / h) + 1, ny = Math.ceil((hi.y - lo.y) / h) + 1, nz = Math.ceil((hi.z - lo.z) / h) + 1;
-  const N = nx * ny * nz;
-  // Seven arrays of ~15 million floats. Allocating and filling them in one go was a
-  // 300 ms stall BEFORE the first checkpoint — the longest frozen frame in the whole
-  // build — so each is its own step.
-  const field = new Float32Array(N).fill(BIG);   // smooth-blended distance
-  yield 'alloc';
-  const best = new Float32Array(N).fill(BIG);    // hard minimum: who OWNS this point
-  yield 'alloc';
-  const rField = new Float32Array(N);            // owner's local radius
-  const gField = new Float32Array(N);            // owner's groove value
-  yield 'alloc';
-  const tmp = new Float32Array(N).fill(BIG);
-  yield 'alloc';
-  const tmpR = new Float32Array(N), tmpG = new Float32Array(N);
-  yield 'alloc';
-  const sx = 1, sy = nx, sz = nx * ny;
 
-  // --- 3. evaluate, limb by limb ----------------------------------------------
-  // Within ONE limb the distance is a hard minimum over its capsules — a smooth
-  // minimum there would inflate the limb wherever consecutive capsules overlap.
-  // BETWEEN limbs it is smooth, and that blend is the fillet.
-  const touched = [];
-  const ba = new THREE.Vector3();
-  for (const c of chains) {
-    touched.length = 0;
-    const fr = frames(c.pts);
-    let z0 = c.seed * 3.7;
-    for (let s = 0; s < c.pts.length - 1; s++) {
-      const A = c.pts[s], B = c.pts[s + 1], ra = c.rad[s], rb = c.rad[s + 1];
-      ba.copy(B).sub(A);
-      const l2 = ba.lengthSq(), len = Math.sqrt(l2);
-      const { N: FN, B: FB } = fr[s];
-      const pad = Math.max(ra, rb) + c.k + 3 * h + 0.06;
-      const ix0 = Math.max(0, Math.floor((Math.min(A.x, B.x) - pad - lo.x) / h)), ix1 = Math.min(nx - 1, Math.ceil((Math.max(A.x, B.x) + pad - lo.x) / h));
-      const iy0 = Math.max(0, Math.floor((Math.min(A.y, B.y) - pad - lo.y) / h)), iy1 = Math.min(ny - 1, Math.ceil((Math.max(A.y, B.y) + pad - lo.y) / h));
-      const iz0 = Math.max(0, Math.floor((Math.min(A.z, B.z) - pad - lo.z) / h)), iz1 = Math.min(nz - 1, Math.ceil((Math.max(A.z, B.z) + pad - lo.z) / h));
-      for (let iz = iz0; iz <= iz1; iz++) {
-        const pz = lo.z + iz * h - A.z;
-        for (let iy = iy0; iy <= iy1; iy++) {
-          const py = lo.y + iy * h - A.y;
-          let idx = ix0 + iy * sy + iz * sz;
-          for (let ix = ix0; ix <= ix1; ix++, idx++) {
-            const px = lo.x + ix * h - A.x;
-            const t = clamp((px * ba.x + py * ba.y + pz * ba.z) / l2, 0, 1);
-            const vx = px - ba.x * t, vy = py - ba.y * t, vz = pz - ba.z * t;
-            const rl = ra + (rb - ra) * t;
-            let d = Math.sqrt(vx * vx + vy * vy + vz * vz) - rl;
-            if (d > c.k + 3 * h + 0.06) continue;   // beyond anything the blend or the mesh can see
-            let g = 0;
-            if (d < 0.1 && d > -0.12) {
-              const th = Math.atan2(vx * FB.x + vy * FB.y + vz * FB.z, vx * FN.x + vy * FN.y + vz * FN.z);
-              const arc = (z0 - c.seed * 3.7) + t * len;
-              // A cross-section is never a circle; integer frequencies close the ring.
-              d -= rl * (0.05 * Math.cos(3 * th + c.seed) + 0.03 * Math.cos(5 * th - c.seed * 1.7 + arc * 1.3));
-              if (c.grooves) {
-                // Grooves only where the grid can carry them. On thinner limbs they
-                // are narrower than a couple of voxels and alias into a zipper; the
-                // named target is broad soft grooves on the TRUNK in any case.
-                const depth = clamp((rl - 0.085) * 0.24, 0, 0.05) * (c.isTrunk ? 1 : smoothstep(0.08, 0.6, arc));
-                if (depth > 0) { g = groove(th, z0 + t * len, c.seed, c.f1, c.isTrunk); d += depth * g; g *= clamp(depth / 0.02, 0, 1); }
-              }
-            }
-            if (d < tmp[idx]) {
-              if (tmp[idx] === BIG) touched.push(idx);
-              tmp[idx] = d; tmpR[idx] = rl; tmpG[idx] = g;
-            }
-          }
-        }
-      }
-      z0 += len;
-      yield 'field';
-    }
-    for (const idx of touched) {
-      const d = tmp[idx];
-      if (d < best[idx]) { best[idx] = d; rField[idx] = tmpR[idx]; gField[idx] = tmpG[idx]; }
-      field[idx] = field[idx] === BIG ? d : smin(field[idx], d, c.k);
-      tmp[idx] = BIG;
-    }
-  }
-  const tField = performance.now() - t0;
+  // --- 3. the chains as plain doubles: what the kernel (and a worker) can read ----
+  const plain = chains.map((c) => {
+    const n = c.pts.length, fr = frames(c.pts);
+    const px = new Float64Array(n), py = new Float64Array(n), pz = new Float64Array(n);
+    for (let i = 0; i < n; i++) { px[i] = c.pts[i].x; py[i] = c.pts[i].y; pz[i] = c.pts[i].z; }
+    const fN = new Float64Array(3 * (n - 1)), fB = new Float64Array(3 * (n - 1));
+    fr.forEach((f, i) => { fN[3 * i] = f.N.x; fN[3 * i + 1] = f.N.y; fN[3 * i + 2] = f.N.z; fB[3 * i] = f.B.x; fB[3 * i + 1] = f.B.y; fB[3 * i + 2] = f.B.z; });
+    return { n, px, py, pz, rad: Float64Array.from(c.rad), fN, fB, k: c.k, seed: c.seed, grooves: c.grooves, f1: c.f1, isTrunk: c.isTrunk };
+  });
+  return { cuts, job: { h, lo: [lo.x, lo.y, lo.z], nx, ny, nz, edgeTable, triTable, chains: plain } };
+}
 
-  // --- 4. marching cubes -------------------------------------------------------
-  const pos = [], nor = [], col = [], grv = [], brk = [];
-  const cornerOff = [0, sx, sx + sy, sy, sz, sx + sz, sx + sy + sz, sy + sz];       // Bourke order
-  const cornerXYZ = [[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]];
-  const edgeV = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
-  const val = new Float32Array(8);
-  const vx_ = new Float32Array(12), vy_ = new Float32Array(12), vz_ = new Float32Array(12);
-  const vnx = new Float32Array(12), vny = new Float32Array(12), vnz = new Float32Array(12);
-  const vr = new Float32Array(12), vg = new Float32Array(12);
-
-  const grad = (ix, iy, iz, out) => {
-    const i = ix + iy * sy + iz * sz, c0 = field[i];
-    const g1 = (a, b) => {
-      const fa = a >= 0 ? field[a] : BIG, fb = b >= 0 ? field[b] : BIG;
-      const A = fa < BIG / 2 ? fa : c0 + h, B = fb < BIG / 2 ? fb : c0 + h;
-      return A - B;
-    };
-    out[0] = g1(ix + 1 < nx ? i + sx : -1, ix > 0 ? i - sx : -1);
-    out[1] = g1(iy + 1 < ny ? i + sy : -1, iy > 0 ? i - sy : -1);
-    out[2] = g1(iz + 1 < nz ? i + sz : -1, iz > 0 ? i - sz : -1);
+/** The slabs' triangles, in z order, as one geometry. */
+function assemble(job, parts, stats) {
+  const join = (key) => {
+    let n = 0; for (const p of parts) n += p[key].length;
+    const out = new Float32Array(n); let o = 0;
+    for (const p of parts) { out.set(p[key], o); o += p[key].length; }
+    return out;
   };
-  const ga = [0, 0, 0], gb = [0, 0, 0];
-
-  for (let iz = 0; iz < nz - 1; iz++) {
-   if (iz) yield 'mesh';
-   for (let iy = 0; iy < ny - 1; iy++) {
-    let q = iy * sy + iz * sz;
-    for (let ix = 0; ix < nx - 1; ix++, q++) {
-      if (field[q] > BIG / 2) continue;
-      let ci = 0, ok = true;
-      for (let k = 0; k < 8; k++) {
-        const v = field[q + cornerOff[k]];
-        if (v > BIG / 2) { ok = false; break; }
-        val[k] = v;
-        if (v < 0) ci |= 1 << k;
-      }
-      if (!ok) continue;
-      const bits = edgeTable[ci];
-      if (bits === 0) continue;
-
-      for (let e = 0; e < 12; e++) {
-        if (!(bits & (1 << e))) continue;
-        const a = edgeV[e][0], b = edgeV[e][1];
-        const mu = clamp(val[a] / (val[a] - val[b]), 0, 1);
-        const ax = ix + cornerXYZ[a][0], ay = iy + cornerXYZ[a][1], az = iz + cornerXYZ[a][2];
-        const bx = ix + cornerXYZ[b][0], by = iy + cornerXYZ[b][1], bz = iz + cornerXYZ[b][2];
-        vx_[e] = lo.x + (ax + (bx - ax) * mu) * h;
-        vy_[e] = lo.y + (ay + (by - ay) * mu) * h;
-        vz_[e] = lo.z + (az + (bz - az) * mu) * h;
-        grad(ax, ay, az, ga); grad(bx, by, bz, gb);
-        let gx = ga[0] + (gb[0] - ga[0]) * mu, gy = ga[1] + (gb[1] - ga[1]) * mu, gz = ga[2] + (gb[2] - ga[2]) * mu;
-        const gl = Math.hypot(gx, gy, gz) || 1;
-        vnx[e] = gx / gl; vny[e] = gy / gl; vnz[e] = gz / gl;
-        const ia = q + cornerOff[a], ib = q + cornerOff[b];
-        vr[e] = rField[ia] + (rField[ib] - rField[ia]) * mu;
-        vg[e] = gField[ia] + (gField[ib] - gField[ia]) * mu;
-      }
-
-      for (let t = ci * 16; triTable[t] !== -1; t += 3) {
-        let e0 = triTable[t], e1 = triTable[t + 1], e2 = triTable[t + 2];
-        // Orient by the field, not by the table's convention: the face normal
-        // must agree with the distance gradient, which points OUT of the wood.
-        const ux = vx_[e1] - vx_[e0], uy = vy_[e1] - vy_[e0], uz = vz_[e1] - vz_[e0];
-        const wx = vx_[e2] - vx_[e0], wy = vy_[e2] - vy_[e0], wz = vz_[e2] - vz_[e0];
-        const fx = uy * wz - uz * wy, fy = uz * wx - ux * wz, fz = ux * wy - uy * wx;
-        if (fx * vnx[e0] + fy * vny[e0] + fz * vnz[e0] < 0) { const s = e1; e1 = e2; e2 = s; }
-        for (const e of [e0, e1, e2]) {
-          pos.push(vx_[e], vy_[e], vz_[e]);
-          nor.push(vnx[e], vny[e], vnz[e]);
-          grv.push(vg[e]); brk.push(vr[e]);
-          // Gentle, warm contact with the ground. No crotch shading here: a
-          // filleted union does not have a crease to shade.
-          const low = 1 - smoothstep(-0.05, 0.55, vy_[e]);
-          const ao = 1 - low * 0.4;
-          col.push(ao, ao, ao);
-        }
-      }
-    }
-   }
-  }
-
   const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  geometry.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
-  geometry.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-  geometry.setAttribute('groove', new THREE.Float32BufferAttribute(grv, 1));
-  geometry.setAttribute('barkR', new THREE.Float32BufferAttribute(brk, 1));
-  geometry.userData.stats = {
-    grid: [nx, ny, nz], voxels: N, triangles: pos.length / 9,
-    fieldMs: Math.round(tField), totalMs: Math.round(performance.now() - t0),
-  };
-  return { geometry, cuts };
+  const pos = join('pos');
+  geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geometry.setAttribute('normal', new THREE.BufferAttribute(join('nor'), 3));
+  geometry.setAttribute('color', new THREE.BufferAttribute(join('col'), 3));
+  geometry.setAttribute('groove', new THREE.BufferAttribute(join('grv'), 1));
+  geometry.setAttribute('barkR', new THREE.BufferAttribute(join('brk'), 1));
+  geometry.userData.stats = { grid: [job.nx, job.ny, job.nz], voxels: job.nx * job.ny * job.nz, triangles: pos.length / 9, ...stats };
+  return geometry;
+}
+
+// Cells per slab on the main thread. Thicker is a little less repeated work (three
+// slices are evaluated twice at every boundary) and more held at once: 32 cells of an
+// ordinary tree's grid is ~31 MB, where the whole grid was 329.
+const SLAB_MAIN = 32;
+
+/** Every slab, one after another, as a generator the two main-thread drivers share. */
+function* mainSteps(job) {
+  const parts = [], scratch = {};
+  for (const [a, b] of slabRanges(job.nz, SLAB_MAIN)) parts.push(yield* slabSteps(job, a, b, scratch));
+  return parts;
 }
 
 /** Synchronous driver: runs the build straight through. Same output as ever. */
 export function buildThickWood(limbs, r, opts = {}) {
-  const it = thickWoodSteps(limbs, r, opts);
-  for (;;) { const s = it.next(); if (s.done) return s.value; }
+  const t0 = performance.now();
+  const { cuts, job } = setup(limbs, r, opts);
+  if (!job) return { geometry: null, cuts };
+  const it = mainSteps(job);
+  for (;;) { const s = it.next(); if (s.done) return { geometry: assemble(job, s.value, { how: 'main', totalMs: Math.round(performance.now() - t0) }), cuts }; }
 }
 
 // A macrotask that is NOT a timer: timers are clamped to 4 ms when nested and to
@@ -350,22 +215,178 @@ function nextTask() {
   });
 }
 
-/**
- * Time-sliced driver: works for `budgetMs` at a stretch, then hands the thread
- * back so the page can paint and respond. `signal` abandons the build (a newer
- * tree was asked for); it rejects with an AbortError.
- */
-export async function buildThickWoodAsync(limbs, r, opts = {}) {
-  const { budgetMs = 10, signal = null } = opts;
-  const it = thickWoodSteps(limbs, r, opts);
+const aborted = () => new DOMException('tree build superseded', 'AbortError');
+
+/** The main thread's sliced build: `budgetMs` of work, then a breath. */
+async function mainSliced(job, budgetMs, signal) {
+  const it = mainSteps(job);
   let t = performance.now();
   for (;;) {
     const s = it.next();
     if (s.done) return s.value;
     if (performance.now() - t >= budgetMs) {
       await nextTask();
-      if (signal && signal.aborted) throw new DOMException('tree build superseded', 'AbortError');
+      if (signal && signal.aborted) throw aborted();
       t = performance.now();
     }
   }
+}
+
+// --- the worker pool ---------------------------------------------------------------
+// The field is 63-84% of the time from "grow" to a tree, and on the main thread it
+// shares that thread with the render loop: measured on a phone six times slower than a
+// laptop, the opening tree took 15-20 s to arrive. Slabs are independent, so they go to
+// workers — the same kernel, the same mesh to the bit — and the main thread is left to
+// draw the island. Anything at all going wrong (no Worker, a policy that refuses one, a
+// module that will not load, a worker that dies or never answers) leaves the main thread
+// building the slabs ON THE SAME SETUP — so the RNG is never drawn from twice.
+let pool = null;
+let jobId = 0;
+const IDLE_MS = 20000;   // then the threads, and their scratch memory, are let go
+
+function workerCount(asked) {
+  const hc = (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || 2;
+  return Math.max(1, Math.min(8, Math.floor(asked ?? Math.min(4, hc - 1))));
+}
+
+function killPool() {
+  if (!pool) return;
+  const P = pool; pool = null;
+  clearTimeout(P.idle);
+  P.dead = P.dead || 'wood workers were shut down';
+  for (const w of P.workers) { try { w.worker.terminate(); } catch { /* already gone */ } }
+  for (const j of [...P.jobs.values()]) j.fail(new Error(P.dead));
+}
+
+/** Start the workers now, so they are loaded by the time the skeleton is grown. */
+export function warmWoodWorkers(asked) {
+  if (typeof Worker === 'undefined') return null;
+  const n = workerCount(asked);
+  if (pool && !pool.dead && pool.workers.length === n) { clearTimeout(pool.idle); return pool; }
+  killPool();
+  const mine = (pool = { workers: [], jobs: new Map(), dead: null, idle: null, pump: () => {} });
+  const die = (why) => { if (mine.dead) return; mine.dead = why; if (pool === mine) killPool(); else for (const j of [...mine.jobs.values()]) j.fail(new Error(why)); };
+  try {
+    const url = new URL(`./woodfield-worker.js${new URL(import.meta.url).search}`, import.meta.url);
+    for (let i = 0; i < n; i++) {
+      const w = { worker: new Worker(url, { type: 'module' }), ready: false, busy: null, sent: new Set() };
+      w.worker.onmessage = (ev) => {
+        const m = ev.data;
+        if (m.type === 'ready') { w.ready = true; mine.pump(); return; }
+        if (m.type === 'error') return die(`wood worker: ${m.message}`);
+        if (m.type !== 'slab') return;
+        w.busy = null;
+        const j = mine.jobs.get(m.id);
+        if (j) j.got(m.slab, m.out, m.ms);
+        mine.pump();
+      };
+      w.worker.onerror = (e) => die(`wood worker failed: ${e && e.message || 'could not start'}`);
+      w.worker.onmessageerror = () => die('wood worker: a message could not be read');
+      mine.workers.push(w);
+    }
+  } catch (e) { die(`wood workers could not be created: ${e && e.message || e}`); }
+  return mine;   // possibly dead already; `dead` says why
+}
+
+/**
+ * The slabs, built by whoever can. Workers take them as they come free; and the MAIN
+ * THREAD takes them too, in `budgetMs` slices, for exactly as long as no worker is ready
+ * to — before they have loaded, if they never load, and after they die. So nothing here
+ * waits on a worker, and no failure of one can cost a tree: a worker that never starts
+ * is a build that happened on the main thread, as it always used to, a slab at a time.
+ * (An earlier version waited for the workers and fell back on a timeout: a page whose
+ * workers silently never answered stood still for six seconds first.)
+ */
+function slabsByAnyone(job, asked, signal, repeat, budgetMs) {
+  const P = warmWoodWorkers(asked);
+  const alive = () => !!P && !P.dead;
+  // Two slabs a worker, of about equal WORK (see slabRangesBalanced), handed out as
+  // workers come free: a phone's cores are not equally fast, and the prediction is not
+  // exact. More slabs would balance better and repeat more — three slices are evaluated
+  // twice at every cut, and the cuts crowd into the middle where the work is.
+  const ranges = slabRangesBalanced(job, workerCount(asked) * 2);
+  const slice = Number.isFinite(budgetMs) ? budgetMs : 10;   // workers were ASKED for: never block them out
+  const id = ++jobId;
+  return new Promise((resolve, reject) => {
+    const n = ranges.length, parts = new Array(n), slabMs = new Array(n);
+    const queue = ranges.map((_, i) => i), inflight = new Map();
+    let done = 0, workMs = 0, mainSlabs = 0, over = false, helping = false, why = P ? P.dead : 'no Worker here';
+    const finish = (err) => {
+      if (over) return; over = true;
+      if (signal) signal.removeEventListener('abort', onAbort);
+      if (P) {
+        P.jobs.delete(id);
+        if (alive()) for (const w of P.workers) if (w.sent.delete(id)) { try { w.worker.postMessage({ type: 'drop', id }); } catch { /* dying */ } }
+        if (pool === P && !P.jobs.size) { clearTimeout(P.idle); P.idle = setTimeout(() => { if (pool === P && !P.jobs.size) killPool(); }, IDLE_MS); }
+      }
+      if (err) reject(err);
+      else resolve({ parts, slabs: n, workers: mainSlabs === n ? 0 : P.workers.length, mainSlabs, workMs: Math.round(workMs), slabMs, why: why || null });
+    };
+    const got = (slab, out, ms) => {
+      if (over || parts[slab]) return;
+      parts[slab] = out; slabMs[slab] = Math.round(ms); workMs += ms;
+      if (++done === n) finish(null);
+    };
+    const onAbort = () => finish(aborted());
+    if (signal) { if (signal.aborted) return finish(aborted()); signal.addEventListener('abort', onAbort); }
+
+    const scratch = {};
+    const help = async () => {
+      if (helping) return; helping = true;
+      try {
+        while (!over && queue.length && !(alive() && P.workers.some((w) => w.ready))) {
+          const slab = queue.shift(), t0 = performance.now();
+          const it = slabSteps(job, ranges[slab][0], ranges[slab][1], scratch);
+          let t = performance.now(), r;
+          for (;;) {
+            r = it.next();
+            if (r.done) break;
+            if (performance.now() - t >= slice) { await nextTask(); if (over) return; t = performance.now(); }
+          }
+          mainSlabs++; got(slab, r.value, performance.now() - t0);
+        }
+      } catch (e) { finish(e); } finally { helping = false; }
+    };
+
+    if (P) {
+      P.jobs.set(id, {
+        // The pool died (killPool, or a worker's error): what it was holding goes back in
+        // the queue, in order, and the main thread carries on.
+        fail: (e) => { why = String(e && e.message || e); for (const slab of [...inflight.keys()].sort((a, b) => b - a)) queue.unshift(slab); inflight.clear(); help(); },
+        got: (slab, out, ms) => { inflight.delete(slab); got(slab, out, ms); },
+        give: (w) => {
+          if (over || !queue.length) return false;
+          if (!w.sent.has(id)) { w.worker.postMessage({ type: 'job', id, job }); w.sent.add(id); }
+          const slab = queue.shift();
+          inflight.set(slab, w); w.busy = id;
+          w.worker.postMessage({ type: 'slab', id, slab, zc0: ranges[slab][0], zc1: ranges[slab][1], repeat });
+          return true;
+        },
+      });
+      P.pump = () => { if (P.dead) return; for (const w of P.workers) { if (!w.ready || w.busy !== null) continue; for (const j of P.jobs.values()) if (j.give(w)) break; } };
+      P.pump();
+    }
+    help();
+  });
+}
+
+/**
+ * The product's driver. In workers when it can (`workers`: how many; 0 = never), and
+ * otherwise — or the moment anything about them fails — on the main thread in
+ * `budgetMs` slices, as it always was. Either way the mesh is the same, to the bit.
+ * `signal` abandons the build (a newer tree was asked for) with an AbortError.
+ */
+export async function buildThickWoodAsync(limbs, r, opts = {}) {
+  const { budgetMs = 10, signal = null, workers = 0 } = opts;
+  const t0 = performance.now();
+  const { cuts, job } = setup(limbs, r, opts);
+  if (!job) return { geometry: null, cuts };
+  if (workers !== 0) {
+    const w = await slabsByAnyone(job, workers === true ? undefined : workers, signal, opts.workerRepeat || 1, budgetMs);
+    if (w.why) console.warn(`[wood] ${w.mainSlabs} of ${w.slabs} slabs were built on the main thread: ${w.why}`);
+    const stats = { how: w.workers ? 'workers' : 'main', workers: w.workers, slabs: w.slabs, mainSlabs: w.mainSlabs, workMs: w.workMs, slabMs: w.slabMs, ...(w.why ? { fellBack: w.why } : {}) };
+    return { geometry: assemble(job, w.parts, { ...stats, totalMs: Math.round(performance.now() - t0) }), cuts };
+  }
+  const parts = await mainSliced(job, budgetMs, signal);
+  return { geometry: assemble(job, parts, { how: 'main', totalMs: Math.round(performance.now() - t0) }), cuts };
 }

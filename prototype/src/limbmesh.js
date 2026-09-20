@@ -29,6 +29,7 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { lerp, clamp, smoothstep, rr, noise3 } from './util.js';
+import { groove } from './woodfield.js';
 
 /** Radial resolution, spent where the radius actually is on screen. */
 function radialFor(radius) {
@@ -55,23 +56,9 @@ function stepFor(radius) {
  * exactly — no seam. The phases drift slowly with arc length, so grooves wander,
  * merge and fade rather than running rule-straight, and nothing repeats.
  */
-export function groove(theta, z, seed, f1 = 8, fine = true) {
-  const p1 = noise3(z * 0.42, seed, 1.7) * 2.6;
-  const p2 = noise3(z * 0.55, seed, 9.1) * 2.6;
-  const p3 = noise3(z * 0.7, seed, 23.4) * 2.6;
-  // Frequencies are per-limb (see grooveFreq) but always INTEGERS, so the ring
-  // closes. Fixed frequencies put the same nineteen grooves round a wrist-thick
-  // limb as round the trunk, which is under two voxels a cycle and aliased the
-  // field into scalloped banding.
-  const f2 = Math.round(f1 * 1.6), f3 = Math.round(f1 * 2.4);
-  let v = 0.5 * Math.cos(f1 * theta + p1)
-        + 0.32 * Math.cos(f2 * theta + p2 + 1.3)
-        + (fine ? 0.18 * Math.cos(f3 * theta + p3 + 4.1) : 0);   // the finest harmonic is below what the voxel grid carries on a limb
-  // Grooves come and go along the limb; a groove that never stops is a flute
-  // on a column, and that is architecture, not a tree.
-  v *= 0.6 + 0.4 * noise3(z * 0.8, seed + 40, 5.5);
-  return smoothstep(0.05, -0.62, v);
-}
+// `groove` is the wood field's too, and the field can run in a worker that cannot import
+// this file (it needs three): so it lives in woodfield.js, and this is the same function.
+export { groove };
 
 /** Groove count from girth: a groove is about a hand wide whatever it is on. */
 export const grooveFreq = (baseRadius) => Math.max(3, Math.round((2 * Math.PI * baseRadius) / 0.24));

@@ -962,3 +962,25 @@ Evidence, the probe and every number: `references/experiments/leafy-ramify-2026-
   not by both together, so a sector can flower high and low and leave its mid-height face, the
   part that is face-on in the middle of a view, bare. That is the next hypothesis. OPEN.
 
+
+### The wood is built in slabs, and can be built in workers — EXPERIMENT, output-neutral (2026-09-21)
+
+Evidence, instruments and every number: `references/experiments/wood-workers-2026-09-21/`.
+
+- **What is slow about growing a tree is the wood field: 63–84% of the time, the skeleton 2–4%.**
+  The "non-yielding skeleton" diagnosis was visual-3d's own and was wrong; the worst single long
+  task is `mountTree`'s synchronous part, which barely scales with CPU throttle (GPU-process wait).
+- **The field is a kernel with no `three` in it** (`woodfield.js`) run over z-SLABS — by the main
+  thread in slices, or by workers (`?woodWorkers=1`; OFF by default until it has run on a real slow
+  device). One implementation, the same mesh to the bit on every path: 48 of 48 against HEAD, and
+  every way a worker can fail still ends in the identical tree without waiting for anything.
+- **Nothing allocates the whole grid any more:** 329 MB of typed arrays for an ordinary tree became
+  ~31 MB (main thread) or <= ~24 MB a worker. No instrument we have can see a tab killed for memory.
+- **Four workers: 2.4x on the wood phase and a third off the time to a tree** (1224 -> ~780 ms,
+  headless Chrome, cores shared with other sessions; 3.4x in clean single-thread arithmetic).
+- **Two traps in the instruments, both now written down (R12):** the Browser pane is a BACKGROUNDED
+  tab, where worker threads and sliced work run 3–6x slow while a straight-through build looks
+  normal; and DevTools' CPU throttle does not slow workers at all, so a throttled run flatters a
+  worker build by exactly the throttle (`woodWorkerRepeat=N` puts it back, as an instrument only).
+- **Not done:** a resolution tier for small screens (the only thing that cuts the work; it changes
+  what a tree is — Lead: not tonight), and cheaper grooves (not bit-identical).

@@ -504,8 +504,13 @@ const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8
  *              rocks           — add V0's composed stones
  * @returns {{ tree, ground, skel, geo, thick, stats, extents, wind, update, dispose }}
  *          wind   — null, or the tree's shared sway uniforms { amp, speed, yLo, yHi, pin }
+ *          faces  — null, or { best, worst, score[16] }: the compass direction the bloom reads
+ *                   best and worst from. Reported, never applied — see where it is computed
  *          update — null, or update(t) for a tree with per-frame work (autumn's leaf fall)
  */
+// 0 until the identity proof and a look on a slow device are both in; `true` is the ship.
+const WOOD_WORKERS_DEFAULT = 0;
+
 export async function growTree(M, q, env, opts = {}) {
   const { uniforms = { time: { value: 0 } }, budgetMs = Infinity, signal = null, onGround = null, leavesDefault = '0' } = opts;
   const { P, num, hexq, preset } = resolveParams(q);
@@ -544,6 +549,17 @@ export async function growTree(M, q, env, opts = {}) {
     ? { amp: { value: WIND }, speed: { value: num('windSpeed', 0.85) }, yLo: { value: 0 }, yHi: { value: 1 },
         pin: WIND_PIN > 0 ? { value: WIND_PIN } : null }
     : null;
+  // THE WOOD FIELD IN WORKERS (woodsdf.js). `woodWorkers=N` asks for N, `=1` lets the
+  // build choose (cores - 1, at most 4), `=0` is the main thread in slices, as it always
+  // was. The mesh is the same either way, to the bit — this is where the work is done,
+  // never what is made. A straight-through build (the debug pages) stays on the main
+  // thread unless asked: it is a measuring instrument. Started HERE, before the island
+  // and the skeleton, so the workers are loaded by the time there are limbs to give them.
+  const WW = q.get('woodWorkers');
+  const WOOD_WORKERS = q.get('sdf') === '0' ? 0
+    : WW === null ? (budgetMs === Infinity ? 0 : WOOD_WORKERS_DEFAULT) : WW === '1' ? true : Math.max(0, Math.floor(Number(WW)) || 0);
+  if (WOOD_WORKERS) M.woodsdf.warmWoodWorkers(WOOD_WORKERS === true ? undefined : WOOD_WORKERS);
+
   // Phase timings (ms of main-thread work per phase). When the build is time-sliced
   // each phase also ends with a breath, so the longest STALL a page can see is the
   // longest single phase — which makes this table the thing to read when a host
@@ -620,7 +636,9 @@ export async function growTree(M, q, env, opts = {}) {
   const RAMIFIED = RAMIFY_MODE === '1' || (RAMIFY_MODE === 'leafy' && !leafless && !WINTER);
   const t0 = performance.now();
   const r = rng(P.seed);
-  const skel = M.branching.buildSkeleton(r, {
+  // Sliced like the wood when the host slices (`budgetMs`): the skeleton used to be the one
+  // phase that ran as a single task. Straight through on the debug pages. Same skeleton.
+  const skelOpts = {
     cloud: { count: P.points, cy: P.cy, rx: P.rx, ry: P.ry, rz: P.rx, hollow: P.hollow },
     grow: { D: P.D, influence: P.influence, kill: P.kill, wobble: P.wobble, maxChildren: P.maxChildren, trunkMin: P.trunkMin },
     radii: { tip: P.tip, alpha: P.alpha, grow: P.grow, taper: P.taper, shootR: P.shootR, max: P.rmax },
@@ -651,7 +669,9 @@ export async function growTree(M, q, env, opts = {}) {
     coarseCount: P.coarseCount, coarseKill: P.coarseKill, coarseInfluence: P.coarseInfluence,
     fineCount: P.fineCount, fineKill: P.fineKill, fineInfluence: P.fineInfluence, fineShell: P.fineShell,
     tipCount: P.tipCount, tipKill: P.tipKill, tipInfluence: P.tipInfluence, tipShell: P.tipShell, tipD: P.tipD, tipWobble: P.tipWobble,
-  });
+  };
+  const skel = budgetMs === Infinity ? M.branching.buildSkeleton(r, skelOpts)
+    : await M.branching.buildSkeletonAsync(r, skelOpts, { budgetMs, signal });
   const tGrow = performance.now() - t0;
   await endPhase('skeleton');
 
@@ -662,9 +682,10 @@ export async function growTree(M, q, env, opts = {}) {
   // thin wood stays swept tubes and picks up where the field stops. `sdf=0` falls
   // back to tubes everywhere, for comparison.
   const useField = q.get('sdf') !== '0';
-  const woodOpts = { voxel: num('voxel', 0.026), budgetMs, signal };
+  // `woodWorkerRepeat` is a measuring aid (woodfield-worker.js): it makes workers N times slower.
+  const woodOpts = { voxel: num('voxel', 0.026), budgetMs, signal, workers: WOOD_WORKERS, workerRepeat: Math.max(1, Math.floor(num('woodWorkerRepeat', 1))) };
   const thick = !useField ? { geometry: null, cuts: new Map() }
-    : budgetMs === Infinity ? M.woodsdf.buildThickWood(skel.limbs, r, woodOpts)
+    : budgetMs === Infinity && !WOOD_WORKERS ? M.woodsdf.buildThickWood(skel.limbs, r, woodOpts)
     : await M.woodsdf.buildThickWoodAsync(skel.limbs, r, woodOpts);
   phases.wood = Math.round(performance.now() - tPhase); tPhase = performance.now();
   throwIfAborted();
@@ -782,6 +803,8 @@ export async function growTree(M, q, env, opts = {}) {
     const bloomSites = FLOWERS === 'none' ? [] : F.chooseBloomSites(spots, flowerRng, {
       amount: FLOWERS, mul: num('bloomMul', 1), fraction: q.has('bloom') ? num('bloom', 0.33) : null, exclude: keepOff,
       bands: q.has('bands') ? q.get('bands').split(',').map(Number) : undefined, tip: q.has('tipBonus') ? num('tipBonus', 0.18) : undefined,
+      even: q.has('bloomEven') ? q.get('bloomEven') !== '0' : undefined,   // EXPERIMENT, off by default: a stratum's share taken spread out (flowers.js pickSites)
+      field: q.has('bloomField') ? num('bloomField', 0.8) : undefined, freq: q.has('bloomFreq') ? num('bloomFreq', 0.42) : undefined,   // debug: the drift field's weight and scale
     });
 
     // L5: the amount decides what the flowering twigs — and their neighbours —
@@ -888,6 +911,36 @@ export async function growTree(M, q, env, opts = {}) {
     });
   }
 
+  // THE CROWN'S FACES DIFFER, and nothing about WHICH twigs flower can stop them: only
+  // about 5 of ~146 attachment points face the camera in the middle third of any view, so
+  // at a 40% bloom that is two twigs, give or take two — a bare-middled face is what a
+  // third of all faces look like under ANY selection (measured: today's, a flatter drift,
+  // a finer drift and a perfectly even pick all leave 2-4 of 48 faces with no bloom there).
+  // So the tree says which way it looks best. `faces.best` is the compass direction (radians,
+  // atan2(z, x) round the trunk) from which the most bloom sits face-on at mid-height;
+  // `faces.worst` the least. EXPOSED, NOT USED: where an orbit starts is the host's framing
+  // decision (Lead's ruling) — a photographer choosing a side of a sculpture — and the
+  // renderer only reports. null when the tree carries no bloom.
+  const faces = (() => {
+    if (!dbgSpots || !dbgBloom || !dbgBloom.length) return null;
+    const bx = new THREE.Box3(); for (const sp of dbgSpots) bx.expandByPoint(sp.pos);
+    const c = bx.getCenter(new THREE.Vector3()), e = bx.getSize(new THREE.Vector3()).multiplyScalar(0.5);
+    const N = 16, score = new Array(N).fill(0);
+    for (const i of dbgBloom) {
+      const sp = dbgSpots[i];
+      const mid = 1 - Math.min(1, Math.abs(sp.pos.y - c.y) / (e.y * 0.6 || 1));   // at mid-height, fading out
+      if (mid <= 0) continue;
+      const az = Math.atan2(sp.pos.z - c.z, sp.pos.x - c.x);
+      const out = Math.hypot(sp.pos.x - c.x, sp.pos.z - c.z) / (Math.max(e.x, e.z) || 1);   // on the shell, not inside it
+      for (let k = 0; k < N; k++) {
+        const d = Math.cos(az - (k / N) * 2 * Math.PI);
+        if (d > 0.72) score[k] += (d - 0.72) / 0.28 * mid * out;                  // within ~44 degrees of face-on
+      }
+    }
+    let hi = 0, lo = 0; for (let k = 1; k < N; k++) { if (score[k] > score[hi]) hi = k; if (score[k] < score[lo]) lo = k; }
+    return { best: (hi / N) * 2 * Math.PI, worst: (lo / N) * 2 * Math.PI, score: score.map((v) => +v.toFixed(2)) };
+  })();
+
   await endPhase('foliage');
 
   const box = new THREE.Box3().setFromObject(tree);
@@ -905,7 +958,7 @@ export async function growTree(M, q, env, opts = {}) {
   const tris = (geo ? geo.index.count / 3 : 0) + (thick.geometry ? thick.geometry.attributes.position.count / 3 : 0);
 
   return {
-    tree, ground, skel, geo, thick, P, extents, season: SEASON, wind,
+    tree, ground, skel, geo, thick, P, extents, season: SEASON, wind, faces,
     // Per-frame work, if this tree has any (autumn's falling leaves): update(t). A pure
     // function of t, so a host may call it as often or as rarely as it likes.
     update: leafFall ? (t) => leafFall.update(t) : null,
