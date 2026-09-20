@@ -4,6 +4,32 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Plants — every website grows differently</title>
+    <meta name="description" content="Paste a website address and watch a tree grow from its visual design — how much styling it has, how dense it is, what colour it is. Every website grows differently." />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#dbe4ea" />
+
+    <!-- THE LINK PREVIEW IS THE WHOLE FIRST IMPRESSION for a product that is
+         entirely a picture. Without these a shared link is a bare URL with no
+         card at all, which reads as broken — and the most likely way anyone
+         arrives here is a link someone posted.
+         og.png is rendered BY THE PRODUCT (tools/og-image.mjs shoots the real
+         renderer at 1200x630 with the interface hidden), so the card cannot
+         drift into advertising a tree we no longer make. Re-run it when the
+         tree's look changes. Absolute URL because several platforms will not
+         resolve a relative one. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Plants" />
+    <meta property="og:title" content="Plants — every website grows differently" />
+    <meta property="og:description" content="Paste a website address and watch a tree grow from its visual design. Unstyled HTML grows bare; a richly designed page grows lush and flowering." />
+    <meta property="og:url" content="https://plants-three-eta.vercel.app/" />
+    <meta property="og:image" content="https://plants-three-eta.vercel.app/og.png" />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta property="og:image:alt" content="A small 3D tree with red flowers growing from a floating grass island." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Plants — every website grows differently" />
+    <meta name="twitter:description" content="Paste a website address and watch a tree grow from its visual design. Unstyled HTML grows bare; a richly designed page grows lush and flowering." />
+    <meta name="twitter:image" content="https://plants-three-eta.vercel.app/og.png" />
     <style>
       /* THE SCENE IS THE PAGE.
          The tree used to live in a rounded box on a cream page. It is now the
