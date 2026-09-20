@@ -17,6 +17,11 @@ const resultHead = $('resultHead');
 
 let tree = null;
 let busy = false;
+// Set false if the scene cannot start at all. Declared HERE rather than beside
+// the mount at the foot of this file: a ?site= link calls grow() before that
+// line has run, and a `let` read before its declaration is a ReferenceError,
+// not a false.
+let renderable = true;
 
 // A LONG WAIT SHOULD SAY SOMETHING TRUE AS IT PASSES.
 // bruno-simon.com takes 51s to reach the right verdict and gwern.net has been
@@ -241,6 +246,7 @@ let growToken = 0;
 let inflight = null;
 
 async function grow(raw) {
+  if (!renderable) return;            // nothing to draw into; the message stands
   const mine = ++growToken;
   if (inflight) inflight.abort();       // stop waiting on the read they replaced
   const ac = (inflight = new AbortController());
@@ -315,7 +321,10 @@ async function grow(raw) {
     // the expected path when a second address superseded this one.
     if (mine !== growToken || err?.name === 'AbortError') return;
     console.error(err);
-    return state('error', 'The tree failed to grow. See the console.');
+    // "See the console" is a note to whoever wrote this, printed at a person who
+    // asked for a tree. Say what happened and offer the retry, which does
+    // sometimes work — a build can fail on a lost GL context.
+    return state('error', 'We read that website, but the tree would not build. That is our fault, not theirs.', true);
   }
   if (mine !== growToken) return;
 
@@ -412,8 +421,17 @@ function setSky(name) {
 // island goes up in ~60ms and the tree swaps into it when whole, so there is
 // never a frame with nothing in it. The grow path finds `tree` already set and
 // takes the setDNA branch, which is the same swap the renderer uses everywhere.
+// IF THE SCENE CANNOT START, SAY SO. Without this the page is a working input
+// box over a blank background on any browser without WebGL — an old device, a
+// locked-down corporate build, a machine with acceleration disabled — and every
+// address typed into it would fail at the last step with developer copy. The
+// scene is the entire product; there is no degraded version of it to offer.
 try { tree = mountIdle(sceneEl, { autoRotate: true, onEnv: setSky }); }
-catch (err) { console.error(err); }
+catch (err) {
+  console.error(err);
+  renderable = false;
+  state('error', 'This browser cannot draw 3D scenes, so there is nowhere to grow a tree. Plants needs WebGL — a recent Chrome, Safari, Firefox or Edge with hardware acceleration on.', false);
+}
 
 // THE OPENING FRAME IS A REAL TREE, and this is a reversal of the note above.
 //
@@ -476,5 +494,5 @@ async function showExample() {
   result.hidden = false;
 }
 
-if (!preset) showExample();
+if (!preset && renderable) showExample();
 
