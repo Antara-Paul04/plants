@@ -34,7 +34,15 @@ function state(s, text, retryable) {
   // site that did not grow this. A person who types a second address has
   // changed their mind, so the second one supersedes the first (see grow()).
   go.textContent = busy ? 'Growing…' : 'Grow my website';
-  if (s !== 'ready') result.hidden = true;
+  // THE PANEL DESCRIBES THE TREE THAT IS ON SCREEN, not the request in flight.
+  // While a read runs, the previous tree is still standing — the renderer holds
+  // it until the new one is whole — so hiding its label left a beautiful
+  // unattributed tree up for 10-30s that was not the visitor's, and for the
+  // first grow of a session that tree is our example. Keeping the caption is
+  // the honest state: this is still X, and something new is on its way. It
+  // clears on ERROR, where the scene really does become bare earth, and on IDLE,
+  // where there is nothing to describe.
+  if (s === 'error' || s === 'idle') { result.hidden = true; result.classList.remove('example'); }
 }
 
 // --- "Why this tree?" -----------------------------------------------------
@@ -178,13 +186,25 @@ const FAILURE_COPY = {
   BLOCKED:     [(d) => `${d} does not allow us to look at it.`, false],
   // Genuinely about the address the person typed. No retry: it would fail again.
   INVALID_URL: [() => 'That does not look like a website address.', false],
-  NOT_FOUND:   [(d) => `We could not find a page at ${d}.`, false],
+  // github.com/<nonexistent> answered "We could not find a page at github.com",
+  // which reads as though the DOMAIN were missing. github.com is fine; the path
+  // is not, and the difference is the whole of what the person needs to know.
+  NOT_FOUND:   [(d) => hasPath(lastUrl) ? `We could not find that page on ${d}.`
+                                        : `We could not find a page at ${d}.`, false],
   REDIRECTED:  [(d) => `${d} sent us somewhere else, so we stopped.`, false],
   EMPTY_PAGE:  [(d) => `There was nothing on ${d} to read.`, false],
   // A PDF or an image is not a failure of the site and not a failure of ours —
   // there is simply no design there to grow a tree from.
   NOT_A_PAGE:  [() => 'That address is a file rather than a web page, so there is no design to read.', false],
 };
+
+// Did the person ask for a particular page, or just for a site?
+function hasPath(raw) {
+  try {
+    const u = new URL(/^https?:\/\//i.test(raw || '') ? raw : 'https://' + raw);
+    return u.pathname.length > 1 || !!u.search;
+  } catch { return false; }
+}
 
 function failureText(failure, domain) {
   const entry = FAILURE_COPY[failure?.code];
@@ -210,7 +230,6 @@ async function grow(raw) {
   // marching cubes AFTER /api/grow returns, and that is the larger half of the
   // wait — reporting the analysis time told the user 2.9s while they sat for 13.
   const t0 = performance.now();
-  result.classList.remove('example');
   state('analyzing', 'Reading your website…');
 
   let data;
@@ -271,6 +290,7 @@ async function grow(raw) {
   if (mine !== growToken) return;
 
   state('ready');
+  result.classList.remove('example');   // from here it is theirs, not ours
   setSky(tree?.envName ?? null);
   domainEl.textContent = data.domain;
   stampEl.textContent = `grown in ${((performance.now() - t0) / 1000).toFixed(1)}s`;
