@@ -33,6 +33,7 @@
 
 import { chromium } from '../analysis/node_modules/playwright-core/index.mjs';
 import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
+import { loadavg } from 'node:os';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const BASE = process.env.PLANTS_BASE || 'http://localhost:5170';
@@ -206,7 +207,7 @@ if (survey) {
     const prior = results.find((r) => r.site === site);
     // --keep-failures: a recorded failure is a result too. Without it a resumed run
     // re-attempts every failure, which is what you want for a retry and not for a sweep.
-    if (prior && (await exists(`${outDir}/${name}.png`) || (keepFailures && !prior.ok))) {
+    if (prior && (await exists(`${outDir}/${name}.png`) || (keepFailures && prior.failure))) {
       console.log(tag, 'skip    ', site, prior.ok ? '(already captured)' : '(failure kept)');
       if (withSite) await addSite(name, prior, tag);
       continue;
@@ -219,8 +220,11 @@ if (survey) {
       const t0 = Date.now();
       try { data = await attempt(site); error = null; }
       catch (err) { error = err.message.split('\n')[0]; }
+      // load1: this machine's 1-minute load average. The analyzer's 8s navigation limit is
+      // CPU-sensitive on OUR side, so a timeout means little without knowing how busy we were.
       attemptLog.push({ ok: Boolean(data?.ok), code: data?.ok ? null : (data?.failure?.code || 'HARNESS'),
-        detail: data?.ok ? null : (data?.failure?.detail || error), ms: Date.now() - t0, analysisMs: data?.timingMs ?? null });
+        detail: data?.ok ? null : (data?.failure?.detail || error), ms: Date.now() - t0,
+        analysisMs: data?.timingMs ?? null, load1: +loadavg()[0].toFixed(1) });
     }
 
     const ok = Boolean(data && data.ok);
@@ -243,6 +247,8 @@ if (survey) {
     console.log(tag, ok ? 'captured' : 'FAILED  ', site, '-', ok
       ? `${d.foliage?.state}/${d.foliage?.density} flowers:${d.flowers?.amount} ${d.botanicalState} bg:${d.background} analysis ${data.timingMs}ms · on screen ${data.e2eMs}ms · try ${attempts}`
       : `${data?.failure?.code || error} (${attemptLog.map((a) => `${a.code} ${a.ms}ms`).join(', ')})`);
+    // The tree keeps auto-rotating in software GL; leave it up and it starves the visit below.
+    await page.goto('about:blank').catch(() => {});
     if (withSite) await addSite(name, entry, tag);
   }
 } else {

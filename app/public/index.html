@@ -91,6 +91,22 @@
         color: var(--muted);
       }
       .overlay[hidden] { display: none; }
+      /* The failure message sits OVER the bare-earth island, so it needs a
+         ground of its own — dark red on brown soil was close to unreadable.
+         A judge put the principle well: an image can refuse to pass judgment on
+         a site, but it cannot say "we could not read this"; that sentence has to
+         be carried by the copy, so the copy has to be legible whatever is behind
+         it. Only the error state gets the card; the idle and loading messages sit
+         on a plain canvas and would look boxed-in. */
+      .overlay.failed #msg, .overlay.failed #retry {
+        background: rgba(253, 251, 247, 0.94);
+        border: 1px solid #e4ded4;
+        border-radius: 12px;
+        padding: 12px 18px;
+        max-width: 34em;
+        box-shadow: 0 2px 14px rgba(60, 48, 36, 0.10);
+      }
+      .overlay.failed #retry { padding: 7px 16px; }
       .spinner {
         width: 19px; height: 19px; border-radius: 50%;
         border: 2px solid var(--line); border-top-color: var(--accent);

@@ -514,5 +514,176 @@
       "transferKB": 2280,
       "shot": true
     }
+  },
+  {
+    "site": "netflix.com",
+    "category": "popular · video",
+    "file": "_failed/netflix.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 33494,
+        "analysisMs": null
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 32611,
+        "analysisMs": null
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading netflix.com. Big, richly built sites often outrun us.",
+    "domain": "netflix.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 32565,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null,
+    "siteMetrics": {
+      "url": "https://netflix.com",
+      "dclMs": null,
+      "error": "page.goto: Timeout 30000ms exceeded.",
+      "shot": false
+    }
+  },
+  {
+    "site": "spotify.com",
+    "category": "popular · music",
+    "file": "spotify.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 28226,
+        "analysisMs": 19030
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "spotify.com",
+    "url": "https://open.spotify.com/",
+    "live": true,
+    "timingMs": 19030,
+    "e2eMs": 25019,
+    "stamp": "grown in 24.0s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.474,
+      "inkCoverage": 0.485,
+      "colorfulness": 0.282,
+      "designColorfulness": 0.282,
+      "designChromaticRatio": 0.0854,
+      "warmShareOfChroma": 0.319,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.122,
+      "accentConcentration": 0.218,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#121212",
+        "primary": "#ae4a51",
+        "secondary": "#ae7858"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#b0484f",
+        "secondary": "#e4d2c7"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#241a1b",
+      "seed": 1640848914,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://open.spotify.com/",
+      "dclMs": 14951,
+      "error": null,
+      "nodesAtDcl": 72,
+      "loadMs": null,
+      "finalUrl": "https://open.spotify.com/",
+      "nodes": 73,
+      "scripts": 13,
+      "blockingScripts": 1,
+      "stylesheets": 1,
+      "images": 0,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 159,
+      "ttfbMs": 2169,
+      "requests": 35,
+      "transferKB": 1549,
+      "shot": true
+    }
+  },
+  {
+    "site": "instagram.com",
+    "category": "popular · social",
+    "file": "_failed/instagram.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 18304,
+        "analysisMs": null
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 27756,
+        "analysisMs": null
+      }
+    ],
+    "harnessError": "page.waitForResponse: Target page, context or browser has been closed",
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading instagram.com. Big, richly built sites often outrun us.",
+    "domain": "instagram.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 18282,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
   }
 ]

@@ -80,7 +80,15 @@ function normalizeUrl(raw, scheme) {
 // plain http — bettermotherfuckingwebsite.com is exactly this case, and it is
 // one of our clearest examples of deliberate minimalism, so it is worth the
 // retry. Never downgrades a URL the user explicitly typed as https.
-const RETRYABLE = new Set(['UNREACHABLE', 'CONNECTION_RESET', 'DNS', 'NAV_FAILED', 'TIMEOUT']);
+//
+// TIMEOUT IS NOT IN THIS SET, and used to be. A navigation timeout is not a
+// connection-level failure: the server answered, we simply gave up waiting for
+// domcontentloaded on a heavy DOM. Plain http cannot do better than https at
+// that — it is the same page and the same bytes. All the retry bought was a
+// second full 8s attempt before the user was told anything, so nike.com took
+// 18-25s to report a failure the analyzer already knew about at 8s. An honest
+// FAST failure beats a slow one, and this was neither fast nor informative.
+const RETRYABLE = new Set(['UNREACHABLE', 'CONNECTION_RESET', 'DNS', 'NAV_FAILED']);
 
 const send = (res, code, body, type = 'application/json; charset=utf-8') => {
   res.writeHead(code, { 'content-type': type, 'cache-control': 'no-store' });

@@ -5,7 +5,8 @@
 // The renderer is imported straight from the 3D domain (served at /tree/), so
 // this page can never drift from the prototype.
 
-import { mountTree } from '/tree/main.js';
+import { mountTree, mountEarth } from '/tree/main.js';
+import { dnaToParams } from '/tree/dna-params.js';
 
 const $ = (id) => document.getElementById(id);
 const form = $('form'), input = $('url'), go = $('go');
@@ -18,15 +19,9 @@ let busy = false;
 
 function state(s, text, retryable) {
   retryBtn.hidden = !(s === 'error' && retryable);
-  // A FAILURE MUST NOT SHOW THE PREVIOUS SITE'S TREE. The canvas keeps whatever
-  // it last drew, so after one success and one failure the error message was
-  // being rendered over a completely unrelated tree — telling the user we could
-  // not read their site while showing them someone else's. Worse than an empty
-  // box, because it looks like a result. (Taste's bare-earth island will fill
-  // this space properly; hiding it is the honest stopgap, not the destination.)
-  sceneEl.style.visibility = s === 'error' ? 'hidden' : '';
   const showOverlay = s !== 'ready';
   overlay.hidden = !showOverlay;
+  overlay.classList.toggle('failed', s === 'error');
   spinner.hidden = !(s === 'analyzing' || s === 'growing');
   msg.textContent = text || '';
   msg.className = s === 'error' ? 'err' : '';
@@ -70,8 +65,15 @@ function renderWhy(dna) {
   add(DENSITY[dna.foliage?.density]);
   add(STATE[dna.botanicalState]);
 
+  // Describe the tree that actually GREW, not the raw contract. An autumn site
+  // still carries flowers.amount in its DNA, but autumn trees carry no flowers
+  // — their accent arrives as fruit — so reading the contract here told the
+  // user "Flowering", with swatches, under a tree that has none. dnaToParams is
+  // the single place that decides, so ask it rather than restating the rule.
+  let effective = dna.flowers?.amount;
+  try { effective = dnaToParams(dna).params.flowers ?? effective; } catch { /* keep the contract's */ }
   const cols = [dna.flowers?.primary, dna.flowers?.secondary].filter(Boolean);
-  add(FLOWERS[dna.flowers?.amount], cols.length ? cols : null);
+  add(FLOWERS[effective], effective !== 'none' && cols.length ? cols : null);
 
   add(SKELETON[dna.skeleton?.complexity]);
   // Fruit is MEASURED, not a quirk. It used to be a seeded lottery and the copy
@@ -156,6 +158,17 @@ async function grow(raw) {
 
   if (!data.ok) {
     const [text, retryable] = failureText(data.failure, data.domain);
+    // BARE EARTH, not the last site's tree. The canvas keeps whatever it drew,
+    // so a failure after a success printed "we could not read X" across a fully
+    // grown tree belonging to something else. Taste's ruling: show the island
+    // with grass, stones and tree all suppressed — terrain is MEASURED too, so
+    // a full lawn under a failure fabricates data we never obtained, and a seed
+    // or a stunted tree would assert a measurement we do not have. It is the
+    // stage without the content.
+    try {
+      if (tree) await tree.setEarth();
+      else tree = mountEarth(sceneEl, { autoRotate: true });
+    } catch (err) { console.error(err); }
     return state('error', text, retryable);
   }
 
