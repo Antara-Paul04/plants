@@ -55,18 +55,26 @@ function stepFor(radius) {
  * exactly — no seam. The phases drift slowly with arc length, so grooves wander,
  * merge and fade rather than running rule-straight, and nothing repeats.
  */
-function groove(theta, z, seed) {
+export function groove(theta, z, seed, f1 = 8) {
   const p1 = noise3(z * 0.42, seed, 1.7) * 2.6;
   const p2 = noise3(z * 0.55, seed, 9.1) * 2.6;
   const p3 = noise3(z * 0.7, seed, 23.4) * 2.6;
-  let v = 0.5 * Math.cos(8 * theta + p1)
-        + 0.32 * Math.cos(13 * theta + p2 + 1.3)
-        + 0.18 * Math.cos(19 * theta + p3 + 4.1);
+  // Frequencies are per-limb (see grooveFreq) but always INTEGERS, so the ring
+  // closes. Fixed frequencies put the same nineteen grooves round a wrist-thick
+  // limb as round the trunk, which is under two voxels a cycle and aliased the
+  // field into scalloped banding.
+  const f2 = Math.round(f1 * 1.6), f3 = Math.round(f1 * 2.4);
+  let v = 0.5 * Math.cos(f1 * theta + p1)
+        + 0.32 * Math.cos(f2 * theta + p2 + 1.3)
+        + 0.18 * Math.cos(f3 * theta + p3 + 4.1);
   // Grooves come and go along the limb; a groove that never stops is a flute
   // on a column, and that is architecture, not a tree.
   v *= 0.6 + 0.4 * noise3(z * 0.8, seed + 40, 5.5);
   return smoothstep(0.05, -0.62, v);
 }
+
+/** Groove count from girth: a groove is about a hand wide whatever it is on. */
+export const grooveFreq = (baseRadius) => Math.max(3, Math.round((2 * Math.PI * baseRadius) / 0.24));
 
 /**
  * Where the NODES are along a shoot — the slight swellings where buds and
@@ -104,6 +112,7 @@ function sweepLimb(pts, radii, opts = {}) {
     terminal = false,
     forkShade = 0,      // occlusion in the crotch where this limb leaves its parent
     leadIn = 0,         // arc length hidden inside the parent before the union
+    hostR = 0,          // the parent's radius at the union, 0 for the trunk
   } = opts;
 
   // Centripetal avoids the cusps and overshoot plain catmull-rom produces on
@@ -143,7 +152,22 @@ function sweepLimb(pts, radii, opts = {}) {
     }
     rad += Math.min(bulge, rad * 0.24);
 
-    if (baseBlend > 0) rad *= 1 + baseBlend * Math.exp(-t * 14);
+    // THE UNION. A branch collar is trumpet-shaped: the limb flares as it meets
+    // its parent, so the two surfaces come together at a shallow angle instead
+    // of one tube plunging into another. Without it the join is a raw
+    // intersection line with an undercut lip and a hard shadow beneath — which
+    // detailed bark used to hide and a smooth clay surface does not. The flare
+    // fades IN across the hidden lead-in, so there is no step inside the parent,
+    // and it is capped below the parent's own radius so it cannot come out of
+    // the far side.
+    let nearUnion = 0;
+    if (hostR > 0) {
+      const past = arc - leadIn;
+      const lam = clamp(rad * 2.2, 0.06, 0.4);
+      nearUnion = smoothstep(-0.12, 0.04, past) * Math.exp(-Math.max(0, past) / lam);
+      rad *= 1 + 0.5 * nearUnion;
+      if (past < 0.12) rad = Math.min(rad, hostR * 0.86);
+    }
     // A shoot holds its diameter and ends in a BUD. Tapering over a fraction
     // of the limb's length made long shoots into needles and, earlier, every
     // shoot into a cone — a tree covered in cones is a thorn bush. So the end
@@ -173,7 +197,9 @@ function sweepLimb(pts, radii, opts = {}) {
     // Deep enough to MODEL under soft light. At the first attempt they were so
     // shallow that an evenly lit trunk was a featureless column: soft light
     // needs more form to work with, not less.
-    const grooveDepth = clamp((rad - 0.018) * 0.17, 0, 0.05);
+    // Grooves fade out toward the union: two groove patterns meeting at an angle
+    // make a jagged join, and a collar is smooth in any case.
+    const grooveDepth = clamp((rad - 0.018) * 0.17, 0, 0.05) * (1 - 0.92 * nearUnion);
 
     // Occlusion, carried as vertex colour and multiplied into the bark:
     // the base darkens into the ground, and crotches are shaded where a limb
@@ -202,7 +228,7 @@ function sweepLimb(pts, radii, opts = {}) {
       }
       const base = rad * wob * (1 + butt);
 
-      const gv = grooveDepth > 0 ? groove(a, arc + zOff, seed) : 0;
+      const gv = grooveDepth > 0 ? groove(a, arc + zOff, seed, grooveFreq(rMax)) : 0;
       const rr_ = base - gv * grooveDepth;
 
       _o.set(0, 0, 0).addScaledVector(N, ca * rr_).addScaledVector(B, sa * rr_);
@@ -273,6 +299,23 @@ function sweepLimb(pts, radii, opts = {}) {
 }
 
 /**
+ * Da Vinci's rule drops the radius ACROSS A FORK, i.e. within one segment —
+ * 0.287 to 0.228 over 0.17 units at the first union — which meshes as a shelf
+ * running round the trunk. Wood spreads that taper over the length of the
+ * union. Relaxing the radii along the chain turns the step into a slope. Shared
+ * with woodsdf.js so the field and the tubes agree on every radius.
+ */
+export function relaxedRadii(chain) {
+  const radii = chain.map((n) => n.r);
+  const last = chain.length - 1;
+  for (let pass = 0; pass < 4; pass++) {
+    const prev = radii.slice();
+    for (let i = 1; i < last; i++) radii[i] = prev[i - 1] * 0.25 + prev[i] * 0.5 + prev[i + 1] * 0.25;
+  }
+  return radii;
+}
+
+/**
  * Mesh a whole skeleton.
  *
  * Children are started INSIDE their parent and flared, and the parent is bulged
@@ -289,22 +332,19 @@ export function buildLimbs(limbs, r, opts = {}) {
     // it — otherwise its children are meshed hanging in mid-air.
     if (L.parentLimb && L.parentLimb.skipped) { L.skipped = true; continue; }
 
-    const pts = chain.map((n) => n.pos.clone());
-    const radii = chain.map((n) => n.r);
-    const last = chain.length - 1;
-
-    // Da Vinci's rule drops the radius ACROSS A FORK, i.e. within one segment:
-    // 0.287 to 0.228 over 0.17 units at the first union, which meshes as a
-    // shelf running round the trunk. Wood does not do that — the taper through
-    // a union is spread over the length of the union. Relaxing the radii along
-    // the chain keeps every fork's totals while turning the step into a slope.
-    for (let pass = 0; pass < 4; pass++) {
-      const prev = radii.slice();
-      for (let i = 1; i < last; i++) radii[i] = prev[i - 1] * 0.25 + prev[i] * 0.5 + prev[i + 1] * 0.25;
-    }
+    // Thick wood is an implicit surface now (woodsdf.js). `cut` is how many of
+    // this limb's nodes it covers; the tube picks up one node before that, a
+    // little thinner so its first ring is hidden inside the field's surface.
+    const cut = opts.cuts?.get(L) || 0;
+    if (cut >= chain.length - 1) continue;              // the field has all of it
+    const start = cut > 0 ? cut - 1 : 0;
+    const pts = chain.slice(start).map((n) => n.pos.clone());
+    const radii = relaxedRadii(chain).slice(start);
+    if (cut > 0) radii[0] *= 0.85;
+    const last = pts.length - 1;
 
     let baseBlend = 0, forkShade = 0, leadIn = 0, lead = 0;
-    if (L.parentLimb) {
+    if (L.parentLimb && cut === 0) {
       const host = L.parentLimb.chain[L.parentIndex];
       // Start the child INSIDE the parent, running along the PARENT'S OWN AXIS
       // for one segment before it curves out.
@@ -357,8 +397,8 @@ export function buildLimbs(limbs, r, opts = {}) {
     // Collars for this limb's OWN children, positioned where they actually
     // leave. Tiny children are ignored: a collar per twig made vertebrae.
     const collarAt = (L.attach || [])
-      .filter((a) => a.r > chain[Math.min(a.index, last)].r * 0.28)
-      .map((a) => ({ t: (a.index + lead) / (last + lead), r: a.r }));
+      .filter((a) => a.index >= start && a.r > chain[Math.min(a.index, chain.length - 1)].r * 0.28)
+      .map((a) => ({ t: (a.index - start + lead) / (last + lead), r: a.r }));
 
     const isTrunk = !L.parentLimb;
     const g = sweepLimb(pts, radii, {
@@ -367,7 +407,8 @@ export function buildLimbs(limbs, r, opts = {}) {
       baseBlend,
       forkShade,
       leadIn,
-      rootFlare: isTrunk ? 1 : 0,
+      hostR: L.parentLimb && cut === 0 ? L.parentLimb.chain[L.parentIndex].r : 0,
+      rootFlare: isTrunk && cut === 0 ? 1 : 0,
       terminal: (L.attach || []).length === 0 && !isTrunk,
     });
     if (opts.debugColors) {

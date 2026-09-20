@@ -346,6 +346,40 @@ shoots were half of the tentacle reading.
   ladder, so that too belongs to the joint tuning.
 - The trunk-base clamp (0.34) still flattens the bottom of the bare trunk.
 
+### Thick wood is an implicit surface; presets follow Taste's width rule — EXPERIMENT
+
+**Status: EXPERIMENT.** Renders: `references/experiments/gate1-clay-2026-09-20/`, including
+`bare-fork-TUBES-for-comparison.png`.
+
+**Why.** On a smooth clay surface a union between two swept tubes cannot look grown: two
+tubes meeting at fifty degrees leave a raw intersection crease with an undercut lip. Four
+tube-side attempts — buried bases, hidden lead-ins, parent collars, trumpet flares — only
+moved the crease around; detailed bark had been hiding it. (One of those attempts also had
+a real bug: the limb's first node was REPLACED by its lead-in, taking it off the limb's own
+meshed path, so grandchildren attaching near the start ran their lead-ins outside their
+parent. Lead-ins are now prepended.)
+
+**What.** `prototype/src/woodsdf.js`: wood thicker than 0.04 is a signed distance field —
+each limb a chain of tapered capsules, hard-min within a limb, SMOOTH-min between limbs —
+meshed with marching cubes (tables from three's addons), normals from the field gradient.
+Unions fillet themselves and the parent swells round the child (a branch collar, for free);
+five buttress roots are just more capsules blended with a wide radius, so they flow;
+grooves live in the field and soften into every join. Thin limbs stay swept tubes and pick
+up where the field stops, the field sinking inside the tube at the hand-over. `?sdf=0`
+falls back to tubes everywhere.
+
+**Cost.** Bare: 8.6M-voxel grid at 0.026, ~1.6 s to evaluate, 102k field triangles, 211k
+total. Sparse: ~0.9 s, 82k total. **That build time is too slow for the product as-is** —
+a coarser voxel, a narrow-band grid or a worker is needed before this ships; not done here.
+
+**Presets now follow Taste's rule** — nothing narrow, width roughly constant, density is
+what varies; buy air with width, never by flattening. Both share a broad domed envelope
+(rx 2.9; ry 2.15 / 2.05) and differ in structure: 334 limbs against 76. Attractor counts
+were scaled with the envelope's volume so widening did not thin the judged branching, and
+`grow` was re-matched by measurement so the first-fork radius is what was reviewed (bare
+0.298 vs 0.2955; sparse 0.166 vs 0.1656). The radius clamp went 0.34 → 0.42, so the bare
+trunk base now tapers naturally into the buttress instead of flattening.
+
 ---
 
 ## Invariant characteristics

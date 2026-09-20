@@ -27,6 +27,7 @@ const { rng } = await import(`./util.js${bust}`);
 const { buildSkeleton } = await import(`./branching.js${bust}`);
 const { buildLimbs } = await import(`./limbmesh.js${bust}`);
 const { makeBarkMaterial } = await import(`./bark.js${bust}`);
+const { buildThickWood } = await import(`./woodsdf.js${bust}`);
 const { buildIsland, buildGrass } = await import(`./island.js${bust}`);
 const { makeRenderer, fitCamera } = await import(`./viewer.js${bust}`);
 
@@ -280,7 +281,12 @@ const tGrow = performance.now() - t0;
 
 const t1 = performance.now();
 const DEBUG_LIMBS = q.get('debug') === 'limbs';
-const geo = buildLimbs(skel.limbs, r, { debugColors: DEBUG_LIMBS });
+// Thick wood is an implicit surface (smooth-blended unions, flowing buttress);
+// thin wood stays swept tubes and picks up where the field stops. `sdf=0` falls
+// back to tubes everywhere, for comparison.
+const useField = q.get('sdf') !== '0';
+const thick = useField ? buildThickWood(skel.limbs, r, { voxel: num('voxel', 0.026) }) : { geometry: null, cuts: new Map() };
+const geo = buildLimbs(skel.limbs, r, { debugColors: DEBUG_LIMBS, cuts: thick.cuts });
 const tMesh = performance.now() - t1;
 
 const bark = DEBUG_LIMBS
@@ -288,9 +294,14 @@ const bark = DEBUG_LIMBS
   : P.flat
   ? new THREE.MeshStandardMaterial({ color: 0x6b5443, roughness: 0.82, metalness: 0 })
   : makeBarkMaterial();
-const tree = new THREE.Mesh(geo, bark);
-tree.castShadow = true;
-tree.receiveShadow = true;
+const tree = new THREE.Group();
+for (const gm of [geo, thick.geometry]) {
+  if (!gm) continue;
+  const m = new THREE.Mesh(gm, bark);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  tree.add(m);
+}
 scene.add(tree);
 
 if (P.showGround) {
@@ -341,13 +352,14 @@ controls.maxPolarAngle = Math.PI * 0.52;
 controls.update();
 
 // --- stats -----------------------------------------------------------------
-const tris = geo.index.count / 3;
+const tris = geo.index.count / 3 + (thick.geometry ? thick.geometry.attributes.position.count / 3 : 0);
 const forks = skel.nodes.filter((n) => n.children.length > 1).length;
 const hud = document.getElementById('hud');
 hud.textContent =
   `${q.get('preset') || 'bare'} · seed ${P.seed} · a=${P.alpha} · shot ${shot}\n` +
   `${skel.nodes.length} nodes · ${skel.limbs.length} limbs · ${forks} forks\n` +
-  `${(tris / 1000).toFixed(0)}k tri · grow ${tGrow.toFixed(0)}ms · mesh ${tMesh.toFixed(0)}ms`;
+  `${(tris / 1000).toFixed(0)}k tri · grow ${tGrow.toFixed(0)}ms · mesh ${tMesh.toFixed(0)}ms` +
+  (thick.geometry ? `\nfield ${JSON.stringify(thick.geometry.userData.stats)}` : '');
 if (q.get('hud') === '0') hud.style.display = 'none';
 
 function resize() {
@@ -370,4 +382,4 @@ function tick() {
 }
 tick();
 document.body.classList.add('ready');
-window.__gate1 = { skel, geo, P, camera, controls, scene, renderer };
+window.__gate1 = { skel, geo, thick, tris, P, camera, controls, scene, renderer };

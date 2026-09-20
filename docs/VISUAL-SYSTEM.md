@@ -223,6 +223,44 @@ emissive floors, which will glow at night. At Gate 2, every emissive or baked-li
 must scale with the environment state, and foliage/flowers/fruit need a per-state grade
 like the ground's. Cheap if designed in; a retrofit otherwise.
 
+### Surface language changed: clay, not bark — EXPERIMENT
+
+**Status: EXPERIMENT, to the human's direction (2026-09-20, with a reference; the
+principle is in TASTE.md). Supersedes the detailed-bark section above.** Renders:
+`references/experiments/gate1-clay-2026-09-20/`.
+
+The detailed procedural bark fixed the low-poly reading and was then rejected as the wrong
+direction: *"this is the sort of artstyle I want, not the detailed bark."* The target is a
+warm light-tan trunk with only broad soft grooves, a smooth flowing buttress, matte
+throughout — "clay or marzipan, never polished wood". **Form stays botanical; surface
+simplifies.** Nothing structural was undone.
+
+What that became, and why:
+
+- **Grooves are sculpted, not textured.** Broad soft grooves are low-frequency enough to BE
+  geometry, so they are real displacement shaded by true normals, and there is no bump map
+  at all. A sculpted surface reads as clay; a texture of one reads as a texture.
+- **No seam, no mirror, no tile — by construction.** Grooves are a sum of cosines at
+  INTEGER frequencies around the limb (the ring closes exactly), with phases drifting along
+  it (they wander and never repeat). The count comes from each limb's girth: fixed
+  frequencies put nineteen grooves round a wrist-thick limb and aliased.
+- **The material only tints** (`bark.js`): a deeper tone in the grooves, a slow drift of
+  warmth so the tree is not one flat swatch, a deeper tone on thin wood so twigs hold
+  against sky. **Zero specular** — roughness 1 alone still leaves a sheen, and that sheen is
+  the "polished wood" being rejected.
+- **Soft light still has to model.** The first clay render under "soft even light" was a
+  featureless peach column: soft light needs MORE form to work with, not less. Grooves went
+  deeper, the key came back up and round to the side, the fill came down. A pinker tan read
+  as skin.
+- **Smooth surfaces hide nothing, so the unions had to be rebuilt** — see TREE-SYSTEM.md.
+  This was the largest consequence of the art-direction change.
+- **Night needed no changes and got better.** Verified, not assumed: the light matte albedo
+  takes moonlight as pale luminous wood, which fixes the "tree too dark" weakness the
+  detailed bark had at night.
+
+**Still needs Taste or the human:** the exact tan; whether grooves should be fewer and
+broader still; twigs (now thin matte wires); and the island, which mismatches more than ever.
+
 ---
 
 ## Overall art direction
