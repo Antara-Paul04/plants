@@ -95,6 +95,13 @@ place by being observed, not assumed.
   become the loudest thing in the frame.** Quieting the turf under a bare tree works,
   and it immediately promotes whatever was left at full summer value — stones, sky —
   to the brightest object in a picture whose whole point was to be quiet.
+- **Restraint is subtraction from abundance; boring is the absence of decision.** The
+  test is to remove one more thing: if the image gets worse it was restrained, and if
+  nothing changes it was boring. A restrained tree is at a minimum where every element
+  is load-bearing; a boring one has slack nobody noticed. So — *Plants may produce a
+  tree with almost nothing on it, and may never produce a tree that had nothing decided
+  about it.* Boring is a property of the mapping rather than of the tree: it means the
+  site's richness found no channel to arrive through.
 - **Spread encodes how much room the tree had, and the viewer reads that as fortune.**
   A tree narrows and sheds its lower limbs when competition starves it of light, so a
   tall bare column or a tight crown says *this specimen lost* before any other reading
@@ -116,8 +123,12 @@ place by being observed, not assumed.
   Broken taper, junctions that step instead of swelling, and too few branch orders are
   the whole of the asset-store look, and no amount of subdivision touches any of them.
   The one thing that legitimately needs *more* is count at the fine end of the
-  hierarchy — three hundred three-triangle twigs, never a smoother trunk. Targets and
-  the Gate 1 checklist: [references/tree-style](../references/tree-style/README.md).
+  hierarchy — three hundred three-triangle twigs, never a smoother trunk. But **crown
+  mass is not monotonic in that count**: twigs too thick for their length merge into a
+  solid dark knot, which fails the silhouette exactly as badly as too few does. The
+  mass comes from fine texture, not from filled volume — long, straight and thin, or
+  it does not matter how many there are. Targets and the Gate 1 checklist:
+  [references/tree-style](../references/tree-style/README.md).
 - **A difference must be exaggerated to the magnitude that survives a thumbnail, and
   the corpus itself says what that magnitude is.** Wherever one generated tree *does*
   read as distinct at feed size, that is the calibration — anything subtler than the

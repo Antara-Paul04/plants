@@ -137,6 +137,53 @@ the geometry in [TREE-SYSTEM.md](TREE-SYSTEM.md). This is what it taught about *
 - Do twelve trees from one family read as *one project* — or as one tree with settings?
 - Is a blue-flowered or green-flowered tree charming or wrong? gov.uk is the test case.
 
+### Bark and light: why the tree read as low-poly — EXPERIMENT
+
+**Status: EXPERIMENT, waiting on Taste and the human.** The human's verdict on the Gate 1
+tree was that it still read as low-poly. The cause was not triangle count: form had been
+done and surface deliberately deferred, and **an unsurfaced tree looks exactly like a
+low-poly asset however good its structure is.** "Low-poly" is mostly a surface reading.
+
+**Approach: procedural bark evaluated in limb-local space** (`prototype/src/bark.js`) —
+around the limb's axis in world units, along it in arc length. Chosen on merit over a
+baked texture set: the two classic bark-texture failures are a seam up the back of every
+limb and a tile repeating up the trunk, and a 3D function of limb-local coordinates has
+neither *by construction*. The grain follows the limb, and scale holds from trunk to twig
+with no texel-density bookkeeping. Height drives normals (forward differences over the
+pixel footprint), cavity, roughness and colour; every layer fades at its own pixel
+footprint so the same material serves the hero shot and the close-up without sparkling.
+
+**Four failures on the way, each a recognisable man-made thing — worth knowing, because
+crisp mathematical primitives read as whatever they most resemble:**
+
+| Attempt | Read as | Why |
+| --- | --- | --- |
+| Ridged value-noise contours | melted wax | contour lines wander, vary wildly in width, and close into loops; bark does none of that |
+| Stretched Voronoi, soft wide ramp | reptile scales | every plate a glossy pillow |
+| Stretched Voronoi, hard narrow ramp | planks with ink outlines | straight Voronoi edges are vector lines; flat tops are boards |
+| Regular `fract` breaks along ridges | woven rope | evenly spaced breaks are ladder rungs |
+
+**What worked:** long interlocking Voronoi ridges (9:1 stretch), *warped at three scales*
+so fissure edges are ragged; a V-shaped furrow with visible sloped walls; warm inner bark
+on those walls (without it fissures are painted black lines); ridge breaks placed by noise
+running along each ridge, slanted, on only some ridges; lumpy-and-fibrous ridge tops; pale
+lichen in patches on old wood; smooth paler bark on thin limbs; specular cut to 30%
+(bark is porous — at default F0 it has a varnish sheen). Once the tree was lit from
+outside (see the winding bug in TREE-SYSTEM.md), furrow shadow had to come from the
+normals rather than painted cavity, or the trunk turned to zebra stripes.
+
+**Light.** Gate 1 carries its own rig: an image-based environment (a sky dome with a warm
+soft sun, through PMREM) plus a key that *rakes* across the trunk. Bark relief is only
+visible under grazing light, and without an environment every shadowed surface falls to
+the same dead value. ACES tone mapping. The product rig is untouched.
+
+**Still needs a human or Taste:**
+
+- Is this the right bark — furrowed grey-brown — or the wrong species for the project?
+- Furrow centre-lines are still slightly inked; young wood is plain, smooth tan.
+- The stylised island and grass now visibly mismatch the tree's fidelity.
+- Whether `botanicalState` should shift the bark palette (winter greyer, autumn warmer).
+
 ---
 
 ## Overall art direction

@@ -64,29 +64,60 @@ export const BANDS = {
 };
 
 // ---------------------------------------------------------------- flower conditioning
-// Raw accent hexes are emitted straight from rendered pixels, and a dark one produces a
-// blossom indistinguishable from bark (github.com: #0b0d40, a near-black navy, at
-// `medium` amount). Flower legibility tracks hue CONTRAST, not amount — independently
-// observed by visual-3d from the renderer side.
+// Raw accent hexes come straight from rendered pixels, and a dark one produces a blossom
+// indistinguishable from bark. But the first version of this fixed that by BLEACHING the
+// petal: #723131 (maroon) came out #d27f7f (dusty pink). Hue was preserved exactly and
+// the colour was still lost, because FOR A DARK ACCENT THE DARKNESS IS PART OF THE
+// IDENTITY — maroon, burgundy, oxblood, forest green, deep plum.
 //
-// Same treatment `background` already gets under Rule 11: display-safe and aesthetically
-// controlled rather than raw. HUE IS PRESERVED EXACTLY — that is the site's colour and
-// the whole of D5. Only lightness and chroma move, and only far enough that a blossom
-// reads as a blossom against green foliage and against its own bark.
-function conditionFlower(hexIn, role) {
+// So legibility now comes from contrast AROUND the petal, not from lightening it:
+//   * petal lightness may travel only a bounded distance, and only up to a floor that
+//     separates it from foliage — it is never pushed into the pastel range;
+//   * the flower CENTRE carries the remaining read. A dark petal gets a bright centre,
+//     which reads at distance, keeps the petal's colour, and is botanically ordinary.
+//
+// Numbers are taken from the 19 real design accents in the corpus (lightness 0.21-0.84,
+// median 0.66, only ONE below 0.40). PETAL_FLOOR sits just under that lone dark accent's
+// neighbourhood so genuinely dark brand colours survive as dark.
+const PETAL_FLOOR = 0.40;   // minimum lightness that still separates a petal from foliage
+const PETAL_LIFT  = 0.22;   // maximum distance lightness may travel, ever
+const PETAL_CEIL  = 0.86;   // keep near-white accents off a light background
+const CENTRE_GAP  = 0.35;   // lightness contrast the centre must achieve against the petal
+
+function conditionFlower(hexIn, role, petalHex) {
   if (!hexIn) return null;
   const [h, s, l] = rgb2hsl(...hex2rgb(hexIn));
-  // A near-grey accent has no hue worth preserving; give it a gentle tint rather than
-  // inventing a colour it does not have.
-  const sat = s < 0.08
-    ? (role === 'secondary' ? 0.22 : 0.30)
-    : Math.max(role === 'secondary' ? 0.38 : 0.48, Math.min(s, 0.92));
-  // Petals sit ABOVE foliage in lightness so they separate from it; centres sit below
-  // the petals so the flower still reads as a flower rather than a flat dot.
-  const lit = role === 'secondary'
-    ? Math.max(0.40, Math.min(0.62, l < 0.40 ? 0.44 : l))
-    : Math.max(0.60, Math.min(0.82, l < 0.60 ? 0.66 : l));
+
+  if (role === 'primary') {
+    // lift only as far as the floor, and never further than PETAL_LIFT
+    const lit = Math.min(PETAL_CEIL, Math.max(l, Math.min(l + PETAL_LIFT, PETAL_FLOOR)));
+    // a near-grey accent has no hue worth preserving; tint gently rather than invent one
+    const sat = s < 0.08 ? 0.28 : Math.max(0.42, Math.min(s, 0.92));
+    return rgb2hex(...hsl2rgb(h, sat, lit));
+  }
+
+  // CENTRE: hue stays the site's secondary, lightness is driven by contrast with the
+  // petal so the flower reads at thumbnail size whatever colour the petal ended up.
+  const petalL = petalHex ? rgb2hsl(...hex2rgb(petalHex))[2] : 0.6;
+  const lit = petalL < 0.50
+    ? Math.max(0.62, Math.min(0.90, petalL + CENTRE_GAP))   // dark petal -> bright centre
+    : Math.max(0.28, Math.min(0.58, petalL - CENTRE_GAP));  // light petal -> deep centre
+  // a centre is subordinate to the petal: it supplies contrast, it does not compete.
+  // Uncapped, stripe's #735ffd centre came out an electric #2b0feb.
+  const sat = s < 0.08 ? 0.22 : Math.max(0.30, Math.min(s, 0.62));
   return rgb2hex(...hsl2rgb(h, sat, lit));
+}
+
+// A dark petal with no secondary accent would have no centre to carry the read, so one is
+// derived from the petal's own hue. Legibility necessity, flagged in `why`.
+function flowerPair(primaryHex, secondaryHex) {
+  const petal = conditionFlower(primaryHex, 'primary');
+  if (!petal) return { petal: null, centre: null, derivedCentre: false };
+  const petalL = rgb2hsl(...hex2rgb(petal))[2];
+  if (!secondaryHex && petalL < 0.45) {
+    return { petal, centre: conditionFlower(primaryHex, 'secondary', petal), derivedCentre: true };
+  }
+  return { petal, centre: conditionFlower(secondaryHex, 'secondary', petal), derivedCentre: false };
 }
 
 // ---------------------------------------------------------------- background
@@ -200,6 +231,8 @@ export function buildDna(fp, domain){
   const fruitOn = eligible && roll < BANDS.fruitRate;
   if (fruitOn) why.fruit = `seeded trait: seed ${seed} → roll ${roll.toFixed(3)} < ${BANDS.fruitRate} and the tree is eligible (not bare, not winter, foliage ${state}). Represents nothing about the website, deliberately.`;
 
+  const flowers = flowerPair(fp.palette.primary, fp.palette.secondary);
+
   const terrain = state === 'bare' ? 'sparse'
     : botanicalState === 'winter' ? 'winter'
     : botanicalState === 'autumn' ? 'autumn'
@@ -208,7 +241,8 @@ export function buildDna(fp, domain){
 
   const background = backgroundFrom(fp.palette.ground, botanicalState, fp.palette.primary);
   if (amount !== 'none' && fp.palette.primary) {
-    why.flowers += `; colour conditioned for legibility — hue preserved exactly from ${fp.palette.primary}, lightness and chroma lifted so the blossom reads against foliage`;
+    why.flowers += `; petal keeps the site's accent ${fp.palette.primary} — hue exact, lightness moved at most ${PETAL_LIFT} so a dark accent stays dark` +
+      (flowers.derivedCentre ? `; centre derived from the petal hue because the site has no secondary accent and a dark petal needs one to read` : `; contrast carried by the flower centre`);
   }
   why.background = `derived from rendered ground ${fp.palette.ground} (${fp.palette.ground.toLowerCase()==='#ffffff'||fp.palette.ground.toLowerCase()==='#fbfbfb'?'achromatic, so hue borrowed from the design accent '+fp.palette.primary:'own hue kept'}); light/dark character preserved, saturation held low → ${background}`;
 
@@ -220,10 +254,10 @@ export function buildDna(fp, domain){
       botanicalState,
       flowers: {
         amount,
-        primary:   amount === 'none' ? null : conditionFlower(fp.palette.primary, 'primary'),
-        secondary: amount === 'none' ? null : conditionFlower(fp.palette.secondary, 'secondary')
+        primary:   amount === 'none' ? null : flowers.petal,
+        secondary: amount === 'none' ? null : flowers.centre
       },
-      fruit: { enabled: fruitOn, color: fruitOn ? (conditionFlower(fp.palette.primary, 'primary') || '#c0392b') : null },
+      fruit: { enabled: fruitOn, color: fruitOn ? (flowers.petal || '#c0392b') : null },
       terrain,
       background,
       seed,

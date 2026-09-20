@@ -258,6 +258,51 @@ reads as a mature specimen rather than a deprived one.
 
 **OPEN:** whether broad-and-open still reads as *designed restraint* rather than merely
 *a different tree* once foliage returns. That is a Gate 5 question and a human one.
+### Gate 1 surface pass — what a real material exposed — EXPERIMENT
+
+**Status: EXPERIMENT.** Renders: `references/experiments/gate1-surface-2026-09-20/`.
+Putting a real bark material on the tree (see VISUAL-SYSTEM.md) immediately exposed
+geometry problems flat colour had been hiding. Recorded because each one will bite again.
+
+1. **The tree was being rendered INSIDE-OUT.** Ring vertices advance N→B and three's
+   Frenet frames have B = T × N, so the inherited index order `(a, b, a+1)` has its
+   normal pointing *into* the limb. Measured: 1000 of 1000 trunk triangles faced inward.
+   What was on screen was the inner face of each tube's far wall. A convex tube under
+   flat colour looks the same either way, which is how it survived — but anything
+   *inside* a limb (base caps, hidden lead-ins) showed straight through, every union
+   looked like tubes passing through each other, and the lighting was wrong throughout.
+   Fixed in `limbmesh.js`. **`tree.js` (the live V0 tree) uses the identical index order
+   and almost certainly has the same bug** — not touched here, flagged to Lead.
+2. **Unions.** A child limb now starts one segment back along its PARENT'S axis and
+   curves out. Da Vinci's rule makes every child thinner than its parent, so that
+   hidden stretch can never escape; starting the child at the union with a flared base
+   put a disc wider than the trunk through both sides of every major fork. The lead-in
+   needs real clearance (≤ 0.42–0.62 of the parent's radius): both surfaces carry ±13%
+   cross-section wobble. The visible swelling at a union is now the parent's collar,
+   which is the right way round anatomically.
+3. **Da Vinci's rule meshes as a shelf.** It drops the radius *across* a fork — 0.287 to
+   0.228 within one 0.17 segment at the first union. Radii are now relaxed along each
+   chain before sweeping, which turns the step into a slope through the union.
+4. **Fine shoots are not meshed on thick wood** (child radius < 16% of a host thicker
+   than 0.07). Space colonization sprouts them straight from the bole and up close they
+   are rose thorns. Skipped at mesh time, with their subtrees, so da Vinci's thickness
+   sums are untouched. Terminal limbs taper only over their last fifth, not from the
+   midpoint, which had turned every shoot into a cone.
+5. **`minStub` in the committed Gate 1 URLs never did anything.** The parameter was not
+   wired into the page when those renders were made, so `minStub=5` was ignored and the
+   reviewed trees were pruned at the 2-segment default. The presets in `gate1.js`
+   (`?preset=bare|sparse`) reproduce the trees that were actually judged: 1273 nodes /
+   213 limbs and 402 / 61.
+6. **OPEN: the trunk base is a cylinder again.** `assignRadii` clamps at 0.34 and the
+   bare tree's tip count now exceeds it, so the bottom five trunk nodes are all 0.34 and
+   the proportional taper is flattened exactly where root flare should begin. Raising
+   the clamp thickens the whole base, which is a proportion call — not taken here.
+7. **Twigs remain the weakest part**, now more visibly so: smooth, uniform, all curving
+   alike. Unchanged by this pass, and still coupled to trunk thickness through da Vinci.
+
+Resolution is now spent where the radius is: 56 radial segments on the trunk down to 8
+on shoots; 167k triangles for the bare tree, 76k for sparse (was 37k / 12k).
+
 ---
 
 ## Invariant characteristics

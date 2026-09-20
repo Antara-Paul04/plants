@@ -1,0 +1,570 @@
+[
+ {
+  "id": "control-raw",
+  "tags": [
+   "near-raw-html",
+   "control"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.786,
+   "largestClassShare": 0.357,
+   "columnCount": 2,
+   "largestUnitShare": 0.55,
+   "sizeEntropy": 0.889,
+   "textShare": 1,
+   "mediaShare": 0,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 1,
+   "gapCV": 0.499,
+   "depthSpread": 0.76,
+   "pageAspect": 0.63,
+   "_blocks": 14,
+   "_nodes": 25,
+   "_docH": 900
+  }
+ },
+ {
+  "id": "cern-first-web",
+  "tags": [
+   "near-raw-html"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.826,
+   "largestClassShare": 0.435,
+   "columnCount": 2,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.711,
+   "textShare": 1,
+   "mediaShare": 0,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.956,
+   "gapCV": 0.619,
+   "depthSpread": 0.76,
+   "pageAspect": 0.63,
+   "_blocks": 23,
+   "_nodes": 48,
+   "_docH": 900
+  }
+ },
+ {
+  "id": "better-mfw",
+  "tags": [
+   "intentional-minimal"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.742,
+   "largestClassShare": 0.387,
+   "columnCount": 2,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.815,
+   "textShare": 1,
+   "mediaShare": 0,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.444,
+   "gapCV": 0.461,
+   "depthSpread": 0.61,
+   "pageAspect": 1.28,
+   "_blocks": 31,
+   "_nodes": 49,
+   "_docH": 1838
+  }
+ },
+ {
+  "id": "yale-art",
+  "tags": [
+   "maximalist",
+   "brutalist"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.661,
+   "largestClassShare": 0.145,
+   "columnCount": 13,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.873,
+   "textShare": 0.648,
+   "mediaShare": 0.352,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.311,
+   "gapCV": 0.548,
+   "depthSpread": 2.93,
+   "pageAspect": 1.31,
+   "_blocks": 165,
+   "_nodes": 343,
+   "_docH": 1891
+  }
+ },
+ {
+  "id": "threejs-example",
+  "tags": [
+   "canvas-webgl",
+   "animation-heavy"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.8,
+   "largestClassShare": 0.8,
+   "columnCount": 1,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.722,
+   "textShare": 0.072,
+   "mediaShare": 0.928,
+   "canvasShare": 1.003,
+   "modalTextWidthRatio": 1,
+   "gapCV": 0,
+   "depthSpread": 1.02,
+   "pageAspect": 0.63,
+   "_blocks": 5,
+   "_nodes": 10,
+   "_docH": 900
+  }
+ },
+ {
+  "id": "unsplash",
+  "tags": [
+   "photography-heavy"
+  ],
+  "ok": false,
+  "fail": "invalid:403"
+ },
+ {
+  "id": "craigslist",
+  "tags": [
+   "text-heavy",
+   "very-dense",
+   "dissociation"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.15,
+   "largestClassShare": 0.1,
+   "columnCount": 6,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.965,
+   "textShare": 1,
+   "mediaShare": 0,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.089,
+   "gapCV": 1.049,
+   "depthSpread": 2.17,
+   "pageAspect": 0.8,
+   "_blocks": 60,
+   "_nodes": 586,
+   "_docH": 1151
+  }
+ },
+ {
+  "id": "bruno-simon",
+  "tags": [
+   "canvas-webgl",
+   "dissociation"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 1,
+   "largestClassShare": 1,
+   "columnCount": 1,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0,
+   "textShare": 0,
+   "mediaShare": 1,
+   "canvasShare": 1,
+   "modalTextWidthRatio": 0,
+   "gapCV": 0,
+   "depthSpread": 1.12,
+   "pageAspect": 0.63,
+   "_blocks": 4,
+   "_nodes": 15,
+   "_docH": 900
+  }
+ },
+ {
+  "id": "mfw",
+  "tags": [
+   "near-raw-html",
+   "intentional-minimal"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.793,
+   "largestClassShare": 0.448,
+   "columnCount": 2,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.757,
+   "textShare": 1,
+   "mediaShare": 0,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 1,
+   "gapCV": 0.34,
+   "depthSpread": 0.63,
+   "pageAspect": 0.78,
+   "_blocks": 29,
+   "_nodes": 30,
+   "_docH": 1120
+  }
+ },
+ {
+  "id": "threejs",
+  "tags": [
+   "image-heavy",
+   "grid"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.859,
+   "largestClassShare": 0.538,
+   "columnCount": 8,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.561,
+   "textShare": 0.083,
+   "mediaShare": 0.917,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.156,
+   "gapCV": 0.5,
+   "depthSpread": 1.06,
+   "pageAspect": 0.63,
+   "_blocks": 78,
+   "_nodes": 140,
+   "_docH": 900
+  }
+ },
+ {
+  "id": "spacejam-1996",
+  "tags": [
+   "maximalist",
+   "retro"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0,
+   "largestClassShare": 0.057,
+   "columnCount": 8,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.985,
+   "textShare": 0.008,
+   "mediaShare": 0.992,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.178,
+   "gapCV": 0.598,
+   "depthSpread": 1.98,
+   "pageAspect": 0.63,
+   "_blocks": 35,
+   "_nodes": 86,
+   "_docH": 900
+  }
+ },
+ {
+  "id": "sive-rs",
+  "tags": [
+   "intentional-minimal",
+   "text-heavy"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.596,
+   "largestClassShare": 0.308,
+   "columnCount": 1,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.814,
+   "textShare": 0.709,
+   "mediaShare": 0.291,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.489,
+   "gapCV": 0.731,
+   "depthSpread": 1.32,
+   "pageAspect": 5.47,
+   "_blocks": 52,
+   "_nodes": 86,
+   "_docH": 7880
+  }
+ },
+ {
+  "id": "stripe",
+  "tags": [
+   "conventional-marketing",
+   "gradient"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.525,
+   "largestClassShare": 0.203,
+   "columnCount": 28,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.861,
+   "textShare": 0.233,
+   "mediaShare": 0.767,
+   "canvasShare": 0.273,
+   "modalTextWidthRatio": 0.067,
+   "gapCV": 1.675,
+   "depthSpread": 7.48,
+   "pageAspect": 10.15,
+   "_blocks": 177,
+   "_nodes": 853,
+   "_docH": 14613
+  }
+ },
+ {
+  "id": "bloomberg",
+  "tags": [
+   "editorial",
+   "very-dense"
+  ],
+  "ok": false,
+  "fail": "invalid:403"
+ },
+ {
+  "id": "gov-uk",
+  "tags": [
+   "intentional-minimal",
+   "text-heavy"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.649,
+   "largestClassShare": 0.169,
+   "columnCount": 10,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.861,
+   "textShare": 0.95,
+   "mediaShare": 0.05,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.4,
+   "gapCV": 0.803,
+   "depthSpread": 3.6,
+   "pageAspect": 3.42,
+   "_blocks": 148,
+   "_nodes": 246,
+   "_docH": 4923
+  }
+ },
+ {
+  "id": "apple",
+  "tags": [
+   "spacious",
+   "image-heavy"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.394,
+   "largestClassShare": 0.155,
+   "columnCount": 13,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.909,
+   "textShare": 0.044,
+   "mediaShare": 0.956,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.222,
+   "gapCV": 1.329,
+   "depthSpread": 1.67,
+   "pageAspect": 8.32,
+   "_blocks": 71,
+   "_nodes": 204,
+   "_docH": 11987
+  }
+ },
+ {
+  "id": "awwwards",
+  "tags": [
+   "maximalist",
+   "image-heavy"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.213,
+   "largestClassShare": 0.066,
+   "columnCount": 8,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.972,
+   "textShare": 0.157,
+   "mediaShare": 0.843,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.111,
+   "gapCV": 1.382,
+   "depthSpread": 3.53,
+   "pageAspect": 2.3,
+   "_blocks": 61,
+   "_nodes": 156,
+   "_docH": 3316
+  }
+ },
+ {
+  "id": "nasa",
+  "tags": [
+   "image-heavy",
+   "dark"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.609,
+   "largestClassShare": 0.132,
+   "columnCount": 25,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.909,
+   "textShare": 0.145,
+   "mediaShare": 0.855,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.133,
+   "gapCV": 0.774,
+   "depthSpread": 3.24,
+   "pageAspect": 5.2,
+   "_blocks": 151,
+   "_nodes": 294,
+   "_docH": 7487
+  }
+ },
+ {
+  "id": "tailwind",
+  "tags": [
+   "rounded",
+   "dashboard-like"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.705,
+   "largestClassShare": 0.215,
+   "columnCount": 15,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.767,
+   "textShare": 0.462,
+   "mediaShare": 0.538,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.533,
+   "gapCV": 0.913,
+   "depthSpread": 3.21,
+   "pageAspect": 7.18,
+   "_blocks": 149,
+   "_nodes": 413,
+   "_docH": 10345
+  }
+ },
+ {
+  "id": "figma",
+  "tags": [
+   "colourful",
+   "rounded",
+   "svg-illustration"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.224,
+   "largestClassShare": 0.082,
+   "columnCount": 9,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.964,
+   "textShare": 0.329,
+   "mediaShare": 0.671,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.244,
+   "gapCV": 1.223,
+   "depthSpread": 3.16,
+   "pageAspect": 6.23,
+   "_blocks": 49,
+   "_nodes": 128,
+   "_docH": 8973
+  }
+ },
+ {
+  "id": "linear",
+  "tags": [
+   "dark",
+   "spacious",
+   "animation-heavy"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.592,
+   "largestClassShare": 0.057,
+   "columnCount": 34,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.915,
+   "textShare": 0.221,
+   "mediaShare": 0.779,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.244,
+   "gapCV": 1.127,
+   "depthSpread": 3.86,
+   "pageAspect": 6.92,
+   "_blocks": 228,
+   "_nodes": 617,
+   "_docH": 9960
+  }
+ },
+ {
+  "id": "wikipedia",
+  "tags": [
+   "text-heavy",
+   "editorial"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.233,
+   "largestClassShare": 0.056,
+   "columnCount": 12,
+   "largestUnitShare": 0.976,
+   "sizeEntropy": 0.964,
+   "textShare": 0.891,
+   "mediaShare": 0.109,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.644,
+   "gapCV": 0.789,
+   "depthSpread": 3.09,
+   "pageAspect": 17.97,
+   "_blocks": 90,
+   "_nodes": 524,
+   "_docH": 25871
+  }
+ },
+ {
+  "id": "vercel",
+  "tags": [
+   "dark",
+   "geometric"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.343,
+   "largestClassShare": 0.143,
+   "columnCount": 6,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.939,
+   "textShare": 0.187,
+   "mediaShare": 0.813,
+   "canvasShare": 0.2,
+   "modalTextWidthRatio": 0.222,
+   "gapCV": 1.165,
+   "depthSpread": 3.22,
+   "pageAspect": 3.7,
+   "_blocks": 70,
+   "_nodes": 146,
+   "_docH": 5333
+  }
+ },
+ {
+  "id": "cosmos-so",
+  "tags": [
+   "image-heavy",
+   "spacious"
+  ],
+  "ok": true,
+  "s": {
+   "repetitionRatio": 0.12,
+   "largestClassShare": 0.12,
+   "columnCount": 5,
+   "largestUnitShare": 1,
+   "sizeEntropy": 0.975,
+   "textShare": 0.956,
+   "mediaShare": 0.044,
+   "canvasShare": 0,
+   "modalTextWidthRatio": 0.111,
+   "gapCV": 1.548,
+   "depthSpread": 2.26,
+   "pageAspect": 4.3,
+   "_blocks": 25,
+   "_nodes": 86,
+   "_docH": 6196
+  }
+ }
+]

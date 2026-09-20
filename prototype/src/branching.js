@@ -403,7 +403,7 @@ export function buildSkeleton(r, opts = {}) {
   const fineCloud = crownCloud(r, {
     ...opts.cloud,
     count: opts.fineCount ?? 950,
-    shell: opts.fineShell ?? 0.35,
+    shell: opts.fineShell ?? 0,   // shell bias belongs to the unconverged twig work; off by default
   });
   nodes = growSkeleton(r, fineCloud, {
     ...g,
@@ -421,10 +421,14 @@ export function buildSkeleton(r, opts = {}) {
   // Shorter segments AND a strong shell bias, so this order appears at the
   // outside of the crown and at the ends of branches, where shoots actually
   // are, rather than evenly along the wood.
-  if ((opts.tipCount ?? 1600) > 0) {
+  // OFF by default. The mechanism works, but shoot density is coupled to trunk
+  // thickness through da Vinci's rule and no parameter set has yet beaten the
+  // two-pass tree. The default build must be the best KNOWN tree, not the most
+  // recent experiment.
+  if ((opts.tipCount ?? 0) > 0) {
     const tipCloud = crownCloud(r, {
       ...opts.cloud,
-      count: opts.tipCount ?? 1600,
+      count: opts.tipCount ?? 0,
       shell: opts.tipShell ?? 0.72,
     });
     nodes = growSkeleton(r, tipCloud, {

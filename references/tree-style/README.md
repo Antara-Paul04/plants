@@ -133,6 +133,63 @@ feel — the prototype's strongest single discovery — is not discarded casuall
 
 **The bar:** something you would stop scrolling to look at. Not "improved".
 
+### Result, as of `db716de` — **REVISE**
+
+Held by `taste`. Foliage may not start. Recorded here because a verdict that lives only
+in messages keeps getting lost.
+
+| Criterion | | Note |
+| --- | --- | --- |
+| 1 taper | **PASS** | da Vinci holds along every path traced |
+| 2 junctions | **PASS** | collars swell and flow; no telescoping |
+| 3 ramification | FAIL | depth 4–5, ~290 tips at best |
+| 4 terminations | FAIL | flat cuts |
+| 5 crown mass at thumbnail | FAIL | too sparse reads as a post; too dense reads as a solid knot |
+| 6 growth history | partial | asymmetry present, twig spacing too regular |
+| 7 root flare | untested | grass height |
+| 8 bark | untested | no material strategy yet, by design |
+
+Criterion 5 is the blocker. The constraint is **shoot shape, not shoot count** — see the
+note on terminal-order mechanism in `docs/TASTE.md`.
+
+---
+
+## KIND vs STATE — the test for whether a proposed species is real
+
+**Status: TENTATIVE.** Reasoned from branching architecture, not yet used on a real
+case. Written down so the species proposal is judged against a criterion set in
+advance rather than one invented to fit whatever arrives.
+
+> **Strip both trees to bare wood. If they still read as different, they are different
+> KINDS. If they become the same tree, they were one kind in two STATES.**
+
+A **state** leaves the architecture untouched and changes only what hangs on it, or
+what colour it is: bare, sparse, lush, flowering, autumn, winter, fruiting.
+
+A **kind** is a different branching architecture. The load-bearing differences:
+
+- whether a **central leader persists** — *excurrent* (one dominant axis its whole life,
+  subordinate laterals, conical silhouette) versus *decurrent* (the leader gives up
+  early, the crown is built of co-dominant forks, rounded silhouette)
+- whether branching is **rhythmic** (regular whorls at intervals) or **opportunistic**
+  (wherever light allows)
+- or, for palms, **no branching at all** — an unbranched column with a terminal rosette,
+  which is neither of the above rather than a variant of one
+
+**Why this criterion and not another:** it is decidable by looking, it cannot be faked
+by colour, flowers or season, and we already own the instrument — it is exactly the
+Gate 1 naked-structure view.
+
+**The rule it produces:** *any proposed new species must justify itself at Gate 1, with
+no foliage, no flowers and no colour.* If an archetype cannot produce a visibly
+different **bare** tree, it is not a species — it is a state, and the effort belongs in
+the state machinery instead.
+
+It also filters the forbidden mappings for free. A species must be argued from branch
+architecture, which is a structural claim about a site. "This site is a restaurant" or
+"this site is Japanese" cannot produce a bare-tree justification, so it cannot get
+through this gate wearing a lab coat.
+
 ---
 
 ## Rejected, on the human's instruction
