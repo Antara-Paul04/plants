@@ -84,15 +84,32 @@ export function dnaToParams(dna) {
   // flowers, never a fallback colour.
   const primary = typeof dna?.flowers?.primary === 'string' ? new THREE.Color(dna.flowers.primary) : null;
   const secondary = typeof dna?.flowers?.secondary === 'string' ? new THREE.Color(dna.flowers.secondary) : null;
-  const flowersOn = !bare && !winter && !!primary && flowerAmt !== 'none';
+  // AUTUMN TREES CARRY NO FLOWERS (the human, 2026-09-20, on the ikea tree: "i hate
+  // the green flowers on it, autumn trees do not have flowers on them").
+  //
+  // This WITHDRAWS an earlier Lead ruling — that autumn bloom decreases (x0.4) rather
+  // than vanishes — and the reasoning is kept because it explains what replaces it.
+  // That ruling existed so an autumn site could still express its accent, when
+  // flowers were the only carrier anyone had in mind. The carrier has since been
+  // broadened (D6: "the website's colour enters the tree through living botanical
+  // detail"), and AUTUMN'S CARRIER IS FRUIT: autumn is the fruiting season, so it is
+  // botanically right rather than a workaround.
+  //
+  // It is also the only thing that works. An autumn crown occupies the whole warm
+  // half of the hue wheel, so a warm accent in bloom is a HUE COLLAPSE — ikea's
+  // yellow on amber read as sickly patches, and raising it from 6 to 15 clusters
+  // changed 2% of a thumbnail. The local contrast stage is value-only by design and
+  // cannot reach a hue problem. Fruit sidesteps it structurally: few, large, hung
+  // on the lower OUTSIDE of the crown, it reads by size and placement.
+  //
+  // THE HOLE, flagged and not papered over: an autumn site WITHOUT the fruit trait
+  // now carries no accent at all (ikea is one). That wants a carrier — perhaps
+  // winter's buds — but which one is a contract question, not the renderer's.
+  const autumn = bState === 'autumn';
+  const flowersOn = !bare && !winter && !autumn && !!primary && flowerAmt !== 'none';
   params.flowers = flowersOn ? flowerAmt : 'none';
   if (primary) params.fc = hexStr(primary);
   if (secondary) params.fc2 = hexStr(secondary);
-  // Autumn still flowers — abundance DECREASES, it does not vanish. Analysis has
-  // already stepped the band down; this is the renderer's half (dna.js: x0.4), and
-  // both halves are intended. "The contract decides how many flowers there are;
-  // the renderer only decides how they look."
-  if (bState === 'autumn') params.bloomMul = 0.4;
   // A winter site delivers no colour today (flowers: none => primary null), so its
   // buds are a natural bud tone rather than an accent nobody measured.
   if (winter && !primary) params.budNatural = '1';

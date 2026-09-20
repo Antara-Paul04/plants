@@ -136,16 +136,31 @@
 
     <main>
       <form id="form">
-        <input id="url" type="text" placeholder="stripe.com" autocomplete="off" spellcheck="false" autofocus />
+        <input id="url" type="text" placeholder="news.ycombinator.com" autocomplete="off" spellcheck="false" autofocus />
         <button id="go" type="submit">Grow my website</button>
       </form>
 
       <div class="examples" id="examples">
         <span>or try</span>
+        <!-- CHIPS MUST BE FAST, RELIABLE, THEN DIFFERENT — in that order (Taste).
+             A suggestion WE chose failing is the worst outcome in the product,
+             worse than having no chips at all, and retry does not rescue it
+             because the user meets the failure before they meet the retry.
+             stripe.com and github.com were both chips and both time out; the
+             old placeholder was stripe.com too. Latency counts as reliability:
+             daringfireball.net grows a lovely night tree but has been measured
+             between 10s and 25s, so it is not a chip.
+             Measured on the live path 2026-09-20 — state, then seconds:
+               info.cern.ch          bare,   no flowers          3.8s
+               news.ycombinator.com  sparse, orange #f37b2b      3.6s
+               arxiv.org             normal, periwinkle #a1a1f8  4.1s
+               gwern.net             normal, WINTER              9.1s
+             Four states, warm and cool accents, one seasonal. Re-measure before
+             changing any of them. -->
         <button type="button" data-site="info.cern.ch" title="essentially unstyled HTML">info.cern.ch</button>
-        <button type="button" data-site="bettermotherfuckingwebsite.com" title="deliberately minimal, but designed">bettermotherfucking…</button>
-        <button type="button" data-site="stripe.com" title="richly designed">stripe.com</button>
-        <button type="button" data-site="github.com" title="dark">github.com</button>
+        <button type="button" data-site="news.ycombinator.com" title="plain, with one strong accent">news.ycombinator.com</button>
+        <button type="button" data-site="arxiv.org" title="dense and academic">arxiv.org</button>
+        <button type="button" data-site="gwern.net" title="designed, and almost colourless">gwern.net</button>
       </div>
 
       <div class="stage">

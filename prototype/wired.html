@@ -53,7 +53,12 @@
       (function watch() { const n = performance.now(); if (watching) worst = Math.max(worst, n - last); last = n; requestAnimationFrame(watch); })();
 
       const t0 = performance.now();
-      const tree = mountTree(document.getElementById('scene'), dna, { autoRotate: url.get('spin') !== '0' });
+      //   ?earth=1                the FAILURE state: the bare-earth island, no DNA
+      //   ?earth=1&then=<site>    ...and then a successful retry on the same handle
+      //   ?site=<a>&thenEarth=1   a tree, and then a failure
+      const { mountEarth } = await import(`./src/main.js${v}`);
+      const mountOpts = { autoRotate: url.get('spin') !== '0' };
+      const tree = url.get('earth') === '1' ? mountEarth(document.getElementById('scene'), mountOpts) : mountTree(document.getElementById('scene'), dna, mountOpts);
       const syncMs = performance.now() - t0;
       const hud = document.getElementById('hud');
       if (url.get('hud') === '0') hud.style.display = 'none';
@@ -69,6 +74,7 @@
       window.__wired.worstGapMs = worst;
       report(url.get('site') || 'DEFAULT_DNA', built, window.__wired.readyMs);
 
+      if (url.get('thenEarth') === '1') { await tree.setEarth(); hud.textContent += '\n-> setEarth()'; }
       if (url.get('then')) {
         const next = pick(url.get('then'));
         const t1 = performance.now();

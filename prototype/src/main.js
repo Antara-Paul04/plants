@@ -29,7 +29,7 @@ import { makeRenderer, makeScene, fitCamera, animateDrift } from './viewer.js';
 import { _orient } from './foliage.js';
 import { DEFAULT_DNA } from './dna.js';
 import { dnaToParams } from './dna-params.js';
-import { loadModules, paramSource, resolveParams, createEnvironment, growTree, nominalExtents } from './grow.js';
+import { loadModules, paramSource, resolveParams, createEnvironment, growTree, growEarth, nominalExtents } from './grow.js';
 
 const pageParams = () => (typeof location !== 'undefined' ? new URLSearchParams(location.search) : new URLSearchParams());
 
@@ -39,7 +39,17 @@ const pageParams = () => (typeof location !== 'undefined' ? new URLSearchParams(
  */
 export function mountTree(canvas, dna = DEFAULT_DNA, opts = {}) {
   const engine = opts.engine ?? pageParams().get('engine') ?? 'new';
-  return engine === 'v0' ? mountTreeV0(canvas, dna, opts) : mountTreeNew(canvas, dna, opts);
+  // Bare earth exists only in the new engine, so asking for it selects it.
+  return engine === 'v0' && !opts.earth ? mountTreeV0(canvas, dna, opts) : mountTreeNew(canvas, dna, opts);
+}
+
+/**
+ * Mount the FAILURE state: the bare-earth island, with no DNA at all. For a host
+ * that could not read a site before any tree was ever mounted. The handle is the
+ * same one mountTree returns, so a successful retry is just `handle.setDNA(dna)`.
+ */
+export function mountEarth(canvas, opts = {}) {
+  return mountTreeNew(canvas, null, { ...opts, earth: true });
 }
 
 function mountTreeNew(canvas, dna, opts = {}) {
@@ -140,6 +150,45 @@ function mountTreeNew(canvas, dna, opts = {}) {
     return promise;
   }
 
+  /**
+   * Show the bare-earth island — the failure state (see growEarth). Same swap
+   * discipline as setDNA: a build in flight is abandoned, the old scene stays up
+   * until this one is ready, and whatever it replaces is freed.
+   */
+  function setEarth() {
+    if (pending) pending.abort.abort();
+    const abort = new AbortController();
+    const mine = (pending = { abort });
+    // No DNA, so nothing measured: always the day state, never the page's own
+    // `envstate` — but the rest of the debug surface still applies.
+    const q = paramSource(url, { envstate: 'day' });
+    const { P } = resolveParams(q);
+    const env = createEnvironment(renderer, q, P);
+    const promise = (async () => {
+      const M = await modules;
+      if (abort.signal.aborted) throw new DOMException('superseded', 'AbortError');
+      const built = growEarth(M, q, env);
+      const old = shown;
+      env.scene.add(built.ground);
+      shown = { env, built };
+      reveal = null;
+      frame(built.extents);
+      if (old) {
+        if (old.built) old.built.dispose();
+        else if (old.ground) M.util.disposeObject(old.ground);
+        if (old.env !== env) old.env.dispose();
+      }
+      if (pending === mine) pending = null;
+      return built;
+    })();
+    promise.catch((e) => {
+      if (e?.name !== 'AbortError') console.error(e);
+      if (!shown || shown.env !== env) env.dispose();
+    });
+    handle.ready = promise;
+    return promise;
+  }
+
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     const key = `${w}x${h}`;
@@ -182,6 +231,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
   const handle = {
     engine: 'new',
     setDNA,
+    setEarth,
     ready: null,
     get current() { return shown ? shown.built : null; },
     scene: () => (shown ? shown.env.scene : null),
@@ -198,7 +248,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
     },
   };
 
-  setDNA(dna);
+  if (opts.earth) setEarth(); else setDNA(dna);
   tick();
   return handle;
 }

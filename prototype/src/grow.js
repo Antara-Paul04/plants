@@ -642,9 +642,10 @@ export async function growTree(M, q, env, opts = {}) {
     const fruitRng = rng(P.seed * 11 + 303);
     const fruitSites = FRUIT ? F.chooseFruitSites(spots, fruitRng, { sites: num('fruitSites', 22) }) : [];
     const keepOff = FRUIT && FLOWERS !== 'none' ? F.bloomExclusion(spots, fruitSites, num('fruitClear', 0.75)) : null;
-    // `bloomMul` scales the amount's fraction WITHOUT changing its band — autumn's
-    // x0.4 (dna.js: "the contract decides how many flowers there are; the renderer
-    // only decides how they look"; the band was already stepped down by analysis).
+    // `bloomMul` scales the amount's fraction WITHOUT changing its band. Nothing
+    // uses it today: it was autumn's x0.4, and autumn no longer flowers at all (see
+    // dna-params.js). It stays because the `few` floor is defined against it — any
+    // future state multiplier arrives here and is clamped, by construction.
     // The multiplier is handed over UN-applied: the `few` floor is clamped inside
     // chooseBloomSites, after all scaling, so no caller can scale beneath it.
     const bloomSites = FLOWERS === 'none' ? [] : F.chooseBloomSites(spots, flowerRng, {
@@ -729,6 +730,40 @@ export async function growTree(M, q, env, opts = {}) {
       M.util.disposeObject(tree);
       M.util.disposeObject(ground);
     },
+  };
+}
+
+/**
+ * BARE EARTH — the product's failure state. The island's own form and nothing
+ * else: no grass, no stones, no tree.
+ *
+ * Why it is this and not a seed, a sprout or a stunted tree (Taste): A FAILURE MUST
+ * NEVER BE DRAWN AS A DEFICIENCY IN THE SITE. When a big site times out, the site
+ * has not failed — we have; a sad little plant would say "there was too little here
+ * to grow anything" about exactly the richest sites on the web. And why it is BARE:
+ * terrain is measured too, so an empty island wearing a lawn and its usual stones
+ * fabricates data that was never obtained — the same lie, told more quietly. Strip
+ * everything unmeasured and what is left, honestly, is the stage and not the content.
+ *
+ * It must be unmistakable from a SUCCESSFUL bare tree (info.cern.ch: a sculptural
+ * leafless tree on dormant turf with stones). That tree has turf AND stones AND a
+ * trunk; this has none of the three. That separation is the acceptance test.
+ *
+ * Always the day state and the default soil: no background was measured either.
+ */
+export function growEarth(M, q, env) {
+  const { P } = resolveParams(q);
+  const ground = new THREE.Group();
+  const terrain = {};
+  for (const k of Object.keys(NORMAL_TERRAIN)) terrain[k] = gradeColor(new THREE.Color(NORMAL_TERRAIN[k]), env.ENV.ground);
+  ground.add(M.island.buildIsland(M.util.rng(P.seed * 13 + 505), { ...terrain, bareEarth: true }));
+  const tree = new THREE.Group();   // empty on purpose: hosts treat every result alike
+  return {
+    tree, ground, earth: true, skel: null, stats: { earth: true }, season: null,
+    // Framed on the ISLAND. Framed like a tree scene it is a small island under a
+    // tree-shaped void — which draws the missing tree, the very thing this is not.
+    extents: { height: 3.3, width: 5.6, targetY: -0.55 },
+    dispose() { M.util.disposeObject(tree); M.util.disposeObject(ground); },
   };
 }
 

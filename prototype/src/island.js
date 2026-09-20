@@ -93,7 +93,19 @@ export function buildIsland(r, params = {}) {
   // so this is what actually shows, and it wants to read as duff, not lawn.
   const duff = tp.soilHi.clone().offsetHSL(0, 0.12, -0.24);
 
+  // BARE EARTH (`params.bareEarth`): the island with nothing growing on it — the
+  // product's FAILURE state, where terrain was never measured, so turf would be
+  // fabricated data. The top is soil, gently varied so it is a surface and not a
+  // plate, and it carries NO contact shading: a dark pool where a trunk would stand
+  // draws the missing tree, and a failure is never drawn as something missing from
+  // the site.
+  const earthHi = tp.soilHi.clone().offsetHSL(0, -0.02, 0.07);
+  const earthLo = tp.soilHi.clone().offsetHSL(0, 0.02, -0.035);
   const topColourAt = (x, z, f) => {
+    if (params.bareEarth) {
+      const n = noise3(x * 0.9 + 11.3, 0.4, z * 0.9 - 4.7) * 0.5 + 0.5;
+      return earthLo.clone().lerp(earthHi, clamp(0.2 + n * 0.75 - f * 0.12, 0, 1));
+    }
     const c = gDeep.clone().lerp(gMid, clamp(0.35 + f * 0.75, 0, 1));
     c.lerp(gDeep, trunkPool(x, z) * 0.7);
     return c.lerp(duff, clamp(trunkContact(x, z) * 1.05, 0, 1) * 0.92);
