@@ -60,14 +60,35 @@ const fade = (t) => t * t * (3 - 2 * t);
  * compiled its own shader — a hitch per tree and an unbounded program cache.
  * The cache key now varies only on `local`, so exactly two programs ever exist
  * no matter how many trees are on screen.
+ *
+ * It COMPOSES with a hook the material already carries. It used to ASSIGN
+ * onBeforeCompile and customProgramCacheKey outright, which was harmless only
+ * because no V0 material had either. On the new tree every material has both,
+ * and the hook that would have been overwritten is the zero-specular rule
+ * (leaves.js killSpecular, flowers.js matte, bark.js): the leaves would have
+ * regained the sheen the clay direction exists to remove, and nothing would have
+ * errored. So the prior hook runs first, and the prior key is kept in front of
+ * ours — one program per (material kind x sway kind), still never one per tree.
+ * A material with no hook of its own gets exactly the key it always had.
+ *
+ * A tuning value may be a number, or a { value } uniform to SHARE: every
+ * material of one tree then answers to one object, and a host can change the
+ * wind on a finished tree without rebuilding it.
  */
 export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo = 1.4, yHi = 4.4, local = false } = {}) {
-  material.onBeforeCompile = (shader) => {
+  const prior = Object.hasOwn(material, 'onBeforeCompile') ? material.onBeforeCompile : null;
+  const priorKey = Object.hasOwn(material, 'customProgramCacheKey') ? material.customProgramCacheKey
+    // A hook with no key of its own is keyed by three on its SOURCE. Ours would
+    // replace it, and two different prior hooks would then share one program.
+    : prior ? () => prior.toString() : null;
+  const U = (v) => (v !== null && typeof v === 'object' && 'value' in v ? v : { value: v });
+  material.onBeforeCompile = (shader, renderer) => {
+    if (prior) prior.call(material, shader, renderer);
     shader.uniforms.uTime = uniforms.time;
-    shader.uniforms.uSwayAmp = { value: amp };
-    shader.uniforms.uSwaySpeed = { value: speed };
-    shader.uniforms.uSwayLo = { value: yLo };
-    shader.uniforms.uSwayHi = { value: yHi };
+    shader.uniforms.uSwayAmp = U(amp);
+    shader.uniforms.uSwaySpeed = U(speed);
+    shader.uniforms.uSwayLo = U(yLo);
+    shader.uniforms.uSwayHi = U(yHi);
     shader.vertexShader =
       'uniform float uTime;\nuniform float uSwayAmp;\nuniform float uSwaySpeed;\n' +
       'uniform float uSwayLo;\nuniform float uSwayHi;\n' + shader.vertexShader;
@@ -95,7 +116,8 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
       `
     );
   };
-  material.customProgramCacheKey = () => (local ? 'sway-local' : 'sway-world');
+  const swayKey = local ? 'sway-local' : 'sway-world';
+  material.customProgramCacheKey = priorKey ? () => `${priorKey.call(material)}+${swayKey}` : () => swayKey;
 }
 
 /**

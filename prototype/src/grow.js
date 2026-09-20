@@ -448,7 +448,7 @@ const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8
  * @param M     the module bag from loadModules()
  * @param q     a paramSource
  * @param env   the createEnvironment() result the tree will stand in (for grades)
- * @param opts  uniforms        — shared { time } uniform for the grass
+ * @param opts  uniforms        — shared { time } uniform: the grass, and the wind
  *              budgetMs        — slice length for the wood build; Infinity (the
  *                                debug pages) runs it straight through
  *              signal          — AbortSignal: a newer tree was asked for
@@ -458,7 +458,8 @@ const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8
  *              terrain         — optional palette {lo,mid,hi,soilHi,soilLo,grass,height,
  *                                rockHi,rockLo} as hex/THREE.Color, overriding the default
  *              rocks           — add V0's composed stones
- * @returns {{ tree, ground, skel, geo, thick, stats, extents, dispose }}
+ * @returns {{ tree, ground, skel, geo, thick, stats, extents, wind, dispose }}
+ *          wind — null, or the tree's shared sway uniforms { amp, speed, yLo, yHi }
  */
 export async function growTree(M, q, env, opts = {}) {
   const { uniforms = { time: { value: 0 } }, budgetMs = Infinity, signal = null, onGround = null, leavesDefault = '0' } = opts;
@@ -466,6 +467,26 @@ export async function growTree(M, q, env, opts = {}) {
   const { rng } = M.util;
   const ENV = env.ENV;
   const throwIfAborted = () => { if (signal && signal.aborted) throw new DOMException('tree build superseded', 'AbortError'); };
+
+  // --- wind ----------------------------------------------------------------------
+  // AMBIENT (ruling W1, docs/briefs/WIND-AND-MOTION.md): weather in the world the
+  // trees live in, the same for every tree. NOTHING MEASURED MAY REACH THESE NUMBERS.
+  // A windier tree for a livelier site was investigated and not shipped — the motion
+  // signal flipped on 17% of repeat runs, and a tree that moves differently on two
+  // visits breaks "same site, same tree". That is why these are read from the debug
+  // parameters and the defaults only, and why dna-params.js has no key for them.
+  //
+  // `wind=0` installs no hook at all: the shaders, the program keys and the pixels are
+  // then exactly what they were before wind existed, which is what an A/B needs.
+  // The uniforms are SHARED by every material of this tree and handed back, so a host
+  // can change the wind on a finished tree instead of paying for another build.
+  const WIND = num('wind', 0.045);
+  const wind = WIND > 0
+    ? { amp: { value: WIND }, speed: { value: num('windSpeed', 0.85) }, yLo: { value: 0 }, yHi: { value: 1 } }
+    : null;
+  // W3, DECIDED by the human (2026-09-20): "leaves swaying is enough." The WOOD IS
+  // RIGID — as V0's was — so the bark material is deliberately never given the hook,
+  // and the trunk, the buttress and their cast shadow stay exactly where they are.
   // Phase timings (ms of main-thread work per phase). When the build is time-sliced
   // each phase also ends with a breath, so the longest STALL a page can see is the
   // longest single phase — which makes this table the thing to read when a host
@@ -736,18 +757,42 @@ export async function growTree(M, q, env, opts = {}) {
     }
   }
 
+  // Everything living on the tree sways, and the wood does not (W3). It is done HERE,
+  // once, over whatever the builders returned, rather than inside each builder: the
+  // new foliage shipped without wind precisely because each builder had to remember
+  // to ask for it and none did. This way a builder added later cannot forget.
+  if (wind) {
+    const done = new Set([bark]);
+    tree.traverse((o) => {
+      for (const m of [o.material].flat()) {
+        if (!m || done.has(m)) continue;
+        done.add(m);
+        M.util.applySway(m, uniforms, wind);
+      }
+    });
+  }
+
   await endPhase('foliage');
 
   const box = new THREE.Box3().setFromObject(tree);
   const size = box.getSize(new THREE.Vector3());
+  if (wind) {
+    // W2: the crown moves, the trunk does not — and the mask is THIS tree's, measured,
+    // not V0's constants (1.4 / 4.4 on a shorter tree would have moved this trunk).
+    // Still at the first real fork, where the trunk ends; full sway at the crown's top.
+    let fork = skel.nodes.find((n) => !n.parent);
+    while (fork.children.length === 1) fork = fork.children[0];
+    wind.yLo.value = fork.pos.y;
+    wind.yHi.value = Math.max(box.max.y, fork.pos.y + 0.5);   // smoothstep needs lo < hi
+  }
   const extents = { height: size.y * 1.12, width: Math.max(size.x, size.z) * 1.12, targetY: box.min.y + size.y * 0.55 };
   const tris = (geo ? geo.index.count / 3 : 0) + (thick.geometry ? thick.geometry.attributes.position.count / 3 : 0);
 
   return {
-    tree, ground, skel, geo, thick, P, extents, season: SEASON,
+    tree, ground, skel, geo, thick, P, extents, season: SEASON, wind,
     cloud: P.showCloud ? new THREE.Points(new THREE.BufferGeometry().setFromPoints(skel.cloud), new THREE.PointsMaterial({ size: 0.04, color: 0xd06a6a })) : null,
     spots: dbgSpots, bloomSites: dbgBloom,
-    stats: { ...stats, phases, ground: groundInfo, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },
+    stats: { ...stats, phases, ground: groundInfo, wind: wind && { amp: WIND, yLo: +wind.yLo.value.toFixed(2), yHi: +wind.yHi.value.toFixed(2) }, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },
     dispose() {
       M.util.disposeObject(tree);
       M.util.disposeObject(ground);

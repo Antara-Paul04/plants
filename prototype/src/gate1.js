@@ -83,7 +83,8 @@ hud.textContent =
   (stats.leaves ? `\nleaves ${JSON.stringify(stats.leaves)}` : '') +
   (stats.flowers ? `\nflowers ${JSON.stringify(stats.flowers)}` : '') +
   (stats.fruit ? `\nfruit ${JSON.stringify(stats.fruit)}` : '') +
-  (stats.winter ? `\nwinter ${JSON.stringify(stats.winter)}` : '');
+  (stats.winter ? `\nwinter ${JSON.stringify(stats.winter)}` : '') +
+  (stats.wind ? `\nwind ${JSON.stringify(stats.wind)}` : '');
 if (q.get('hud') === '0') hud.style.display = 'none';
 
 function resize() {
@@ -96,9 +97,14 @@ function resize() {
   }
 }
 
+// `t=SECONDS` pins the wind's clock. This page is a measuring instrument, and once
+// the crown sways two captures of one tree differ by wherever the wind happened to
+// be — so a pixel comparison needs either a pinned time or `wind=0` (no wind at all,
+// and byte-identical shaders to the tree before wind existed).
+const T_FIXED = q.has('t') ? parseFloat(q.get('t')) : null;
 const clock = new THREE.Clock();
 function tick() {
-  uniforms.time.value = clock.getElapsedTime();
+  uniforms.time.value = T_FIXED ?? clock.getElapsedTime();
   resize();
   controls.update();
   renderer.render(scene, camera);
@@ -106,7 +112,7 @@ function tick() {
 }
 tick();
 document.body.classList.add('ready');
-window.__gate1 = { skel, geo, thick, tris, leafStats: stats.leaves, flowerStats: stats.flowers, fruitStats: stats.fruit,
+window.__gate1 = { skel, geo, thick, tris, wind: built.wind, uniforms, leafStats: stats.leaves, flowerStats: stats.flowers, fruitStats: stats.fruit,
   spots: built.spots, bloomSites: built.bloomSites, contrastStats: stats.contrast, winterStats: stats.winter, P, camera, controls, scene, renderer,
   orders: Math.max(...skel.limbs.map((l) => l.depth)) + 1,
   primaries: skel.limbs.filter((l) => l.depth === 1).length };
