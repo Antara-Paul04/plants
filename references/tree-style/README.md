@@ -182,7 +182,11 @@ Judged at **three sizes** — thumbnail (~140px), hero, and close — and from *
 four azimuths**, because the baseline's predecessor was strong from two angles and
 lopsided from a third.
 
-**REVISED 2026-09-20** after the human's style direction. The original criteria 3, 5, 7
+**REVISED 2026-09-20** after the human's style direction, and criterion 3 revised a
+second time the same day. My first revision constrained orders and thickness but set no
+floor on *count* and said nothing about shoot *aspect ratio* — so a 47-limb tree of
+short thick prongs was fully compliant and read as antlers. That was my under-specification,
+not a misreading of it. The original criteria 3, 5, 7
 and 8 were calibrated against a *photograph* of a real winter tree, which is not the
 target. Nothing on the supplied references carries a fine twig haze; their crowns are
 clustered leaf masses on chunky readable limbs. Criteria 1, 2 and 6 are unchanged —
@@ -192,7 +196,7 @@ they are about correctness of form, which the references honour fully.
 | --- | --- | --- |
 | 1 | **Taper** — every child 0.70–0.80 × its parent radius along any path root-to-tip | any junction where a child reads as thick as its parent |
 | 2 | **Junctions** — swell and flow out of the parent | any visible telescoping step or floating flange |
-| 3 | **Ramification — REVISED** — 4–5 orders, limbs staying **chunky and individually readable to the tip**. *Chunky is not uniform:* the size gradient must continue all the way out, every shoot still thinner than its parent and still tapering to a point | it reads as a wire haze; **or as antlers or coral**, which is what same-thickness forking prongs give; or the primary limbs can be counted on one hand |
+| 3 | **Ramification — REVISED TWICE** — 4–5 orders and **roughly 100–150 limbs** on the bare tree. Limbs chunky and readable to the tip, with the size gradient continuing all the way out. **Terminal shoots must be long relative to their thickness — 6:1 at minimum, 10:1 is better — with varied spacing and angle along the parent** | it reads as a wire haze; **or as antlers, coral or a cactus**, which is what short thick prongs at even intervals give however correct their taper; or the crown describes no envelope |
 | 4 | **Terminations** — every tip tapers; no flat cuts | any blunt-chopped end anywhere |
 | 5 | **Bare silhouette at thumbnail — REVISED** — reads as a deliberate sculptural object | reads as a post, a spray of sticks, or a solid knot at 140px |
 | 6 | **Growth history** — asymmetry, a dominant leader, out-competed limbs | limbs leave at similar angles with similar lengths |

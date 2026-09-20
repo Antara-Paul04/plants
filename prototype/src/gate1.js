@@ -28,6 +28,8 @@ const { buildSkeleton } = await import(`./branching.js${bust}`);
 const { buildLimbs } = await import(`./limbmesh.js${bust}`);
 const { makeBarkMaterial } = await import(`./bark.js${bust}`);
 const { buildThickWood } = await import(`./woodsdf.js${bust}`);
+const { buildLeaves, leafAttachments } = await import(`./leaves.js${bust}`);
+const { buildFlowers, buildFruit, chooseBloomSites, FLOWER_FORMS } = await import(`./flowers.js${bust}`);
 const { buildIsland, buildGrass } = await import(`./island.js${bust}`);
 const { makeRenderer, fitCamera } = await import(`./viewer.js${bust}`);
 
@@ -154,38 +156,52 @@ const ENVS = {
     rim: { color: 0xcfe2f2, intensity: 0.55, dir: [-6.5, 4.2, -5.6] },
     env: 0.95, exposure: 0.97, tone: 'neutral',
   },
-  night: {
-    // The sky sits DARKER than the lit tree, so the tree is the brightest thing
-    // in the frame — a first attempt had it the other way round, and the tree
-    // became a black cut-out on a bright blue card.
-    skyTop: 0x04060d, skyHorizon: 0x151e38, skyGround: 0x070a12,
-    glow: { color: 0xcdd9ff, power: 12, size: 7, dir: [-5.2, 7.4, 6.2] },
-    // The moon LIGHTS the tree, from the front quarter. Two lessons in it:
-    //  - a pure backlight fails, because rough dark bark returns almost nothing
-    //    to the camera and a back-lit tree is simply a silhouette;
-    //  - a SATURATED blue key fails too, because warm-brown bark has almost no
-    //    blue reflectance, so the wood goes black with a wet blue sheen.
-    // Real moonlight is near-white — reflected sunlight; the blue is
-    // perceptual — so the key is only gently cool and the night colour is
-    // carried by the sky, the shadows and the ground instead.
-    // A soft-edged SPOT rather than a directional: the light pools on the
-    // island and falls away at its rim, which is what makes it a diorama
-    // rather than a landscape at night.
-    key: { color: 0xc9d6ff, intensity: 4.4, dir: [-5.2, 7.4, 6.2], shadowRadius: 1.6, spot: { angle: 0.33, penumbra: 1.0 } },
-    // The silver edge: a second light from behind, doing what a backlit moon
-    // would do if bark were not so rough.
-    fill: { color: 0xdfe8ff, intensity: 2.2, dir: [6.0, 4.2, -6.2] },
-    // A faint warm kicker keeps the wood reading as WOOD rather than slate.
-    rim: { color: 0xffc890, intensity: 0.3, dir: [7.0, 1.8, 3.0] },
-    // Ground response is its own value, because no light can do it: turf that
-    // is lit at all by a cool key stays daytime green and becomes the brightest
-    // thing in the frame. At night colour drains toward blue-grey and value
-    // drops; the tree is the hero, the ground is where it stands.
-    // Over-graded, this reads as FROST — pale blue-white turf is snow, and
-    // that is a season, not a time of day. It has to stay recognisably grass.
-    ground: { sat: 0.5, value: 0.36, tint: 0x5f7fae, tintAmt: 0.2 },
-    env: 1.0, exposure: 1.15, tone: 'aces',
-  },
+  // NIGHT. The human rejected the first version outright: "too much light."
+  // The rule it was built on still holds — night comes from colour, direction
+  // and contrast, never from a lowered exposure — but it had been applied so
+  // strictly that the key never came down at all, and "properly exposed" had
+  // quietly become "brightly lit". Day-for-night still has falloff: a moon is a
+  // weak source, and what makes its subject readable is that everything around
+  // it is darker, not that the subject sits at daylight levels.
+  //
+  // So: the key comes down and CONTRAST does more of the work; the pool is
+  // tighter, leaving more of the island in shadow; the ambient drops so the
+  // trunk has a real shadow side; and the turf and foliage carry less light of
+  // their own. `?night=a|b|c` is three points on that range, brightest first,
+  // so the choice is a pick rather than a guess. The two documented failures
+  // bound it: a black cut-out on a bright card at one end, this rejected
+  // near-daylight version at the other.
+  night: (() => {
+    const LV = {
+      a: { key: 2.9, angle: 0.29, edge: 1.5, kick: 0.2, env: 0.52, exp: 1.04, ground: 0.3, leaf: 1.26 },
+      b: { key: 2.1, angle: 0.26, edge: 1.15, kick: 0.15, env: 0.36, exp: 1.0, ground: 0.25, leaf: 1.12 },
+      c: { key: 1.5, angle: 0.235, edge: 0.85, kick: 0.1, env: 0.25, exp: 1.0, ground: 0.2, leaf: 1.0 },
+    };
+    const L = LV[q.get('night')] || LV.b;
+    return {
+      // The sky sits DARKER than the lit tree, so the tree is the brightest thing
+      // in the frame; still a little lighter toward the horizon, because that
+      // band is what the shadow side is read against.
+      skyTop: 0x03050b, skyHorizon: 0x111a31, skyGround: 0x05070d,
+      glow: { color: 0xcdd9ff, power: 9, size: 6, dir: [-5.2, 7.4, 6.2] },
+      // Near-white, from the front quarter: a saturated blue key is absorbed by
+      // warm wood (black wood, wet blue sheen), and a pure backlight leaves a
+      // silhouette. A soft-edged SPOT, so the light pools and falls away.
+      key: { color: 0xc9d6ff, intensity: L.key, dir: [-5.2, 7.4, 6.2], shadowRadius: 1.6, spot: { angle: L.angle, penumbra: 1.0 } },
+      // The silver edge, from behind — an EDGE, not a second key.
+      fill: { color: 0xdfe8ff, intensity: L.edge, dir: [5.2, 4.6, -7.0] },
+      // A faint warm kicker keeps the wood reading as wood rather than slate.
+      rim: { color: 0xffc890, intensity: L.kick, dir: [7.0, 1.8, 3.0] },
+      ground: { sat: 0.5, value: L.ground, tint: 0x5f7fae, tintAmt: 0.2 },
+      // Desaturated toward sage, but kept clearly GREEN: all the way to silver
+      // reads as frost, which is a season and not a time of day.
+      foliage: { sat: 0.64, value: L.leaf, tint: 0xa9c6dc, tintAmt: 0.26 },
+      // Bloom and fruit carry the WEBSITE's colour, so they keep more of it than the
+      // leaves do: a little cooled, barely desaturated.
+      bloom: { sat: 0.9, value: L.leaf * 1.2, tint: 0xa9c6dc, tintAmt: 0.06 },
+      env: L.env, exposure: L.exp, tone: 'aces',
+    };
+  })(),
 };
 const ENV = ENVS[q.get('envstate')] || ENVS.day;
 renderer.toneMappingExposure = ENV.exposure * P.exposure;
@@ -210,15 +226,14 @@ const dirOf = (a) => new THREE.Vector3(...a).normalize();
 
 // Grade a ground colour for the environment state: drain saturation toward its
 // own luminance, pull it toward the state's tint, drop its value.
-function gradeGround(hex) {
-  const c = new THREE.Color(hex);
-  const G = ENV.ground;
+function gradeColor(c, G) {
   if (!G) return c;
   const l = c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722;
   c.lerp(new THREE.Color(l, l, l), 1 - G.sat);
   c.lerp(new THREE.Color(G.tint).multiplyScalar(l * 1.4), G.tintAmt);
   return c.multiplyScalar(G.value);
 }
+const gradeGround = (hex) => gradeColor(new THREE.Color(hex), ENV.ground);
 
 // Image-based light. Without an environment a rough dielectric has nothing to
 // reflect and every shadowed surface falls to the same dead value. The env
@@ -309,6 +324,57 @@ for (const gm of [geo, thick.geometry]) {
   m.receiveShadow = true;
   tree.add(m);
 }
+// GATE 2 — foliage, as authored clusters on the judged structure. Off on the
+// Gate 1 page (the naked tree is still its own test); gate2.html turns it on.
+const LEAVES = q.get('leaves') ?? window.__LEAVES_DEFAULT ?? '0';
+let leafStats = null, flowerStats = null, fruitStats = null;
+if (LEAVES !== '0') {
+  // Order matters. Attachment points first (same RNG draws as before, so no leaf
+  // moves); then WHICH of them flower, on a separate stream; then the leaves,
+  // which need to know, because a flowering twig carries a smaller leaf cluster.
+  const attach = { spacing: num('leafSpacing', 0.4), maxRadius: num('leafMaxR', 0.12), outerFraction: num('leafOuter', 0.78) };
+  const spots = leafAttachments(skel.limbs, r, attach);
+  const FLOWERS = q.get('flowers') ?? 'none';
+  const flowerRng = rng(P.seed * 7 + 101);
+  const bloomSites = FLOWERS === 'none' ? [] : chooseBloomSites(spots, flowerRng, { amount: FLOWERS, fraction: q.has('bloom') ? num('bloom', 0.27) : null });
+
+  const lv = buildLeaves(skel.limbs, r, {
+    spots,
+    cluster: {
+      leaves: num('perCluster', 17), leafLength: num('leafLen', 0.5), soft: num('soft', 0.62),
+      grade: ENV.foliage ? (c) => gradeColor(c, ENV.foliage) : null,
+    },
+    shrink: new Set(bloomSites.map((i) => spots[i])), shrinkTo: num('leafAtBloom', 0.55),
+  });
+  tree.add(lv.group);
+  leafStats = lv.stats;
+  if (q.get('leafHide') === '1') lv.group.visible = false;   // debug: see where the bloom actually is
+
+  // Flowers and fruit: their own cluster types, on the leaves' attachment points.
+  const hexq = (k, d) => (q.has(k) ? parseInt(q.get(k).replace('#', ''), 16) : d);
+  const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
+  let taken = null;
+  if (bloomSites.length) {
+    const fl = buildFlowers(spots, flowerRng, {
+      sites: bloomSites,
+      form: FLOWER_FORMS.includes(q.get('form')) ? q.get('form') : 'blossom',
+      primary: hexq('fc', 0xf7a6b8), secondary: q.has('fc2') ? hexq('fc2', 0xe87b92) : (q.has('fc') ? null : 0xe87b92),
+      size: num('flowerSize', 1), pale: num('pale', 0.42), lift: num('lift', 0), grade: bloomGrade,
+      proud: 0.5 * num('leafAtBloom', 0.55) + 0.07,
+    });
+    tree.add(fl.group);
+    taken = fl.taken;
+    flowerStats = fl.stats;
+  }
+  if (q.get('fruit') === '1') {
+    const fr = buildFruit(lv.spots, rng(P.seed * 11 + 303), {
+      color: hexq('fruitc', 0xd8452f), sites: num('fruitSites', 22), radius: num('fruitR', 0.16),
+      grade: bloomGrade, exclude: taken,
+    });
+    tree.add(fr.group);
+    fruitStats = fr.stats;
+  }
+}
 scene.add(tree);
 
 if (P.showGround) {
@@ -366,7 +432,10 @@ hud.textContent =
   `${q.get('preset') || 'bare'} · seed ${P.seed} · a=${P.alpha} · shot ${shot}\n` +
   `${skel.nodes.length} nodes · ${skel.limbs.length} limbs · ${forks} forks\n` +
   `${(tris / 1000).toFixed(0)}k tri · grow ${tGrow.toFixed(0)}ms · mesh ${tMesh.toFixed(0)}ms` +
-  (thick.geometry ? `\nfield ${JSON.stringify(thick.geometry.userData.stats)}` : '');
+  (thick.geometry ? `\nfield ${JSON.stringify(thick.geometry.userData.stats)}` : '') +
+  (leafStats ? `\nleaves ${JSON.stringify(leafStats)}` : '') +
+  (flowerStats ? `\nflowers ${JSON.stringify(flowerStats)}` : '') +
+  (fruitStats ? `\nfruit ${JSON.stringify(fruitStats)}` : '');
 if (q.get('hud') === '0') hud.style.display = 'none';
 
 function resize() {
@@ -389,6 +458,6 @@ function tick() {
 }
 tick();
 document.body.classList.add('ready');
-window.__gate1 = { skel, geo, thick, tris, P, camera, controls, scene, renderer,
+window.__gate1 = { skel, geo, thick, tris, leafStats, flowerStats, fruitStats, P, camera, controls, scene, renderer,
   orders: Math.max(...skel.limbs.map((l) => l.depth)) + 1,
   primaries: skel.limbs.filter((l) => l.depth === 1).length };

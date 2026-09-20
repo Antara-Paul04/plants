@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gate 2 — foliage</title>
+    <style>
+      :root { color-scheme: light; }
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #eee8de; }
+      #scene { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 400ms ease; }
+      body.ready #scene { opacity: 1; }
+      #hud {
+        position: fixed; left: 10px; top: 10px; z-index: 2; white-space: pre;
+        font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: #33302c; background: #ffffffcc; padding: 6px 9px; border: 1px solid #0002;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+    <div id="hud"></div>
+    <script>window.__LEAVES_DEFAULT = "1";</script>
+    <script type="module" src="./src/gate1.js"></script>
+  </body>
+</html>

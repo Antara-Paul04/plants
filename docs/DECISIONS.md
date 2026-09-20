@@ -70,7 +70,9 @@ and is good.
 
 ## D5 — Website colour should meaningfully influence the tree
 
-**Status:** DECIDED in principle — **exact mapping is OPEN**
+**Status:** DECIDED in principle — **carrier BROADENED and settled 2026-09-20, see D6.**
+The "explicitly unresolved" list at the foot of this entry is kept as a historical record of
+what was open in V0. Most of it is now answered by D6; read D6 first.
 
 A website's colour must have a real, visible effect on the resulting tree. A tree that
 looks the same regardless of the site's palette fails the premise.
@@ -99,3 +101,94 @@ form. This is an appealing hypothesis, **not a decision**, and it has not been t
 
 Do not implement the flower mapping as though it were settled. Promoting it to DECIDED
 requires seeing it, and is a human taste judgment (AGENTS.md R7).
+
+
+---
+
+## D6 — The website's colour enters the tree through living botanical detail
+
+**Status:** DECIDED — 2026-09-20, after external review of the whole flower system.
+
+This supersedes D5's tentative "flowers are the carrier" hypothesis. The invariant is now:
+
+> **The website's colour enters the tree through living botanical detail.**
+
+- Flowers remain the primary and default carrier **in flowering leafy states**.
+- Flowers need **not** carry the colour in every botanical state.
+- Permitted carriers: **flowers, fruit, berries, buds**, and other restrained living detail.
+- **Forbidden carriers: bark, trunk, soil, the entire foliage mass, the environment.**
+
+**Reasoning.** D5's narrow form left real holes. A `winter` tree was forced to
+`flowers: none` and therefore expressed *nothing* of its website — the site vanished
+entirely, which is the one outcome the product cannot afford. Broadening the carrier fixes
+that without reaching for the thing D5 was right to forbid: recolouring the tree itself. A
+magenta trunk stops reading as botanical. A magenta *bud* does not.
+
+This also answers D5's open question "what happens to monochrome, black-and-white or very
+muted sites": they receive ivory/white/grey botanical accents drawn from their own palette.
+Low chroma is not low richness, and a restrained tree is not a punished one.
+
+---
+
+## D7 — Meaning lives in the DNA; artistic variation lives in the renderer
+
+**Status:** DECIDED — 2026-09-20.
+
+```
+WEBSITE   → measured fingerprint → BOTANICAL DNA     (meaning)
+MORPHOLOGY (a DNA field)         → which bloom grammars are compatible   (constraint)
+SEED (a DNA field, FNV-1a over the domain) → which compatible grammar is used   (variation)
+```
+
+**Morphology CONSTRAINS the bloom grammar. It does not dictate it.** It answers "what kinds
+of bloom can grow convincingly on this tree?", not "this tree always gets this flower."
+
+Where more than one grammar is compatible, the **stable domain seed** chooses among them.
+This is an acceptable use of seed **because the seed decides nothing meaningful**: whether a
+site flowers, how much, and in what colour all come from measurement. The seed only picks
+between artistic embodiments that are all equally valid. The same domain always gets the
+same choice.
+
+The three built grammars are **not species**. Plants makes a stylised botanical translation
+and never performs species classification:
+
+| grammar | what it is |
+|---|---|
+| `cluster` | many small blossoms grouped together |
+| `statement` | fewer, larger flowers |
+| `pendant` | hanging, tapering clusters |
+
+Plants must never claim "this is a cherry tree."
+
+---
+
+## D8 — Rejected approaches, recorded so they are not rediscovered
+
+**Status:** DECIDED — do not re-litigate without new evidence.
+
+1. **Morphology directly selecting one fixed flower form.** Morphology already encodes
+   structural information about the website; binding form to it one-to-one expresses the
+   same signal twice. Superseded by D7.
+2. **A new analysis metric for flower form.** Reverse-engineering website "meaning" to
+   justify geometry that happens to already exist. No property of a website means
+   "wisteria." See also D8.7.
+3. **Random fruit.** A seeded coin-flip (`roll < 0.50`) silently denied fruit to half of all
+   genuinely fruit-eligible sites — random from the website's point of view, and it deleted a
+   measured trait. Concentration is the measurement; eligibility follows from it.
+4. **Bleaching dark or cool accents to make them legible.** Maroon `#723131` became dusty
+   pink `#d27f7f`: hue preserved exactly, colour destroyed. **For a dark accent, the darkness
+   is part of the identity** — maroon, burgundy, oxblood, forest green, deep plum. Legibility
+   comes from contrast *around* the petal (the flower centre, and local foliage value), never
+   from repainting the source colour.
+5. **Moving flowers outward to solve "the wreath".** Tried three times and it does not work.
+   The bloom is *already* evenly distributed through the crown — a debug render with foliage
+   hidden proves it. The rim appearance is **leaf occlusion**: front-facing leaf clusters
+   cover the bloom behind them. The fix is botanical (flowering twigs carry less foliage),
+   not positional.
+6. **Literal website-background-colour → scene mapping.** Environment states are
+   art-directed, not colour-translated.
+7. **Colourfulness as a proxy for design richness.** Measured **r = 0.02 across 23 sites** —
+   the two are orthogonal axes. Gating ornament on chroma discarded an entire independent
+   signal and gave the corpus's most sophisticated site (linear.app, maximum styling
+   richness, achromatic) *no ornament at all*. Richness decides **whether** there is bloom;
+   colour decides **what colour** it is. This is the Linear failure and it must not return.

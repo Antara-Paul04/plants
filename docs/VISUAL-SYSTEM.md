@@ -210,6 +210,20 @@ failures are kept in `references/experiments/gate1-surface-2026-09-20/night-FAIL
    silver edge a real backlit moon would give smoother bark; a faint warm kicker so the
    wood stays wood rather than slate; a dark restrained sky, lighter at the horizon.
 
+**The first night was rejected by the human: "too much light." (2026-09-20)** The rule
+above was right and had been over-applied. "The tree stays properly exposed" had quietly
+become "the tree is lit at daylight level in a blue room" — the key never came down at
+all. Day-for-night still has FALLOFF: what makes a moonlit subject readable is that
+everything around it is darker, not that the subject sits at daytime values. The correction
+is parameters only, nothing structural: key down and contrast doing more of the work, a
+tighter pool so more of the island is in shadow, less image-based ambient so the trunk has
+a real shadow side, and turf and foliage carrying less light of their own. Three points on
+that range are kept for Taste and the human to pick from (`?night=a|b|c`, `b` the default
+until someone chooses), in `references/experiments/night-levels-2026-09-20/`. Mean frame
+luminance, rejected → a / b / c: 42.8 → 25.7 / 18.5 / 13.4. All three still resolve at
+140px, leafy and bare; `c` is the floor — below it the crown stops reading as green and the
+first documented failure (black cut-out) is next. **Status: EXPERIMENT, awaiting a pick.**
+
 **Ground response cannot come from the lights.** Turf lit at all by a cool key stays
 daytime green and becomes the brightest thing in the frame. It needs its own per-state
 grade — saturation drained, value dropped, pulled toward the state's tint — through the
@@ -260,6 +274,51 @@ What that became, and why:
 
 **Still needs Taste or the human:** the exact tan; whether grooves should be fewer and
 broader still; twigs (now thin matte wires); and the island, which mismatches more than ever.
+
+### Gate 2 — foliage as authored clusters — EXPERIMENT
+
+**Status: EXPERIMENT, first pass, awaiting Taste.** `prototype/gate2.html` (the Gate 1
+harness with foliage on). Renders, a true-size 140px sheet and the rejected first attempt:
+`references/experiments/gate2-foliage-2026-09-20/`.
+
+**The leaf CLUSTER is the unit** (`prototype/src/leaves.js`). Each leaf is a real modelled
+teardrop — folded on its midrib, drooping, with its own one of three greens — and ~17 of
+them form a cluster in a golden-angle spiral, instanced ~146 times onto limb tips and the
+outer, thinner stretch of each limb. The two-distance rule is served by two separate
+things: real leaf SHAPES give individual leaves up close, and shading normals bent toward
+each cluster's outward direction make a cluster shade as one soft form at distance.
+
+- **A rosette reads as its own plant.** The first attempt was narrow leaves splayed in a
+  half-dome and read as agave on a tree. Leaves went broad (teardrop, width ≈ ⅔ length) and
+  the spiral now runs past the horizontal and DOWN, so a cluster is a ball of leaves.
+- **Bias shading normals skyward.** A leaf whose normal points at the ground catches
+  nothing from a sky-lit scene and goes bottle-black; V0 found the same thing.
+- **Geometric double-facing, never `DoubleSide`** — it flips back-face normals and back-lit
+  leaves go black. Also inherited from V0.
+- **No baked light, at all.** V0's foliage carried day-tuned emissive floors and would glow
+  at night. This is plain matte albedo with specular killed, so it relights for free.
+- **Foliage needs its own per-environment response, like the ground.** Under the moon,
+  saturated green returns little light: the crown went heavy while the pale trunk glowed,
+  and the crown must not be the darkest thing on the hero. A brightness multiplier fixed
+  value but read as daylight lime in a dark room — night wants DESATURATION toward sage,
+  which a multiplier cannot do, so leaf albedo is graded at build time. Taken all the way
+  to silver it reads as frost, which is a season and not a time of day.
+- **Generated, not Blender-authored — a reversal of my own earlier suggestion.** Headless
+  Blender is procedural modelling in Python rather than JavaScript; the geometry is code
+  either way, and the price is an export step, a loader and async assets. Blender earns its
+  place when a PERSON sculpts a cluster, and `clusterSource` in `leaves.js` is the seam
+  where a hand-made glTF would be swapped in.
+
+**Measured at 140px:** day full, day sparse, night full and night sparse all resolve into a
+crown MASS (the criterion that closes the gate); day/night are unmistakable, full/sparse
+distinguishable by openness and visible limbs.
+
+**Cost:** 146 clusters, 278k triangles, 4 draw calls, ~15 ms to build. Foliage is cheap;
+the implicit-surface wood (~1.5–2.5 s) is still the whole performance problem.
+
+**OPEN:** no wind sway yet; foliage is not wired to DNA (`foliage.state`/`density`,
+`botanicalState` palettes); flowers and fruit — which carry the website's colour — are next;
+cluster greens and leaf size are Taste's to judge against the actual board.
 
 ---
 
@@ -429,3 +488,27 @@ One entry exists already, inherited from DECISIONS **D3**:
   growing on the tree. The tree expresses visual design, never subject matter.
 
 - _otherwise unresolved_
+
+### Gate 2 — flowers and fruit, first pass — EXPERIMENT
+
+`prototype/src/flowers.js`; renders and a fuller write-up in
+`references/experiments/gate2-flowers-2026-09-20/`. Not wired to the DNA.
+
+- **Flowers and fruit are cluster types on the leaves' own attachment points.** A flower
+  that is not on a twig is confetti. Three forms built for Taste to choose between —
+  `blossom` (corymb of open flowers), `magnolia` (large upright goblets), `wisteria` (bunches
+  of hanging racemes). A form belongs to the tree; one tree carries one.
+- **Value, not hue, is what carries an accent colour against foliage.** V0 found a cool
+  accent vanishes against canopy green at any amount. Paling every petal toward its edge
+  gives bloom a light value the green does not have, and the site's blue then reads at 140px
+  *as given*. Raising the colour's lightness instead reads no better and is less the site's
+  colour.
+- **Bloom is chosen by a low-frequency field, top fraction taken** — drifts, not scatter, and
+  an exact count.
+- **A crown is a shell, so in projection bloom piles up at the rim** and every amount reads as
+  a green tree in a pink wreath. Moving the bloom does not fix it (tried three times; hiding
+  the leaves showed the bloom was already evenly spread). What helps is botanical: a twig that
+  flowers carries a smaller leaf cluster. Improved, not solved — `abundant` is still rim-heavy
+  from the hero angle.
+- **Fruit is toy-scale on purpose** — V0's was invisible at any size — and hangs on the lower
+  outside of the crown, off the flowering sites.
