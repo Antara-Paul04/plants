@@ -30,8 +30,28 @@ plumbing is in place and the leaves, flowers and fruit simply were never wired u
 `leaves.js` and `flowers.js` build their materials through `matte()` and no `applySway` call
 was added when they were written.
 
-So the first version of this is small: thread `uniforms` into the foliage builders and call
-`applySway` on the leaf, flower and fruit materials.
+So the first version of this is small — **but NOT as small as I first wrote here, and the
+difference would have shipped broken.**
+
+> **CORRECTION, from `visual-3d`, 2026-09-20.** I originally wrote "thread `uniforms` into the
+> foliage builders and call `applySway` on the leaf, flower and fruit materials." That would
+> silently break them.
+>
+> `applySway` **assigns** `material.onBeforeCompile` and `customProgramCacheKey`. So do
+> `killSpecular()` in `leaves.js` and `matte()` in `flowers.js` — and that hook is the
+> **zero-specular rule**, which exists because the human rejected polished wood by name
+> ("roughness 1 alone still leaves a sheen"). Calling `applySway` afterwards overwrites it:
+> leaves, flowers, fruit, buds and berries would all regain the sheen, **and nothing would
+> error**. It would also collide cache keys, since `'sway-world'` is shared with V0's foliage
+> materials, which carry no specular kill — whichever compiled first would win.
+>
+> The fix: make the sway hook **compose** with any existing `onBeforeCompile` and **append**
+> to the existing key (`'leaf-matte-v1+sway-world'`). Program count stays bounded — one per
+> matte key, not one per tree — so the uniforms-not-literals work above is preserved.
+>
+> Recorded because *"it should be a two-line change"* is exactly how this would have shipped
+> broken, and because the failure is invisible: no error, no crash, just a sheen returning to
+> a tree that was explicitly art-directed not to have one.
 
 ---
 
@@ -58,6 +78,16 @@ The height mask is the reason the effect reads as a tree rather than as a wobbli
 Keep `yLo`/`yHi` tuned to the tree's actual extents rather than V0's constants — the new tree
 is a different size, and a mask calibrated for the old one will either move the trunk or
 freeze the crown.
+
+### W2b — Night must be LEGIBLE at 140 px. DECIDED, and it unblocks L17.
+
+The tree has to separate from the sky at thumbnail size. That is a **floor, not a
+preference** — whether night is moody *enough* is taste's call, whether you can see the tree
+is not. `daringfireball.net` currently fails it with a near-black crown on a near-black sky.
+
+So L17 is a legibility bug with a measurable test (crown-versus-sky separation at 140 px),
+not an aesthetic question needing permission. The standing ban still holds: **night comes
+from colour, direction and contrast, never from raising exposure.**
 
 ### W3 — Open, and genuinely a taste question: does the WOOD sway?
 
