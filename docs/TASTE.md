@@ -95,6 +95,12 @@ place by being observed, not assumed.
   become the loudest thing in the frame.** Quieting the turf under a bare tree works,
   and it immediately promotes whatever was left at full summer value — stones, sky —
   to the brightest object in a picture whose whole point was to be quiet.
+- **What makes a tree look expensive is proportion and topology, not resolution.**
+  Broken taper, junctions that step instead of swelling, and too few branch orders are
+  the whole of the asset-store look, and no amount of subdivision touches any of them.
+  The one thing that legitimately needs *more* is count at the fine end of the
+  hierarchy — three hundred three-triangle twigs, never a smoother trunk. Targets and
+  the Gate 1 checklist: [references/tree-style](../references/tree-style/README.md).
 - **A difference must be exaggerated to the magnitude that survives a thumbnail, and
   the corpus itself says what that magnitude is.** Wherever one generated tree *does*
   read as distinct at feed size, that is the calibration — anything subtler than the

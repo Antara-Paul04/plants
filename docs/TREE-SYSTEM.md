@@ -202,6 +202,41 @@ deliberate. **Not a verdict — it may well be charm.**
 — `requestAnimationFrame` is throttled while the preview pane is hidden, so no number
 is quoted here rather than a fabricated one. Mobile remains untested.
 
+### BARE vs SPARSE must be different architecture — EXPERIMENT
+
+**Status: EXPERIMENT, recorded during the Gate 1 structural rebuild so it is not
+rediscovered later.**
+
+Analysis predicted that raw HTML (`info.cern.ch`, BARE) and designed minimalism
+(`bettermotherfuckingwebsite.com`, SPARSE) are the pair most likely to die quietly in a
+fidelity rebuild, because both are sparse trees and a better renderer makes sparse trees
+prettier *in the same direction*. Same risk for BARE vs WINTER. This is the crux the
+concept rests on: unstyled HTML must not read as deliberate minimalism.
+
+**Tested on the new structural model, same seed, only architecture varied:**
+
+| | nodes | limbs | forks | depth | reads as |
+| --- | --- | --- | --- | --- | --- |
+| BARE spec | 1329 | 219 | 218 | 4 | a mature tree with its entire branch system exposed |
+| SPARSE spec | 236 | 37 | 36 | 3 | a young, lightly-branched tree carrying few shoots |
+
+Renders: `references/experiments/gate1-2026-09-20/pair-{bare,sparse}-architecture.png`.
+
+**The distinction survives, and the direction is counter-intuitive: BARE gets MORE
+structure, SPARSE gets LESS.** Bare is the whole skeleton on display, so its ramification
+*is* the subject and it wants maximum twig order and a full crown. Sparse is a tree
+wearing few leaves, so it wants fewer, shorter shoots and a smaller crown. Treating bare
+as "sparse minus foliage" would collapse them — which is exactly the failure mode
+predicted, and it is the same lesson the first bare attempt taught when an amputated
+stump was fixed by adding ramification rather than removing it.
+
+The levers are the second growth pass and the crown envelope: attractor count and kill
+distance for the fine pass, plus crown width/height. They are independent of foliage
+entirely, so the two states cannot converge by both being given fewer leaves.
+
+**OPEN:** whether the sparse tree, which currently reads young and wand-like, still reads
+as *designed restraint* rather than as *a poor tree* once foliage returns. That is a
+Gate 5 question and a human one.
 ---
 
 ## Invariant characteristics
