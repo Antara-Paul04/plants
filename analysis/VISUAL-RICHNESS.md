@@ -162,3 +162,40 @@ the defect, and it is one wiring change plus the disagreement override.
 **What is missing:** nothing, for Linear. For fruit, one measurement. For a general
 pixel-sophistication metric — that remains unsolved, and I would rather report it unsolved
 than ship ink wearing a new name.
+
+---
+
+## 7. Motion, concluded: not shippable
+
+**I recommended the boolean twice and the evidence refused it twice.** Recording the full
+sequence because the failure mode is the interesting part.
+
+1. **Incidental evidence** (existing runs): static pages returned *exactly* 0.0000 at every
+   grid resolution and threshold; moving pages were never 0. I reported the boolean stable
+   in 100% of observations and recommended shipping it.
+2. **Designed test** (5 independent loads per site) **falsified that.** figma.com returned
+   `0.0141 / 0.0000 / 0.0000 / 0.0010 / 0.0010` — the boolean flipped 2 of 5.
+3. **Diagnosis:** not a threshold problem, a *sampling* problem. The 1.4s window fell
+   between animation events. Widened to 5 frames over ~4.0s, figma read
+   `0.2233 / 0.2236 / 0.2193 / 0.2236` — stable across 4 trials, and 200× higher.
+4. **Live re-test falsified the fix too.** Through the real analysis path, figma returned
+   **5 true / 1 false over 6 identical runs.** My 4-trial validation was too small to see
+   the residual — the same small-sample error, for the third time.
+
+**Conclusion: visible motion cannot be made deterministic by sampling harder.** A ~17%
+flip rate breaks the product's core requirement that the same URL gives everyone the same
+tree. Longer windows reduce the rate without removing it, and each second spent is a
+second of a 20s budget.
+
+**Status:** implemented, emitted in the fingerprint, **consumed by nothing**, and sampling
+is **off by default** (`opts.motion`). It costs nothing unless deliberately enabled.
+
+**The only avenue likely to make it safe** is to stop sampling wall-clock time and control
+it instead — CDP `Emulation.setVirtualTimePolicy`, or driving animations directly through
+the Animation domain, so the same page is always observed at the same point in its
+timeline. That is deterministic by construction rather than by luck. **Not attempted**, and
+it is a research task, not a fix.
+
+**ASSUMPTION worth stating:** the flip may not be animation timing alone. figma.com may
+serve different content between loads (A/B, rotating hero). If so no sampling policy fixes
+it, and that strengthens the same conclusion.

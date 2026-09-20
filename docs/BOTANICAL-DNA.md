@@ -185,7 +185,37 @@ If no corpus site legitimately qualifies for AUTUMN or WINTER, **report that** a
 optionally add one clearly-labelled synthetic record. Do not lower a threshold to
 produce a nice demo. The same applies to fruit: it is a seeded trait at roughly
 8–12% (EXPERIMENT), eligible only when the tree is not bare, not winter, and has
-sufficient foliage. Fruit represents nothing analytical. That is intentional.
+sufficient foliage. ~~Fruit represents nothing analytical. That is intentional.~~
+
+> **SUPERSEDED 2026-09-20 — EXPERIMENT.** The struck sentence above is left visible
+> rather than deleted, because it was true when written: no signal existed that fruit
+> could honestly represent. One does now.
+>
+> **Fruit represents accent colour that is CONCENTRATED — few, large areas. Flowers
+> represent accent colour that is DISTRIBUTED — many, small ones.** Measured by
+> connected-component analysis over accent pixels (`analysis/probe/accent-regions.js`):
+> concentration is the share of accent area held by the largest connected region, gated
+> on that region covering at least 1% of the frame.
+>
+> This was tested before being adopted. The decisive pair is `gov.uk` (one hero band —
+> largest region holds **87%** of accent area) against `craigslist.org` (thousands of tiny
+> link texts — largest region holds **0.7%**). Coverage-by-hue scored *both* at ~0.97
+> "concentrated" and could not tell them apart; it measures how much of a colour exists,
+> never how it is laid out.
+>
+> **Eligibility is now measured; the seeded roll remains as the personality layer.** So
+> fruit is no longer a lottery — when someone asks why their site grew fruit, the answer
+> is a property of their page, not "your domain won".
+>
+> **Excluded: canvas-dominant pages.** `bruno-simon.com` scores concentration 1.00 only
+> because its entire page is one canvas. That is degenerate, not concentrated.
+>
+> **Known cliff, flagged not smoothed:** `stripe.com` sits at largest-region fraction
+> **0.0103** against a 0.01 gate. Recorded the same way as gov.uk's 0.006 styling cliff.
+>
+> Adopted on the human's instruction — *"Fruit still needs MEANING. Do not use fruit as a
+> consolation prize"* — and on their request to test exactly this hypothesis. It is
+> **EXPERIMENT**, not DECIDED.
 
 ---
 

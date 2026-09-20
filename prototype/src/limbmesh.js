@@ -14,16 +14,17 @@
 //      the branch base — so the parent bulges where the child leaves and the
 //      child flares into it. Flaring only the child looks glued on.
 //
-//   3. A SILHOUETTE THAT IS NOT A TUBE. Real bark displaces the outline: flutes
-//      and furrows are visible against the sky, not just shaded onto a smooth
-//      cylinder. Low-frequency relief is therefore real geometry here; the
-//      fine relief is left to the shader, where it is cheaper and sharper.
+//   3. SCULPTED, NOT TEXTURED. The surface language is smooth and clay-like
+//      (human direction, with a reference: a warm light-tan trunk carrying only
+//      broad soft grooves, matte, never polished wood — see docs/TASTE.md). Broad
+//      soft grooves are low-frequency enough to BE geometry, so they are real
+//      displacement here and are shaded by true normals. There is no bump map:
+//      a sculpted surface reads as clay, a texture of one reads as a texture.
 //
-//   4. LIMB-LOCAL BARK COORDINATES. Every vertex carries its position in its
-//      own limb's frame (around the axis in world units, along it in arc
-//      length). Bark computed in that space is seamless around the limb and
-//      never tiles, by construction — the two classic bark-texture failures —
-//      and its grain follows the limb instead of the world.
+//   4. NO SEAM, NO MIRROR, NO TILE — by construction. Grooves are a sum of
+//      cosines at INTEGER frequencies around the limb, so they close exactly,
+//      with phases that drift along the limb so they wander and never repeat.
+//      A smooth surface hides less than a busy one, so this matters more now.
 
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -47,22 +48,24 @@ function stepFor(radius) {
 }
 
 /**
- * Low-frequency bark relief, as real displacement.
+ * Broad soft grooves running with the grain. Returns 0 on the ridge, 1 in the
+ * bottom of a groove.
  *
- * Ridged noise stretched hard along the limb, so the relief reads as flutes and
- * furrows running with the grain. Only the two coarsest octaves: anything finer
- * is below what this mesh density can carry and belongs to the shader.
+ * Periodic in theta by construction (integer frequencies), so the ring closes
+ * exactly — no seam. The phases drift slowly with arc length, so grooves wander,
+ * merge and fade rather than running rule-straight, and nothing repeats.
  */
-function relief(x, y, z) {
-  const s = 5.2;
-  const zz = z * 0.16;
-  let n = noise3(x * s + 3.1, y * s - 1.7, zz * s);
-  let h = 1 - Math.abs(n);
-  h = h * h;
-  n = noise3(x * s * 2.3 - 5.0, y * s * 2.3 + 2.2, zz * s * 2.3);
-  let h2 = 1 - Math.abs(n);
-  h2 = h2 * h2;
-  return (h * 0.68 + h2 * 0.32) - 0.42; // roughly zero-mean, so limbs keep their radius
+function groove(theta, z, seed) {
+  const p1 = noise3(z * 0.42, seed, 1.7) * 2.6;
+  const p2 = noise3(z * 0.55, seed, 9.1) * 2.6;
+  const p3 = noise3(z * 0.7, seed, 23.4) * 2.6;
+  let v = 0.5 * Math.cos(8 * theta + p1)
+        + 0.32 * Math.cos(13 * theta + p2 + 1.3)
+        + 0.18 * Math.cos(19 * theta + p3 + 4.1);
+  // Grooves come and go along the limb; a groove that never stops is a flute
+  // on a column, and that is architecture, not a tree.
+  v *= 0.6 + 0.4 * noise3(z * 0.8, seed + 40, 5.5);
+  return smoothstep(0.05, -0.62, v);
 }
 
 /**
@@ -112,7 +115,7 @@ function sweepLimb(pts, radii, opts = {}) {
   const radial = radialFor(rMax);
   const frames = curve.computeFrenetFrames(steps, false);
 
-  const pos = [], col = [], bark = [], barkR = [], idx = [];
+  const pos = [], col = [], grooveAttr = [], barkR = [], idx = [];
   const _o = new THREE.Vector3();
   const zOff = seed * 3.7; // de-correlate the bark pattern from limb to limb
 
@@ -156,15 +159,21 @@ function sweepLimb(pts, radii, opts = {}) {
 
     // Nodes: young wood swells slightly where buds and leaves attach.
     const young = 1 - smoothstep(0.01, 0.034, rad);
-    if (young > 0) rad *= 1 + 0.2 * young * nodePulse(arc + zOff);
+    if (young > 0) rad *= 1 + 0.12 * young * nodePulse(arc + zOff);
 
-    // Root flare and buttresses. Angular, not radial — a cone reads as a
-    // funnel, whereas lobes that run down into the ground read as roots.
-    const flare = rootFlare > 0 ? rootFlare * Math.exp(-t * 7.5) : 0;
+    // Root buttress, in WORLD height above the turf rather than as a fraction
+    // of the limb (the trunk limb now runs to the top of the tree, so a
+    // fraction of it is metres). The target is a smooth FLOWING buttress: the
+    // whole base swells, and a few broad roots run out of it into the ground.
+    const above = Math.max(0, c.y - 0.14);
+    const flare = rootFlare > 0 ? Math.exp(-above / 0.36) : 0;
 
-    // Relief fades out on thin wood: young bark is smooth, and the mesh there
-    // could not carry it anyway.
-    const reliefAmp = clamp((rad - 0.02) * 0.11, 0, 0.02);
+    // Groove depth scales with the wood: broad and visible on the trunk, gone
+    // on thin limbs, which stay smooth.
+    // Deep enough to MODEL under soft light. At the first attempt they were so
+    // shallow that an evenly lit trunk was a featureless column: soft light
+    // needs more form to work with, not less.
+    const grooveDepth = clamp((rad - 0.018) * 0.17, 0, 0.05);
 
     // Occlusion, carried as vertex colour and multiplied into the bark:
     // the base darkens into the ground, and crotches are shaded where a limb
@@ -183,22 +192,28 @@ function sweepLimb(pts, radii, opts = {}) {
         0.07 * Math.sin(3 * a + seed + t * 1.6) +
         0.04 * Math.sin(5 * a - seed * 1.7 + t * 2.4) +
         0.022 * Math.sin(7 * a + seed * 0.6 - t * 1.2);
-      const butt = flare > 0 ? flare * (0.5 + 0.5 * Math.pow(Math.max(0, Math.sin(3 * a + seed)), 2)) : 0;
+      // Five broad roots at uneven spacing (integer frequencies keep the ring
+      // closed). The overall swell is gentle; the roots carry the character.
+      let butt = 0;
+      if (flare > 0) {
+        const roots = 0.5 + 0.5 * Math.cos(5 * a + seed);
+        const uneven = 0.75 + 0.25 * Math.cos(2 * a + seed * 1.9);
+        butt = flare * 0.34 + Math.pow(flare, 1.6) * 0.95 * Math.pow(roots, 2.2) * uneven;
+      }
       const base = rad * wob * (1 + butt);
 
-      // Bark space: around the axis in world units, along it in arc length.
-      const bx = ca * base, by = sa * base, bz = arc + zOff;
-      const rr_ = base + (reliefAmp > 0 ? relief(bx, by, bz) * reliefAmp : 0);
+      const gv = grooveDepth > 0 ? groove(a, arc + zOff, seed) : 0;
+      const rr_ = base - gv * grooveDepth;
 
       _o.set(0, 0, 0).addScaledVector(N, ca * rr_).addScaledVector(B, sa * rr_);
       const px = c.x + _o.x, py = c.y + _o.y, pz = c.z + _o.z;
       pos.push(px, py, pz);
-      bark.push(bx, by, bz);
+      grooveAttr.push(gv * clamp(grooveDepth / 0.02, 0, 1));
       barkR.push(rad);
 
       const low = 1 - smoothstep(-0.05, 0.6, py);
       const tuck = 1 - smoothstep(0.3, 1.0, Math.hypot(px, pz));
-      const ground = 1 - clamp(low * lerp(0.45, 1, tuck), 0, 1) * 0.78;
+      const ground = 1 - clamp(low * lerp(0.45, 1, tuck), 0, 1) * 0.42;
       const ao = ground * crotch;
       col.push(ao, ao, ao);
     }
@@ -227,18 +242,18 @@ function sweepLimb(pts, radii, opts = {}) {
   const ring = radial + 1;
   const tipP = curve.getPointAt(1);
   const ti = pos.length / 3;
-  pos.push(tipP.x, tipP.y, tipP.z); bark.push(0, 0, length + zOff); barkR.push(0); col.push(1, 1, 1);
+  pos.push(tipP.x, tipP.y, tipP.z); grooveAttr.push(0); barkR.push(0); col.push(1, 1, 1);
   for (let j = 0; j < radial; j++) idx.push(steps * ring + j, steps * ring + j + 1, ti);   // faces +T
 
   const baseP = curve.getPointAt(0);
   const bi = pos.length / 3;
-  pos.push(baseP.x, baseP.y, baseP.z); bark.push(0, 0, zOff); barkR.push(radii[0]); col.push(1, 1, 1);
+  pos.push(baseP.x, baseP.y, baseP.z); grooveAttr.push(0); barkR.push(radii[0]); col.push(1, 1, 1);
   for (let j = 0; j < radial; j++) idx.push(j, bi, j + 1);                                  // faces -T
 
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-  g.setAttribute('barkCoord', new THREE.Float32BufferAttribute(bark, 3));
+  g.setAttribute('groove', new THREE.Float32BufferAttribute(grooveAttr, 1));
   g.setAttribute('barkR', new THREE.Float32BufferAttribute(barkR, 1));
   g.setIndex(idx);
   g.computeVertexNormals();
@@ -288,7 +303,7 @@ export function buildLimbs(limbs, r, opts = {}) {
       for (let i = 1; i < last; i++) radii[i] = prev[i - 1] * 0.25 + prev[i] * 0.5 + prev[i + 1] * 0.25;
     }
 
-    let baseBlend = 0, forkShade = 0, leadIn = 0;
+    let baseBlend = 0, forkShade = 0, leadIn = 0, lead = 0;
     if (L.parentLimb) {
       const host = L.parentLimb.chain[L.parentIndex];
       // Start the child INSIDE the parent, running along the PARENT'S OWN AXIS
@@ -305,16 +320,25 @@ export function buildLimbs(limbs, r, opts = {}) {
       // on the parent's centreline is always buried. It is also how a real
       // union is built — the branch flows out of the parent, it is not stuck on.
       const hostPrev = L.parentIndex > 0 ? L.parentLimb.chain[L.parentIndex - 1] : host.parent;
-      pts[0] = host.pos.clone();
+      // PREPEND the lead-in; never replace the limb's own first node. Replacing
+      // it took that node off this limb's meshed path, so any grandchild that
+      // attached near the start ran its "hidden" lead-in through a point that
+      // was now outside its parent — sawn-off stubs below the first union.
+      // Every chain node must stay on its own limb's path, because every
+      // child's lead-in is built from its parent's chain nodes.
+      //
+      // Real clearance, not just "thinner than the parent": both surfaces carry
+      // cross-section wobble and grooves, so a lead-in near the parent's radius
+      // breaks through its skin in patches.
+      pts.unshift(host.pos.clone());
+      radii.unshift(Math.min(chain[0].r, host.r * 0.62));
+      lead = 1;
+      leadIn = host.pos.distanceTo(chain[0].pos) * 0.5;
       if (hostPrev) {
         pts.unshift(hostPrev.pos.clone());
-        // Real clearance, not just "thinner than the parent". Both surfaces
-        // carry +/-13% cross-section wobble plus relief, so a lead-in at 0.8 of
-        // the parent's radius broke through its skin in patches and showed as a
-        // flat-cut sleeve hanging on the trunk.
-        radii[0] = Math.min(chain[0].r, host.r * 0.62);
         radii.unshift(Math.min(chain[0].r, hostPrev.r * 0.42));
-        leadIn = hostPrev.pos.distanceTo(host.pos);
+        lead = 2;
+        leadIn += hostPrev.pos.distanceTo(host.pos);
       }
       // A branch is fattest where it leaves its parent — but a twig on a trunk
       // is a COLLAR, not a cone.
@@ -327,14 +351,14 @@ export function buildLimbs(limbs, r, opts = {}) {
       // swelling at the union is the PARENT'S collar, which is the right way
       // round anatomically.
       baseBlend = 0;
-      forkShade = clamp(chain[0].r / 0.05, 0.15, 0.5);
+      forkShade = clamp(chain[0].r / 0.05, 0.1, 0.3);
     }
 
     // Collars for this limb's OWN children, positioned where they actually
     // leave. Tiny children are ignored: a collar per twig made vertebrae.
     const collarAt = (L.attach || [])
       .filter((a) => a.r > chain[Math.min(a.index, last)].r * 0.28)
-      .map((a) => ({ t: a.index / last, r: a.r }));
+      .map((a) => ({ t: (a.index + lead) / (last + lead), r: a.r }));
 
     const isTrunk = !L.parentLimb;
     const g = sweepLimb(pts, radii, {
@@ -343,7 +367,7 @@ export function buildLimbs(limbs, r, opts = {}) {
       baseBlend,
       forkShade,
       leadIn,
-      rootFlare: isTrunk ? 1.25 : 0,
+      rootFlare: isTrunk ? 1 : 0,
       terminal: (L.attach || []).length === 0 && !isTrunk,
     });
     if (opts.debugColors) {

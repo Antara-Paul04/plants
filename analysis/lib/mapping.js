@@ -62,7 +62,13 @@ export const BANDS = {
   // only legitimate wild WINTER cases) keep a 3x margin; figma at 0.165 is excluded.
   winter:       { authored: 0.60, colorfulness: 0.06, unmaskedColorfulness: 0.10, ink: 0.20, styling: 0.35 },
   autumn:       { warmShare: 0.55, chromatic: 0.05 },
-  fruitRate:    0.10,
+  // FRUIT now carries meaning (EXPERIMENT, 2026-09-20). Flowers represent small,
+  // distributed accents; fruit represents FEWER, LARGER, CONCENTRATED ones. Measured by
+  // connected-component analysis over accent pixels — see probe/accent-regions.js.
+  // Threshold 0.60 from the corpus: gov.uk 0.874, stripe 0.752, figma 0.695 sit above it
+  // and nothing else with a real accent comes close (next is 0.326).
+  fruit:        { concentration: 0.60, rate: 0.50 },
+  fruitRate:    0.10,   // retained for reference; superseded by fruit.rate
   // below this chromatic coverage there is no meaningful accent.
   // RECALIBRATED 2026-09-20 (Lead ruling): 0.01 was set by judgment, never from the
   // distribution, and gated out 12 of 23 sites before colourfulness was consulted —
@@ -264,11 +270,22 @@ export function buildDna(fp, domain){
   }
 
   // --- fruit: seeded personality, represents nothing analytical (by design)
-  const eligible = state !== 'bare' && botanicalState !== 'winter'
-                && (state === 'normal' || state === 'lush') && amount !== 'abundant';
+  // Eligibility is now MEASURED, not a lottery: the site's accent colour must live in a
+  // few large concentrated areas rather than be scattered in many small ones.
+  // Canvas-dominant pages are excluded — bruno-simon reads concentration 1.0 only because
+  // its whole page is one canvas, which is degenerate rather than concentrated.
+  const conc = fp.accentConcentration ?? 0;
+  const canvasDominant = (fp.canvasArea ?? 0) >= 0.5;
+  const concentrated = conc >= B.fruit.concentration && !canvasDominant;
+  const eligible = concentrated && state !== 'bare' && botanicalState !== 'winter'
+                && (state === 'normal' || state === 'lush');
   const roll = rng();
-  const fruitOn = eligible && roll < BANDS.fruitRate;
-  if (fruitOn) why.fruit = `seeded trait: seed ${seed} → roll ${roll.toFixed(3)} < ${BANDS.fruitRate} and the tree is eligible (not bare, not winter, foliage ${state}). Represents nothing about the website, deliberately.`;
+  const fruitOn = eligible && roll < B.fruit.rate;
+  if (fruitOn) {
+    why.fruit = `accent concentration ${conc.toFixed(3)} >= ${B.fruit.concentration}: this site's colour sits in a few large areas rather than many small ones, which is what fruit represents (flowers represent the distributed case). Seeded personality then decides: seed ${seed} → roll ${roll.toFixed(3)} < ${B.fruit.rate}.`;
+  } else if (concentrated && !eligible) {
+    why.fruit = `accent is concentrated (${conc.toFixed(3)}) but the tree is not fruit-eligible (foliage ${state}, state ${botanicalState})`;
+  }
 
   // colour source: the site's accent when it has one, ivory when it does not.
   const petalSource   = hasChroma ? fp.palette.primary   : achromaticPetal(fp.palette.ground);

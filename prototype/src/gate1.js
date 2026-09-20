@@ -42,14 +42,24 @@ const { makeRenderer, fitCamera } = await import(`./viewer.js${bust}`);
 // so it was silently ignored and the reviewed trees were pruned at the default.
 // These presets reproduce the trees that were actually judged.
 const PRESETS = {
+  // Taste's rule, tested at both ends: "Nothing in this family should be narrow.
+  // Hold the width roughly constant and let DENSITY be what varies" — and "buy
+  // air with width, never by flattening": a flat crown reads as savanna at any
+  // width, a domed one stays ours. So both states share a broad, domed envelope
+  // and differ in how much structure fills it (334 limbs against 76).
+  //
+  // Attractor counts scale with the envelope's volume, so widening did not thin
+  // the branching that was judged. `grow` is re-matched BY MEASUREMENT so the
+  // first-fork radius is what was reviewed (bare 0.2955, sparse 0.1656) — a
+  // wider crown feeds more tips into da Vinci's rule and would otherwise
+  // quietly thicken the trunk.
   bare: {
-    rx: 2.35, ry: 2.15, cy: 4.15, trunkMin: 8,
-    c1: 230, k1: 5.0, c2: 1800, k2: 1.4, i2: 11, tip: 0.004, minStub: 0.3,
+    rx: 2.9, ry: 2.15, cy: 4.15, trunkMin: 8,
+    c1: 350, k1: 5.0, c2: 2740, k2: 1.4, i2: 11, tip: 0.004, minStub: 0.3, grow: 1.8e-4,
   },
   sparse: {
-    rx: 2.75, ry: 1.55, cy: 3.45, trunkMin: 7,
-    c1: 155, k1: 6.0, c2: 430, k2: 3.0, i2: 9, tip: 0.005, minStub: 0.3,
-    grow: 1.48e-4,   // matched to the reviewed sparse trunk (fork 0.1656); fewer segments to accumulate over
+    rx: 2.9, ry: 2.05, cy: 3.95, trunkMin: 7,
+    c1: 190, k1: 6.0, c2: 520, k2: 3.0, i2: 9, tip: 0.005, minStub: 0.3, grow: 0.97e-4,
   },
 };
 const preset = PRESETS[q.get('preset')] || PRESETS.bare;
@@ -74,6 +84,7 @@ const P = {
   grow: num('grow', 2.8e-4),
   taper: num('taper', 0.013),
   shootR: num('shootR', 0.0055),
+  rmax: num('rmax', 0.42),
   smooth: num('smooth', 3),
   minStub: num('minStub', 0.3),
   maxChildren: num('kids', 2),
@@ -105,7 +116,7 @@ const P = {
 const canvas = document.getElementById('scene');
 const renderer = makeRenderer(canvas);
 const TM = { neutral: THREE.NeutralToneMapping, aces: THREE.ACESFilmicToneMapping, agx: THREE.AgXToneMapping };
-renderer.toneMapping = TM[q.get('tm')] ?? THREE.ACESFilmicToneMapping;
+// tone mapping is part of the environment state; set once ENV is known
 const uniforms = { time: { value: 0 } };
 
 // --- environment states ------------------------------------------------------
@@ -123,13 +134,19 @@ const uniforms = { time: { value: 0 } };
 // day-for-night has always been shot, and it is why it reads as night rather
 // than as an underexposed afternoon.
 const ENVS = {
+  // DAY: soft, even light with gentle occlusion and no harsh shadow — the
+  // reference's lighting, and the right light for a matte clay surface. The
+  // rig this replaces raked a hard key across the trunk to bring out fissured
+  // bark; with broad sculpted grooves that just made hard terminator lines.
+  // Most of the light is now the environment, the key only shapes, and a warm
+  // fill from the camera side keeps the shadow side luminous rather than grey.
   day: {
-    skyTop: 0x4f95c8, skyHorizon: 0xdfe6e4, skyGround: 0x6f6a55,
-    glow: { color: 0xfff0d8, power: 14, size: 9, dir: [5.6, 8.4, 5.4] },
-    key: { color: 0xfff0dc, intensity: 3.3, dir: [5.6, 8.4, 5.4], shadowRadius: 2.4 },
-    fill: null,
-    rim: { color: 0xbcd6ee, intensity: 0.75, dir: [-6.5, 4.2, -5.6] },
-    env: 0.85, exposure: 1.0,
+    skyTop: 0x5d9fd0, skyHorizon: 0xe6ebe6, skyGround: 0x8a8468,
+    glow: { color: 0xfff2dc, power: 7, size: 14, dir: [5.6, 8.4, 5.4] },
+    key: { color: 0xfff1de, intensity: 2.7, dir: [7.2, 7.4, 3.6], shadowRadius: 4, shadowMap: 2048 },
+    fill: { color: 0xffe9d2, intensity: 0.42, dir: [-3.0, 3.2, 7.5] },
+    rim: { color: 0xcfe2f2, intensity: 0.55, dir: [-6.5, 4.2, -5.6] },
+    env: 0.95, exposure: 0.97, tone: 'neutral',
   },
   night: {
     // The sky sits DARKER than the lit tree, so the tree is the brightest thing
@@ -161,11 +178,12 @@ const ENVS = {
     // Over-graded, this reads as FROST — pale blue-white turf is snow, and
     // that is a season, not a time of day. It has to stay recognisably grass.
     ground: { sat: 0.5, value: 0.36, tint: 0x5f7fae, tintAmt: 0.2 },
-    env: 1.0, exposure: 1.15,
+    env: 1.0, exposure: 1.15, tone: 'aces',
   },
 };
 const ENV = ENVS[q.get('envstate')] || ENVS.day;
 renderer.toneMappingExposure = ENV.exposure * P.exposure;
+renderer.toneMapping = TM[q.get('tm') || ENV.tone] ?? THREE.NeutralToneMapping;
 
 function skyDome(radius, withGround) {
   const top = new THREE.Color(ENV.skyTop), hor = new THREE.Color(ENV.skyHorizon), gnd = new THREE.Color(ENV.skyGround);
@@ -227,7 +245,7 @@ const key = ENV.key.spot
   : new THREE.DirectionalLight(ENV.key.color, keyI);
 key.position.copy(dirOf(ENV.key.dir)).multiplyScalar(ENV.key.spot ? 17 : 14);
 key.castShadow = true;
-key.shadow.mapSize.set(4096, 4096);
+key.shadow.mapSize.set(ENV.key.shadowMap || 4096, ENV.key.shadowMap || 4096);   // a smaller map is a softer PCF edge
 key.shadow.camera.near = 1;
 key.shadow.camera.far = 34;
 const S = 6.2;
@@ -251,7 +269,7 @@ const r = rng(P.seed);
 const skel = buildSkeleton(r, {
   cloud: { count: P.points, cy: P.cy, rx: P.rx, ry: P.ry, rz: P.rx, hollow: P.hollow },
   grow: { D: P.D, influence: P.influence, kill: P.kill, wobble: P.wobble, maxChildren: P.maxChildren, trunkMin: P.trunkMin },
-  radii: { tip: P.tip, alpha: P.alpha, grow: P.grow, taper: P.taper, shootR: P.shootR },
+  radii: { tip: P.tip, alpha: P.alpha, grow: P.grow, taper: P.taper, shootR: P.shootR, max: P.rmax },
   smooth: P.smooth,
   minStub: P.minStub,
   coarseCount: P.coarseCount, coarseKill: P.coarseKill, coarseInfluence: P.coarseInfluence,
@@ -269,7 +287,7 @@ const bark = DEBUG_LIMBS
   ? new THREE.MeshBasicMaterial({ vertexColors: true })
   : P.flat
   ? new THREE.MeshStandardMaterial({ color: 0x6b5443, roughness: 0.82, metalness: 0 })
-  : makeBarkMaterial({ depth: P.barkDepth, lichen: P.lichen });
+  : makeBarkMaterial();
 const tree = new THREE.Mesh(geo, bark);
 tree.castShadow = true;
 tree.receiveShadow = true;

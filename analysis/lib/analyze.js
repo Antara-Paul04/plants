@@ -9,7 +9,8 @@
 import { chromium } from 'playwright-core';
 import fs from 'node:fs';
 import { measurePage } from '../probe/measure.js';
-import { analysePixels } from '../probe/pixels.js';
+import { analysePixels, diffFrames } from '../probe/pixels.js';
+import { measureAccentRegions } from '../probe/accent-regions.js';
 import { buildDna } from './mapping.js';
 
 const CHROME = [
@@ -28,6 +29,9 @@ const LOAD_MS     = 4500;    // bounded wait for subresources AFTER dom-ready. N
 const IDLE_MS     = 1500;    // networkidle never fires on many SPAs — cap it low
 const SETTLE_MS   = 600;     // fixed settle after that
 const SHOT_MS     = 5000;
+const MOTION_GAP  = 1000;    // validated protocol: 5 frames at 1s. A SHORT 3-frame check
+const MOTION_MAX  = 5;       // is a subset of it, so stopping early when it already reads
+                             // non-zero is faithful, not a different method.
 
 const now = () => Number(process.hrtime.bigint() / 1000000n);
 
@@ -98,7 +102,7 @@ const INTERSTITIAL = /attention required|just a moment|access denied|you have be
 // ---------------------------------------------------------------- fingerprint
 // V0 set, frozen by Lead. The design-palette fields exist because the media-masked
 // palette ruling stands: photographs are content (D3), not a site's brand colour.
-function toFingerprint(m, pixels) {
+function toFingerprint(m, pixels, accent, hasMotion) {
   const v = m.scopes.v3;
   const all = pixels.all, masked = pixels.mediaMasked;
   const useMask = !!masked && (pixels.maskedFraction || 0) > 0.05;
@@ -114,12 +118,20 @@ function toFingerprint(m, pixels) {
     imageArea:            +v.media.imageArea.toFixed(3),
     canvasArea:           +v.media.canvasArea.toFixed(3),
     textDensity:          +Math.min(1, v.text.charsPerMegapixel / 2500).toFixed(3),
+    accentConcentration:  +((accent && accent.concentration) || 0).toFixed(3),
+    hasVisibleMotion:     !!hasMotion,
     palette: { ground: all.background, primary: design.primary || null, secondary: design.secondary || null },
     paletteSource: useMask ? 'media-masked' : 'whole-frame'
   };
 }
 
 // ---------------------------------------------------------------- public API
+async function scratchDiff(frames) {
+  const sc = await getScratch();
+  const r = await sc.evaluate(diffFrames, { frames, docW: VW, excludeRects: [] }).catch(() => null);
+  return r ? r.sustained : 0;
+}
+
 export async function analyzeUrl(url, opts = {}) {
   const budget = opts.budgetMs || BUDGET_MS;
   const T0 = now();
@@ -212,6 +224,34 @@ async function runAnalysis(u, domain, budget, T0, left) {
     const m = await page.evaluate(measurePage, { only: 'v3' });
     t.domEval = now() - tDom;
 
+    // ---- motion (boolean only; the magnitude is NOT exposed — it was rejected at 19x
+    // run-to-run variation and one stabilised test does not reverse that).
+    // Sampling matters more than thresholding: a 1.4s window read figma at 0.001 on some
+    // loads and 0.0000 on others, not because its motion is weak but because the window
+    // fell between animation events. Over ~4s it reads 0.22 every time.
+    // Early exit: static pages return EXACTLY 0.0000 and never a false positive, so a
+    // non-zero short read already proves motion. Only the ambiguous zero pays full price.
+    // DISABLED BY DEFAULT (opts.motion === true to enable). Live testing found the
+    // boolean still flips on figma.com: 5 true / 1 false over 6 identical runs. That
+    // breaks "same URL gives everyone the same tree", and nothing in the mapping consumes
+    // it, so sampling is not worth 3-5s of every request. See VISUAL-RICHNESS.md.
+    const tMotion = now();
+    let hasMotion = false, motionFrames = 0;
+    try {
+      if (!opts.motion) throw new Error('motion sampling disabled');
+      const frames = [];
+      for (let i = 0; i < MOTION_MAX && left() > 6000; i++) {
+        if (i) await page.waitForTimeout(MOTION_GAP);
+        frames.push((await page.screenshot({ type: 'png', animations: 'allow', timeout: 3000 })).toString('base64'));
+        motionFrames = frames.length;
+        if (frames.length >= 3) {
+          const r = await scratchDiff(frames.slice(-3));
+          if (r > 0) { hasMotion = true; break; }      // proven; stop paying
+        }
+      }
+    } catch (e) { /* motion is best-effort; never fails the analysis */ }
+    t.motion = now() - tMotion;
+
     // ---- one screenshot for colour
     const tShot = now();
     const clipH = Math.min(m.docHeight, VH * 3);
@@ -231,10 +271,16 @@ async function runAnalysis(u, domain, budget, T0, left) {
       pngB64: shot.toString('base64'),
       maskRects: m.mediaRects.filter(r => r.y < clipH), docW: VW
     });
+    // spatial layout of the accent colour: separates flowers (many small) from fruit
+    // (few large). Same masked frame as the palette, so the two agree.
+    const accent = await scratch.evaluate(measureAccentRegions, {
+      pngB64: shot.toString('base64'),
+      maskRects: m.mediaRects.filter(r => r.y < clipH), docW: VW
+    }).catch(() => null);
     t.pixels = now() - tPix;
 
     t.total = now() - T0;
-    return { ok: true, domain, url: finalUrl, fingerprint: toFingerprint(m, pixels), timingMs: t };
+    return { ok: true, domain, url: finalUrl, fingerprint: toFingerprint(m, pixels, accent, hasMotion), timingMs: t };
   } catch (e) {
     const msg = String(e && e.message || e).split('\n')[0];
     return fail(domain, /Timeout|timeout/.test(msg) ? 'TIMEOUT' : 'INTERNAL', msg);
