@@ -26,6 +26,19 @@ export async function analysePixels(arg) {
     for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) { if (!mask[y * W + x]) { mask[y * W + x] = 1; maskedCount++; } }
   }
 
+  // OKLab chroma. HSL saturation cannot be used for this: it inflates near white, and
+  // reports stripe.com's pale cream hero wash at 0.93 — higher than its brand purple.
+  function okChroma(r, g, b) {
+    const f = v => { v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+    const R = f(r), G = f(g), B = f(b);
+    const l = Math.cbrt(0.4122214708*R + 0.5363325363*G + 0.0514459929*B);
+    const m = Math.cbrt(0.2119034982*R + 0.6806995451*G + 0.1073969566*B);
+    const s2 = Math.cbrt(0.0883024619*R + 0.2817188376*G + 0.6299787005*B);
+    const A = 1.9779984951*l - 2.4285922050*m + 0.4505937099*s2;
+    const Bb = 0.0259040371*l + 0.7827717662*m - 0.8086757660*s2;
+    return Math.sqrt(A*A + Bb*Bb);
+  }
+
   function rgbToHsl(r, g, b) {
     r /= 255; g /= 255; b /= 255;
     const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
@@ -82,8 +95,27 @@ export async function analysePixels(arg) {
       const o = i * 4; if (data[o + 3] < 16) continue;
       if (Math.abs(data[o] - br) + Math.abs(data[o + 1] - bgg) + Math.abs(data[o + 2] - bb) < 36) bgLike++;
     }
-    const accents = [...hueBins.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 3)
-      .map(([hk, e]) => ({ hex: hex(e.r / e.n, e.g / e.n, e.b / e.n), hue: hk, coverage: +(e.n / n).toFixed(4) }));
+    // RANK by coverage x perceptual-chroma-squared, not by raw pixel count.
+    // A brand colour is typically SMALL AND SATURATED; raw count ranks for large and any
+    // saturation, which handed stripe.com a pale cream wash (coverage 0.021, okChroma
+    // 0.069) as primary over #735ffd, its actual brand purple (0.004, 0.225). Coverage
+    // stays LINEAR so "how much of the page is this" still counts; chroma is squared so
+    // "how much of a colour is it" can outweigh a large wash.
+    // Checked against 11 sites with a known brand colour: raw count scored 10/11, this
+    // scores 11/11, and only stripe changes materially.
+    const MIN_ACCENT_COVERAGE = 0.0005;    // a speck cannot be a brand colour
+    const scored = [...hueBins.entries()].map(([hk, e]) => {
+      const R = e.r / e.n, G = e.g / e.n, B = e.b / e.n;
+      const c = okChroma(R, G, B);
+      return { hex: hex(R, G, B), hue: hk, coverage: +(e.n / n).toFixed(5),
+               okChroma: +c.toFixed(4), score: (e.n / n) * c * c };
+    });
+    const eligible = scored.filter(a => a.coverage >= MIN_ACCENT_COVERAGE);
+    const accents = (eligible.length ? eligible : scored).sort((a, b) => b.score - a.score).slice(0, 3);
+    // warmShare over ONE bin is trivially 0 or 1 whatever the site looks like, which is
+    // how ikea reached warmShare 1.0 and a false autumn. Report the bin count so the
+    // autumn gate can refuse to read a share off a single bin.
+    const chromaticBins = eligible.length;
     // WARM share of chromatic coverage (bin centres 22.5/37.5/52.5 -> amber..rust).
     // Same definition as probe/hue.js so live and batch agree. Feeds the AUTUMN gate.
     let warm = 0;
@@ -102,6 +134,7 @@ export async function analysePixels(arg) {
       secondary: accents[1] ? accents[1].hex : null,
       tertiary: accents[2] ? accents[2].hex : null,
       warmShare: chromatic ? +(warm / chromatic).toFixed(4) : 0,
+      chromaticBins,
       distinctBuckets: bins.size,
       sampledPixels: n
     };

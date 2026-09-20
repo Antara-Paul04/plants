@@ -61,7 +61,10 @@ export const BANDS = {
   // Threshold 0.10 chosen from live measurement: craigslist 0.03 and vercel 0.00 (the
   // only legitimate wild WINTER cases) keep a 3x margin; figma at 0.165 is excluded.
   winter:       { authored: 0.60, colorfulness: 0.06, unmaskedColorfulness: 0.10, ink: 0.20, styling: 0.35 },
-  autumn:       { warmShare: 0.55, chromatic: 0.05 },
+  // a warm SHARE read off a single hue bin is meaningless — one accent scores 0 or 1
+  // whatever the site looks like (ikea: warmShare 1.0, false autumn). Require real
+  // chromatic variety before a share is allowed to mean anything.
+  autumn:       { warmShare: 0.55, chromatic: 0.05, minBins: 2 },
   // FRUIT now carries meaning (EXPERIMENT, 2026-09-20). Flowers represent small,
   // distributed accents; fruit represents FEWER, LARGER, CONCENTRATED ones. Measured by
   // connected-component analysis over accent pixels — see probe/accent-regions.js.
@@ -261,6 +264,7 @@ export function buildDna(fp, domain){
     botanicalState = 'winter';
     why.botanicalState = `authored ${fp.authored} >= ${B.winter.authored} AND stylingRichness ${fp.stylingRichness} >= ${B.winter.styling} (clearly authored) AND design colourfulness ${fp.designColorfulness} < ${B.winter.colorfulness} AND inkCoverage ${fp.inkCoverage} < ${B.winter.ink} AND unmasked colourfulness ${fp.colorfulness} < ${B.winter.unmaskedColorfulness} (no colour anywhere on the page, not merely none we can credit to design) → WINTER (restraint, not absence — distinct from BARE)`;
   } else if (fp.warmShareOfChroma >= B.autumn.warmShare && fp.designChromaticRatio >= B.autumn.chromatic
+             && (fp.chromaticBins ?? 0) >= B.autumn.minBins
              && fp.canvasArea < 0.5) {
     botanicalState = 'autumn';
     why.botanicalState = `warm hues hold ${(fp.warmShareOfChroma*100).toFixed(0)}% of design chromatic coverage (>= ${B.autumn.warmShare*100}%) over ${fp.designChromaticRatio} coverage → AUTUMN`;

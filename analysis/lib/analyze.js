@@ -142,6 +142,7 @@ function toFingerprint(m, pixels, accent, hasMotion) {
     canvasArea:           +v.media.canvasArea.toFixed(3),
     textDensity:          +Math.min(1, v.text.charsPerMegapixel / 2500).toFixed(3),
     accentConcentration:  +((accent && accent.concentration) || 0).toFixed(3),
+    chromaticBins:        (design.chromaticBins ?? 0),
     hasVisibleMotion:     !!hasMotion,
     palette: { ground: all.background, primary: design.primary || null, secondary: design.secondary || null },
     paletteSource: useMask ? 'media-masked' : 'whole-frame'
