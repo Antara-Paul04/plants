@@ -68,6 +68,12 @@ if (sitesFile) {
   }
 }
 const sites = named.length ? named : DEFAULT_SITES;
+// zsh does not word-split an unquoted $VAR: a whole list arrives as one argument.
+const joined = sites.find((s) => /\s/.test(s));
+if (joined) {
+  console.error(`not a site: "${joined.slice(0, 60)}…" — pass sites as separate arguments, or use --sites-file`);
+  process.exit(1);
+}
 const fileName = (site) => site.replace(/[^a-z0-9.]/gi, '-');
 
 await mkdir(outDir, { recursive: true });

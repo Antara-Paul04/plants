@@ -49,3 +49,8 @@ tmp/
 # results.json, sites.txt) is committed; the images stay local for review.
 references/experiments/site-survey-*/*.png
 references/experiments/site-survey-*/_failed/
+# Website-beside-tree pairs and the raw site shots that compose them (capture.mjs
+# --with-site). Another 52MB on top of the trees. The pairs are review material,
+# regenerable from results.json plus a re-shoot; the analysis stays committed.
+references/experiments/site-survey-*/pairs/
+references/experiments/site-survey-*/_site/

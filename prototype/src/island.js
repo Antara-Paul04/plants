@@ -126,6 +126,16 @@ export function buildIsland(r, params = {}) {
       topIdx.push(a0 + i, b0 + i, a0 + j, b0 + i, b0 + j, a0 + j);
     }
   }
+  // WINDING. Every triangle in this island was wound the wrong way round — the
+  // turf dome faced DOWN (0 of 2,592 triangles up) and the soil body faced INWARD
+  // (0 of 546 out), measured, the same family of bug the trunk had. Back faces are
+  // culled, so from any low angle the near wall vanished and the island was an
+  // open bowl: you looked through it at the inside of the far wall, with the
+  // tree's shadow falling into it and the trunk's buried base hanging under the
+  // turf. From above it hid well — the blades cover the missing dome — which is
+  // how it survived. The dome's contact shading had never once been on screen.
+  const flip = (ix) => { for (let k = 0; k < ix.length; k += 3) { const t = ix[k + 1]; ix[k + 1] = ix[k + 2]; ix[k + 2] = t; } return ix; };
+  flip(topIdx);
   const topGeo = new THREE.BufferGeometry();
   topGeo.setAttribute('position', new THREE.Float32BufferAttribute(topPos, 3));
   topGeo.setAttribute('normal', new THREE.Float32BufferAttribute(topNor, 3));
@@ -158,8 +168,14 @@ export function buildIsland(r, params = {}) {
     for (let i = 0; i < SSEG; i++) {
       const a = (i / SSEG) * Math.PI * 2;
       const n = noise3(Math.cos(a) * 2.1, lv.t * 3.4, Math.sin(a) * 2.1);
-      const rad = radiusAt(a) * lv.k * (1 + n * 0.085 * (0.25 + lv.t));
-      sidePos.push(Math.cos(a) * rad, lv.yy + n * 0.05, Math.sin(a) * rad);
+      // The TOP ring meets the turf exactly: no noise, the dome's own rim height,
+      // and a hair wider than the dome (whose rim is at 0.995) so this coarser
+      // 42-gon's chords never cut inside it. With noise on this ring there was a
+      // hairline crack between turf and soil — invisible while the island was
+      // inside-out, because the far wall showed through it; sky once it was not.
+      const top = lv.t === 0;
+      const rad = top ? radiusAt(a) * 1.01 : radiusAt(a) * lv.k * (1 + n * 0.085 * (0.25 + lv.t));
+      sidePos.push(Math.cos(a) * rad, top ? topY(radiusAt(a)) : lv.yy + n * 0.05, Math.sin(a) * rad);
       const c = soilHi.clone().lerp(soilLo, clamp(lv.t * 1.35, 0, 1));
       sideCol.push(c.r, c.g, c.b);
     }
@@ -180,7 +196,7 @@ export function buildIsland(r, params = {}) {
   const sideGeo = new THREE.BufferGeometry();
   sideGeo.setAttribute('position', new THREE.Float32BufferAttribute(sidePos, 3));
   sideGeo.setAttribute('color', new THREE.Float32BufferAttribute(sideCol, 3));
-  sideGeo.setIndex(sideIdx);
+  sideGeo.setIndex(flip(sideIdx));
   sideGeo.computeVertexNormals();
   const sideMesh = new THREE.Mesh(
     sideGeo,

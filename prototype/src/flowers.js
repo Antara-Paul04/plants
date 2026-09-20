@@ -110,6 +110,38 @@ function paintFlat(g, color) {
 }
 
 /**
+ * The flower's centre. A round bright dot, concentric in a round dark disc, is
+ * exactly how an EYE is drawn — and a canopy of dark blooms with round centres
+ * read as dozens of eyes staring out of the tree (the human: "so fucking scary").
+ * Colour alone does not cure that: a pale centre on a dark petal is still a pupil.
+ * So the default centre is a small STAMEN STAR — five points, slightly domed —
+ * which is a flower's centre and cannot be a pupil. `round` is kept for the A/B.
+ */
+function eyeGeometry(r, radius, shape = 'star') {
+  if (shape === 'round') {
+    const e = new THREE.SphereGeometry(radius, 7, 4);
+    e.scale(1, 0.7, 1);
+    e.translate(0, radius * 0.35, 0);
+    return e;
+  }
+  const pts = 5, R = radius * 1.55, ri = radius * 0.62, hgt = radius * 0.7;
+  const pos = [0, hgt, 0], idx = [];
+  const a0 = r() * Math.PI * 2;
+  for (let i = 0; i < pts * 2; i++) {
+    const a = a0 + (i / (pts * 2)) * Math.PI * 2;
+    const rad = i % 2 === 0 ? R : ri;
+    pos.push(Math.cos(a) * rad, i % 2 === 0 ? hgt * 0.15 : hgt * 0.45, Math.sin(a) * rad);
+  }
+  // Wound to face +Y (up the flower's axis): (centre, next, this).
+  for (let i = 0; i < pts * 2; i++) idx.push(0, 1 + ((i + 1) % (pts * 2)), 1 + i);
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
+/**
  * One flower: `petals` around an axis, `open` radians off it. Returns geometry
  * parts in the flower's own frame (+Y is the flower's axis, base at the origin).
  */
@@ -128,12 +160,7 @@ function flowerParts(r, col, o) {
   };
   whorl(o.petals, o.open, o.length, o.width, o.cup, r() * 6.28, 1);
   if (o.inner) whorl(o.inner, o.open * 0.5, o.length * 0.86, o.width * 0.9, o.cup * 1.2, r() * 6.28, 0.94);
-  if (o.eye > 0) {
-    const e = new THREE.SphereGeometry(o.eye, 7, 4);
-    e.scale(1, 0.7, 1);
-    e.translate(0, o.eye * 0.35, 0);
-    parts.push(paintFlat(e, col.eye));
-  }
+  if (o.eye > 0) parts.push(paintFlat(eyeGeometry(r, o.eye, o.eyeShape), col.eye));
   return parts;
 }
 
@@ -256,24 +283,68 @@ export function chooseGrammar(morphology, seed) {
 }
 
 /** Petal palette from the site's two colours. `grade` is the environment's. */
+/**
+ * `pale` — how far a petal lightens toward its edge — is a FUNCTION OF THE PETAL'S
+ * OWN LIGHTNESS, not a constant (human ruling, 2026-09-20: "solid for only dark
+ * colours and the gradient thingy for the lighter colours").
+ *
+ * It began as a constant 0.42, justified as buying VALUE contrast for cool
+ * accents against canopy green. That was an overcorrection: it bought value by
+ * destroying SATURATION, and against a mid-value green a solid deep blue already
+ * differs in hue AND saturation AND value at once. On a dark petal the white
+ * blend turned a deep saturated blue into a lavender smudge and the site's
+ * colour stopped being recognisable. On a LIGHT petal the same edge is right —
+ * solid pale pink reads flat and plasticky, like a poster.
+ *
+ * So the rule is physical rather than a legibility hack: the pale edge is a
+ * HIGHLIGHT, and a highlight belongs on a light, thin, translucent surface. A
+ * deep saturated petal does not catch light that way.
+ *
+ * KEEP IN SYNC: the ramp's dark end is PETAL_FLOOR = 0.40 in
+ * analysis/lib/mapping.js — the darkest petal the pipeline can deliver — so
+ * "solid" is exactly the floor case and there is no dead zone under it. If
+ * PETAL_FLOOR moves, PALE_FROM moves with it. Taste owns the endpoints and curve.
+ */
+export const PALE_FROM = 0.40, PALE_TO = 0.70, PALE_MAX = 0.42;
+export function paleFor(lightness) {
+  return PALE_MAX * smoothstep(PALE_FROM, PALE_TO, lightness);
+}
+
 function flowerPalette(r, primary, secondary, opts) {
-  const { pale = 0.42, lift = 0, grade = null } = opts;
+  const { lift = 0, grade = null } = opts;
   const body = new THREE.Color(primary);
+  // Lightness is read BEFORE the per-variant jitter, so every variant of one
+  // tree's bloom agrees about how solid it is.
+  const petalL = body.getHSL({}).l;
+  const pale = opts.pale ?? paleFor(petalL);
   body.offsetHSL(rr(r, -0.012, 0.012), 0, rr(r, -0.025, 0.025));
   if (lift > 0) {
-    // OPTIONAL, and a colour-fidelity question that is not mine to settle: raise
-    // a dark accent's lightness so it separates from the green in VALUE. Off by
-    // default — the pale edge does the same job without restating the hue.
+    // DEBUG ONLY. Raising a dark accent's lightness is a standing ban (DECISIONS:
+    // "bleaching dark accents" — for a dark accent the darkness IS the identity).
     const hsl = body.getHSL({});
     body.setHSL(hsl.h, hsl.s, Math.max(hsl.l, lerp(hsl.l, 0.66, lift)));
   }
-  const throat = new THREE.Color(secondary ?? primary);
-  if (!secondary) throat.offsetHSL(0.02, 0.05, -0.12);
-  throat.lerp(body, 0.25);
+  // THE CENTRE is the site's, not the renderer's. Analysis computes it on purpose
+  // (mapping.js, CENTRE_GAP: driven away from the petal's lightness so the flower
+  // reads at thumbnail size) and delivers it as `flowers.secondary`. The eye used
+  // to be 82% hard-coded yellow whatever the site was — a blue site issued a
+  // yellow eye it never earned, the renderer silently discarding meaning. Only
+  // when NO centre arrives (the ?fc= debug path) is one derived here, from the
+  // petal's own hue, pushed the same way the pipeline pushes it.
+  let centre;
+  if (secondary != null) centre = new THREE.Color(secondary);
+  else {
+    const h = body.getHSL({});
+    centre = new THREE.Color().setHSL(h.h, h.s * 0.7, h.l < 0.55 ? Math.min(h.l + 0.35, 0.9) : Math.max(h.l - 0.35, 0.18));
+  }
+  // A small warm bias, so a centre reads as pollen rather than as paint. Taste's dial.
+  const eye = centre.clone().lerp(new THREE.Color(0xf3cf5b), opts.eyeWarm ?? 0.14);
+  // The claw: a deeper tone of the petal itself, with a hint of the centre only
+  // where the petal is light enough to take a gradient. A dark petal stays solid.
+  const throat = body.clone().offsetHSL(0, 0.03, -0.07).lerp(centre, 0.22 * (pale / PALE_MAX));
   const edge = body.clone().lerp(new THREE.Color(0xffffff), pale);
-  const eye = new THREE.Color(0xf3cf5b).lerp(throat, 0.18);
   for (const c of [body, throat, edge, eye]) if (grade) grade(c);
-  return { body, throat, edge, eye };
+  return { body, throat, edge, eye, pale, petalL };
 }
 
 /** One cluster variant: merged, soft-normalled, double-faced. */
@@ -345,25 +416,57 @@ function crownBox(spots) {
  * flowers, and it is the only place a viewer can see it.
  */
 export function pickSites(spots, r, opts = {}) {
-  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, field: fieldW = 1, exclude = null } = opts;
+  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null } = opts;
   if (!spots.length || fraction <= 0) return [];
   const { c, e } = crownBox(spots);
   const ox = r() * 50, oy = r() * 50, oz = r() * 50;
+  let radMax = 1e-6;
+  for (const s of spots) radMax = Math.max(radMax, s.rad ?? 0);
   const scored = [];
   spots.forEach((s, i) => {
     if (exclude && exclude.has(i)) return;
     const d = new THREE.Vector3((s.pos.x - c.x) / (e.x || 1), (s.pos.y - c.y) / (e.y || 1), (s.pos.z - c.z) / (e.z || 1));
     const field = noise3(s.pos.x * freq + ox, s.pos.y * freq + oy, s.pos.z * freq + oz);
-    const score = fieldW * field + outer * d.length() + (s.tip ? 0.18 : 0) - low * d.y + rr(r, -0.08, 0.08);
+    const score = fieldW * field + outer * d.length() + (s.tip ? 0.18 : 0) - low * d.y + old * ((s.rad ?? 0) / radMax) + rr(r, -0.08, 0.08);
     scored.push({ i, score });
   });
-  scored.sort((a, b) => b.score - a.score);
-  return scored.slice(0, Math.max(1, Math.round(spots.length * fraction))).map((x) => x.i);
+  const want = Math.max(1, Math.round(spots.length * fraction));
+  if (!(strata > 1)) {
+    scored.sort((a, b) => b.score - a.score);
+    return scored.slice(0, want).map((x) => x.i);
+  }
+  // STRATIFIED: the crown is cut into sectors of compass direction (and an upper
+  // and lower band), and each takes its own share by score. Unstratified, a
+  // 27% bloom could — and on the judged tree did — leave the whole camera-facing
+  // side without a single flowering twig: debug view B showed the middle of the
+  // frame empty of bloom, which no amount of foliage reduction can fix. The tree
+  // is orbited, so EVERY side has to carry its share. Drifts survive inside a
+  // sector; what is lost is only the chance of a side with nothing.
+  const groups = new Map();
+  for (const sIt of scored) {
+    const s = spots[sIt.i];
+    const az = Math.atan2(s.pos.z - c.z, s.pos.x - c.x);
+    const k = (Math.floor(((az + Math.PI) / (2 * Math.PI)) * strata) % strata) * 2 + (s.pos.y > c.y ? 1 : 0);
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(sIt);
+  }
+  const picked = [];
+  const rest = [];
+  for (const g of groups.values()) {
+    g.sort((a, b) => b.score - a.score);
+    const q = Math.floor(g.length * fraction);
+    picked.push(...g.slice(0, q));
+    rest.push(...g.slice(q).map((x, j) => ({ ...x, rank: j })));
+  }
+  // Largest-remainder top-up, best-scored first among each group's next-in-line.
+  rest.sort((a, b) => (a.rank - b.rank) || (b.score - a.score));
+  for (const x of rest) { if (picked.length >= want) break; picked.push(x); }
+  return picked.slice(0, want).map((x) => x.i);
 }
 
 // How much of the crown blooms at each DNA amount. Exaggerated on purpose — the
 // steps have to be different trees at thumbnail size, not degrees of one.
-export const BLOOM_FRACTION = { none: 0, few: 0.1, medium: 0.27, abundant: 0.62 };
+export const BLOOM_FRACTION = { none: 0, few: 0.1, medium: 0.33, abundant: 0.62 };
 
 /**
  * L5 — bloom amount controls a FOLIAGE RELATIONSHIP, not just a count.
@@ -393,11 +496,11 @@ export const BLOOM_FOLIAGE = {
   // way too. Reducing only the twig's own cluster was not enough — debug view C
   // showed its full-size NEIGHBOURS doing the hiding (they are 0.4 apart and
   // 0.55 across). Bloom also comes in off the rim, so it is there to be seen.
-  medium:   { atBloom: 0.42, nearTo: 0.6,  nearRadius: 1.0,  elsewhere: 1,    outer: 0.3,  field: 0.8 },
+  medium:   { atBloom: 0.42, nearTo: 0.55, nearRadius: 1.1,  elsewhere: 0.88, outer: 0,    field: 0.8,  strata: 6 },
   // Peak bloom: the whole tree is in the phase. The field is nearly flat here —
   // with a strong one the 38% of twigs NOT flowering were one contiguous leafy
   // patch, which read as a second, green plant standing in a pink one.
-  abundant: { atBloom: 0.26, nearTo: 0.5,  nearRadius: 0.8,  elsewhere: 0.72, outer: 0.1,  field: 0.35 },
+  abundant: { atBloom: 0.26, nearTo: 0.5,  nearRadius: 0.8,  elsewhere: 0.72, outer: 0.1,  field: 0.35, strata: 6 },
 };
 
 /**
@@ -419,6 +522,57 @@ export function foliageScales(spots, bloomSites, rel) {
   return out;
 }
 
+const lstar = (c) => 116 * Math.cbrt(Math.max(0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b, 1e-6)) - 16;
+
+/**
+ * L6 — LOCAL FOLIAGE CONTRAST ADAPTATION. We change the stage, never the subject.
+ *
+ * The website's colour is never repainted: maroon stays maroon, navy stays navy
+ * (bleaching a dark accent preserves its hue exactly and destroys the colour —
+ * for a dark accent the darkness IS the identity; DECISIONS, standing bans).
+ * What adapts is the VALUE of the foliage right around a flowering twig:
+ *
+ *   flower darker than the leaves  -> nearby foliage somewhat LIGHTER. A dark
+ *       bloom in mid-green reads as a HOLE in the canopy — a void, or damage —
+ *       because dark-inside-green is what a gap looks like. On a paler ground its
+ *       outline is a petal outline, and it reads as an object in front.
+ *   flower lighter than the leaves -> nearby foliage somewhat DEEPER, the mirror
+ *       case: near-white bloom on bright yellow-green washes out.
+ *
+ * Value only (an RGB multiply: chromaticity is untouched), local only (eased out
+ * to nothing by `radius`; distant foliage is untouched — this is a stage, not a
+ * grade). Returns a per-site multiplier for the leaf clusters' instance colour.
+ */
+export function foliageContrast(spots, bloomSites, opts = {}) {
+  const {
+    primary, secondary = null, pale = 0.42, lift = 0, grade = null,
+    greens = [0x86c440, 0xa6d84f, 0x63ad3a],
+    radius = 0.85, lighten = 1.34, deepen = 0.72, strength = 1,   // 1.35 reached most of a medium crown: a grade, not a stage
+  } = opts;
+  const out = new Float32Array(spots.length).fill(1);
+  if (!bloomSites.length || primary == null || !(strength > 0)) return { scale: out, target: 1, flowerL: 0, foliageL: 0 };
+  const col = flowerPalette(() => 0.5, primary, secondary, { pale, lift, grade });
+  const flowerL = lstar(col.body.clone().lerp(col.edge, 0.35));
+  let foliageL = 0;
+  for (const h of greens) { const c = new THREE.Color(h); if (grade) grade(c); foliageL += lstar(c) / greens.length; }
+  const sep = flowerL - foliageL;
+  // How hard to push: a flower far darker than the leaf gets the full lighten;
+  // one only a little lighter gets a partial deepen. Nothing is ever pushed the
+  // wrong way, and a flower sitting AT leaf value is pushed whichever way is
+  // nearer its own side.
+  const target = sep < 0
+    ? lerp(1, lighten, smoothstep(2, 30, -sep))
+    : lerp(1, deepen, smoothstep(2, 16, sep));
+  const k = lerp(1, target, clamp(strength, 0, 1));
+  const bloom = bloomSites.map((i) => spots[i].pos);
+  for (let i = 0; i < spots.length; i++) {
+    let d = Infinity;
+    for (const b of bloom) d = Math.min(d, b.distanceTo(spots[i].pos));
+    out[i] = lerp(k, 1, smoothstep(0.35 * radius, radius, d));
+  }
+  return { scale: out, target: k, flowerL: Math.round(flowerL), foliageL: Math.round(foliageL) };
+}
+
 /**
  * Which sites bloom, for a DNA amount. Separate from buildFlowers because the
  * LEAVES need the answer too: a twig that flowers carries a smaller leaf cluster.
@@ -428,7 +582,7 @@ export function chooseBloomSites(spots, r, opts = {}) {
   // A little bloom sits on the outermost twigs; a tree in FULL bloom flowers all
   // through. WHICH twigs flower is selection — it is not moving a flower.
   const rel = BLOOM_FOLIAGE[opts.amount] ?? BLOOM_FOLIAGE.medium;
-  return pickSites(spots, r, { fraction: frac, outer: rel.outer, field: rel.field });
+  return pickSites(spots, r, { fraction: frac, outer: rel.outer, field: rel.field, strata: rel.strata ?? 0, exclude: opts.exclude ?? null });
 }
 
 /**
@@ -451,6 +605,11 @@ export function buildFlowers(spots, r, opts = {}) {
   const geos = [];
   for (let v = 0; v < variants; v++) geos.push(flowerClusterGeometry(r, grammar, primary, secondary, { size, grade, pale, lift, soft }));
   const hang = !!geos[0].userData.hang;
+  // How far off the twig a bloom is SEATED, as a share of `proud`. A cluster is a
+  // broad dome and beds into the leaf tuft under it; a statement flower has a
+  // narrow base, and stood off by the same distance it visibly FLOATED — a goblet
+  // hanging in the sky past the end of its twig. It sits on the wood.
+  const seat = { cluster: 1, statement: 0.25, pendant: 1 }[grammar] ?? 1;
   const mat = matte('flower-matte-v1');
 
   const buckets = geos.map(() => []);
@@ -480,7 +639,7 @@ export function buildFlowers(spots, r, opts = {}) {
         // face of the crown plain green.
         radial.copy(sp.pos).sub(box.c).normalize();
         ax.copy(radial).multiplyScalar(0.8).addScaledVector(sp.axis, 0.45).normalize();
-        p.copy(sp.pos).addScaledVector(ax, proud * sp.scale);   // the leaf ball's own radius: ON it, not in it
+        p.copy(sp.pos).addScaledVector(ax, proud * seat * sp.scale);   // the leaf ball's own radius: ON it, not in it
       }
       q.setFromUnitVectors(UP, ax);
       q2.setFromAxisAngle(ax, r() * Math.PI * 2);
@@ -540,6 +699,30 @@ function fruitGeometry(r, color, opts) {
 }
 
 /**
+ * L11 — flowers and fruit COEXIST when the site earns both; a measured trait is
+ * never deleted because composition is inconvenient. They are kept apart the way
+ * a tree keeps them apart:
+ *   fruit   hangs LOW, on the OLDER, heavier wood (`old` favours thick twigs);
+ *   bloom   is on the fine new growth, toward the tips;
+ *   and the twigs right around a fruiting site do not flower at all, so each
+ *   fruit hangs in its own clearing of plain leaf instead of inside a bouquet.
+ * Fruit is chosen FIRST; `bloomExclusion` is what the flowers must then avoid.
+ */
+export function chooseFruitSites(spots, r, opts = {}) {
+  const { sites = 22, exclude = null } = opts;
+  return pickSites(spots, r, { fraction: Math.min(1, sites / spots.length), freq: 0.6, outer: 0.6, low: 0.45, old: 0.5, field: 0.4, strata: 6, exclude });
+}
+
+export function bloomExclusion(spots, fruitSites, radius = 0.75) {
+  const out = new Set(fruitSites);
+  for (let i = 0; i < spots.length; i++) {
+    if (out.has(i)) continue;
+    for (const f of fruitSites) if (spots[f].pos.distanceTo(spots[i].pos) < radius) { out.add(i); break; }
+  }
+  return out;
+}
+
+/**
  * Fruit: few, LARGE, in ones and twos and threes, hung on the lower outside of
  * the crown. `exclude` keeps it off the sites that are flowering.
  */
@@ -548,7 +731,7 @@ export function buildFruit(spots, r, opts = {}) {
   const t0 = performance.now();
   const group = new THREE.Group();
   if (!spots.length || color == null) return { group, stats: { fruit: 0, triangles: 0, ms: 0 } };
-  const chosen = pickSites(spots, r, { fraction: Math.min(1, sites / spots.length), freq: 0.6, outer: 0.8, low: 0.3, field: 0.4, exclude });
+  const chosen = opts.chosen ?? chooseFruitSites(spots, r, { sites, exclude });
   const variants = 3;
   const geos = [];
   for (let v = 0; v < variants; v++) geos.push(fruitGeometry(r, color, { radius, grade }));
@@ -586,4 +769,179 @@ export function buildFruit(spots, r, opts = {}) {
     triangles += (geo.index.count / 3) * items.length;
   });
   return { group, stats: { fruit: places.length, sites: chosen.length, triangles: Math.round(triangles), drawCalls: group.children.length, ms: Math.round(performance.now() - t0) } };
+}
+
+
+// ---------------------------------------------------------------------------
+// WINTER (ruling L8). Winter used to express nothing of the website: analysis
+// sends it `flowers: none`, so the site's colour never reached a winter tree.
+// The colour enters through living botanical detail (L7) — never bark, never
+// soil — and winter gets its own two carriers:
+//
+//   site has the fruit trait  -> PERSISTENT BERRIES, bunches that hung on after
+//                                the leaves went;
+//   no fruit trait            -> accent-coloured BUDS on terminal and lateral
+//                                twigs: next year's growth, already coloured.
+//
+// "Bare is the absence of styling; winter is the presence of restraint." Both
+// are built; Taste rules. Sizes are a little exaggerated for 140px on purpose.
+// ---------------------------------------------------------------------------
+
+/** One bud: a pointed ovoid, brown bud-scales at the base, the site's colour swelling out of them. */
+function budGeometry(r, col, scaleCol, opts = {}) {
+  const { length = 0.26, width = 0.07 } = opts;
+  const pts = [];
+  const N = 7;
+  for (let i = 0; i <= N; i++) {
+    const t = i / N;
+    const rad = width * Math.pow(Math.sin(Math.PI * Math.pow(t, 0.72)), 0.85);
+    pts.push(new THREE.Vector2(Math.max(rad, 0.0002), t * length));
+  }
+  const g = new THREE.LatheGeometry(pts, 7);
+  g.deleteAttribute('uv');
+  g.computeVertexNormals();
+  const P = g.attributes.position, out = new Float32Array(P.count * 3), c = new THREE.Color();
+  for (let i = 0; i < P.count; i++) {
+    const t = P.getY(i) / length;
+    c.copy(scaleCol).lerp(col.body, smoothstep(0.16, 0.42, t)).lerp(col.edge, smoothstep(0.62, 1, t) * 0.55);
+    out[i * 3] = c.r; out[i * 3 + 1] = c.g; out[i * 3 + 2] = c.b;
+  }
+  g.setAttribute('color', new THREE.BufferAttribute(out, 3));
+  return g;
+}
+
+/** A bud SPRAY: one leading bud and a few smaller ones splayed round it. `terminal` sprays are fuller. */
+function budSprayGeometry(r, col, scaleCol, terminal, size) {
+  const parts = [];
+  const lead = budGeometry(r, col, scaleCol, { length: (terminal ? 0.34 : 0.24) * size, width: (terminal ? 0.088 : 0.07) * size });
+  parts.push(lead);
+  const n = terminal ? 3 + Math.floor(r() * 2) : 1 + Math.floor(r() * 2);
+  for (let k = 0; k < n; k++) {
+    const az = (k / n) * Math.PI * 2 + r() * 0.8;
+    const pol = rr(r, 0.55, 0.95);
+    const dir = new THREE.Vector3(Math.sin(pol) * Math.cos(az), Math.cos(pol), Math.sin(pol) * Math.sin(az));
+    const g = budGeometry(r, col, scaleCol, { length: rr(r, 0.17, 0.24) * size, width: rr(r, 0.055, 0.07) * size });
+    const m = new THREE.Matrix4().makeRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(UP, dir));
+    m.setPosition(0, -rr(r, 0.0, 0.05) * size, 0);
+    g.applyMatrix4(m);
+    parts.push(g);
+  }
+  return BufferGeometryUtils.mergeGeometries(parts, false);
+}
+
+/** Winter carrier 1: accent-coloured buds on every twig — terminal sprays at the tips, lateral pairs along the wood. */
+export function buildBuds(spots, r, opts = {}) {
+  const { primary = 0xf7a6b8, secondary = null, grade = null, size = 1, pale = 0.3 } = opts;
+  const t0 = performance.now();
+  const group = new THREE.Group();
+  if (!spots.length || primary == null) return { group, stats: { buds: 0, triangles: 0, ms: 0 } };
+  const col = flowerPalette(r, primary, secondary, { pale, grade });
+  const scaleCol = new THREE.Color(0x7b5b40);
+  if (grade) grade(scaleCol);
+  const mat = matte('bud-matte-v1');
+  const sets = [
+    { terminal: true, items: spots.filter((s) => s.tip) },
+    { terminal: false, items: spots.filter((s) => !s.tip) },
+  ];
+  let triangles = 0, count = 0;
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), q2 = new THREE.Quaternion(), sc = new THREE.Vector3(), p = new THREE.Vector3(), ax = new THREE.Vector3();
+  for (const set of sets) {
+    const variants = 3;
+    const geos = Array.from({ length: variants }, () => budSprayGeometry(r, col, scaleCol, set.terminal, size));
+    const buckets = geos.map(() => []);
+    set.items.forEach((s, i) => buckets[i % variants].push(s));
+    geos.forEach((geo, v) => {
+      const items = buckets[v];
+      if (!items.length) return;
+      const im = new THREE.InstancedMesh(geo, mat, items.length);
+      im.castShadow = true; im.receiveShadow = true; im.frustumCulled = false;
+      items.forEach((sp, i) => {
+        // The leaf attachment sits a leaf-ball's offset off the wood; a bud sits ON it.
+        ax.copy(sp.axis);
+        p.copy(sp.pos);
+        if (!sp.tip) p.addScaledVector(sp.axis, -0.04);
+        q.setFromUnitVectors(UP, ax);
+        q2.setFromAxisAngle(ax, r() * Math.PI * 2);
+        q.premultiply(q2);
+        im.setMatrixAt(i, m.compose(p, q, sc.setScalar(rr(r, 0.88, 1.15))));
+      });
+      im.instanceMatrix.needsUpdate = true;
+      group.add(im);
+      triangles += (geo.index.count / 3) * items.length;
+      count += items.length;
+    });
+  }
+  return { group, stats: { carrier: 'buds', sprays: count, triangles: Math.round(triangles), drawCalls: group.children.length, ms: Math.round(performance.now() - t0) } };
+}
+
+/** A bunch of persistent berries: a loose drooping corymb on fine stalks. */
+function berryBunchGeometry(r, color, opts) {
+  const { radius = 0.062, grade = null, size = 1 } = opts;
+  const base = new THREE.Color(color);
+  const hi = base.clone().offsetHSL(0.02, -0.03, 0.12);
+  const lo = base.clone().offsetHSL(-0.01, 0.03, -0.12);
+  const stalkC = new THREE.Color(0x6e5138);
+  for (const c of [base, hi, lo, stalkC]) if (grade) grade(c);
+  const parts = [];
+  const n = 7 + Math.floor(r() * 4);
+  const c = new THREE.Color();
+  for (let i = 0; i < n; i++) {
+    const f = (i + 0.5) / n;
+    const pol = lerp(0.2, 1.25, Math.pow(f, 0.8));
+    const az = i * GOLDEN + rr(r, -0.3, 0.3);
+    // Built hanging: -Y is down the bunch.
+    const dir = new THREE.Vector3(Math.sin(pol) * Math.cos(az), -Math.cos(pol), Math.sin(pol) * Math.sin(az));
+    const len = rr(r, 0.13, 0.22) * size;
+    const rad = radius * size * rr(r, 0.85, 1.15);
+    const end = dir.clone().multiplyScalar(len);
+    const b = new THREE.SphereGeometry(rad, 8, 6);
+    b.deleteAttribute('uv');
+    const P = b.attributes.position, col = new Float32Array(P.count * 3);
+    for (let k = 0; k < P.count; k++) {
+      const y = P.getY(k) / rad;
+      c.copy(lo).lerp(base, smoothstep(-1, 0, y)).lerp(hi, smoothstep(0.1, 1, y) * 0.7);
+      col[k * 3] = c.r; col[k * 3 + 1] = c.g; col[k * 3 + 2] = c.b;
+    }
+    b.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    b.translate(end.x, end.y, end.z);
+    parts.push(b);
+    const st = new THREE.CylinderGeometry(0.006 * size, 0.009 * size, len, 4, 1, true);
+    st.deleteAttribute('uv');
+    st.translate(0, len / 2, 0);
+    st.applyMatrix4(new THREE.Matrix4().makeRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(UP, dir)));
+    parts.push(paintFlat(st, stalkC));
+  }
+  return BufferGeometryUtils.mergeGeometries(parts, false);
+}
+
+/** Winter carrier 2: persistent berries, where the site has the fruit trait. */
+export function buildBerries(spots, r, opts = {}) {
+  const { color = 0xd8452f, grade = null, fraction = 0.42, size = 1 } = opts;
+  const t0 = performance.now();
+  const group = new THREE.Group();
+  if (!spots.length || color == null) return { group, stats: { bunches: 0, triangles: 0, ms: 0 } };
+  const chosen = pickSites(spots, r, { fraction, freq: 0.5, outer: 0.25, low: 0.1, field: 0.7, strata: 6 });
+  const variants = 3;
+  const geos = Array.from({ length: variants }, () => berryBunchGeometry(r, color, { grade, size }));
+  const mat = matte('berry-matte-v1');
+  const buckets = geos.map(() => []);
+  chosen.forEach((si, k) => buckets[k % variants].push(spots[si]));
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = new THREE.Vector3(), p = new THREE.Vector3();
+  let triangles = 0;
+  geos.forEach((geo, v) => {
+    const items = buckets[v];
+    if (!items.length) return;
+    const im = new THREE.InstancedMesh(geo, mat, items.length);
+    im.castShadow = true; im.receiveShadow = true; im.frustumCulled = false;
+    items.forEach((sp, i) => {
+      q.setFromEuler(e.set(rr(r, -0.25, 0.25), r() * 6.28, rr(r, -0.25, 0.25)));
+      p.copy(sp.pos);
+      if (!sp.tip) p.addScaledVector(sp.axis, -0.04);
+      im.setMatrixAt(i, m.compose(p, q, sc.setScalar(sp.scale * rr(r, 0.9, 1.15))));
+    });
+    im.instanceMatrix.needsUpdate = true;
+    group.add(im);
+    triangles += (geo.index.count / 3) * items.length;
+  });
+  return { group, stats: { carrier: 'berries', bunches: chosen.length, triangles: Math.round(triangles), drawCalls: group.children.length, ms: Math.round(performance.now() - t0) } };
 }

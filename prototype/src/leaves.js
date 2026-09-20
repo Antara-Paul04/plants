@@ -200,7 +200,7 @@ export function leafAttachments(limbs, r, opts = {}) {
         axis = side.multiplyScalar(0.7).addScaledVector(up, 0.8).addScaledVector(outward, 0.3).normalize();
         pos.addScaledVector(axis, rad + 0.05);
       }
-      out.push({ index: out.length, pos, axis, tip: k === 0, scale: rr(r, 0.85, 1.2) * (k === 0 ? 1.08 : 1) });
+      out.push({ index: out.length, pos, axis, tip: k === 0, rad, scale: rr(r, 0.85, 1.2) * (k === 0 ? 1.08 : 1) });
     }
   }
   return out;
@@ -244,6 +244,9 @@ export function buildLeaves(limbs, r, opts = {}) {
     // wreath until the foliage gave way. `shrink` marks the flowering twigs, for
     // the debug view only.
     siteScale = null, shrink = null,
+    // A per-site VALUE multiplier for the cluster's colour (flowers.js,
+    // foliageContrast): the local stage for a bloom whose value fights the leaf.
+    siteValue = null,
     // Debug view C: paint flowering-twig foliage hot orange and everything else
     // grey, ignoring the leaf colours. It answers the question the wreath hid for
     // three rounds — not "is there bloom through the crown" but "what is in
@@ -286,7 +289,7 @@ export function buildLeaves(limbs, r, opts = {}) {
       sc.setScalar(sp.scale * (siteScale ? siteScale[sp.index] : 1));
       im.setMatrixAt(i, m.compose(sp.pos, q, sc));
       // Cluster-to-cluster drift in value, so the crown is not one flat green.
-      const k = rr(r, 0.9, 1.08);
+      const k = rr(r, 0.9, 1.08) * (siteValue ? siteValue[sp.index] : 1);
       tint.setRGB(k, k * rr(r, 0.98, 1.03), k * rr(r, 0.94, 1.0));
       if (debugShrink) tint.set(shrink && shrink.has(sp) ? 0xff6a00 : 0xb9bcc0);
       im.setColorAt(i, tint);

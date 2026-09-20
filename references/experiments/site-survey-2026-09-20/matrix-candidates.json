@@ -1,0 +1,2011 @@
+[
+  {
+    "site": "uchicago.edu",
+    "ok": true,
+    "live": true,
+    "domain": "uchicago.edu",
+    "url": "https://www.uchicago.edu/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.499,
+      "inkCoverage": 0.398,
+      "colorfulness": 0.32,
+      "designColorfulness": 0.179,
+      "designChromaticRatio": 0.0244,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.499,
+      "canvasArea": 0,
+      "textDensity": 0.22,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#902727",
+        "secondary": "#801f22"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#a12b2b",
+        "secondary": "#e6989b"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e5",
+      "seed": 3541278202,
+      "rareCat": false
+    },
+    "timingMs": 16625
+  },
+  {
+    "site": "tamu.edu",
+    "ok": true,
+    "live": true,
+    "domain": "tamu.edu",
+    "url": "https://www.tamu.edu/",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.519,
+      "inkCoverage": 0.267,
+      "colorfulness": 0.165,
+      "designColorfulness": 0.142,
+      "designChromaticRatio": 0.0314,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.087,
+      "canvasArea": 0,
+      "textDensity": 0.554,
+      "accentConcentration": 0.989,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#5c1111",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#ac2020",
+        "secondary": "#e79898"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#ebe5e5",
+      "seed": 60931862,
+      "rareCat": false
+    },
+    "timingMs": 11299
+  },
+  {
+    "site": "asu.edu",
+    "ok": true,
+    "live": true,
+    "domain": "asu.edu",
+    "url": "https://www.asu.edu/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.414,
+      "inkCoverage": 0.543,
+      "colorfulness": 0.59,
+      "designColorfulness": 0.187,
+      "designChromaticRatio": 0.0157,
+      "warmShareOfChroma": 1,
+      "imageArea": 1,
+      "canvasArea": 0,
+      "textDensity": 0.219,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fefefe",
+        "primary": "#e0b43b",
+        "secondary": "#44391b"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#e0b43b",
+        "secondary": "#665629"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe9e5",
+      "seed": 3753150722,
+      "rareCat": false
+    },
+    "timingMs": 22364
+  },
+  {
+    "site": "umn.edu",
+    "ok": true,
+    "live": true,
+    "domain": "umn.edu",
+    "url": "https://www.umn.edu/",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.558,
+      "inkCoverage": 0.688,
+      "colorfulness": 0.693,
+      "designColorfulness": 0.697,
+      "designChromaticRatio": 0.4252,
+      "warmShareOfChroma": 0.023,
+      "imageArea": 0.577,
+      "canvasArea": 0,
+      "textDensity": 0.189,
+      "accentConcentration": 0.861,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#f0efee",
+        "primary": "#7d051d",
+        "secondary": "#750f2c"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#c4082e",
+        "secondary": "#e798ae"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e8e6e5",
+      "seed": 2688681681,
+      "rareCat": false
+    },
+    "timingMs": 14053
+  },
+  {
+    "site": "mcmaster.ca",
+    "ok": false,
+    "live": true,
+    "domain": "mcmaster.ca",
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    }
+  },
+  {
+    "site": "stanford.edu",
+    "ok": true,
+    "live": true,
+    "domain": "stanford.edu",
+    "url": "https://www.stanford.edu/",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.473,
+      "inkCoverage": 0.735,
+      "colorfulness": 0.384,
+      "designColorfulness": 0.425,
+      "designChromaticRatio": 0.1164,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.535,
+      "canvasArea": 0,
+      "textDensity": 0.101,
+      "accentConcentration": 0.946,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#891414",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#b21a1a",
+        "secondary": "#e79898"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e5",
+      "seed": 1479417526,
+      "rareCat": false
+    },
+    "timingMs": 10346
+  },
+  {
+    "site": "harvard.edu",
+    "ok": true,
+    "live": true,
+    "domain": "harvard.edu",
+    "url": "https://www.harvard.edu/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.518,
+      "inkCoverage": 0.246,
+      "colorfulness": 0.146,
+      "designColorfulness": 0.089,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.421,
+      "canvasArea": 0,
+      "textDensity": 0.18,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#1b2136",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#d1d1e5",
+        "secondary": "#66669d"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#1f222c",
+      "seed": 1669919605,
+      "rareCat": false
+    },
+    "timingMs": 9544
+  },
+  {
+    "site": "vt.edu",
+    "ok": true,
+    "live": true,
+    "domain": "vt.edu",
+    "url": "https://www.vt.edu/",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.544,
+      "inkCoverage": 0.697,
+      "colorfulness": 0.522,
+      "designColorfulness": 0.197,
+      "designChromaticRatio": 0.0401,
+      "warmShareOfChroma": 0.018,
+      "imageArea": 0.822,
+      "canvasArea": 0,
+      "textDensity": 0.174,
+      "accentConcentration": 0.988,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fcfbfc",
+        "primary": "#892546",
+        "secondary": "#ca7143"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#a12b52",
+        "secondary": "#e3b49c"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#ebe4eb",
+      "seed": 3087373997,
+      "rareCat": false
+    },
+    "timingMs": 11949
+  },
+  {
+    "site": "msstate.edu",
+    "ok": true,
+    "live": true,
+    "domain": "msstate.edu",
+    "url": "https://www.msstate.edu/",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.471,
+      "inkCoverage": 0.685,
+      "colorfulness": 0.3,
+      "designColorfulness": 0.007,
+      "designChromaticRatio": 0.0003,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.645,
+      "canvasArea": 0,
+      "textDensity": 0.035,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#000000",
+        "primary": "#b9939b",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#e5e5d1",
+        "secondary": "#9d9d66"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#1e1517",
+      "seed": 1882190528,
+      "rareCat": false
+    },
+    "timingMs": 22950
+  },
+  {
+    "site": "qatarairways.com",
+    "ok": true,
+    "live": true,
+    "domain": "qatarairways.com",
+    "url": "https://www.qatarairways.com/en-in/homepage.html",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.53,
+      "inkCoverage": 0.257,
+      "colorfulness": 0.122,
+      "designColorfulness": 0.081,
+      "designChromaticRatio": 0.0049,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.562,
+      "canvasArea": 0,
+      "textDensity": 0.152,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#963264",
+        "secondary": "#504cb8"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#993366",
+        "secondary": "#a6a4db"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#ebe5e8",
+      "seed": 2230666933,
+      "rareCat": false
+    },
+    "timingMs": 21092
+  },
+  {
+    "site": "bc.edu",
+    "ok": true,
+    "live": true,
+    "domain": "bc.edu",
+    "url": "https://www.bc.edu/",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.499,
+      "inkCoverage": 0.502,
+      "colorfulness": 0.322,
+      "designColorfulness": 0.278,
+      "designChromaticRatio": 0.083,
+      "warmShareOfChroma": 0.096,
+      "imageArea": 0.435,
+      "canvasArea": 0,
+      "textDensity": 0.21,
+      "accentConcentration": 0.362,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#9d3733",
+        "secondary": "#511517"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#9d3733",
+        "secondary": "#e69d9f"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e5",
+      "seed": 2068971024,
+      "rareCat": false
+    },
+    "timingMs": 10526
+  },
+  {
+    "site": "suckless.org",
+    "ok": true,
+    "live": true,
+    "domain": "suckless.org",
+    "url": "https://suckless.org/",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.253,
+      "inkCoverage": 0.104,
+      "colorfulness": 0.158,
+      "designColorfulness": 0.158,
+      "designChromaticRatio": 0.0291,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.343,
+      "accentConcentration": 0.397,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#619dbe",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#619dbe",
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e9eb",
+      "seed": 1622469678,
+      "rareCat": false
+    },
+    "timingMs": 9727
+  },
+  {
+    "site": "sqlite.org",
+    "ok": true,
+    "live": true,
+    "domain": "sqlite.org",
+    "url": "https://sqlite.org/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.237,
+      "inkCoverage": 0.143,
+      "colorfulness": 0.199,
+      "designColorfulness": 0.175,
+      "designChromaticRatio": 0.0666,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.071,
+      "canvasArea": 0,
+      "textDensity": 0.331,
+      "accentConcentration": 0.644,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#4a7c8f",
+        "secondary": "#95b3bd"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#3f819a",
+        "secondary": "#b5ced7"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e9eb",
+      "seed": 1819578093,
+      "rareCat": false
+    },
+    "timingMs": 4851
+  },
+  {
+    "site": "openbsd.org",
+    "ok": true,
+    "live": true,
+    "domain": "openbsd.org",
+    "url": "https://www.openbsd.org/",
+    "fingerprint": {
+      "authored": 0.5,
+      "stylingRichness": 0.212,
+      "inkCoverage": 0.269,
+      "colorfulness": 0.463,
+      "designColorfulness": 0.4,
+      "designChromaticRatio": 0.1651,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.096,
+      "canvasArea": 0,
+      "textDensity": 0.375,
+      "accentConcentration": 0.923,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#62b5ce",
+        "secondary": "#5d9fc7"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#62b5ce",
+        "secondary": "#25506a"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5eaeb",
+      "seed": 951533862,
+      "rareCat": false
+    },
+    "timingMs": 7581
+  },
+  {
+    "site": "lobste.rs",
+    "ok": true,
+    "live": true,
+    "domain": "lobste.rs",
+    "url": "https://lobste.rs/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.343,
+      "inkCoverage": 0.096,
+      "colorfulness": 0.168,
+      "designColorfulness": 0.168,
+      "designChromaticRatio": 0.0422,
+      "warmShareOfChroma": 0.207,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.432,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fefefe",
+        "primary": "#84a5e5",
+        "secondary": "#ebe9bc"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#84a5e5",
+        "secondary": "#8d882a"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e7eb",
+      "seed": 727698633,
+      "rareCat": false
+    },
+    "timingMs": 4837
+  },
+  {
+    "site": "lwn.net",
+    "ok": true,
+    "live": true,
+    "domain": "lwn.net",
+    "url": "https://lwn.net/",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.22,
+      "inkCoverage": 0.324,
+      "colorfulness": 0.211,
+      "designColorfulness": 0.211,
+      "designChromaticRatio": 0.0875,
+      "warmShareOfChroma": 0.687,
+      "imageArea": 0.002,
+      "canvasArea": 0,
+      "textDensity": 1,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#e9bc8e",
+        "secondary": "#dfbc9a"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "normal"
+      },
+      "botanicalState": "autumn",
+      "flowers": {
+        "amount": "few",
+        "primary": "#e9bc8e",
+        "secondary": "#95622f"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "autumn",
+      "background": "#ebe8e5",
+      "seed": 1428455691,
+      "rareCat": false
+    },
+    "timingMs": 6751
+  },
+  {
+    "site": "9front.org",
+    "ok": true,
+    "live": true,
+    "domain": "9front.org",
+    "url": "https://9front.org/",
+    "fingerprint": {
+      "authored": 0.4,
+      "stylingRichness": 0.307,
+      "inkCoverage": 0.039,
+      "colorfulness": 0.173,
+      "designColorfulness": 0.173,
+      "designChromaticRatio": 0.0195,
+      "warmShareOfChroma": 0.047,
+      "imageArea": 0.015,
+      "canvasArea": 0,
+      "textDensity": 0.11,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#8888ff",
+        "secondary": "#f47b78"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#8d8dfa",
+        "secondary": "#ac2c28"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e5eb",
+      "seed": 4207073499,
+      "rareCat": false
+    },
+    "timingMs": 9478
+  },
+  {
+    "site": "old.reddit.com",
+    "ok": true,
+    "live": true,
+    "domain": "old.reddit.com",
+    "url": "https://old.reddit.com/login/?reason=lor2&dest=https%3A%2F%2Fold.reddit.com%2F",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.461,
+      "inkCoverage": 0.06,
+      "colorfulness": 0.074,
+      "designColorfulness": 0.074,
+      "designChromaticRatio": 0.005,
+      "warmShareOfChroma": 0.311,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.126,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fbfbfb",
+        "primary": "#aac5ec",
+        "secondary": "#fd865a"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#aac5ec",
+        "secondary": "#b8512b"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e4e7eb",
+      "seed": 3953871071,
+      "rareCat": false
+    },
+    "timingMs": 8860
+  },
+  {
+    "site": "catb.org",
+    "ok": true,
+    "live": true,
+    "domain": "catb.org",
+    "url": "https://catb.org/",
+    "fingerprint": {
+      "authored": 0.4,
+      "stylingRichness": 0.174,
+      "inkCoverage": 0.075,
+      "colorfulness": 0.051,
+      "designColorfulness": 0.051,
+      "designChromaticRatio": 0.0031,
+      "warmShareOfChroma": 0.402,
+      "imageArea": 0.002,
+      "canvasArea": 0,
+      "textDensity": 0.078,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#9696ee",
+        "secondary": "#d6b16a"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e5eb",
+      "seed": 1223421375,
+      "rareCat": false
+    },
+    "timingMs": 9086
+  },
+  {
+    "site": "norvig.com",
+    "ok": true,
+    "live": true,
+    "domain": "norvig.com",
+    "url": "https://www.norvig.com/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.298,
+      "inkCoverage": 0.109,
+      "colorfulness": 0.137,
+      "designColorfulness": 0.137,
+      "designChromaticRatio": 0.0306,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.392,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#99caeb",
+        "secondary": "#3e5164"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#99caeb",
+        "secondary": "#496988"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e9eb",
+      "seed": 3837876849,
+      "rareCat": false
+    },
+    "timingMs": 3805
+  },
+  {
+    "site": "vercel.com",
+    "ok": true,
+    "live": true,
+    "domain": "vercel.com",
+    "url": "https://vercel.com/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.437,
+      "inkCoverage": 0.053,
+      "colorfulness": 0,
+      "designColorfulness": 0,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.237,
+      "canvasArea": 0.2,
+      "textDensity": 0.062,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fbfbfb",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e6e6e6",
+      "seed": 1666752833,
+      "rareCat": false
+    },
+    "timingMs": 10781
+  },
+  {
+    "site": "craigslist.org",
+    "ok": true,
+    "live": true,
+    "domain": "craigslist.org",
+    "url": "https://www.craigslist.org/area/bangalore",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.373,
+      "inkCoverage": 0.061,
+      "colorfulness": 0.03,
+      "designColorfulness": 0.03,
+      "designChromaticRatio": 0.0016,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.63,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a2a2ee",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e4e4e7",
+      "seed": 403037984,
+      "rareCat": false
+    },
+    "timingMs": 23740
+  },
+  {
+    "site": "are.na",
+    "ok": true,
+    "live": true,
+    "domain": "are.na",
+    "url": "https://www.are.na/",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.479,
+      "inkCoverage": 0.028,
+      "colorfulness": 0.021,
+      "designColorfulness": 0.021,
+      "designChromaticRatio": 0.0007,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.125,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#222874",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e4e4e7",
+      "seed": 4292076956,
+      "rareCat": false
+    },
+    "timingMs": 4965
+  },
+  {
+    "site": "stephango.com",
+    "ok": true,
+    "live": true,
+    "domain": "stephango.com",
+    "url": "https://stephango.com/",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.372,
+      "inkCoverage": 0.053,
+      "colorfulness": 0.049,
+      "designColorfulness": 0.049,
+      "designChromaticRatio": 0.0003,
+      "warmShareOfChroma": 1,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.197,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fffcf0",
+        "primary": "#f1d5ba",
+        "secondary": "#f6e2cd"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e7e6e4",
+      "seed": 2737009055,
+      "rareCat": false
+    },
+    "timingMs": 3117
+  },
+  {
+    "site": "linear.app",
+    "ok": true,
+    "live": true,
+    "domain": "linear.app",
+    "url": "https://linear.app/",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.598,
+      "inkCoverage": 0.278,
+      "colorfulness": 0.027,
+      "designColorfulness": 0.016,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.541,
+      "canvasArea": 0,
+      "textDensity": 0.179,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#08090a",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#d1dbe5",
+        "secondary": "#66829d"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#191c1f",
+      "seed": 896593017,
+      "rareCat": false
+    },
+    "timingMs": 9449
+  },
+  {
+    "site": "ia.net",
+    "ok": true,
+    "live": true,
+    "domain": "ia.net",
+    "url": "https://ia.net/",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.429,
+      "inkCoverage": 0.316,
+      "colorfulness": 0.316,
+      "designColorfulness": 0.281,
+      "designChromaticRatio": 0.0191,
+      "warmShareOfChroma": 0,
+      "imageArea": 1,
+      "canvasArea": 0,
+      "textDensity": 0.02,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#eeeeee",
+        "primary": "#15a1fa",
+        "secondary": "#7ea8d2"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#1aa0f5",
+        "secondary": "#25476a"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e3e7ea",
+      "seed": 179192806,
+      "rareCat": false
+    },
+    "timingMs": 7947
+  },
+  {
+    "site": "rsms.me",
+    "ok": true,
+    "live": true,
+    "domain": "rsms.me",
+    "url": "https://rsms.me/",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.438,
+      "inkCoverage": 0.086,
+      "colorfulness": 0.026,
+      "designColorfulness": 0.026,
+      "designChromaticRatio": 0.0002,
+      "warmShareOfChroma": 1,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.358,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#ff6425",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e7e5e4",
+      "seed": 1107099474,
+      "rareCat": false
+    },
+    "timingMs": 3485
+  },
+  {
+    "site": "neverssl.com",
+    "ok": false,
+    "live": true,
+    "domain": "neverssl.com",
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_EMPTY_RESPONSE at https://neverssl.com/"
+    }
+  },
+  {
+    "site": "cat-v.org",
+    "ok": true,
+    "live": true,
+    "domain": "cat-v.org",
+    "url": "https://cat-v.org/",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.3,
+      "inkCoverage": 0.197,
+      "colorfulness": 0.504,
+      "designColorfulness": 0.504,
+      "designChromaticRatio": 0.1499,
+      "warmShareOfChroma": 0.275,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.558,
+      "accentConcentration": 0.392,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#749ce0",
+        "secondary": "#e86408"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#749ce0",
+        "secondary": "#83481f"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e7eb",
+      "seed": 1114236008,
+      "rareCat": false
+    },
+    "timingMs": 9324
+  },
+  {
+    "site": "kernel.org",
+    "ok": true,
+    "live": true,
+    "domain": "kernel.org",
+    "url": "https://kernel.org/",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.5,
+      "inkCoverage": 0.365,
+      "colorfulness": 0.263,
+      "designColorfulness": 0.263,
+      "designChromaticRatio": 0.0559,
+      "warmShareOfChroma": 0.406,
+      "imageArea": 0.033,
+      "canvasArea": 0,
+      "textDensity": 0.321,
+      "accentConcentration": 0.234,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#f0ede3",
+        "primary": "#a5b4ea",
+        "secondary": "#dfbb3f"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#a5b4ea",
+        "secondary": "#b3942a"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#eae8e1",
+      "seed": 936464904,
+      "rareCat": false
+    },
+    "timingMs": 4440
+  },
+  {
+    "site": "debian.org",
+    "ok": true,
+    "live": true,
+    "domain": "debian.org",
+    "url": "https://www.debian.org/",
+    "fingerprint": {
+      "authored": 0.3,
+      "stylingRichness": 0.298,
+      "inkCoverage": 0.436,
+      "colorfulness": 0.317,
+      "designColorfulness": 0.351,
+      "designChromaticRatio": 0.2836,
+      "warmShareOfChroma": 0.012,
+      "imageArea": 0.595,
+      "canvasArea": 0,
+      "textDensity": 0.162,
+      "accentConcentration": 0.826,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#26475c",
+        "secondary": "#bc3159"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#3b7091",
+        "secondary": "#e59aaf"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e9eb",
+      "seed": 381884928,
+      "rareCat": false
+    },
+    "timingMs": 17409
+  },
+  {
+    "site": "gnu.org",
+    "ok": true,
+    "live": true,
+    "domain": "gnu.org",
+    "url": "https://www.gnu.org/",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.373,
+      "inkCoverage": 0.366,
+      "colorfulness": 0.248,
+      "designColorfulness": 0.168,
+      "designChromaticRatio": 0.0469,
+      "warmShareOfChroma": 0.002,
+      "imageArea": 0.038,
+      "canvasArea": 0,
+      "textDensity": 0.552,
+      "accentConcentration": 0.256,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#86a6cf",
+        "secondary": "#b04c49"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#86a6cf",
+        "secondary": "#733230"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e8eb",
+      "seed": 1465471095,
+      "rareCat": false
+    },
+    "timingMs": 10320
+  },
+  {
+    "site": "netbsd.org",
+    "ok": true,
+    "live": true,
+    "domain": "netbsd.org",
+    "url": "https://netbsd.org/",
+    "fingerprint": {
+      "authored": 0.5,
+      "stylingRichness": 0.268,
+      "inkCoverage": 0.094,
+      "colorfulness": 0.172,
+      "designColorfulness": 0.172,
+      "designChromaticRatio": 0.03,
+      "warmShareOfChroma": 0.834,
+      "imageArea": 0.024,
+      "canvasArea": 0,
+      "textDensity": 0.366,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#eca68a",
+        "secondary": "#5c7188"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#eca68a",
+        "secondary": "#44607f"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#ebe7e5",
+      "seed": 1712969065,
+      "rareCat": false
+    },
+    "timingMs": 4509
+  },
+  {
+    "site": "freebsd.org",
+    "ok": true,
+    "live": true,
+    "domain": "freebsd.org",
+    "url": "https://www.freebsd.org/",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.486,
+      "inkCoverage": 0.117,
+      "colorfulness": 0.324,
+      "designColorfulness": 0.275,
+      "designChromaticRatio": 0.0478,
+      "warmShareOfChroma": 0.043,
+      "imageArea": 0.102,
+      "canvasArea": 0,
+      "textDensity": 0.322,
+      "accentConcentration": 0.691,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fdf4f4",
+        "primary": "#b94e4b",
+        "secondary": "#facf3b"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#b94e4b",
+        "secondary": "#74601b"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#b94e4b"
+      },
+      "terrain": "normal",
+      "background": "#ece3e3",
+      "seed": 98087548,
+      "rareCat": false
+    },
+    "timingMs": 8171
+  },
+  {
+    "site": "php.net",
+    "ok": true,
+    "live": true,
+    "domain": "php.net",
+    "url": "https://www.php.net/",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.483,
+      "inkCoverage": 0.537,
+      "colorfulness": 0.105,
+      "designColorfulness": 0.105,
+      "designChromaticRatio": 0.0367,
+      "warmShareOfChroma": 0,
+      "imageArea": 1,
+      "canvasArea": 0,
+      "textDensity": 0.418,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#303030",
+        "primary": "#515d93",
+        "secondary": "#95aec7"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#4254a2",
+        "secondary": "#bbcbdb"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#22242e",
+      "seed": 4165940598,
+      "rareCat": false
+    },
+    "timingMs": 7540
+  },
+  {
+    "site": "lua.org",
+    "ok": true,
+    "live": true,
+    "domain": "lua.org",
+    "url": "https://lua.org/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.354,
+      "inkCoverage": 0.036,
+      "colorfulness": 0.179,
+      "designColorfulness": 0.054,
+      "designChromaticRatio": 0.0067,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.086,
+      "canvasArea": 0,
+      "textDensity": 0.028,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fefefe",
+        "primary": "#7a7abd",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#7272c5",
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e5eb",
+      "seed": 2557984625,
+      "rareCat": false
+    },
+    "timingMs": 4506
+  },
+  {
+    "site": "vim.org",
+    "ok": false,
+    "live": true,
+    "domain": "vim.org",
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://vim.org/"
+    }
+  },
+  {
+    "site": "tilde.club",
+    "ok": true,
+    "live": true,
+    "domain": "tilde.club",
+    "url": "https://tilde.club/",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.338,
+      "inkCoverage": 0.131,
+      "colorfulness": 0.283,
+      "designColorfulness": 0.283,
+      "designChromaticRatio": 0.1155,
+      "warmShareOfChroma": 1,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.553,
+      "accentConcentration": 0.177,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#111111",
+        "primary": "#8d6934",
+        "secondary": "#562e0c"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "autumn",
+      "flowers": {
+        "amount": "few",
+        "primary": "#956f37",
+        "secondary": "#e7bc98"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "autumn",
+      "background": "#23201a",
+      "seed": 65201741,
+      "rareCat": false
+    },
+    "timingMs": 6162
+  },
+  {
+    "site": "textfiles.com",
+    "ok": true,
+    "live": true,
+    "domain": "textfiles.com",
+    "url": "http://textfiles.com/",
+    "fingerprint": {
+      "authored": 0.5,
+      "stylingRichness": 0.233,
+      "inkCoverage": 0.125,
+      "colorfulness": 0.322,
+      "designColorfulness": 0.322,
+      "designChromaticRatio": 0.1267,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.041,
+      "canvasArea": 0,
+      "textDensity": 0.325,
+      "accentConcentration": 0.369,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#000000",
+        "primary": "#004e00",
+        "secondary": "#1e7712"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#08b708",
+        "secondary": "#98e48d"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#151e15",
+      "seed": 3690119830,
+      "rareCat": false
+    },
+    "timingMs": 25340
+  },
+  {
+    "site": "sr.ht",
+    "ok": true,
+    "live": true,
+    "domain": "sr.ht",
+    "url": "https://sr.ht/",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.395,
+      "inkCoverage": 0.054,
+      "colorfulness": 0.103,
+      "designColorfulness": 0.103,
+      "designChromaticRatio": 0.0072,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.209,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fdfefe",
+        "primary": "#5b8ce0",
+        "secondary": "#dce4fb"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#5b8ce0",
+        "secondary": "#1b3274"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e4ecec",
+      "seed": 3394756326,
+      "rareCat": false
+    },
+    "timingMs": 3244
+  },
+  {
+    "site": "nginx.org",
+    "ok": true,
+    "live": true,
+    "domain": "nginx.org",
+    "url": "https://nginx.org/",
+    "fingerprint": {
+      "authored": 0.5,
+      "stylingRichness": 0.228,
+      "inkCoverage": 0.162,
+      "colorfulness": 0.196,
+      "designColorfulness": 0.196,
+      "designChromaticRatio": 0.0398,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.012,
+      "canvasArea": 0,
+      "textDensity": 0.534,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#9999f7",
+        "secondary": "#248e4c"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#9999f7",
+        "secondary": "#2db15f"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e5eb",
+      "seed": 776392815,
+      "rareCat": false
+    },
+    "timingMs": 3162
+  }
+]

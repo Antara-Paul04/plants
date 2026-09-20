@@ -29,7 +29,7 @@ const { buildLimbs } = await import(`./limbmesh.js${bust}`);
 const { makeBarkMaterial } = await import(`./bark.js${bust}`);
 const { buildThickWood } = await import(`./woodsdf.js${bust}`);
 const { buildLeaves, leafAttachments } = await import(`./leaves.js${bust}`);
-const { buildFlowers, buildFruit, chooseBloomSites, chooseGrammar, BLOOM_GRAMMARS, LEGACY_GRAMMAR, BLOOM_FOLIAGE, foliageScales } = await import(`./flowers.js${bust}`);
+const { buildFlowers, buildFruit, chooseBloomSites, chooseGrammar, BLOOM_GRAMMARS, LEGACY_GRAMMAR, BLOOM_FOLIAGE, foliageScales, foliageContrast, buildBuds, buildBerries, chooseFruitSites, bloomExclusion } = await import(`./flowers.js${bust}`);
 const { buildIsland, buildGrass } = await import(`./island.js${bust}`);
 const { makeRenderer, fitCamera } = await import(`./viewer.js${bust}`);
 
@@ -327,8 +327,23 @@ for (const gm of [geo, thick.geometry]) {
 // GATE 2 — foliage, as authored clusters on the judged structure. Off on the
 // Gate 1 page (the naked tree is still its own test); gate2.html turns it on.
 const LEAVES = q.get('leaves') ?? window.__LEAVES_DEFAULT ?? '0';
-let leafStats = null, flowerStats = null, fruitStats = null;
-if (LEAVES !== '0') {
+// WINTER (ruling L8): leafless, the scene dormant with it, and the website's
+// colour carried by BUDS — or by persistent BERRIES where the site has the fruit
+// trait. `?season=winter`, `?winter=buds|berries` (default follows `?fruit=1`).
+const WINTER = q.get('season') === 'winter';
+let leafStats = null, flowerStats = null, fruitStats = null, winterStats = null, dbgSpots = null, dbgBloom = null, contrastStats = null;
+if (WINTER) {
+  const attach = { spacing: num('leafSpacing', 0.4), maxRadius: num('leafMaxR', 0.12), outerFraction: num('leafOuter', 0.78) };
+  const spots = leafAttachments(skel.limbs, r, attach);
+  const hexq = (k, d) => (q.has(k) ? parseInt(q.get(k).replace('#', ''), 16) : d);
+  const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
+  const carrier = q.get('winter') ?? (q.get('fruit') === '1' ? 'berries' : 'buds');
+  const w = carrier === 'berries'
+    ? buildBerries(spots, rng(P.seed * 11 + 303), { color: hexq('fruitc', hexq('fc', 0xd8452f)), grade: bloomGrade, fraction: num('berryFrac', 0.42), size: num('berrySize', 1) })
+    : buildBuds(spots, rng(P.seed * 7 + 101), { primary: hexq('fc', 0xf7a6b8), secondary: q.has('fc2') ? hexq('fc2', 0) : null, grade: bloomGrade, size: num('budSize', 1) });
+  tree.add(w.group);
+  winterStats = w.stats;
+} else if (LEAVES !== '0') {
   // Order matters. Attachment points first (same RNG draws as before, so no leaf
   // moves); then WHICH of them flower, on a separate stream; then the leaves,
   // which need to know, because a flowering twig carries a smaller leaf cluster.
@@ -342,7 +357,13 @@ if (LEAVES !== '0') {
   const GRAMMAR = BLOOM_GRAMMARS.includes(askedGrammar) ? askedGrammar
     : (LEGACY_GRAMMAR[askedGrammar] ?? chooseGrammar(q.get('morphology') ?? 'broad', P.seed));
   const flowerRng = rng(P.seed * 7 + 101);
-  const bloomSites = FLOWERS === 'none' ? [] : chooseBloomSites(spots, flowerRng, { amount: FLOWERS, fraction: q.has('bloom') ? num('bloom', 0.27) : null });
+  // L11: fruit is planned FIRST (low, on older wood), and the bloom keeps off the
+  // twigs around it. Its own stream, so fruit never re-rolls a flower.
+  const FRUIT = q.get('fruit') === '1';
+  const fruitRng = rng(P.seed * 11 + 303);
+  const fruitSites = FRUIT ? chooseFruitSites(spots, fruitRng, { sites: num('fruitSites', 22) }) : [];
+  const keepOff = FRUIT && FLOWERS !== 'none' ? bloomExclusion(spots, fruitSites, num('fruitClear', 0.75)) : null;
+  const bloomSites = FLOWERS === 'none' ? [] : chooseBloomSites(spots, flowerRng, { amount: FLOWERS, fraction: q.has('bloom') ? num('bloom', 0.33) : null, exclude: keepOff });
 
   // L5: the amount decides what the flowering twigs — and their neighbours —
   // WEAR. Every number in the table can be overridden from the URL for tuning.
@@ -353,28 +374,40 @@ if (LEAVES !== '0') {
     nearRadius: num('leafNearR', folT.nearRadius), elsewhere: num('leafElsewhere', folT.elsewhere),
   };
 
+  const hexq = (k, d) => (q.has(k) ? parseInt(q.get(k).replace('#', ''), 16) : d);
+  const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
+  const leafGrade = ENV.foliage ? (c) => gradeColor(c, ENV.foliage) : null;
+  const FC = hexq('fc', 0xf7a6b8);
+  const FC2 = q.has('fc2') ? hexq('fc2', 0xe87b92) : (q.has('fc') ? null : 0xe87b92);
+  // L6: the local stage. `?contrast=0` turns it off, for the A/B.
+  const contrast = foliageContrast(spots, bloomSites, {
+    primary: FC, secondary: FC2, pale: num('pale', 0.42), lift: num('lift', 0), grade: bloomGrade,
+    strength: num('contrast', 1), radius: num('contrastR', 1.35),
+  });
+  contrastStats = { target: +contrast.target.toFixed(2), flowerL: contrast.flowerL, foliageL: contrast.foliageL };
+
   const lv = buildLeaves(skel.limbs, r, {
     spots,
     cluster: {
       leaves: num('perCluster', 17), leafLength: num('leafLen', 0.5), soft: num('soft', 0.62),
-      grade: ENV.foliage ? (c) => gradeColor(c, ENV.foliage) : null,
+      grade: leafGrade,
     },
+    siteValue: contrast.scale,
     siteScale: foliageScales(spots, bloomSites, FOL), shrink: new Set(bloomSites.map((i) => spots[i])),
     debugShrink: q.get('debug') === 'bloomleaves',
   });
   tree.add(lv.group);
   leafStats = lv.stats;
+  dbgSpots = spots; dbgBloom = bloomSites;
   if (q.get('leafHide') === '1') lv.group.visible = false;   // debug: see where the bloom actually is
 
   // Flowers and fruit: their own cluster types, on the leaves' attachment points.
-  const hexq = (k, d) => (q.has(k) ? parseInt(q.get(k).replace('#', ''), 16) : d);
-  const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
   let taken = null;
   if (bloomSites.length) {
     const fl = buildFlowers(spots, flowerRng, {
       sites: bloomSites,
       grammar: GRAMMAR,
-      primary: hexq('fc', 0xf7a6b8), secondary: q.has('fc2') ? hexq('fc2', 0xe87b92) : (q.has('fc') ? null : 0xe87b92),
+      primary: FC, secondary: FC2,
       size: num('flowerSize', 1), pale: num('pale', 0.42), lift: num('lift', 0), grade: bloomGrade,
       proud: 0.5 * FOL.atBloom + 0.07,   // stands off its OWN leaf tuft; this is not a move, the tuft shrank
     });
@@ -382,10 +415,11 @@ if (LEAVES !== '0') {
     taken = fl.taken;
     flowerStats = fl.stats;
   }
-  if (q.get('fruit') === '1') {
-    const fr = buildFruit(lv.spots, rng(P.seed * 11 + 303), {
+  if (FRUIT) {
+    const fr = buildFruit(spots, fruitRng, {
+      chosen: fruitSites,
       color: hexq('fruitc', 0xd8452f), sites: num('fruitSites', 22), radius: num('fruitR', 0.16),
-      grade: bloomGrade, exclude: taken,
+      grade: bloomGrade,
     });
     tree.add(fr.group);
     fruitStats = fr.stats;
@@ -394,10 +428,19 @@ if (LEAVES !== '0') {
 scene.add(tree);
 
 if (P.showGround) {
-  // The product's NORMAL terrain palette, graded for the environment state.
+  // The product's NORMAL terrain palette, graded for the environment state — and,
+  // in winter, taken dormant first: "if the tree goes dormant, the scene goes
+  // dormant with it" (TASTE). V0's DORMANT palette (dna.js), at the dormancy V0
+  // uses under a LEAFLESS tree (0.82) — this winter tree is leafless, and leafless
+  // wood in living turf reads as death rather than as winter.
+  const NORMAL_T = { lo: 0x5e9e37, mid: 0x81c246, hi: 0xa8d95c, soilHi: 0xa07b58, soilLo: 0x6a5663 };
+  const DORMANT_T = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8a7d6d, soilLo: 0x5d5859 };
+  const dormancy = WINTER ? num('dormancy', 0.82) : 0;
+  const T = {};
+  for (const k of Object.keys(NORMAL_T)) T[k] = new THREE.Color(NORMAL_T[k]).lerp(new THREE.Color(DORMANT_T[k]), dormancy).getHex();
   const terrain = {
-    lo: gradeGround(0x5e9e37), mid: gradeGround(0x81c246), hi: gradeGround(0xa8d95c),
-    soilHi: gradeGround(0xa07b58), soilLo: gradeGround(0x6a5663),
+    lo: gradeGround(T.lo), mid: gradeGround(T.mid), hi: gradeGround(T.hi),
+    soilHi: gradeGround(T.soilHi), soilLo: gradeGround(T.soilLo),
   };
   scene.add(buildIsland(r, terrain));
   scene.add(buildGrass(r, uniforms, { ...terrain, detail: 0.6 }));
@@ -451,7 +494,8 @@ hud.textContent =
   (thick.geometry ? `\nfield ${JSON.stringify(thick.geometry.userData.stats)}` : '') +
   (leafStats ? `\nleaves ${JSON.stringify(leafStats)}` : '') +
   (flowerStats ? `\nflowers ${JSON.stringify(flowerStats)}` : '') +
-  (fruitStats ? `\nfruit ${JSON.stringify(fruitStats)}` : '');
+  (fruitStats ? `\nfruit ${JSON.stringify(fruitStats)}` : '') +
+  (winterStats ? `\nwinter ${JSON.stringify(winterStats)}` : '');
 if (q.get('hud') === '0') hud.style.display = 'none';
 
 function resize() {
@@ -474,6 +518,6 @@ function tick() {
 }
 tick();
 document.body.classList.add('ready');
-window.__gate1 = { skel, geo, thick, tris, leafStats, flowerStats, fruitStats, P, camera, controls, scene, renderer,
+window.__gate1 = { skel, geo, thick, tris, leafStats, flowerStats, fruitStats, spots: dbgSpots, bloomSites: dbgBloom, contrastStats, winterStats, P, camera, controls, scene, renderer,
   orders: Math.max(...skel.limbs.map((l) => l.depth)) + 1,
   primaries: skel.limbs.filter((l) => l.depth === 1).length };

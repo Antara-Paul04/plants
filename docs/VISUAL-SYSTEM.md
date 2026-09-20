@@ -512,3 +512,65 @@ One entry exists already, inherited from DECISIONS **D3**:
   from the hero angle.
 - **Fruit is toy-scale on purpose** — V0's was invisible at any size — and hangs on the lower
   outside of the crown, off the flowering sites.
+
+### Bloom system — L1 to L11, built against Lead's rulings — EXPERIMENT
+
+Rulings: `docs/briefs/BLOOM-SYSTEM-RULINGS.md`. Code: `prototype/src/flowers.js`. Renders:
+`references/experiments/bloom-{L5,L6,L8-winter,L11-composition,matrix}-2026-09-20/`.
+**Every number here is a proposal; Taste owns sizes, counts, fractions and tones.**
+
+- **Grammars, never species (L3); chosen by seed, not by DNA (L1).** `cluster`, `statement`,
+  `pendant`. `chooseGrammar(morphology, seed)` = the grammars compatible with the morphology,
+  indexed by a pure hash of the seed on its own stream — it never advances a shared RNG, so
+  adding a grammar re-rolls nothing. Seeds 3 / 7 / 10 give three visibly different trees.
+  `GRAMMAR_COMPAT.broad` lists all three **pending Taste's pendant × broad ruling**.
+- **Bloom amount is a foliage relationship (L5) — this is what killed the wreath.** The wreath
+  was occlusion, not placement. Three relationships, not one number scaled: `few` is a tree in
+  leaf with touches on outer twigs; `medium` is a flowering LIMB — the foliage *around* a bloom
+  gives way too, because debug view C showed the full-size NEIGHBOURS doing the hiding; and
+  `abundant` is peak bloom, a different phase of the year, with foliage reduced tree-wide and
+  wood showing between clusters.
+- **Two things the debug views found that reading the code never would.** (1) A 27% bloom could
+  leave the whole camera-facing side without one flowering twig, so selection is now
+  stratified by compass sector — the tree is orbited and every side carries its share.
+  (2) Measured in the hero view, only **7 of 146** attachment points face the camera at the
+  centre of the crown: the face of a crown is mostly other sides seen *through* it. So colour
+  through the middle depends on the foliage opening, which is why `abundant` succeeds outright
+  and `medium` only partly.
+- **At high amounts the drift field must be nearly flat.** With a strong one the twigs NOT
+  flowering were one contiguous patch, which read as a second, green plant inside a pink one.
+- **Local foliage contrast (L6): the stage moves, the subject never does.** The leaf clusters
+  within 0.85 of a flowering twig take a VALUE multiply (an RGB scale, chromaticity untouched):
+  lighter around a bloom darker than the leaf, deeper around one lighter. Navy stays navy. At
+  1.35 the radius reached most of a medium crown and became a grade, not a stage.
+- **Winter carries the site's colour in buds, or in persistent berries where the site fruits
+  (L8).** Leafless, on V0's dormant ground at the leafless dormancy (0.82). Reads at 140px in
+  every test colour, navy and cream included, and is the cheapest tree in the set.
+- **Flowers and fruit coexist (L11)** by zoning, the way a tree does it: fruit is planned first,
+  low and on older wood; bloom keeps off the twigs within 0.75 of a fruiting site. Red bloom
+  with red fruit still reads as two things, because form and zone differ.
+- **A narrow-based flower must sit on the wood.** Statement flowers stood off their twig by the
+  same distance as a cluster dome visibly FLOATED. Seating is per grammar.
+- **Cost, honestly:** leaf clusters are scaled, not culled, so `abundant` is the MOST expensive
+  state today (~668k tris vs ~519k for `few`). A small-tuft variant for shrunken clusters would
+  bring it to about parity; that is the deferred performance pass.
+
+### The island was inside-out — FIXED (2026-09-20, reported by the human)
+
+*"lower place is still hollow i can see the tree roots."* Every triangle in `island.js` was
+wound backwards: the turf dome faced DOWN (0 of 2,592 triangles up) and the soil body faced
+INWARD (0 of 546 out) — measured, and the same family of bug as the trunk's winding. Back
+faces are culled, so from any low angle the near wall vanished and the island was an open
+bowl: the inside of the far wall, the tree's shadow falling into it, the trunk's buried base
+hanging under the turf. It survived because from the hero angle the grass blades cover the
+missing dome. Two consequences worth keeping: **the dome's contact shading at the trunk had
+never once been on screen**, and **the soil colour everyone had judged was the unlit inside
+of the far wall** — the real, lit flank is warmer and lighter. Fixed by flipping the winding;
+the top ring of the soil now meets the turf rim exactly (its noise left a hairline crack that
+only showed once the island was solid). `island.js` is shared, so the live V0 is fixed too —
+checked before/after, crown and turf unchanged. Renders:
+`references/experiments/island-inside-out-2026-09-20/`.
+
+**Rule, now earned twice:** any hand-indexed mesh gets its facing MEASURED (share of
+triangles whose geometric normal points away from the form), not eyeballed from the hero
+angle.
