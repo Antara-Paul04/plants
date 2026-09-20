@@ -377,11 +377,17 @@ if (WINTER) {
   const hexq = (k, d) => (q.has(k) ? parseInt(q.get(k).replace('#', ''), 16) : d);
   const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
   const leafGrade = ENV.foliage ? (c) => gradeColor(c, ENV.foliage) : null;
+  // WARNING FOR ANYONE JUDGING COLOUR FROM A URL: `?fc=` and `?fc2=` go straight to
+  // the renderer and BYPASS conditionFlower in analysis/lib/mapping.js (the petal
+  // lightness floor, the computed centre). No real site can deliver, say, a raw
+  // #0b0d40 petal — so a URL-driven render is NOT representative of a real tree
+  // unless the colours passed are already-conditioned ones (e.g. github arrives as
+  // petal #1b20a0 + centre #989ad5). Lead reached a false conclusion this way once.
   const FC = hexq('fc', 0xf7a6b8);
   const FC2 = q.has('fc2') ? hexq('fc2', 0xe87b92) : (q.has('fc') ? null : 0xe87b92);
   // L6: the local stage. `?contrast=0` turns it off, for the A/B.
   const contrast = foliageContrast(spots, bloomSites, {
-    primary: FC, secondary: FC2, pale: num('pale', 0.42), lift: num('lift', 0), grade: bloomGrade,
+    primary: FC, secondary: FC2, pale: q.has('pale') ? num('pale', 0) : null, lift: num('lift', 0), grade: bloomGrade,
     strength: num('contrast', 1), radius: num('contrastR', 1.35),
   });
   contrastStats = { target: +contrast.target.toFixed(2), flowerL: contrast.flowerL, foliageL: contrast.foliageL };
@@ -408,7 +414,8 @@ if (WINTER) {
       sites: bloomSites,
       grammar: GRAMMAR,
       primary: FC, secondary: FC2,
-      size: num('flowerSize', 1), pale: num('pale', 0.42), lift: num('lift', 0), grade: bloomGrade,
+      size: num('flowerSize', 1), pale: q.has('pale') ? num('pale', 0) : null, lift: num('lift', 0), grade: bloomGrade,
+      eyeShape: q.get('eye') === 'round' ? 'round' : 'star', eyeWarm: q.has('eyeWarm') ? num('eyeWarm', 0.14) : null,
       proud: 0.5 * FOL.atBloom + 0.07,   // stands off its OWN leaf tuft; this is not a move, the tuft shrank
     });
     tree.add(fl.group);

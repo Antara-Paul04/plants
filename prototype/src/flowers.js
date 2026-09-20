@@ -160,7 +160,7 @@ function flowerParts(r, col, o) {
   };
   whorl(o.petals, o.open, o.length, o.width, o.cup, r() * 6.28, 1);
   if (o.inner) whorl(o.inner, o.open * 0.5, o.length * 0.86, o.width * 0.9, o.cup * 1.2, r() * 6.28, 0.94);
-  if (o.eye > 0) parts.push(paintFlat(eyeGeometry(r, o.eye, o.eyeShape), col.eye));
+  if (o.eye > 0) parts.push(paintFlat(eyeGeometry(r, o.eye, col.eyeShape), col.eye));
   return parts;
 }
 
@@ -211,7 +211,7 @@ const GRAMMARS = {
     // larger florets, and buds that are a deeper tone of the SAME colour (the
     // throat colour made them maroon, which read as dead flowers).
     const parts = [];
-    const bud = { throat: col.body, body: col.body.clone().lerp(col.throat, 0.35), edge: col.body, eye: col.eye };
+    const bud = { throat: col.body, body: col.body.clone().lerp(col.throat, 0.35), edge: col.body, eye: col.eye, eyeShape: col.eyeShape };
     const spines = [];
     const count = 3;
     for (let k = 0; k < count; k++) {
@@ -344,7 +344,7 @@ function flowerPalette(r, primary, secondary, opts) {
   const throat = body.clone().offsetHSL(0, 0.03, -0.07).lerp(centre, 0.22 * (pale / PALE_MAX));
   const edge = body.clone().lerp(new THREE.Color(0xffffff), pale);
   for (const c of [body, throat, edge, eye]) if (grade) grade(c);
-  return { body, throat, edge, eye, pale, petalL };
+  return { body, throat, edge, eye, pale, petalL, eyeShape: opts.eyeShape ?? 'star' };
 }
 
 /** One cluster variant: merged, soft-normalled, double-faced. */
@@ -384,6 +384,7 @@ function flowerClusterGeometry(r, grammar, primary, secondary, opts) {
   for (let k = 0; k < n0; k += 3) ix.push(ix[k], ix[k + 2], ix[k + 1]);
   g.setIndex(ix);
   g.userData.hang = built.hang;
+  g.userData.pale = col.pale;
   return g;
 }
 
@@ -545,7 +546,7 @@ const lstar = (c) => 116 * Math.cbrt(Math.max(0.2126 * c.r + 0.7152 * c.g + 0.07
  */
 export function foliageContrast(spots, bloomSites, opts = {}) {
   const {
-    primary, secondary = null, pale = 0.42, lift = 0, grade = null,
+    primary, secondary = null, pale = null, lift = 0, grade = null,
     greens = [0x86c440, 0xa6d84f, 0x63ad3a],
     radius = 0.85, lighten = 1.34, deepen = 0.72, strength = 1,   // 1.35 reached most of a medium crown: a grade, not a stage
   } = opts;
@@ -593,7 +594,7 @@ export function buildFlowers(spots, r, opts = {}) {
   const {
     grammar = 'cluster', amount = 'medium', fraction = null,
     primary = 0xf7a6b8, secondary = 0xe87b92,
-    variants = 3, size = 1, grade = null, pale = 0.42, lift = 0, soft = 0.5,
+    variants = 3, size = 1, grade = null, pale = null, lift = 0, soft = 0.5, eyeShape = 'star', eyeWarm = null,
     proud = 0.5,            // how far a bloom stands off its twig: the radius of the leaf ball under it
   } = opts;
   const t0 = performance.now();
@@ -603,7 +604,7 @@ export function buildFlowers(spots, r, opts = {}) {
   if (!chosen.length || primary == null) return { group, taken: new Set(), stats: { clusters: 0, triangles: 0, ms: 0 } };
 
   const geos = [];
-  for (let v = 0; v < variants; v++) geos.push(flowerClusterGeometry(r, grammar, primary, secondary, { size, grade, pale, lift, soft }));
+  for (let v = 0; v < variants; v++) geos.push(flowerClusterGeometry(r, grammar, primary, secondary, { size, grade, pale, lift, soft, eyeShape, eyeWarm }));
   const hang = !!geos[0].userData.hang;
   // How far off the twig a bloom is SEATED, as a share of `proud`. A cluster is a
   // broad dome and beds into the leaf tuft under it; a statement flower has a
@@ -656,7 +657,7 @@ export function buildFlowers(spots, r, opts = {}) {
   });
   return {
     group, taken,
-    stats: { grammar, clusters: chosen.length, triangles: Math.round(triangles), drawCalls: group.children.length, ms: Math.round(performance.now() - t0) },
+    stats: { grammar, pale: +(geos[0].userData.pale ?? 0).toFixed(2), clusters: chosen.length, triangles: Math.round(triangles), drawCalls: group.children.length, ms: Math.round(performance.now() - t0) },
   };
 }
 
@@ -831,7 +832,7 @@ function budSprayGeometry(r, col, scaleCol, terminal, size) {
 
 /** Winter carrier 1: accent-coloured buds on every twig — terminal sprays at the tips, lateral pairs along the wood. */
 export function buildBuds(spots, r, opts = {}) {
-  const { primary = 0xf7a6b8, secondary = null, grade = null, size = 1, pale = 0.3 } = opts;
+  const { primary = 0xf7a6b8, secondary = null, grade = null, size = 1, pale = null } = opts;
   const t0 = performance.now();
   const group = new THREE.Group();
   if (!spots.length || primary == null) return { group, stats: { buds: 0, triangles: 0, ms: 0 } };
