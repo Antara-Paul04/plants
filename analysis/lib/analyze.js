@@ -201,6 +201,32 @@ const sameBrand = (a, b) => {
   return la === lb || la.includes(lb) || lb.includes(la);
 };
 
+// What is at this address, according to the server rather than the browser?
+// Used only when Chrome aborts a navigation without rendering: HEAD first because
+// it costs nothing, then a one-byte ranged GET for the servers that answer HEAD
+// with 405. Any failure returns '' and the caller keeps its original verdict —
+// this may only ever turn an UNREACHABLE into something more specific, never the
+// other way round.
+async function headContentType(href, budgetMs) {
+  const read = async (method) => {
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), budgetMs);
+    try {
+      const r = await fetch(href, {
+        method,
+        redirect: 'follow',
+        signal: ac.signal,
+        headers: method === 'GET' ? { range: 'bytes=0-0' } : undefined
+      });
+      if (!r.ok && r.status !== 206) return '';
+      if (method === 'GET' && r.body) await r.body.cancel().catch(() => {});
+      return String(r.headers.get('content-type') || '').toLowerCase().split(';')[0].trim();
+    } catch { return ''; }
+    finally { clearTimeout(timer); }
+  };
+  return (await read('HEAD')) || (await read('GET'));
+}
+
 const INTERSTITIAL = /attention required|just a moment|access denied|you have been blocked|security check|enable javascript and cookies|verifying you are human|are you a robot|site can.t be reached|err_connection/i;
 
 // ---------------------------------------------------------------- fingerprint
@@ -330,6 +356,21 @@ async function runAnalysis(u, domain, budget, T0, left) {
         // the document went away under us mid-probe: a post-response navigation, which
         // is how the bot walls arrive
         return fail(domain, 'REFUSED', 'page navigated away while being read' + (e ? ' — ' + e : ''));
+      }
+      // A NAVIGATION THE BROWSER REFUSED TO RENDER. ERR_ABORTED means Chrome
+      // decided this was not a page to display — almost always a download or a
+      // content type it has no viewer for. On this laptop Chrome opens a PDF in
+      // its built-in viewer, so the content-type check further down catches it;
+      // the serverless build has no such viewer and aborts the navigation before
+      // a single header reaches us. Same URL, two different failures, and the
+      // server's was a lie: "we could not reach arxiv.org" about a paper that
+      // answered immediately. So ask the network directly what it is. Costs one
+      // request and only on this branch, which no ordinary website takes.
+      if (/ERR_ABORTED/.test(e)) {
+        const ctype = await headContentType(u.href, Math.min(4000, Math.max(1500, left())));
+        if (ctype && !/^(text\/html|application\/xhtml)/.test(ctype)) {
+          return fail(domain, 'NOT_A_PAGE', ctype);
+        }
       }
       return fail(domain, 'UNREACHABLE', e || 'no response and no error reported');
     }

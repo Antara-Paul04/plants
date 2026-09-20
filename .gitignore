@@ -72,7 +72,7 @@ references/experiments/retest-*/**/*.png
 references/experiments/retest-*/*.png
 
 # Deployment build output and dependencies
-public/
+/public/
 node_modules/
 .vercel/
 .vercel
