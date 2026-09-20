@@ -74,15 +74,31 @@ until the visitor grows their own.
 
 ## Known limitations
 
-- **The opening frame does not reach budget phones.** The page opens on a real
-  example tree, which lands fine at 4x CPU throttle and takes **15-20 s at 6x**
-  (a cheap Android, cold cache) — so the visitor most likely to arrive from a
-  link still meets sky and an empty island for fifteen seconds. Cumulative
-  long-task on the opening frame: 1986 ms → **3298 ms** at 4x with the example,
-  6478 ms at 6x, worst single task 461-500 ms. Against the build's 10 ms slicing
-  budget that names one phase that is not yielding — the skeleton, below. The
-  centre invitation card is gone while it builds, so the wait reads as arriving
-  rather than as finished-and-empty, but nothing is faster.
+- **The opening frame is ~4-9 s on a budget phone, down from ~13 s.** Measured
+  against the deployment, 6x CPU throttle, cold cache, 390x844, 3 runs each, on a
+  quiet machine:
+
+  ```
+  workers OFF (what shipped before tonight)          13.0 s
+  workers ON, throttle NOT reaching workers           3.6 s   ← flattered
+  workers ON, throttle put back (woodWorkerRepeat=6)  8.8 s
+  ```
+
+  **Do not quote the 3.6 s.** DevTools CPU throttling does not throttle workers,
+  so any throttled measurement of a worker build is flattered by exactly the
+  throttle. A real budget phone has several genuinely slow cores, so the truth
+  sits between the second and third rows: several usable cores tends toward
+  3.6 s, one usable core toward the main thread's time and no worse. **Nobody
+  has run this on a real device** and that is the open item.
+  The earlier "15-20 s" figure was real and matches the workers-OFF row.
+- **Halving three.js does NOT help.** `three.module.min.js` is the same pinned
+  version at 687 KB against 1304 KB (170 KB against 261 KB over the wire), one
+  import-map line, no build step. Measured at 6x on localhost: 3.4 s → 3.3 s,
+  i.e. noise. Parse volume was not the constraint, so the "ship less JavaScript"
+  lead is closed unless someone has a better reason than byte count.
+- **Every asset finishes at ~1.6 s; the network was never the bottleneck.**
+  preconnect + modulepreload moved three's *start* from 520 ms to 278 ms and left
+  total asset time unchanged. Worth having, not a fix.
 - **`medium`'s wreath was one camera angle.** Averaged round the tree, approved
   `abundant` carries 31-42% of its bloom in the crown's middle third against
   34-37% at the rim. Every bloom judgement on this project was read off
