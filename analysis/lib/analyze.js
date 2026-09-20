@@ -72,18 +72,53 @@ async function getBrowser() {
     // PLANTS_CHROME is checked but deliberately NOT existence-tested.
     let exe = CHROME;
     let extra = [];
+    let launchEnv;
     if (!exe) {
+      // THE LIB BUNDLE IS ONLY EXTRACTED IF IT BELIEVES IT IS ON LAMBDA, and it
+      // decides from AWS_EXECUTION_ENV / AWS_LAMBDA_JS_RUNTIME. Vercel runs on
+      // Lambda but does not set either in the shape it looks for, so it unpacked
+      // chromium WITHOUT its shared libraries and the browser died on
+      // "libnss3.so: cannot open shared object file" — surfacing, unhelpfully, as
+      // "Target page, context or browser has been closed".
+      //
+      // Declaring the runtime is what makes it extract al2023.tar.br. Node 20 and
+      // 22 are both Amazon Linux 2023, which is what Vercel's Node runtime is.
+      // Set BEFORE the import, because the module reads it at load.
+      process.env.AWS_LAMBDA_JS_RUNTIME ??= 'nodejs20.x';
       const mod = await import('@sparticuz/chromium').catch(() => null);
       if (!mod) throw new Error('no Chrome binary found — set PLANTS_CHROME, or install @sparticuz/chromium');
       const pkg = mod.default ?? mod;
       exe = await pkg.executablePath();
-      // Its args carry the single-process and /dev/shm settings a lambda needs;
-      // ours carry the rendering rules every measurement was calibrated with.
-      extra = pkg.args ?? [];
+      // ITS ARGS ARE FOR PUPPETEER AND TWO OF THEM BREAK PLAYWRIGHT.
+      //
+      //   --single-process   puppeteer tolerates it; playwright connects to a
+      //                      separate browser process and the launch dies with
+      //                      "Target page, context or browser has been closed".
+      //   --headless='shell' playwright adds its own headless flag, and two
+      //                      disagreeing ones is not a configuration.
+      //
+      // Everything else — /dev/shm, gpu, sandbox, the lambda's whole survival
+      // kit — is kept. Their --disable-features ALREADY carries IsolateOrigins
+      // and site-per-process, which is what ours used to add: a second
+      // --disable-features does not merge with the first, it replaces it, so
+      // appending ours silently threw away the rest of their list.
+      extra = (pkg.args ?? []).filter((a) =>
+        !a.startsWith('--single-process') && !a.startsWith('--headless'));
+      // AND ITS SHARED LIBRARIES. executablePath() unpacks chromium AND a lib
+      // bundle into /tmp and points process.env.LD_LIBRARY_PATH at it — but
+      // playwright spawns the browser with an env of its own, so the child never
+      // saw it and died with "libnss3.so: cannot open shared object file",
+      // surfacing as the far less helpful "Target page, context or browser has
+      // been closed". Pass it through explicitly.
+      launchEnv = { ...process.env, LD_LIBRARY_PATH: process.env.LD_LIBRARY_PATH };
     }
     _browser = await chromium.launch({
       executablePath: exe, headless: true,
-      args: [...extra, '--hide-scrollbars','--mute-audio','--disable-features=IsolateOrigins,site-per-process','--font-render-hinting=none']
+      ...(launchEnv ? { env: launchEnv } : {}),
+      // Ours are appended only when they are not already covered: on the
+      // serverless path IsolateOrigins/site-per-process come from the list above.
+      args: [...extra, '--hide-scrollbars','--mute-audio','--font-render-hinting=none',
+             ...(extra.length ? [] : ['--disable-features=IsolateOrigins,site-per-process'])]
     });
     _browser.on('disconnected', () => { _browser = null; _scratch = null; });
     _starting = null;

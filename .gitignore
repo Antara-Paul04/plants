@@ -75,3 +75,4 @@ references/experiments/retest-*/*.png
 public/
 node_modules/
 .vercel/
+.vercel
