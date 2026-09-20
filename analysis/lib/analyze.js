@@ -30,14 +30,20 @@ const CHROME = process.env.PLANTS_CHROME || [
 
 const VW = 1440, VH = 900;
 const BUDGET_MS   = 20000;   // hard ceiling for the whole analysis
-const NAV_MS      = 8000;    // domcontentloaded, not load: 'load' waits on every
-                             // subresource and was timing linear.app out entirely
+// 'commit' — response headers received. NOT 'domcontentloaded', which does not fire
+// until every deferred and module script has DOWNLOADED AND EXECUTED. Measured on
+// github.com across three visits: HTML complete 1.2-2.2s and domInteractive 2.0-2.5s
+// EVERY time, while DOM-ready was 5.3s / 12s / >30s. All the variance is in the script
+// tail, and we measure pixels from a screenshot — the site's JS finishing is not a
+// precondition for that. Raising the old timeout only waited longer for the wrong event.
+const NAV_MS      = 9000;
 const LOAD_MS     = 4500;    // bounded wait for subresources AFTER dom-ready. Needed:
                              // without it figma.com measured before its imagery painted
                              // and classified as WINTER — a colourful site read as
                              // colourless. A fast wrong tree is worse than a slow one.
-const IDLE_MS     = 1500;    // networkidle never fires on many SPAs — cap it low
-const SETTLE_MS   = 600;     // fixed settle after that
+const READY_MS    = 7000;    // poll for a parseable document after commit
+const STABLE_MS   = 9000;    // ceiling on visual-stability settling
+const POLL_MS     = 250;
 const SHOT_MS     = 5000;
 const MOTION_GAP  = 1000;    // validated protocol: 5 frames at 1s. A SHORT 3-frame check
 const MOTION_MAX  = 5;       // is a subset of it, so stopping early when it already reads
@@ -181,7 +187,10 @@ async function runAnalysis(u, domain, budget, T0, left) {
     const tNav = now();
     let resp = null, navErr = null;
     try {
-      resp = await page.goto(u.href, { waitUntil: 'domcontentloaded', timeout: Math.min(NAV_MS, Math.max(2500, left() - 6000)) });
+      resp = await page.goto(u.href, { waitUntil: 'commit', timeout: Math.min(NAV_MS, Math.max(2500, left() - 6000)) });
+      // commit only means headers; wait for a document we can actually read
+      await page.waitForFunction(() => document.readyState !== 'loading' && !!document.body,
+        { timeout: Math.max(1000, Math.min(READY_MS, left() - 5000)), polling: 200 }).catch(() => {});
     } catch (e) { navErr = String(e.message || e).split('\n')[0]; }
     t.load = now() - tNav;
 
@@ -215,18 +224,41 @@ async function runAnalysis(u, domain, budget, T0, left) {
     if (probe.els < 3 && probe.bodyLen < 2) return fail(domain, 'EMPTY_PAGE');
 
     // ---- settle (bounded by whatever budget remains)
-    // Settle is best-effort and strictly bounded. If the page never goes quiet we
-    // measure what is on screen at the deadline: a slightly-early tree beats no tree.
+    // Settle by MEASURED VISUAL STABILITY rather than a fixed wait. Two things have to
+    // be true before we measure: the page has actual content, and it has stopped
+    // changing. Waiting on a clock instead is how lusion.co's black preloader was
+    // measured as the site (false WINTER, ink 0.012) and play.grafana.org's spinner too.
+    // Moving navigation earlier makes that failure MORE likely, so this is the part that
+    // has to carry it.
     const tSettle = now();
-    // 'load' as a BOUNDED wait rather than the navigation condition: we get images and
-    // fonts when they are quick, and give up on them when they are not.
-    await page.waitForLoadState('load', { timeout: Math.max(500, Math.min(LOAD_MS, left() - 7000)) }).catch(() => {});
-    await page.waitForLoadState('networkidle', { timeout: Math.max(300, Math.min(IDLE_MS, left() - 6500)) }).catch(() => {});
+    let prev = null, stable = 0, settled = false;
+    while (left() > 6000 && now() - tSettle < STABLE_MS) {
+      const sig = await page.evaluate(() => {
+        const all = document.querySelectorAll('body *');
+        let geo = 0, n = 0;
+        for (const el of all) {
+          const r = el.getBoundingClientRect();
+          if (r.width > 40 && r.height > 20) {
+            geo += (Math.round(r.x) + Math.round(r.y) * 3 + Math.round(r.width) * 7 + Math.round(r.height) * 11) % 1000003;
+            if (++n > 400) break;
+          }
+        }
+        return { els: all.length, text: (document.body.innerText || '').trim().length, geo, boxes: n };
+      }).catch(() => null);
+      if (!sig) break;
+      // a preloader is a page with almost nothing on it; do not accept it as settled
+      const hasContent = sig.text >= 40 || sig.boxes >= 8;
+      const same = prev && sig.els === prev.els && sig.text === prev.text && sig.geo === prev.geo;
+      stable = same ? stable + 1 : 0;
+      if (hasContent && stable >= 2) { settled = true; break; }
+      prev = sig;
+      await page.waitForTimeout(POLL_MS);
+    }
+    rec.settleReason = settled ? 'stable' : 'deadline';
     await Promise.race([
       page.evaluate(() => document.fonts ? document.fonts.ready : null).catch(() => {}),
-      page.waitForTimeout(800)
+      page.waitForTimeout(600)
     ]);
-    await page.waitForTimeout(Math.max(150, Math.min(SETTLE_MS, left() - 7000)));
     t.settle = now() - tSettle;
 
     // ---- measure rendered DOM (~20ms) — no motion sampling

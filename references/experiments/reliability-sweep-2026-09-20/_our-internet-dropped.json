@@ -1,0 +1,646 @@
+[
+  {
+    "site": "booking.com",
+    "category": "popular · travel",
+    "file": "_failed/booking.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/",
+        "ms": 2857,
+        "analysisMs": null,
+        "load1": 26.5,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.6,
+        "waitedForQuietMs": 4509
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/",
+        "ms": 3413,
+        "analysisMs": null,
+        "load1": 24.5,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/"
+    },
+    "shown": "We could not reach booking.com just now.",
+    "domain": "booking.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 3388,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "uber.com",
+    "category": "popular · brand",
+    "file": "_failed/uber.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/",
+        "ms": 2100,
+        "analysisMs": null,
+        "load1": 23,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 3003
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/",
+        "ms": 2348,
+        "analysisMs": null,
+        "load1": 21.3,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1506
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/"
+    },
+    "shown": "We could not reach uber.com just now.",
+    "domain": "uber.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2323,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "bbc.com",
+    "category": "popular · news",
+    "file": "_failed/bbc.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/",
+        "ms": 2541,
+        "analysisMs": null,
+        "load1": 20.2,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/",
+        "ms": 2552,
+        "analysisMs": null,
+        "load1": 19.7,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/"
+    },
+    "shown": "We could not reach bbc.com just now.",
+    "domain": "bbc.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2507,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "cnn.com",
+    "category": "popular · news",
+    "file": "_failed/cnn.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/",
+        "ms": 2479,
+        "analysisMs": null,
+        "load1": 19.6,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/",
+        "ms": 2557,
+        "analysisMs": null,
+        "load1": 18.4,
+        "cpuBefore": 0.45,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 1508
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/"
+    },
+    "shown": "We could not reach cnn.com just now.",
+    "domain": "cnn.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2532,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "theguardian.com",
+    "category": "popular · news",
+    "file": "_failed/theguardian.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/",
+        "ms": 2340,
+        "analysisMs": null,
+        "load1": 18.4,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/",
+        "ms": 1746,
+        "analysisMs": null,
+        "load1": 17.3,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.69,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/"
+    },
+    "shown": "We could not reach theguardian.com just now.",
+    "domain": "theguardian.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1708,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "espn.com",
+    "category": "popular · sport",
+    "file": "_failed/espn.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/",
+        "ms": 2234,
+        "analysisMs": null,
+        "load1": 16.6,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/",
+        "ms": 2555,
+        "analysisMs": null,
+        "load1": 17.1,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/"
+    },
+    "shown": "We could not reach espn.com just now.",
+    "domain": "espn.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2532,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "imdb.com",
+    "category": "popular · reference",
+    "file": "_failed/imdb.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/",
+        "ms": 2108,
+        "analysisMs": null,
+        "load1": 18.1,
+        "cpuBefore": 0.35,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/",
+        "ms": 1714,
+        "analysisMs": null,
+        "load1": 18.1,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/"
+    },
+    "shown": "We could not reach imdb.com just now.",
+    "domain": "imdb.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1683,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "weather.com",
+    "category": "popular · utility",
+    "file": "_failed/weather.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/",
+        "ms": 2094,
+        "analysisMs": null,
+        "load1": 16.9,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/",
+        "ms": 2040,
+        "analysisMs": null,
+        "load1": 16.6,
+        "cpuBefore": 0.36,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/"
+    },
+    "shown": "We could not reach weather.com just now.",
+    "domain": "weather.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1996,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "yahoo.com",
+    "category": "popular · portal",
+    "file": "_failed/yahoo.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/",
+        "ms": 2120,
+        "analysisMs": null,
+        "load1": 16.6,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/",
+        "ms": 2076,
+        "analysisMs": null,
+        "load1": 16.8,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/"
+    },
+    "shown": "We could not reach yahoo.com just now.",
+    "domain": "yahoo.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2036,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "bing.com",
+    "category": "popular · search",
+    "file": "_failed/bing.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/",
+        "ms": 2045,
+        "analysisMs": null,
+        "load1": 15.6,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/",
+        "ms": 2605,
+        "analysisMs": null,
+        "load1": 15,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/"
+    },
+    "shown": "We could not reach bing.com just now.",
+    "domain": "bing.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2554,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "duckduckgo.com",
+    "category": "popular · search",
+    "file": "_failed/duckduckgo.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/",
+        "ms": 2661,
+        "analysisMs": null,
+        "load1": 14.6,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/",
+        "ms": 1946,
+        "analysisMs": null,
+        "load1": 14.6,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/"
+    },
+    "shown": "We could not reach duckduckgo.com just now.",
+    "domain": "duckduckgo.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1918,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "microsoft.com",
+    "category": "popular · brand",
+    "file": "_failed/microsoft.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/",
+        "ms": 2346,
+        "analysisMs": null,
+        "load1": 14.1,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/",
+        "ms": 2279,
+        "analysisMs": null,
+        "load1": 13.1,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/"
+    },
+    "shown": "We could not reach microsoft.com just now.",
+    "domain": "microsoft.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2227,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "samsung.com",
+    "category": "popular · brand",
+    "file": "_failed/samsung.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/",
+        "ms": 2000,
+        "analysisMs": null,
+        "load1": 12.7,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/",
+        "ms": 2077,
+        "analysisMs": null,
+        "load1": 12.7,
+        "cpuBefore": 0.37,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 1501
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/"
+    },
+    "shown": "We could not reach samsung.com just now.",
+    "domain": "samsung.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2022,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "tesla.com",
+    "category": "popular · brand",
+    "file": "_failed/tesla.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/",
+        "ms": 2022,
+        "analysisMs": null,
+        "load1": 12.1,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/",
+        "ms": 20669,
+        "analysisMs": null,
+        "load1": 49.7,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.73,
+        "waitedForQuietMs": 1508
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/"
+    },
+    "shown": "We could not reach tesla.com just now.",
+    "domain": "tesla.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 20521,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  }
+]

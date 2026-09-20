@@ -98,7 +98,7 @@ const PETAL_LIFT  = 0.22;   // maximum distance lightness may travel, ever
 const PETAL_CEIL  = 0.86;   // keep near-white accents off a light background
 const CENTRE_GAP  = 0.35;   // lightness contrast the centre must achieve against the petal
 
-function conditionFlower(hexIn, role, petalHex) {
+function conditionFlower(hexIn, role, petalHex, achromatic) {
   if (!hexIn) return null;
   const [h, s, l] = rgb2hsl(...hex2rgb(hexIn));
 
@@ -118,7 +118,16 @@ function conditionFlower(hexIn, role, petalHex) {
     : Math.max(0.28, Math.min(0.58, petalL - CENTRE_GAP));  // light petal -> deep centre
   // a centre is subordinate to the petal: it supplies contrast, it does not compete.
   // Uncapped, stripe's #735ffd centre came out an electric #2b0feb.
-  const sat = s < 0.08 ? 0.22 : Math.max(0.30, Math.min(s, 0.62));
+  //
+  // The saturation FLOOR must not apply to a deliberately colourless flower. It did, and
+  // it invented a colour: ente.com has no accent, so its petal is a pale cream (hue 60,
+  // L 0.93). Darkening that cream for the centre while forcing saturation up to 0.30
+  // produced #9d9d66 — OLIVE GREEN — on a site with no green in it. A dark yellow is
+  // khaki; only a pale yellow is cream. For an achromatic flower the centre should stay
+  // near-neutral, because grey is the honest answer when the site gave us no hue.
+  const sat = achromatic ? Math.min(s, 0.09)
+            : s < 0.08   ? 0.22
+            : Math.max(0.30, Math.min(s, 0.62));
   return rgb2hex(...hsl2rgb(h, sat, lit));
 }
 
@@ -136,14 +145,14 @@ function achromaticPetal(groundHex) {
   return rgb2hex(...hsl2rgb(hue, sat >= 0.05 ? 0.07 : 0.05, 0.93));
 }
 
-function flowerPair(primaryHex, secondaryHex) {
+function flowerPair(primaryHex, secondaryHex, achromatic) {
   const petal = conditionFlower(primaryHex, 'primary');
   if (!petal) return { petal: null, centre: null, derivedCentre: false };
   const petalL = rgb2hsl(...hex2rgb(petal))[2];
   if (!secondaryHex && petalL < 0.45) {
-    return { petal, centre: conditionFlower(primaryHex, 'secondary', petal), derivedCentre: true };
+    return { petal, centre: conditionFlower(primaryHex, 'secondary', petal, achromatic), derivedCentre: true };
   }
-  return { petal, centre: conditionFlower(secondaryHex, 'secondary', petal), derivedCentre: false };
+  return { petal, centre: conditionFlower(secondaryHex, 'secondary', petal, achromatic), derivedCentre: false };
 }
 
 // ---------------------------------------------------------------- background
@@ -290,7 +299,7 @@ export function buildDna(fp, domain){
   // colour source: the site's accent when it has one, ivory when it does not.
   const petalSource   = hasChroma ? fp.palette.primary   : achromaticPetal(fp.palette.ground);
   const centreSource  = hasChroma ? fp.palette.secondary : achromaticPetal(fp.palette.ground);
-  const flowers = flowerPair(petalSource, centreSource);
+  const flowers = flowerPair(petalSource, centreSource, !hasChroma);
 
   const terrain = state === 'bare' ? 'sparse'
     : botanicalState === 'winter' ? 'winter'

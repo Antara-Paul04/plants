@@ -84,10 +84,12 @@ node app/server.js     # → http://localhost:5170
 
 ## Roles
 
-`visual-3d` and `test` are staffed. **`taste` is not** — its rulings are recorded
+`test` and `analysis` are staffed. **`taste` is not** — its rulings are recorded
 in `docs/briefs/BLOOM-SYSTEM-RULINGS.md` and `docs/TASTE.md`, but nobody is
-holding visual judgement, and `medium` needs re-judging when it lands.
-`analysis` is unstaffed; L15 and the timeout work both need it.
+holding visual judgement. `visual-3d` churned late in the session; check with
+`ListAgents` rather than trusting this line, and expect a fresh session to need
+STATUS.md, `references/tree-style/README.md` and the rulings brief before it can
+pick anything up.
 
 ---
 

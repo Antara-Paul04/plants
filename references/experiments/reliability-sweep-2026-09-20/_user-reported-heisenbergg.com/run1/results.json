@@ -1,0 +1,111 @@
+[
+  {
+    "site": "https://heisenbergg.com",
+    "category": "",
+    "file": "https---heisenbergg.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 17290,
+        "analysisMs": 8058,
+        "load1": 30.1,
+        "cpuBefore": 0.47,
+        "cpuDuring": 0.62,
+        "waitedForQuietMs": 12745
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "heisenbergg.com",
+    "url": "https://heisenbergg.com/",
+    "live": true,
+    "timingMs": 8058,
+    "e2eMs": 14220,
+    "stamp": "grown in 12.3s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.57,
+      "inkCoverage": 0.243,
+      "colorfulness": 0.206,
+      "designColorfulness": 0.187,
+      "designChromaticRatio": 0.1087,
+      "warmShareOfChroma": 0.492,
+      "imageArea": 0.36,
+      "canvasArea": 0.655,
+      "textDensity": 0.101,
+      "accentConcentration": 0.472,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#010101",
+        "primary": "#462104",
+        "secondary": "#37091e"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#b0530a",
+        "secondary": "#e389b2"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#1e1916",
+      "seed": 3126908467,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://heisenbergg.com/",
+      "dclMs": 4819,
+      "error": null,
+      "cpuBefore": 0.45,
+      "load1": 30.1,
+      "commitMs": 605,
+      "cpuDuring": 0.59,
+      "nodesAtDcl": 382,
+      "loadMs": 5207,
+      "stages": {
+        "ttfb": 338,
+        "htmlDone": 589,
+        "domInteractive": 4084,
+        "domReady": 4158,
+        "load": 4218,
+        "firstPaint": 3084,
+        "firstContentfulPaint": 3084
+      },
+      "scriptsBeforeDomReady": 3,
+      "scriptKBBeforeDomReady": 4,
+      "finalUrl": "https://heisenbergg.com/",
+      "nodes": 382,
+      "scripts": 12,
+      "blockingScripts": 0,
+      "deferredScripts": 2,
+      "stylesheets": 3,
+      "images": 1,
+      "iframes": 0,
+      "canvases": 11,
+      "htmlKB": 61,
+      "ttfbMs": 338,
+      "requests": 18,
+      "transferKB": 294,
+      "shot": true
+    }
+  }
+]

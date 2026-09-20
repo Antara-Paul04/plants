@@ -70,6 +70,42 @@
       "background": "#e5e5eb",
       "seed": 446285954,
       "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://info.cern.ch/",
+      "dclMs": 1196,
+      "error": null,
+      "cpuBefore": 0.5,
+      "load1": 20.9,
+      "commitMs": 1182,
+      "cpuDuring": 0.46,
+      "nodesAtDcl": 16,
+      "loadMs": 1223,
+      "stages": {
+        "ttfb": 1146,
+        "htmlDone": 1147,
+        "domInteractive": 1169,
+        "domReady": 1169,
+        "load": 1170,
+        "firstPaint": 1216,
+        "firstContentfulPaint": 1216
+      },
+      "scriptsBeforeDomReady": 0,
+      "scriptKBBeforeDomReady": 0,
+      "finalUrl": "https://info.cern.ch/",
+      "nodes": 16,
+      "scripts": 0,
+      "blockingScripts": 0,
+      "deferredScripts": 0,
+      "stylesheets": 0,
+      "images": 0,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 1,
+      "ttfbMs": 1146,
+      "requests": 1,
+      "transferKB": 2,
+      "shot": true
     }
   },
   {
@@ -143,6 +179,42 @@
       "background": "#ebebe2",
       "seed": 2307374702,
       "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://news.ycombinator.com/",
+      "dclMs": 1801,
+      "error": null,
+      "cpuBefore": 0.45,
+      "load1": 19.4,
+      "commitMs": 1468,
+      "cpuDuring": 0.46,
+      "nodesAtDcl": 817,
+      "loadMs": 2044,
+      "stages": {
+        "ttfb": 1434,
+        "htmlDone": 1436,
+        "domInteractive": 1786,
+        "domReady": 1786,
+        "load": 2024,
+        "firstPaint": 1800,
+        "firstContentfulPaint": 1800
+      },
+      "scriptsBeforeDomReady": 1,
+      "scriptKBBeforeDomReady": 2,
+      "finalUrl": "https://news.ycombinator.com/",
+      "nodes": 817,
+      "scripts": 1,
+      "blockingScripts": 0,
+      "deferredScripts": 0,
+      "stylesheets": 1,
+      "images": 2,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 33,
+      "ttfbMs": 1434,
+      "requests": 6,
+      "transferKB": 6,
+      "shot": true
     }
   },
   {
@@ -227,6 +299,42 @@
       "background": "#e5e5eb",
       "seed": 1356002849,
       "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://arxiv.org/",
+      "dclMs": 527,
+      "error": null,
+      "cpuBefore": 0.43,
+      "load1": 18.2,
+      "commitMs": 192,
+      "cpuDuring": 0.45,
+      "nodesAtDcl": 414,
+      "loadMs": 968,
+      "stages": {
+        "ttfb": 159,
+        "htmlDone": 160,
+        "domInteractive": 507,
+        "domReady": 507,
+        "load": 946,
+        "firstPaint": 416,
+        "firstContentfulPaint": 416
+      },
+      "scriptsBeforeDomReady": 3,
+      "scriptKBBeforeDomReady": 10,
+      "finalUrl": "https://arxiv.org/",
+      "nodes": 414,
+      "scripts": 5,
+      "blockingScripts": 2,
+      "deferredScripts": 0,
+      "stylesheets": 4,
+      "images": 4,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 37,
+      "ttfbMs": 159,
+      "requests": 16,
+      "transferKB": 353,
+      "shot": true
     }
   },
   {
@@ -300,6 +408,42 @@
       "background": "#e6e6e6",
       "seed": 2830561623,
       "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://gwern.net/",
+      "dclMs": 2638,
+      "error": null,
+      "cpuBefore": 0.42,
+      "load1": 17.1,
+      "commitMs": 1269,
+      "cpuDuring": 0.51,
+      "nodesAtDcl": 1994,
+      "loadMs": 3753,
+      "stages": {
+        "ttfb": 1231,
+        "htmlDone": 1380,
+        "domInteractive": 1848,
+        "domReady": 2509,
+        "load": 3716,
+        "firstPaint": 2096,
+        "firstContentfulPaint": 2096
+      },
+      "scriptsBeforeDomReady": 4,
+      "scriptKBBeforeDomReady": 268,
+      "finalUrl": "https://gwern.net/",
+      "nodes": 2107,
+      "scripts": 7,
+      "blockingScripts": 2,
+      "deferredScripts": 2,
+      "stylesheets": 2,
+      "images": 0,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 139,
+      "ttfbMs": 1231,
+      "requests": 28,
+      "transferKB": 845,
+      "shot": true
     }
   },
   {
@@ -373,6 +517,42 @@
       "background": "#232427",
       "seed": 2006368837,
       "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://www.google.com/",
+      "dclMs": 3718,
+      "error": null,
+      "cpuBefore": 0.45,
+      "load1": 15.9,
+      "commitMs": 638,
+      "cpuDuring": 0.47,
+      "nodesAtDcl": 467,
+      "loadMs": 3814,
+      "stages": {
+        "ttfb": 569,
+        "htmlDone": 1029,
+        "domInteractive": 1180,
+        "domReady": 3667,
+        "load": 3671,
+        "firstPaint": 1072,
+        "firstContentfulPaint": 1072
+      },
+      "scriptsBeforeDomReady": 2,
+      "scriptKBBeforeDomReady": 390,
+      "finalUrl": "https://www.google.com/",
+      "nodes": 483,
+      "scripts": 21,
+      "blockingScripts": 0,
+      "deferredScripts": 1,
+      "stylesheets": 2,
+      "images": 6,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 218,
+      "ttfbMs": 569,
+      "requests": 33,
+      "transferKB": 806,
+      "shot": true
     }
   },
   {
@@ -1721,650 +1901,6 @@
     "live": true,
     "timingMs": null,
     "e2eMs": 13717,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "booking.com",
-    "category": "popular · travel",
-    "file": "_failed/booking.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/",
-        "ms": 2857,
-        "analysisMs": null,
-        "load1": 26.5,
-        "cpuBefore": 0.41,
-        "cpuDuring": 0.6,
-        "waitedForQuietMs": 4509
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/",
-        "ms": 3413,
-        "analysisMs": null,
-        "load1": 24.5,
-        "cpuBefore": 0.44,
-        "cpuDuring": 0.58,
-        "waitedForQuietMs": 1504
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/"
-    },
-    "shown": "We could not reach booking.com just now.",
-    "domain": "booking.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 3388,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "uber.com",
-    "category": "popular · brand",
-    "file": "_failed/uber.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/",
-        "ms": 2100,
-        "analysisMs": null,
-        "load1": 23,
-        "cpuBefore": 0.43,
-        "cpuDuring": 0.58,
-        "waitedForQuietMs": 3003
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/",
-        "ms": 2348,
-        "analysisMs": null,
-        "load1": 21.3,
-        "cpuBefore": 0.48,
-        "cpuDuring": 0.58,
-        "waitedForQuietMs": 1506
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/"
-    },
-    "shown": "We could not reach uber.com just now.",
-    "domain": "uber.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 2323,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "bbc.com",
-    "category": "popular · news",
-    "file": "_failed/bbc.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/",
-        "ms": 2541,
-        "analysisMs": null,
-        "load1": 20.2,
-        "cpuBefore": 0.41,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1501
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/",
-        "ms": 2552,
-        "analysisMs": null,
-        "load1": 19.7,
-        "cpuBefore": 0.44,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1502
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/"
-    },
-    "shown": "We could not reach bbc.com just now.",
-    "domain": "bbc.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 2507,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "cnn.com",
-    "category": "popular · news",
-    "file": "_failed/cnn.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/",
-        "ms": 2479,
-        "analysisMs": null,
-        "load1": 19.6,
-        "cpuBefore": 0.48,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1504
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/",
-        "ms": 2557,
-        "analysisMs": null,
-        "load1": 18.4,
-        "cpuBefore": 0.45,
-        "cpuDuring": 0.56,
-        "waitedForQuietMs": 1508
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/"
-    },
-    "shown": "We could not reach cnn.com just now.",
-    "domain": "cnn.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 2532,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "theguardian.com",
-    "category": "popular · news",
-    "file": "_failed/theguardian.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/",
-        "ms": 2340,
-        "analysisMs": null,
-        "load1": 18.4,
-        "cpuBefore": 0.42,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1502
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/",
-        "ms": 1746,
-        "analysisMs": null,
-        "load1": 17.3,
-        "cpuBefore": 0.43,
-        "cpuDuring": 0.69,
-        "waitedForQuietMs": 1504
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/"
-    },
-    "shown": "We could not reach theguardian.com just now.",
-    "domain": "theguardian.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 1708,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "espn.com",
-    "category": "popular · sport",
-    "file": "_failed/espn.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/",
-        "ms": 2234,
-        "analysisMs": null,
-        "load1": 16.6,
-        "cpuBefore": 0.4,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1502
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/",
-        "ms": 2555,
-        "analysisMs": null,
-        "load1": 17.1,
-        "cpuBefore": 0.4,
-        "cpuDuring": 0.58,
-        "waitedForQuietMs": 1503
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/"
-    },
-    "shown": "We could not reach espn.com just now.",
-    "domain": "espn.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 2532,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "imdb.com",
-    "category": "popular · reference",
-    "file": "_failed/imdb.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/",
-        "ms": 2108,
-        "analysisMs": null,
-        "load1": 18.1,
-        "cpuBefore": 0.35,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1504
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/",
-        "ms": 1714,
-        "analysisMs": null,
-        "load1": 18.1,
-        "cpuBefore": 0.49,
-        "cpuDuring": 0.59,
-        "waitedForQuietMs": 1502
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/"
-    },
-    "shown": "We could not reach imdb.com just now.",
-    "domain": "imdb.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 1683,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "weather.com",
-    "category": "popular · utility",
-    "file": "_failed/weather.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/",
-        "ms": 2094,
-        "analysisMs": null,
-        "load1": 16.9,
-        "cpuBefore": 0.4,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1502
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/",
-        "ms": 2040,
-        "analysisMs": null,
-        "load1": 16.6,
-        "cpuBefore": 0.36,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1503
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/"
-    },
-    "shown": "We could not reach weather.com just now.",
-    "domain": "weather.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 1996,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "yahoo.com",
-    "category": "popular · portal",
-    "file": "_failed/yahoo.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/",
-        "ms": 2120,
-        "analysisMs": null,
-        "load1": 16.6,
-        "cpuBefore": 0.42,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1502
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/",
-        "ms": 2076,
-        "analysisMs": null,
-        "load1": 16.8,
-        "cpuBefore": 0.5,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1503
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/"
-    },
-    "shown": "We could not reach yahoo.com just now.",
-    "domain": "yahoo.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 2036,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "bing.com",
-    "category": "popular · search",
-    "file": "_failed/bing.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/",
-        "ms": 2045,
-        "analysisMs": null,
-        "load1": 15.6,
-        "cpuBefore": 0.43,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1501
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/",
-        "ms": 2605,
-        "analysisMs": null,
-        "load1": 15,
-        "cpuBefore": 0.38,
-        "cpuDuring": 0.58,
-        "waitedForQuietMs": 1503
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/"
-    },
-    "shown": "We could not reach bing.com just now.",
-    "domain": "bing.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 2554,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "duckduckgo.com",
-    "category": "popular · search",
-    "file": "_failed/duckduckgo.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/",
-        "ms": 2661,
-        "analysisMs": null,
-        "load1": 14.6,
-        "cpuBefore": 0.39,
-        "cpuDuring": 0.59,
-        "waitedForQuietMs": 1502
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/",
-        "ms": 1946,
-        "analysisMs": null,
-        "load1": 14.6,
-        "cpuBefore": 0.44,
-        "cpuDuring": 0.58,
-        "waitedForQuietMs": 1504
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/"
-    },
-    "shown": "We could not reach duckduckgo.com just now.",
-    "domain": "duckduckgo.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 1918,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "microsoft.com",
-    "category": "popular · brand",
-    "file": "_failed/microsoft.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/",
-        "ms": 2346,
-        "analysisMs": null,
-        "load1": 14.1,
-        "cpuBefore": 0.39,
-        "cpuDuring": 0.57,
-        "waitedForQuietMs": 1504
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/",
-        "ms": 2279,
-        "analysisMs": null,
-        "load1": 13.1,
-        "cpuBefore": 0.46,
-        "cpuDuring": 0.58,
-        "waitedForQuietMs": 1504
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/"
-    },
-    "shown": "We could not reach microsoft.com just now.",
-    "domain": "microsoft.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 2227,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "samsung.com",
-    "category": "popular · brand",
-    "file": "_failed/samsung.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/",
-        "ms": 2000,
-        "analysisMs": null,
-        "load1": 12.7,
-        "cpuBefore": 0.4,
-        "cpuDuring": 0.56,
-        "waitedForQuietMs": 1502
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/",
-        "ms": 2077,
-        "analysisMs": null,
-        "load1": 12.7,
-        "cpuBefore": 0.37,
-        "cpuDuring": 0.55,
-        "waitedForQuietMs": 1501
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/"
-    },
-    "shown": "We could not reach samsung.com just now.",
-    "domain": "samsung.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 2022,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
-  },
-  {
-    "site": "tesla.com",
-    "category": "popular · brand",
-    "file": "_failed/tesla.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/",
-        "ms": 2022,
-        "analysisMs": null,
-        "load1": 12.1,
-        "cpuBefore": 0.44,
-        "cpuDuring": 0.56,
-        "waitedForQuietMs": 1503
-      },
-      {
-        "ok": false,
-        "code": "UNREACHABLE",
-        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/",
-        "ms": 20669,
-        "analysisMs": null,
-        "load1": 49.7,
-        "cpuBefore": 0.41,
-        "cpuDuring": 0.73,
-        "waitedForQuietMs": 1508
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "UNREACHABLE",
-      "message": "We could not reach that website.",
-      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/"
-    },
-    "shown": "We could not reach tesla.com just now.",
-    "domain": "tesla.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 20521,
     "stamp": null,
     "fingerprint": null,
     "dna": null
@@ -4429,5 +3965,511 @@
     "stamp": null,
     "fingerprint": null,
     "dna": null
+  },
+  {
+    "site": "who.int",
+    "category": "institutional",
+    "file": "_failed/who.int.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9375,
+        "analysisMs": null,
+        "load1": 20.8,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 15488,
+        "analysisMs": null,
+        "load1": 17.8,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.46,
+        "waitedForQuietMs": 3012
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading who.int. Big, richly built sites often outrun us.",
+    "domain": "who.int",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 15411,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "europa.eu",
+    "category": "institutional",
+    "file": "_failed/europa.eu.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 15547,
+        "analysisMs": null,
+        "load1": 20.8,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 3010
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 10321,
+        "analysisMs": null,
+        "load1": 18.2,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading europa.eu. Big, richly built sites often outrun us.",
+    "domain": "europa.eu",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 10280,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "mit.edu",
+    "category": "institutional",
+    "file": "mit.edu.png",
+    "ok": true,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9408,
+        "analysisMs": null,
+        "load1": 17.9,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 29659,
+        "analysisMs": 9040,
+        "load1": 34.9,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.7,
+        "waitedForQuietMs": 1506
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "mit.edu",
+    "url": "https://web.mit.edu/",
+    "live": true,
+    "timingMs": 9040,
+    "e2eMs": 26458,
+    "stamp": "grown in 16.3s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.511,
+      "inkCoverage": 0.197,
+      "colorfulness": 0.272,
+      "designColorfulness": 0.274,
+      "designChromaticRatio": 0.0516,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.133,
+      "canvasArea": 0,
+      "textDensity": 0.099,
+      "accentConcentration": 0.946,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#8b192b",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#ad1f35",
+        "secondary": "#e798a4"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#ad1f35"
+      },
+      "terrain": "lush",
+      "background": "#ebe5e6",
+      "seed": 3413716087,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "archive.org",
+    "category": "recheck · was EMPTY_PAGE",
+    "file": "_failed/archive.org.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 12578,
+        "analysisMs": null,
+        "load1": 29.9,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.6,
+        "waitedForQuietMs": 27215
+      },
+      {
+        "ok": false,
+        "code": "EMPTY_PAGE",
+        "detail": null,
+        "ms": 7465,
+        "analysisMs": null,
+        "load1": 36.4,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 27979
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "EMPTY_PAGE",
+      "message": "There was nothing on that page to look at.",
+      "detail": null
+    },
+    "shown": "There was nothing on archive.org to read.",
+    "domain": "archive.org",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 7335,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "lingscars.com",
+    "category": "recheck · was BLOCKED",
+    "file": "_failed/lingscars.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "HTTP 403",
+        "ms": 3948,
+        "analysisMs": null,
+        "load1": 33.6,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.61,
+        "waitedForQuietMs": 4515
+      },
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "HTTP 403",
+        "ms": 3307,
+        "analysisMs": null,
+        "load1": 32.5,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 3011
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "BLOCKED",
+      "message": "That website blocked us from looking at it.",
+      "detail": "HTTP 403"
+    },
+    "shown": "lingscars.com does not allow us to look at it.",
+    "domain": "lingscars.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 3273,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "nytimes.com",
+    "category": "recheck · was BLOCKED",
+    "file": "_failed/nytimes.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "HTTP 403",
+        "ms": 3653,
+        "analysisMs": null,
+        "load1": 28.8,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.53,
+        "waitedForQuietMs": 7514
+      },
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "HTTP 403",
+        "ms": 3495,
+        "analysisMs": null,
+        "load1": 23.9,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.51,
+        "waitedForQuietMs": 10561
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "BLOCKED",
+      "message": "That website blocked us from looking at it.",
+      "detail": "HTTP 403"
+    },
+    "shown": "nytimes.com does not allow us to look at it.",
+    "domain": "nytimes.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 3333,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "spacejam.com/1996",
+    "category": "recheck · was TIMEOUT",
+    "file": "_failed/spacejam.com-1996.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "exceeded 20000ms",
+        "ms": 20617,
+        "analysisMs": null,
+        "load1": 25.2,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 7573
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "exceeded 20000ms",
+        "ms": 20812,
+        "analysisMs": null,
+        "load1": 23.7,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.54,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "exceeded 20000ms"
+    },
+    "shown": "We could not finish reading spacejam.com. Big, richly built sites often outrun us.",
+    "domain": "spacejam.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 20765,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "booking.com",
+    "category": "popular · travel",
+    "file": "booking.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 18863,
+        "analysisMs": 10808,
+        "load1": 24.4,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 16017
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "booking.com",
+    "url": "https://www.booking.com/",
+    "live": true,
+    "timingMs": 10808,
+    "e2eMs": 15798,
+    "stamp": "grown in 14.2s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.459,
+      "inkCoverage": 0.266,
+      "colorfulness": 0.491,
+      "designColorfulness": 0.534,
+      "designChromaticRatio": 0.1784,
+      "warmShareOfChroma": 0.021,
+      "imageArea": 0.313,
+      "canvasArea": 0,
+      "textDensity": 0.242,
+      "accentConcentration": 0.98,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#064199",
+        "secondary": "#ffc941"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#0853c4",
+        "secondary": "#e7d098"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#0853c4"
+      },
+      "terrain": "normal",
+      "background": "#e5e7eb",
+      "seed": 2993858307,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "uber.com",
+    "category": "popular · brand",
+    "file": "uber.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 23305,
+        "analysisMs": 15275,
+        "load1": 29.6,
+        "cpuBefore": 0.45,
+        "cpuDuring": 0.53,
+        "waitedForQuietMs": 1509
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "uber.com",
+    "url": "https://www.uber.com/in/en/",
+    "live": true,
+    "timingMs": 15275,
+    "e2eMs": 20268,
+    "stamp": "grown in 19.1s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.438,
+      "inkCoverage": 0.234,
+      "colorfulness": 0.078,
+      "designColorfulness": 0,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.268,
+      "canvasArea": 0,
+      "textDensity": 0.089,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#000000",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#e5e5d1",
+        "secondary": "#9d9d66"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#1a1a1a",
+      "seed": 3304384390,
+      "rareCat": false
+    }
   }
 ]

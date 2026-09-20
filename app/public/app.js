@@ -51,6 +51,35 @@ const FLOWERS = {
   medium:   ['Flowering', 'a clear accent colour running through the design'],
   abundant: ['Heavily flowering', 'colour is central to how this site looks'],
 };
+// Is the bloom carrying a real accent, or the pale fallback? Analysis synthesises
+// an ivory petal from the site's GROUND when no accent survives the media mask,
+// and the product must not then claim "a clear accent colour running through the
+// design" — ente.com has no accent at all and was being told it had one.
+//
+// Read off the COLOUR ITSELF rather than re-testing the chroma threshold here:
+// the accent floor lives in analysis/lib/mapping.js and copying it into a second
+// file is how the two drift apart. A synthesised petal is near-grey by
+// construction; a real accent that survived the floor is not.
+function isPaleFallback(hex) {
+  if (typeof hex !== 'string') return false;
+  const n = parseInt(hex.replace('#', ''), 16);
+  if (!Number.isFinite(n)) return false;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  // CHROMA (max - min), not HSL saturation. Saturation is divided by how close
+  // the colour sits to black or white, so it inflates for light near-neutrals:
+  // the ivory #e5e5d1 reports 0.28, which looks like a real accent and is not.
+  // Chroma separates them by an order of magnitude — measured across the corpus,
+  // synthesised petals land at 14-20 and real conditioned accents at 140-200.
+  const chroma = Math.max(r, g, b) - Math.min(r, g, b);
+  return chroma < 45;
+}
+
+const PALE = {
+  few:      ['A few flowers', 'no colour of its own, so the bloom is ivory'],
+  medium:   ['Flowering', 'richly designed, but with no accent colour of its own'],
+  abundant: ['Heavily flowering', 'a lot of visual design, and almost no colour in it'],
+};
+
 const STATE = {
   autumn: ['Autumn', 'warm hues dominate the design palette'],
   winter: ['Winter', 'clearly designed, but extremely restrained and almost colourless'],
@@ -72,8 +101,10 @@ function renderWhy(dna) {
   // the single place that decides, so ask it rather than restating the rule.
   let effective = dna.flowers?.amount;
   try { effective = dnaToParams(dna).params.flowers ?? effective; } catch { /* keep the contract's */ }
+  const pale = isPaleFallback(dna.flowers?.primary);
   const cols = [dna.flowers?.primary, dna.flowers?.secondary].filter(Boolean);
-  add(FLOWERS[effective], effective !== 'none' && cols.length ? cols : null);
+  add((pale && PALE[effective]) || FLOWERS[effective],
+      effective !== 'none' && cols.length ? cols : null);
 
   add(SKELETON[dna.skeleton?.complexity]);
   // Fruit is MEASURED, not a quirk. It used to be a seeded lottery and the copy

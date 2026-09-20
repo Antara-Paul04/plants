@@ -258,6 +258,7 @@ if (survey) {
 
     let data = null, error = null, attempts = 0;
     const attemptLog = [];
+    let offlineWaits = 0;
     while (attempts < 2 && !(data && data.ok)) {
       attempts++;
       const calm = quiet ? await waitQuiet() : { busy: null, waitedMs: 0 };
@@ -265,6 +266,13 @@ if (survey) {
       try { data = await attempt(site); error = null; }
       catch (err) { error = err.message.split('\n')[0]; }
       const cpuDuring = busyBetween(cpu0, cpuSnap());
+      // OUR connection dropping is not a fact about the site. Wait it out, uncounted.
+      if (/ERR_INTERNET_DISCONNECTED|ERR_NETWORK_CHANGED/.test(data?.failure?.detail || '') && offlineWaits < 6) {
+        offlineWaits++; attempts--; data = null;
+        console.log(tag, 'offline ', site, '- this machine has no internet; waiting 20s');
+        await new Promise((r) => setTimeout(r, 20000));
+        continue;
+      }
       // load1: this machine's 1-minute load average. The analyzer's 8s navigation limit is
       // CPU-sensitive on OUR side, so a timeout means little without knowing how busy we were.
       attemptLog.push({ ok: Boolean(data?.ok), code: data?.ok ? null : (data?.failure?.code || 'HARNESS'),
