@@ -60,11 +60,28 @@ export function paramSource(...layers) {
 // minStub: the committed Gate 1 URLs once said `minStub=5`, but that parameter
 // was never wired at the time, so the reviewed trees were pruned at the default.
 // These presets reproduce the trees that were actually judged.
+// `ram` is each structure's RAMIFICATION (branching.js, ramifyLimbs) and is read ONLY when a
+// tree is ramified — it sits under its own key so that nothing in it can reach the un-ramified
+// tree, which has to stay what it is to the bit. `sprout` is how many shoots are raised on thin
+// wood and is each structure's OWN: the 100-150 count was the bare Gate's, never a law of trees.
+// `sparse` raises none — "few limbs held wide" is its character, and the product rests on bare
+// and sparse being visibly different plants (Lead's ruling). `mid` is what most real sites get,
+// has never been judged, and must not become bare-with-more-twigs: at 90 it did (91 limbs).
+// `spacing` multiplies the leaf spacing: a ramified tree has about twice the twig, so the same
+// spacing doubles the clusters, doubles the leaf triangles and buries the structure. It is set
+// so that a ramified tree carries the SAME amount of leaf as the one that was judged — spread
+// through the crown instead of round its rim. Spacing ALONE cannot do it: every limb tip
+// carries a cluster whatever the spacing, so a ramified tree has a floor (~106 clusters on
+// `bare`, where today's sparse-foliage tree has 70) — which would quietly make "sparse" less
+// sparse. So the amount is also CAPPED at what was judged: `leafK`, from the law today's trees
+// follow (clusters ~ leafK / spacing; measured 56 / 42 / 30 over three seeds and three states).
+// All of it is visual-3d's, none of it is judged.
 export const PRESETS = {
   bare: {
     rx: 2.9, ry: 2.15, cy: 4.15, trunkMin: 8,
     c1: 300, k1: 4.6, c2: 700, k2: 2.4, i2: 9, minStub: 0.62,
     trunk: 0.31,
+    ram: { sprout: 200, rounds: 4, maxR: 0.13, gapLo: 0.18, gapHi: 0.55, clear: 0.12, spacing: 1.9, leafK: 56 },
   },
   // Between the two judged ones, for `skeleton.complexity: normal`. NOT yet
   // judged by Taste — it exists because the product has three complexities and
@@ -73,11 +90,13 @@ export const PRESETS = {
     rx: 2.9, ry: 2.1, cy: 4.05, trunkMin: 8,
     c1: 235, k1: 5.3, c2: 440, k2: 3.0, i2: 9, minStub: 0.62,
     trunk: 0.27,
+    ram: { sprout: 20, rounds: 3, maxR: 0.13, gapLo: 0.22, gapHi: 0.65, clear: 0.13, spacing: 1.6, leafK: 42 },
   },
   sparse: {
     rx: 2.9, ry: 2.05, cy: 3.95, trunkMin: 7,
     c1: 170, k1: 6.0, c2: 220, k2: 3.6, i2: 9, minStub: 0.62,
     trunk: 0.23,
+    ram: { sprout: 0, rounds: 0, maxR: 0.13, gapLo: 0.3, gapHi: 0.8, clear: 0.15, spacing: 1.05, leafK: 30 },
   },
 };
 
@@ -390,6 +409,7 @@ function labOf(c) {
   const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
   return { L: 116 * f(Y) - 16, a: 500 * (f(X) - f(Y)), b: 200 * (f(Y) - f(Z)), Y };
 }
+const lerp01 = (a, b, t) => a + (b - a) * Math.min(1, Math.max(0, t));
 const sstep = (e0, e1, x) => { const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
 const yOfL = (L) => Math.pow((L + 16) / 116, 3);
 
@@ -488,7 +508,8 @@ const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8
  */
 export async function growTree(M, q, env, opts = {}) {
   const { uniforms = { time: { value: 0 } }, budgetMs = Infinity, signal = null, onGround = null, leavesDefault = '0' } = opts;
-  const { P, num, hexq } = resolveParams(q);
+  const { P, num, hexq, preset } = resolveParams(q);
+  const RAM = preset.ram ?? {};
   const { rng } = M.util;
   const ENV = env.ENV;
   const throwIfAborted = () => { if (signal && signal.aborted) throw new DOMException('tree build superseded', 'AbortError'); };
@@ -595,6 +616,8 @@ export async function growTree(M, q, env, opts = {}) {
   await endPhase('ground');
 
   // --- structure ---------------------------------------------------------------
+  const RAMIFY_MODE = q.get('ramify') ?? RAMIFY_DEFAULT;
+  const RAMIFIED = RAMIFY_MODE === '1' || (RAMIFY_MODE === 'leafy' && !leafless && !WINTER);
   const t0 = performance.now();
   const r = rng(P.seed);
   const skel = M.branching.buildSkeleton(r, {
@@ -611,13 +634,19 @@ export async function growTree(M, q, env, opts = {}) {
     // OFF BY DEFAULT UNTIL IT HAS BEEN JUDGED. This file grows the product's trees, and
     // the product is live: default-on would change every tree anyone grows the moment
     // this is committed. `ramify=1` to see it. Flipping RAMIFY_DEFAULT is the ship.
-    ramify: (q.get('ramify') ?? RAMIFY_DEFAULT) === '0' ? null : {
+    // `ramify=leafy`: only a tree that will carry LEAVES. The bare and the leafy tree want
+    // OPPOSITE skeletons — the blind panel's finding, and the one that outranks the gate that
+    // produced it: at 140px a naked tree reads by a bold armature (today's), and a crown needs
+    // many twigs through its volume (the ramified one). Under foliage the new twigs are
+    // attachment points, mostly hidden; on a naked tree they are "a grey fuzz". Winter is
+    // naked wood with buds on it, so it counts as naked.
+    ramify: !RAMIFIED ? null : {
       aspectLo: num('shootLo', 7), aspectHi: num('shootHi', 11), thorn: num('thorn', 0.5),
-      stretch: num('shootStretch', 0.85), sprout: num('sprout', 0),
-      sproutOn: [num('sproutMinR', 0.04), num('sproutMaxR', 0.105)],
-      sproutGap: [num('sproutGapLo', 0.34), num('sproutGapHi', 0.95)],
-      rounds: num('sproutRounds', 2), clear: num('sproutClear', 0.17), envelope: num('ramEnvelope', 1),
-      curl: num('curl', 1.95), collar: num('collar', 0.6), reach: num('reach', 1.0), fork: num('fork', 0.7),
+      stretch: num('shootStretch', 0.85), sprout: num('sprout', RAM.sprout ?? 0),
+      sproutOn: [num('sproutMinR', 0.04), num('sproutMaxR', RAM.maxR ?? 0.105)],
+      sproutGap: [num('sproutGapLo', RAM.gapLo ?? 0.34), num('sproutGapHi', RAM.gapHi ?? 0.95)],
+      rounds: num('sproutRounds', RAM.rounds ?? 2), clear: num('sproutClear', RAM.clear ?? 0.17), envelope: num('ramEnvelope', 1),
+      curl: num('curl', 1.95), collar: num('collar', 0.6), reach: num('reach', 1.0), fork: num('fork', 0),
     },
     coarseCount: P.coarseCount, coarseKill: P.coarseKill, coarseInfluence: P.coarseInfluence,
     fineCount: P.fineCount, fineKill: P.fineKill, fineInfluence: P.fineInfluence, fineShell: P.fineShell,
@@ -671,13 +700,28 @@ export async function growTree(M, q, env, opts = {}) {
   const attach = {
     // Winter's thinning is applied to its LEAVES below, not here: its buds belong on
     // every twig, and thinning the attachment points would halve them too.
-    spacing: num('leafSpacing', 0.4) / (WINTER ? 1 : leafAmount),
+    // x `ramSpacing` on a ramified tree: the same amount of leaf, on about twice the twig.
+    spacing: num('leafSpacing', 0.4) / (WINTER ? 1 : leafAmount) * (RAMIFIED ? num('ramSpacing', RAM.spacing ?? 1) : 1),
     maxRadius: num('leafMaxR', 0.12), outerFraction: num('leafOuter', 0.78),
   };
   const greens = q.has('greens') ? q.get('greens').split(',').map((h) => parseInt(h.replace('#', ''), 16)) : season.greens;
   const cluster = {
     leaves: num('perCluster', 17), leafLength: num('leafLen', 0.5), soft: num('soft', 0.62),
     greens, grade: leafGrade,
+  };
+
+  // THE SAME AMOUNT OF LEAF AS WAS JUDGED, on a tree with more twig to put it on. Evenly
+  // through the list (which runs limb by limb), so what goes goes from everywhere at once;
+  // and re-indexed, because the bloom and contrast arrays are indexed by `spot.index`.
+  const judgedAmount = (spots) => {
+    if (!RAMIFIED || !RAM.leafK || q.get('ramThin') === '0') return spots;
+    const outer = num('leafOuter', 0.78);
+    const target = Math.round(RAM.leafK / (num('leafSpacing', 0.4) / leafAmount) * lerp01(0.85, 1, (outer - 0.56) / 0.22));
+    if (spots.length <= target * 1.05) return spots;
+    const keep = []; const step = spots.length / target;
+    for (let k = 0; k < target; k++) keep.push(spots[Math.floor(k * step)]);
+    keep.forEach((sp, i) => { sp.index = i; });
+    return keep;
   };
 
   if (WINTER) {
@@ -714,7 +758,7 @@ export async function growTree(M, q, env, opts = {}) {
     // Order matters. Attachment points first (same RNG draws as before, so no leaf
     // moves); then WHICH of them flower, on a separate stream; then the leaves,
     // which need to know, because a flowering twig carries a smaller leaf cluster.
-    const spots = M.leaves.leafAttachments(skel.limbs, r, attach);
+    const spots = judgedAmount(M.leaves.leafAttachments(skel.limbs, r, attach));
     const FLOWERS = q.get('flowers') ?? 'none';
     // The bloom GRAMMAR is not in the DNA (ruling L1): it is chosen from the
     // grammars compatible with the morphology, by the seed, on its own stream.

@@ -499,7 +499,10 @@ export function ramifyLimbs(nodes, limbs, r, opts = {}) {
     clear = 0.17,                  // a new shoot keeps this far from wood that is not its own
     rounds = 2,                    // a shoot raised in one round may carry shoots in the next
     reach = 1.0,                   // how far past the asked-for envelope a grown shoot may reach (1 = on it)
-    fork = 0.7,                    // the share of terminal shoots that end in a fork rather than a point
+    // OFF. Built for the panel's "kill the straight spike as the terminal element", and then
+    // all three judges of the next round called the tree with forks and the tree without "the
+    // same image". A difference nobody can see is not a difference; it only adds limbs.
+    fork = 0,                      // the share of terminal shoots that end in a fork rather than a point
     curl = 1.95,                   // radians a limb may turn from its first heading before it is cut (~112 deg)
     collar = 0.6,                  // the blend at a shoot's base, as a fraction of its HOST's radius
   } = opts;

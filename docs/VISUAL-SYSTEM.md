@@ -941,3 +941,24 @@ are waiting on the human's weather review — sway, gust and shedding judged tog
   the camera. `fitCamera` now refuses a fit it cannot trust, because a camera that is moved by a
   RELATIVE factor never recovers from one bad number.
 
+### The wreath is a FACE, not a shell — every bloom judgement was made from one angle of one seed (2026-09-21)
+
+Evidence, the probe and every number: `references/experiments/leafy-ramify-2026-09-21/`.
+
+- **Averaged round the tree there is no wreath.** Today's `abundant`, 8 azimuths, 3 seeds, at a
+  true 140px: 31–42% bloom in the crown's middle third against 34–37% at its rim. The figure that
+  started the structural work — "8.6% in the middle against 36% at the rim" — is the HERO ANGLE OF
+  SEED 7, which is that tree's worst face. `medium`, seed 7, by view: 6.8 · 27.2 · 29.4 · 31.2 ·
+  6.3 · 23.0 · 30.4 · 20.4 — the first is the angle it was judged from.
+- **`gate2.html?preset=bare&seed=7` from the default camera is the debug page's default, and it
+  has been the instrument for every bloom judgement here.** A tree that is orbited has to be
+  measured round the tree, on more than one seed.
+- **Ramification under foliage does not help** (middle-to-rim 0.85 / 1.07 / 1.31 against 0.87 /
+  1.13 / 1.23), and my own "4 -> 14 attachment points facing the camera" was one view at twice the
+  leaf: properly, 5.2 -> 6.3. The `ramify=leafy` path and the foliage ladder's compensation exist,
+  inert, and are not recommended on this evidence.
+- **What is wrong is that the crown's faces differ**, and for some sites the product's first frame
+  is the bad one. Bloom selection is stratified by compass sector and, separately, by height band —
+  not by both together, so a sector can flower high and low and leave its mid-height face, the
+  part that is face-on in the middle of a view, bare. That is the next hypothesis. OPEN.
+

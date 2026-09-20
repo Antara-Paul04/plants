@@ -23,8 +23,24 @@ Bare tree, seed 7, quiet machine (load 3.3), URL parameters only:
 The wood field splats each capsule segment into a box sized by its own radius, so the trunk and
 the primaries ARE the cost and a thin limb is nearly free: 2.1x the limbs is +13% field. (Wood ms
 wobbles ±200 between loads; read the field column.) The final cycle-3 tree is 93 limbs / 231k
-triangles. **Its build time was never re-measured on a quiet machine** — every later load ran at
-load 10–40 — so that number is still owed.
+triangles.
+
+**The finished tree's cost, counted rather than timed.** Timing it failed honestly: at load 5.5,
+three interleaved loads of TODAY's tree took 2.5, 4.2 and 5.0 s of wood build and the ramified one
+1.3, 3.9 and 4.6 s — noise three times the signal, and ramified "faster" in two pairs of three.
+But the field fill is deterministic WORK: every capsule segment is evaluated over a box padded by
+`max(ra, rb) + k + 3h + 0.06`, so the sum of those boxes is the number of voxel evaluations the
+build performs, whatever else the machine is doing:
+
+| structure / seed | limbs | field evaluations | |
+| --- | --- | --- | --- |
+| bare / 7 | 47 → 93 | 18.7M → 20.7M | **+11%** |
+| bare / 3 | 48 → 90 | 20.4M → 22.5M | **+10%** |
+| sparse / 7, 3 (shoot rule only) | 18 → 21, 21 → 27 | 8.6M → 9.1M, 8.6M → 8.6M | +6%, +1% |
+
+58–60% of today's field work is wood thicker than 0.1: the trunk and the primaries are the cost.
+(`mid` at 90 sprouted shoots came out +29–47% and at 91 limbs — i.e. as the bare tree. That is a
+wrong default, not a cost finding: `mid` must not become bare-with-more-twigs.)
 
 ## 2. Where the antlers come from — one line of the radius law
 
@@ -154,3 +170,19 @@ on spacing for `bare`) before this could ship for leafy trees. No leafy tree was
   the chunky-versus-gradient tension it should start with the human's eye, not end with it.
 - `sparse` keeps its count (Lead's ruling). The shoot rule alone barely touches it: its limbs are
   already long (median 9.6:1, 17% under 6:1).
+
+## 8. Two notes for whoever runs the next panel, and one correction to the ruling
+
+- **The judges share the Browser pane with the session that launched them.** A read-only judge
+  opened a sheet in it, took the front tab, and the launching session's next script ran against a
+  PNG (`file:///…candidate-P.png`) instead of the gate page. Pass an explicit `tabId` on every
+  browser call while a panel is running — and tell the judges to read the PNG files directly
+  rather than open them (cycles 2 and 3 did).
+- **A judge can take eleven minutes.** One did (it measured pixels rather than looking), and
+  reported after "never reported" had been written into this file. Wait for all of them, or say
+  the verdict is outstanding rather than missing.
+- **The count ruling was ANSWERED, not met** (Lead, on reading this). The ruling was that the
+  100–150 floor is the bare tree's alone. The evidence is that count was never the binding
+  constraint in the first place: cycle 2 reached 124 limbs and cycle 3 93, and the verdicts did
+  not move with it. What binds is calibre, the hollow shell, the hooks and the missing leader.
+
