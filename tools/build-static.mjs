@@ -18,7 +18,18 @@ await mkdir(OUT, { recursive: true });
 await cp('app/public', OUT, { recursive: true });
 await cp('prototype/src', `${OUT}/tree`, { recursive: true });
 
-// The comparison grid is an internal view and the page links to it.
-await cp('prototype/compare.html', `${OUT}/compare.html`).catch(() => {});
+// The comparison grid is an internal view and the product links to it from the
+// corner of every screen — so when it broke, it broke in public.
+//
+// It was copied verbatim and its one script tag says `./src/compare.js`. That is
+// correct where the prototype is served, because there the prototype root IS the
+// server root. Here the renderer lands at /tree/, so the tag 404'd and the page
+// rendered its heading, one checkbox, and nothing else. Rewrite the path as it is
+// copied rather than editing the prototype, which must keep working where it lives.
+import { readFile, writeFile } from 'node:fs/promises';
+try {
+  const html = await readFile('prototype/compare.html', 'utf8');
+  await writeFile(`${OUT}/compare.html`, html.replaceAll('./src/', '/tree/'));
+} catch { /* no comparison grid in this tree; the link will 404 rather than break the build */ }
 
 console.log(`built ${OUT}/ — shell + renderer`);
