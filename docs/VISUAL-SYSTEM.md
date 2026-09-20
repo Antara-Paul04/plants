@@ -663,19 +663,34 @@ Renders and measurements: `references/experiments/ground-value-2026-09-20/`.
   and stops. Measured in renders, turf vs trunk luma: autumn −16% → −34%, winter → −31%, bare
   −20% → −33%, sparse −9% → −25%; summer green is untouched by construction. `WOOD_TAN` is
   exported from `bark.js` so the rule follows the clay if it moves.
-- **The stones move with the state** (`stonesForGround`): a step lighter than the turf they
-  lie on, capped well under the trunk. They were +23–27% BRIGHTER than the trunk in every day
-  state — the brightest thing in a picture whose subject is the tree — and are now within
-  ±3% of it. The cap is lower in albedo than it looks like it needs to be, because a stone's
-  facets face the sky and the trunk's do not.
-- **Night is NOT fixed by this:** at the sampled point the turf is still ~20% brighter than the
-  trunk's shadow side. That is the moon's direction, and it follows whichever night level is
-  picked.
+- **The stones are capped under the trunk** (`stonesForGround`). They were L* ~92 in every
+  daylight state, +23–27% over the trunk in the render — the brightest thing in a picture whose
+  subject is the tree — and are now within ±3% of it. It is a CAP, stated honestly: an earlier
+  "a step lighter than the turf" term never fired for any shipped palette and was removed. The
+  stones still read lighter than the lawn because their facets face the sky and grass blades
+  do not (~21 L* in the render at equal albedo). Their STATE arrives through the host's palette
+  (cream → grey with dormancy), which a value scale leaves alone.
+- **Two regressions of this change, caught by independent review and fixed:** (1) the island's
+  own value order — taking the turf down without the soil left the grass DARKER than the soil
+  cliff under it in winter and bare, which is backward; the soil now follows only as far as the
+  order needs (`soilForTurf`). (2) **Night is exempt from the stone cap:** the moonlit trunk is
+  already the brightest object there, and capped stones under a weak ambient rendered darker
+  than the lawn — holes punched in the grass instead of pebbles.
+- **Dissent on record:** the independent judge FAILED summer on a strict reading — sunlit grass
+  blades tie the trunk's brightest value. Taste's ruling says summer passes because saturated
+  green separates from tan by hue, and the rule leaves it untouched by construction. Noted for
+  Taste rather than acted on.
+- **Night's turf is not fixed by this** (the rule runs in albedo, and at the sampled point the
+  turf is brighter than the trunk's shadow side). That is the moon's direction, and it follows
+  whichever night level is picked.
 - **`few` is a floor, not a point on a scale.** Multipliers may scale `medium` and `abundant`;
   nothing may take a flowering tree below `few`. A CLAMP applied after all scaling
   (`chooseBloomSites`), never an exemption inside one season's branch: a clamp covers every
-  future multiplier by construction. Plus a minimum cluster COUNT (6) — "touches" is plural,
-  and 10% of a small crown's twigs is two. The explicit `bloom=` debug fraction is not clamped.
+  future multiplier by construction — including a multiplier of ZERO, which an earlier version
+  let through. Plus a minimum cluster COUNT (6) — "touches" is plural, and 10% of a small
+  crown's twigs is two — and `few` is now lightly STRATIFIED, because more clusters otherwise
+  only extend the one drift already chosen (one real tree had all its touches on one side).
+  The explicit `bloom=` debug fraction is not clamped.
 - **What the clamp does NOT fix, stated plainly:** ikea went 6 → 15 clusters and its accent
   still barely arrives. Yellow bloom inside an amber crown is a HUE COLLAPSE, not a count
   problem, and the value-only local contrast (L6) cannot reach it by design. Any accent inside
