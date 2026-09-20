@@ -1,0 +1,518 @@
+[
+  {
+    "site": "info.cern.ch",
+    "category": "chip",
+    "file": "info.cern.ch.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 14470,
+        "analysisMs": 4082
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "info.cern.ch",
+    "url": "https://info.cern.ch/",
+    "live": true,
+    "timingMs": 4082,
+    "e2eMs": 11352,
+    "stamp": "grown in 9.8s",
+    "fingerprint": {
+      "authored": 0.1,
+      "stylingRichness": 0.069,
+      "inkCoverage": 0.018,
+      "colorfulness": 0.09,
+      "designColorfulness": 0.09,
+      "designChromaticRatio": 0.0096,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.076,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#9b9bf8",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "bare",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e5eb",
+      "seed": 446285954,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://info.cern.ch/",
+      "dclMs": 2015,
+      "error": null,
+      "nodesAtDcl": 16,
+      "loadMs": 2047,
+      "finalUrl": "https://info.cern.ch/",
+      "nodes": 16,
+      "scripts": 0,
+      "blockingScripts": 0,
+      "stylesheets": 0,
+      "images": 0,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 1,
+      "ttfbMs": 1931,
+      "requests": 1,
+      "transferKB": 2,
+      "shot": true
+    }
+  },
+  {
+    "site": "news.ycombinator.com",
+    "category": "chip",
+    "file": "_failed/news.ycombinator.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 37656,
+        "analysisMs": null
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 31708,
+        "analysisMs": null
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading news.ycombinator.com. Big, richly built sites often outrun us.",
+    "domain": "news.ycombinator.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 31685,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null,
+    "siteMetrics": {
+      "url": "https://news.ycombinator.com",
+      "dclMs": 11064,
+      "error": null,
+      "nodesAtDcl": 817,
+      "loadMs": 12224,
+      "finalUrl": "https://news.ycombinator.com/",
+      "nodes": 817,
+      "scripts": 1,
+      "blockingScripts": 0,
+      "stylesheets": 1,
+      "images": 2,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 33,
+      "ttfbMs": 8376,
+      "requests": 6,
+      "transferKB": 6,
+      "shot": true
+    }
+  },
+  {
+    "site": "arxiv.org",
+    "category": "chip",
+    "file": "arxiv.org.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 22698,
+        "analysisMs": 14113
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "arxiv.org",
+    "url": "https://arxiv.org/",
+    "live": true,
+    "timingMs": 14113,
+    "e2eMs": 19652,
+    "stamp": "grown in 19.1s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.321,
+      "inkCoverage": 0.189,
+      "colorfulness": 0.292,
+      "designColorfulness": 0.292,
+      "designChromaticRatio": 0.1051,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.008,
+      "canvasArea": 0,
+      "textDensity": 0.931,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a1a1f8",
+        "secondary": "#a1b9d6"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#a1a1f8",
+        "secondary": "#466fa0"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e5eb",
+      "seed": 1356002849,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://arxiv.org/",
+      "dclMs": 3903,
+      "error": null,
+      "nodesAtDcl": 414,
+      "loadMs": 4325,
+      "finalUrl": "https://arxiv.org/",
+      "nodes": 414,
+      "scripts": 5,
+      "blockingScripts": 2,
+      "stylesheets": 4,
+      "images": 4,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 37,
+      "ttfbMs": 3042,
+      "requests": 16,
+      "transferKB": 353,
+      "shot": true
+    }
+  },
+  {
+    "site": "gwern.net",
+    "category": "chip",
+    "file": "gwern.net.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 22466,
+        "analysisMs": 14686
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "gwern.net",
+    "url": "https://gwern.net/",
+    "live": true,
+    "timingMs": 14686,
+    "e2eMs": 19368,
+    "stamp": "grown in 18.9s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.431,
+      "inkCoverage": 0.135,
+      "colorfulness": 0,
+      "designColorfulness": 0,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.362,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e6e6e6",
+      "seed": 2830561623,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://gwern.net/",
+      "dclMs": 4335,
+      "error": null,
+      "nodesAtDcl": 1926,
+      "loadMs": null,
+      "finalUrl": "https://gwern.net/",
+      "nodes": 2090,
+      "scripts": 7,
+      "blockingScripts": 2,
+      "stylesheets": 2,
+      "images": 0,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 139,
+      "ttfbMs": 1519,
+      "requests": 23,
+      "transferKB": 796,
+      "shot": true
+    }
+  },
+  {
+    "site": "google.com",
+    "category": "popular · search",
+    "file": "_failed/google.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "exceeded 20000ms",
+        "ms": 29170,
+        "analysisMs": null
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "exceeded 20000ms",
+        "ms": 40368,
+        "analysisMs": null
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "exceeded 20000ms"
+    },
+    "shown": "We could not finish reading google.com. Big, richly built sites often outrun us.",
+    "domain": "google.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 40345,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null,
+    "siteMetrics": {
+      "url": "https://google.com",
+      "dclMs": 24049,
+      "error": null,
+      "nodesAtDcl": 466,
+      "loadMs": 26518,
+      "finalUrl": "https://www.google.com/",
+      "nodes": 484,
+      "scripts": 21,
+      "blockingScripts": 0,
+      "stylesheets": 2,
+      "images": 6,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 218,
+      "ttfbMs": 15158,
+      "requests": 34,
+      "transferKB": 823,
+      "shot": true
+    }
+  },
+  {
+    "site": "youtube.com",
+    "category": "popular · video",
+    "file": "_failed/youtube.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 22469,
+        "analysisMs": null
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 18875,
+        "analysisMs": null
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading youtube.com. Big, richly built sites often outrun us.",
+    "domain": "youtube.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 18847,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null,
+    "siteMetrics": {
+      "url": "https://youtube.com",
+      "dclMs": null,
+      "error": "page.goto: Timeout 30000ms exceeded.",
+      "shot": false
+    }
+  },
+  {
+    "site": "apple.com",
+    "category": "popular · brand",
+    "file": "apple.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20911,
+        "analysisMs": 12031
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "apple.com",
+    "url": "https://www.apple.com/",
+    "live": true,
+    "timingMs": 12031,
+    "e2eMs": 17844,
+    "stamp": "grown in 16.6s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.561,
+      "inkCoverage": 0.351,
+      "colorfulness": 0.138,
+      "designColorfulness": 0.027,
+      "designChromaticRatio": 0.0012,
+      "warmShareOfChroma": 0,
+      "imageArea": 1,
+      "canvasArea": 0,
+      "textDensity": 0.065,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#f5f5f7",
+        "primary": "#a0c6eb",
+        "secondary": "#b4d2ef"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#d1d1e5",
+        "secondary": "#66669d"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e5e5ea",
+      "seed": 3197224656,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://www.apple.com/",
+      "dclMs": 5978,
+      "error": null,
+      "nodesAtDcl": 2069,
+      "loadMs": 6559,
+      "finalUrl": "https://www.apple.com/",
+      "nodes": 2099,
+      "scripts": 17,
+      "blockingScripts": 1,
+      "stylesheets": 10,
+      "images": 51,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 305,
+      "ttfbMs": 2446,
+      "requests": 49,
+      "transferKB": 2280,
+      "shot": true
+    }
+  }
+]

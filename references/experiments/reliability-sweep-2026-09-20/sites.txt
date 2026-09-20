@@ -1,0 +1,96 @@
+# Reliability sweep 2026-09-20 — what passes, what fails, and why.
+#   node tools/capture.mjs references/experiments/reliability-sweep-2026-09-20 --survey --with-site --keep-failures --sites-file <this file>
+# Format: site  category. Weighted towards what an ordinary person would actually type.
+
+# --- the four example chips: a chip that fails is the worst outcome in the product
+info.cern.ch                 chip
+news.ycombinator.com         chip
+arxiv.org                    chip
+gwern.net                    chip
+
+# --- what people actually type
+google.com                   popular · search
+youtube.com                  popular · video
+apple.com                    popular · brand
+netflix.com                  popular · video
+spotify.com                  popular · music
+instagram.com                popular · social
+facebook.com                 popular · social
+x.com                        popular · social
+tiktok.com                   popular · social
+linkedin.com                 popular · social
+reddit.com                   popular · social
+whatsapp.com                 popular · brand
+discord.com                  popular · brand
+twitch.tv                    popular · video
+wikipedia.org                popular · reference
+amazon.com                   popular · e-commerce
+ebay.com                     popular · e-commerce
+walmart.com                  popular · e-commerce
+etsy.com                     popular · e-commerce
+nike.com                     popular · brand e-commerce
+adidas.com                   popular · brand e-commerce
+zara.com                     popular · brand e-commerce
+ikea.com                     popular · brand e-commerce
+airbnb.com                   popular · travel
+booking.com                  popular · travel
+uber.com                     popular · brand
+bbc.com                      popular · news
+cnn.com                      popular · news
+theguardian.com              popular · news
+espn.com                     popular · sport
+imdb.com                     popular · reference
+weather.com                  popular · utility
+yahoo.com                    popular · portal
+bing.com                     popular · search
+duckduckgo.com               popular · search
+microsoft.com                popular · brand
+samsung.com                  popular · brand
+tesla.com                    popular · brand
+paypal.com                   popular · finance
+chatgpt.com                  popular · app
+canva.com                    popular · app
+zoom.us                      popular · app
+starbucks.com                popular · brand
+disney.com                   popular · brand
+nintendo.com                 popular · brand
+lego.com                     popular · brand
+
+# --- design-led / very new web (the sites Lead saw fail are here)
+stripe.com                   design-led
+github.com                   design-led · dark
+figma.com                    design-led
+linear.app                   design-led · dark
+vercel.com                   design-led
+notion.com                   design-led
+framer.com                   design-led
+theverge.com                 design-led · editorial
+awwwards.com                 design-led · gallery
+dribbble.com                 design-led · gallery
+
+# --- designed but light: the counter-examples to "we only measure boring sites"
+daringfireball.net           designed · light DOM
+kottke.org                   designed · light DOM
+simonwillison.net            designed · light DOM
+jvns.ca                      designed · light DOM
+craigslist.org               old web · light DOM
+
+# --- docs
+developer.mozilla.org        docs
+docs.python.org              docs
+react.dev                    docs
+stackoverflow.com            docs · Q&A
+
+# --- government / institutional
+gov.uk                       government
+usa.gov                      government
+nasa.gov                     government
+who.int                      institutional
+europa.eu                    institutional
+mit.edu                      institutional
+
+# --- known non-timeout failures from the first survey: do they still hold?
+archive.org                  recheck · was EMPTY_PAGE
+lingscars.com                recheck · was BLOCKED
+nytimes.com                  recheck · was BLOCKED
+spacejam.com/1996            recheck · was TIMEOUT

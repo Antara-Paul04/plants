@@ -45,7 +45,7 @@ function earthCap(tp) {
   const hi = tp.soilHi.clone().offsetHSL(0, -0.03, 0.06), lo = tp.soilHi.clone().offsetHSL(0, 0, -0.02);
   const wall = tp.soilHi.clone().multiplyScalar(0.74), under = tp.soilHi.clone().multiplyScalar(0.42);
   const push = (x, y, z, c) => { pos.push(x, y, z); col.push(c.r, c.g, c.b); return pos.length / 3 - 1; };
-  const topAt = (x, z, f) => TOP + 0.03 * (1 - f * f) + 0.032 * noise3(x * 1.15 + 7.1, 0.7, z * 1.15 - 2.3);
+  const topAt = (x, z, f) => TOP + 0.025 * (1 - f * f) + 0.06 * noise3(x * 1.15 + 7.1, 0.7, z * 1.15 - 2.3);   // enough relief that the facets READ
   const tone = (x, z) => lo.clone().lerp(hi, clamp(0.5 + 0.6 * noise3(x * 0.8 - 3.3, 1.9, z * 0.8 + 5.1), 0, 1));
 
   const c0 = push(0, topAt(0, 0, 0), 0, tone(0, 0));

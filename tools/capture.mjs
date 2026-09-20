@@ -22,6 +22,12 @@
 // The site shot is the harness's OWN visit under the analyzer's conditions — the
 // analyzer does not keep its frame — so it is close to, not identical to, what was
 // measured. Works on an already-captured folder: trees are skipped, pairs are added.
+// That visit also WEIGHS the page (time to domcontentloaded, DOM nodes, scripts,
+// transfer size) into results.json, so failures have numbers too.
+//
+// Add --keep-failures when resuming an interrupted sweep: recorded failures are kept
+// instead of being re-attempted. Each result carries e2eMs — the whole wait a person
+// sits through, tree build included — beside the API's analysis-only timingMs.
 //
 // Requires the V0 server on :5170 and Playwright from analysis/node_modules.
 
@@ -53,6 +59,7 @@ if (!outDir) {
 const rest = process.argv.slice(3);
 const survey = rest.includes('--survey');
 const withSite = rest.includes('--with-site');
+const keepFailures = rest.includes('--keep-failures');
 const fileAt = rest.indexOf('--sites-file');
 const sitesFile = fileAt >= 0 ? rest[fileAt + 1] : null;
 const named = rest.filter((a, i) => !a.startsWith('--') && !(fileAt >= 0 && i === fileAt + 1));
@@ -94,10 +101,16 @@ const shoot = async (name, url, { wait = 24000, fullPage = false } = {}) => {
 // One survey attempt: load the product page, take the API's own answer off the
 // wire, and wait for the state the human would see before shooting it.
 const attempt = async (site) => {
+  const t0 = Date.now();
   const reply = page.waitForResponse((r) => r.url().endsWith('/api/grow'), { timeout: 90000 });
   await page.goto(`${BASE}/?site=${encodeURIComponent(site)}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
   const data = await (await reply).json();
-  await page.waitForSelector(data.ok ? '#result:not([hidden])' : '#msg.err', { timeout: 30000 });
+  await page.waitForSelector(data.ok ? '#result:not([hidden])' : '#msg.err', { timeout: 60000 });
+  // END TO END: the wait a person sits through, tree build included — not timingMs,
+  // which is the analysis alone. `stamp` is the product's own claim, kept to compare.
+  data.e2eMs = Date.now() - t0;
+  data.stamp = data.ok ? await page.textContent('#stamp').catch(() => null) : null;
+  data.shown = data.ok ? null : await page.textContent('#msg').catch(() => null);
   // Fixed settle from READY, so every tree is shot at the same auto-rotate angle.
   if (data.ok) await page.waitForTimeout(3000);
   return data;
@@ -115,16 +128,36 @@ const siteCtx = withSite ? await browser.newContext({
 }) : null;
 const composer = withSite ? await browser.newPage({ viewport: { width: 2260, height: 1000 }, deviceScaleFactor: 1 }) : null;
 
+// Also weighs the page, independently of the analyzer, so a site the analyzer gave up
+// on still has numbers: how long a plain visit takes to reach domcontentloaded (the
+// event the analyzer's 8s navigation limit waits for) and how heavy the document is.
 const shootSite = async (url, path) => {
   const p = await siteCtx.newPage();
+  const m = { url, dclMs: null, error: null };
   try {
-    await p.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
-    await p.waitForLoadState('load', { timeout: 4500 }).catch(() => {});
+    const t0 = Date.now();
+    await p.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    m.dclMs = Date.now() - t0;
+    m.nodesAtDcl = await p.evaluate(() => document.getElementsByTagName('*').length).catch(() => null);
+    await p.waitForLoadState('load', { timeout: 4500 }).then(() => { m.loadMs = Date.now() - t0; }, () => { m.loadMs = null; });
     await p.waitForLoadState('networkidle', { timeout: 1500 }).catch(() => {});
     await p.waitForTimeout(600);
+    Object.assign(m, await p.evaluate(() => {
+      const nav = performance.getEntriesByType('navigation')[0] || {};
+      const res = performance.getEntriesByType('resource');
+      const q = (s) => document.querySelectorAll(s).length;
+      return {
+        finalUrl: location.href, nodes: q('*'), scripts: q('script'), blockingScripts: q('head script[src]:not([async]):not([defer]):not([type=module])'),
+        stylesheets: q('link[rel=stylesheet]'), images: q('img'), iframes: q('iframe'), canvases: q('canvas'),
+        htmlKB: Math.round((nav.decodedBodySize || 0) / 1024), ttfbMs: Math.round(nav.responseStart || 0),
+        requests: res.length, transferKB: Math.round(res.reduce((a, r) => a + (r.transferSize || 0), 0) / 1024),
+      };
+    }).catch(() => ({})));
     await p.screenshot({ path, animations: 'disabled', timeout: 10000 });
-    return true;
-  } catch { return false; } finally { await p.close().catch(() => {}); }
+    m.shot = true;
+  } catch (err) { m.error = err.message.split('\n')[0]; m.shot = false; }
+  finally { await p.close().catch(() => {}); }
+  return m;
 };
 
 // Website on the left, its tree and explanation on the right, one PNG per site.
@@ -155,9 +188,11 @@ if (survey) {
 
   // Site shot + pair for one results entry; fills in only what is missing.
   const addSite = async (name, r, tag) => {
-    if (!(await exists(`${outDir}/_site/${name}.png`))) {
-      const shot = await shootSite(r.url || `https://${r.site}`, `${outDir}/_site/${name}.png`);
-      if (!shot) { console.log(tag, 'no site ', r.site, '- the harness could not load it'); return; }
+    if (!(await exists(`${outDir}/_site/${name}.png`)) && !r.siteMetrics) {
+      r.siteMetrics = await shootSite(r.url || `https://${r.site}`, `${outDir}/_site/${name}.png`);
+      await writeFile(resultsPath, JSON.stringify(results, null, 2));
+      if (!r.siteMetrics.shot) { console.log(tag, 'no site ', r.site, '-', r.siteMetrics.error); return; }
+      console.log(tag, 'weighed ', r.site, `dcl ${r.siteMetrics.dclMs}ms · ${r.siteMetrics.nodes} nodes · ${r.siteMetrics.scripts} scripts · ${r.siteMetrics.transferKB}KB`);
     }
     if (r.ok && !(await exists(`${outDir}/pairs/${name}.png`))) {
       await composePair(name, r);
@@ -169,17 +204,23 @@ if (survey) {
     const name = fileName(site);
     const tag = `[${i + 1}/${sites.length}]`;
     const prior = results.find((r) => r.site === site);
-    if (prior && await exists(`${outDir}/${name}.png`)) {
-      console.log(tag, 'skip    ', site, '(already captured)');
+    // --keep-failures: a recorded failure is a result too. Without it a resumed run
+    // re-attempts every failure, which is what you want for a retry and not for a sweep.
+    if (prior && (await exists(`${outDir}/${name}.png`) || (keepFailures && !prior.ok))) {
+      console.log(tag, 'skip    ', site, prior.ok ? '(already captured)' : '(failure kept)');
       if (withSite) await addSite(name, prior, tag);
       continue;
     }
 
     let data = null, error = null, attempts = 0;
+    const attemptLog = [];
     while (attempts < 2 && !(data && data.ok)) {
       attempts++;
+      const t0 = Date.now();
       try { data = await attempt(site); error = null; }
       catch (err) { error = err.message.split('\n')[0]; }
+      attemptLog.push({ ok: Boolean(data?.ok), code: data?.ok ? null : (data?.failure?.code || 'HARNESS'),
+        detail: data?.ok ? null : (data?.failure?.detail || error), ms: Date.now() - t0, analysisMs: data?.timingMs ?? null });
     }
 
     const ok = Boolean(data && data.ok);
@@ -188,10 +229,11 @@ if (survey) {
 
     const entry = {
       site, category: category.get(site) || '', file: ok ? `${name}.png` : `_failed/${name}.png`,
-      ok, attempts, harnessError: error,
-      failure: data && !data.ok ? data.failure : null,
+      ok, attempts, attemptLog, harnessError: error,
+      failure: data && !data.ok ? data.failure : null, shown: data?.shown ?? null,
       domain: data?.domain ?? null, url: data?.url ?? null, live: data?.live ?? null,
-      timingMs: data?.timingMs ?? null, fingerprint: data?.fingerprint ?? null, dna: data?.dna ?? null,
+      timingMs: data?.timingMs ?? null, e2eMs: data?.e2eMs ?? null, stamp: data?.stamp ?? null,
+      fingerprint: data?.fingerprint ?? null, dna: data?.dna ?? null,
     };
     results = results.filter((r) => r.site !== site);
     results.push(entry);
@@ -199,8 +241,8 @@ if (survey) {
 
     const d = data?.dna;
     console.log(tag, ok ? 'captured' : 'FAILED  ', site, '-', ok
-      ? `${d.foliage?.state}/${d.foliage?.density} flowers:${d.flowers?.amount} ${d.botanicalState} bg:${d.background} ${data.timingMs}ms`
-      : (data?.failure?.code || error));
+      ? `${d.foliage?.state}/${d.foliage?.density} flowers:${d.flowers?.amount} ${d.botanicalState} bg:${d.background} analysis ${data.timingMs}ms · on screen ${data.e2eMs}ms · try ${attempts}`
+      : `${data?.failure?.code || error} (${attemptLog.map((a) => `${a.code} ${a.ms}ms`).join(', ')})`);
     if (withSite) await addSite(name, entry, tag);
   }
 } else {

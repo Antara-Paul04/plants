@@ -720,3 +720,40 @@ Renders and measurements: `references/experiments/ground-value-2026-09-20/`.
   discipline as `setDNA`: a build in flight is abandoned, the old scene stays up until the new
   one is ready, everything replaced is freed. **The product does not call it yet — that is
   `app/`, and web's.**
+
+### "Half of the flowers are in the air" — a bloom is ATTACHED (2026-09-20, the human)
+
+On a `few` tree in the product a third of the blooms hung detached in the sky. **Measured, not
+eyeballed** (distance from each bloom's origin to the nearest attachment point on the wood):
+median **0.58** at `few`, against 0.29 at `medium` and 0.21 at `abundant` — which is why only
+`few` broke. The bloom's base is about a quarter of a unit across, so past that there is sky
+between flower and twig. Cause: the stand-off was tied to the radius of the leaf ball under
+the bloom — a leftover of the three banned attempts to beat occlusion by pushing flowers
+outward — and at `few` that ball is nearly full size. Now clamped INSIDE the builder
+(`SEAT_MAX`, flowers.js), so no caller can float a bloom: `few` is back to 0.29. A flower
+nestles in its leaves; the foliage relationship is what makes it visible, never distance.
+Renders: `references/experiments/floating-bloom-2026-09-20/`.
+
+### Independent review of the autumn and failure-state work — what it found against me
+
+- **Craft, failure island:** the first version "reads as a potato or a bread roll" — a smooth
+  convex lawn-dome on a faceted drum, the rim overhang gone, a soil a quarter lighter and twice
+  as chromatic as a successful island's. Rebuilt as `earthCap`: a nearly flat, flat-shaded,
+  gently worked plateau on the soil body's own 42 segments, with the RIM LIP that identifies
+  our island, in the soil family every successful island already uses. Facing MEASURED: 294/294
+  top facets up, 84/84 wall out, 84/84 underside down.
+- **Craft, fruit:** nine fruit shoulder to shoulder in one arc ("a grape bunch, the loudest
+  object in the image") and every fruit the same radius. Fruiting sites now keep 0.95 apart
+  (a preference — the count still wins), and each spur has its own size with one leading fruit.
+- **Code:** the environment's tone mapping was applied when it was CREATED rather than when it
+  went on screen, so during a build the old scene was re-rendered under the next state's tone
+  mapping (a day island under night's ACES). `dispose()` leaked an island shown early for a
+  tree that never finished. The `v0` handle had no `setEarth`, so a `?engine=v0` page threw on
+  its first failure — it now hands the canvas to the new engine.
+- **Passed without change:** every interleaving of `setDNA` / `setEarth` the reviewer traced —
+  an aborted build can never add itself to the scene or free the environment on screen.
+- **Judge recommendations NOT acted on, because they are not mine to decide:** "take blue fruit
+  dark — a bright cool brand colour arrives as a shade of itself". That repaints the website's
+  colour, which the rulings forbid for bloom; whether fruit is different is Lead's and the
+  human's call. And: "the render can only refuse to pass judgment; 'we could not read this' has
+  to be carried by the failure card's copy" — a scoping question for Lead.
