@@ -49,6 +49,11 @@ export function crownCloud(r, opts = {}) {
     rx = 2.7, ry = 1.85, rz = 2.7,
     hollow = 0.42,   // how much of the underside is emptied
     lift = 0.22,     // bias points upward inside the envelope
+    // Push points toward the envelope's SURFACE. Shoots cluster where the
+    // light is, which is the outside of the crown and the ends of branches —
+    // a uniform cloud spaces them evenly along the wood instead, which is what
+    // made the twigs read as regular thorns on a stem.
+    shell = 0,
   } = opts;
 
   const pts = [];
@@ -64,8 +69,14 @@ export function crownCloud(r, opts = {}) {
     const radial = Math.hypot(x, z);
     if (y < 0 && radial < hollow * (1 + y)) continue;
 
-    const yy = y + lift * (1 - y * y);
-    pts.push(new THREE.Vector3(cx + x * rx, cy + yy * ry, cz + z * rz));
+    let sx = x, sy = y, sz = z;
+    if (shell > 0) {
+      const d = Math.sqrt(d2) || 1e-6;
+      const k = lerp(d, 1, shell) / d;
+      sx *= k; sy *= k; sz *= k;
+    }
+    const yy = sy + lift * (1 - sy * sy);
+    pts.push(new THREE.Vector3(cx + sx * rx, cy + yy * ry, cz + sz * rz));
   }
   return pts;
 }
@@ -290,19 +301,26 @@ export function smoothChains(nodes, iterations = 3, strength = 0.42) {
  * Space colonization always leaves some. They are the difference between a tree
  * and a tree with whiskers, and they are far more visible with no leaves on.
  */
-export function pruneStubs(nodes, minSegments = 3) {
+export function pruneStubs(nodes, minLength = 0.34) {
   const keep = new Set(nodes);
   let changed = true;
   while (changed) {
     changed = false;
     for (const n of nodes) {
       if (!keep.has(n) || n.children.length) continue;
-      // Walk back to the nearest fork, counting.
+      // Walk back to the nearest fork, accumulating WORLD LENGTH.
+      //
+      // This used to count segments, which silently broke the moment a growth
+      // pass used a different segment length: the terminal pass runs at 0.62x
+      // the base step, so a stub threshold of 5 segments deleted every shoot
+      // that pass produced and the whole order vanished with no error. Length
+      // is the thing actually meant, and it is invariant across passes.
       let len = 0, cur = n;
       while (cur.parent && cur.parent.children.filter((c) => keep.has(c)).length === 1) {
-        cur = cur.parent; len++;
+        len += cur.pos.distanceTo(cur.parent.pos);
+        cur = cur.parent;
       }
-      if (len < minSegments && cur.parent) {
+      if (len < minLength && cur.parent) {
         let x = n;
         while (x !== cur.parent) { keep.delete(x); x = x.parent; }
         changed = true;
@@ -369,24 +387,61 @@ export function extractLimbs(nodes) {
  * -> twig falls out of the two scales rather than being asserted.
  */
 export function buildSkeleton(r, opts = {}) {
+  const g = opts.grow || {};
+  const D = g.D ?? 0.17;
+
+  // PASS 1 — architecture. Few, widely spaced attractors so a tip runs a long
+  // way before anything pulls it apart.
   const coarseCloud = crownCloud(r, { ...opts.cloud, count: opts.coarseCount ?? 190 });
   let nodes = growSkeleton(r, coarseCloud, {
-    ...opts.grow,
+    ...g,
     kill: opts.coarseKill ?? 5.5,
     influence: opts.coarseInfluence ?? 20,
   });
 
-  // Second pass: twigs, onto the limbs the first pass produced.
-  const fineCloud = crownCloud(r, { ...opts.cloud, count: opts.fineCount ?? 950 });
+  // PASS 2 — twigs onto that architecture.
+  const fineCloud = crownCloud(r, {
+    ...opts.cloud,
+    count: opts.fineCount ?? 950,
+    shell: opts.fineShell ?? 0.35,
+  });
   nodes = growSkeleton(r, fineCloud, {
-    ...opts.grow,
+    ...g,
     kill: opts.fineKill ?? 2.0,
     influence: opts.fineInfluence ?? 7,
-    wobble: (opts.grow?.wobble ?? 0.1) * 1.3,
+    wobble: (g.wobble ?? 0.1) * 1.3,
     blockTrunk: true,
   }, nodes);
 
-  nodes = pruneStubs(nodes, opts.minStub ?? 2);
+  // PASS 3 — terminal growth on the twigs.
+  //
+  // This is the order that stops the eye finding "the last branch". A twig
+  // that leaves its parent and simply stops reads as a thorn; real terminal
+  // growth forks again two or three times, each order finer than the last.
+  // Shorter segments AND a strong shell bias, so this order appears at the
+  // outside of the crown and at the ends of branches, where shoots actually
+  // are, rather than evenly along the wood.
+  if ((opts.tipCount ?? 1600) > 0) {
+    const tipCloud = crownCloud(r, {
+      ...opts.cloud,
+      count: opts.tipCount ?? 1600,
+      shell: opts.tipShell ?? 0.72,
+    });
+    nodes = growSkeleton(r, tipCloud, {
+      ...g,
+      D: D * (opts.tipD ?? 0.62),
+      kill: opts.tipKill ?? 1.5,
+      influence: opts.tipInfluence ?? 5,
+      // Wobble has to come DOWN at this scale, not up. Short segments plus a
+      // large per-step turn produced hooks and claws rather than shoots: the
+      // same angular variation that gives a metre-long limb character bends a
+      // ten-centimetre shoot into a fishhook.
+      wobble: (g.wobble ?? 0.1) * (opts.tipWobble ?? 1.15),
+      blockTrunk: true,
+    }, nodes);
+  }
+
+  nodes = pruneStubs(nodes, opts.minStub ?? 0.3);
   smoothChains(nodes, opts.smooth ?? 3);
   assignRadii(nodes, opts.radii);
   return { nodes, limbs: extractLimbs(nodes), cloud: fineCloud };

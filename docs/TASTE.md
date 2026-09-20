@@ -103,6 +103,15 @@ place by being observed, not assumed.
   street tree and the same many held wide read as an established open-grown specimen.
   **Nothing in this family should be narrow.** Hold the width roughly constant and let
   density be what varies.
+- **Crown height is what keeps this tree in the family; width is free.** A flat crown
+  reads as savanna or parasol at any width, while a domed one stays deciduous even when
+  very broad — tested at `rx 3.1 / ry 2.05`, which is generous and still ours. So buy
+  air with width, never by flattening.
+- **A mass in the canopy has to exist in the branches first.** Painting lobes of
+  foliage over a structure makes the two disagree — leaves where no twig is — and that
+  is what reads as plastic scatter. But growing twigs into an *even* volume is the
+  other failure, broccoli. The masses belong in the growth volume itself: clump what
+  the branches grow into, and the foliage clusters honestly and for free.
 - **What makes a tree look expensive is proportion and topology, not resolution.**
   Broken taper, junctions that step instead of swelling, and too few branch orders are
   the whole of the asset-store look, and no amount of subdivision touches any of them.

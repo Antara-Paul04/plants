@@ -25,7 +25,8 @@ function radialFor(radius) {
   if (radius > 0.16) return 14;
   if (radius > 0.075) return 10;
   if (radius > 0.03) return 8;
-  return 6;
+  if (radius > 0.012) return 6;
+  return 4; // terminal shoots: below this they are a pixel wide anyway
 }
 
 /**
@@ -41,6 +42,11 @@ function sweepLimb(pts, radii, opts = {}) {
     collarAt = [],
     rootFlare = 0,
     baseBlend = 0,      // flare INTO the parent at t=0
+    // Terminal limbs taper to effectively nothing. Every tip previously ended
+    // in a flat cut at the tip radius, and a tree whose every shoot ends in a
+    // clean disc reads as PRUNED — managed rather than grown. Nothing in a real
+    // canopy ends bluntly except where something broke.
+    terminal = false,
     steps: stepsIn = 0,
   } = opts;
 
@@ -85,6 +91,8 @@ function sweepLimb(pts, radii, opts = {}) {
     // the collar it is growing out of, so the two surfaces merge instead of
     // intersecting.
     if (baseBlend > 0) rad *= 1 + baseBlend * Math.exp(-t * 14);
+
+    if (terminal) rad *= 1 - smoothstep(0.55, 1.0, t) * 0.93;
 
     // Root flare and buttresses. Angular, not radial — a cone reads as a
     // funnel, whereas lobes that run down into the ground read as roots.
@@ -192,6 +200,7 @@ export function buildLimbs(limbs, r, opts = {}) {
       collarAt,
       baseBlend,
       rootFlare: isTrunk ? 1.25 : 0,
+      terminal: (L.attach || []).length === 0 && !isTrunk,
     });
 
     // --- bark colour -----------------------------------------------------
