@@ -43,7 +43,15 @@ export const BANDS = {
   // UNMASKED corpus distribution and then applied to MASKED values, which run about half
   // (median .205 unmasked vs .095 masked). Intended spread was 5/6/7/5; delivered was
   // 12/6/3/2. These are the natural gaps in the MASKED distribution.
-  flowers:      { none: 0.03, few: 0.10, medium: 0.25 },
+  flowers:      { none: 0.03, few: 0.10, medium: 0.25 },   // retained: colour bands, no longer gate amount
+  // DECORATION AMOUNT is gated on visual RICHNESS, not colour (Lead ruling 2026-09-20).
+  // stylingRichness and colourfulness measure r=0.02 across 23 sites — orthogonal axes —
+  // so gating decoration on chroma discarded an entire independent signal. A maximally
+  // sophisticated achromatic site (linear.app, stylingRichness 0.614, the corpus maximum) got
+  // no ornament at all.
+  // PROVISIONAL BANDS — mechanism first. `taste` owes the restrained-vs-boring
+  // definition, which is the acceptance test for "rich enough to earn decoration".
+  decoration:   { none: 0.20, few: 0.40, medium: 0.55 },
   skeleton:     { simple: 0.15, normal: 0.45 },
   // WINTER means deliberate RESTRAINT. Added 2026-09-20 (Lead ruling): winter now also
   // requires low UNMASKED colourfulness, so colour anywhere on the page blocks it even
@@ -110,6 +118,18 @@ function conditionFlower(hexIn, role, petalHex) {
 
 // A dark petal with no secondary accent would have no centre to carry the read, so one is
 // derived from the petal's own hue. Legibility necessity, flagged in `why`.
+// A site with no chromatic accent still earns flowers (richness gates whether, colour
+// gates only what colour). They come out pale — ivory carrying a whisper of the site's
+// own ground hue, so achromatic sites are not all issued the same white.
+function achromaticPetal(groundHex) {
+  const [h, sat] = rgb2hsl(...hex2rgb(groundHex || '#ffffff'));
+  // A greyscale ground reports hue 0, which is RED — borrowing it gave four unrelated
+  // sites the same pink ivory. Only borrow a hue the ground actually has; otherwise use
+  // a neutral warm cream.
+  const hue = sat >= 0.05 ? h : 42;
+  return rgb2hex(...hsl2rgb(hue, sat >= 0.05 ? 0.07 : 0.05, 0.93));
+}
+
 function flowerPair(primaryHex, secondaryHex) {
   const petal = conditionFlower(primaryHex, 'primary');
   if (!petal) return { petal: null, centre: null, derivedCentre: false };
@@ -150,21 +170,36 @@ export function buildDna(fp, domain){
   const rng = rngOf(seed);
   const B = BANDS;
 
+  // --- visual richness. Normally the DOM-measured value. But where the DOM cannot see
+  // the page at all — a canvas-dominant site has a handful of blocks and no landmarks —
+  // stylingRichness reads near-unstyled while the pixels are dense. In that case the
+  // pixels win, because the pixels are what a person sees.
+  // SCOPED DELIBERATELY to the canvas case: n=2 (bruno-simon, threejs.org/examples).
+  // It should in principle also catch full-bleed video and image-only pages; that is
+  // UNTESTED and the gate is not widened to cover it.
+  const domBlind = (fp.canvasArea ?? 0) >= 0.5 && fp.stylingRichness < 0.30;
+  const richness = domBlind
+    ? Math.max(fp.stylingRichness, Math.min(1, (fp.inkCoverage ?? 0) + 0.15))
+    : fp.stylingRichness;
+  if (domBlind) {
+    why.richness = `canvasArea ${fp.canvasArea} with stylingRichness ${fp.stylingRichness}: the DOM cannot represent this page, so richness is taken from rendered pixels (${richness.toFixed(3)}) instead. Scoped to canvas-dominant pages only; n=2.`;
+  }
+
   // --- foliage state. BARE requires BOTH low authored and low styling, so that
   // designed minimalism (better-mfw: authored .20 / styling .16) cannot fall in.
   let state;
-  if (fp.authored <= 0.15 && fp.stylingRichness < B.foliageState.bare) {
+  if (fp.authored <= 0.15 && richness < B.foliageState.bare) {
     state = 'bare';
-    why.foliage = `stylingRichness ${fp.stylingRichness} < ${B.foliageState.bare} AND authored ${fp.authored} <= 0.15 → BARE (unstyled: the page has no authored design to express as foliage)`;
-  } else if (fp.stylingRichness < B.foliageState.sparse) {
+    why.foliage = `visual richness ${richness.toFixed(3)} < ${B.foliageState.bare} AND authored ${fp.authored} <= 0.15 → BARE (unstyled: the page has no authored design to express as foliage)`;
+  } else if (richness < B.foliageState.sparse) {
     state = 'sparse';
-    why.foliage = `stylingRichness ${fp.stylingRichness} in [${B.foliageState.bare}, ${B.foliageState.sparse}) → SPARSE; authored ${fp.authored} > 0.15 keeps it out of BARE (restraint, not absence)`;
-  } else if (fp.stylingRichness < B.foliageState.normal) {
+    why.foliage = `visual richness ${richness.toFixed(3)} in [${B.foliageState.bare}, ${B.foliageState.sparse}) → SPARSE; authored ${fp.authored} > 0.15 keeps it out of BARE (restraint, not absence)`;
+  } else if (richness < B.foliageState.normal) {
     state = 'normal';
-    why.foliage = `stylingRichness ${fp.stylingRichness} in [${B.foliageState.sparse}, ${B.foliageState.normal}) → NORMAL (the corpus midband, 12 of 23 sites)`;
+    why.foliage = `visual richness ${richness.toFixed(3)} in [${B.foliageState.sparse}, ${B.foliageState.normal}) → NORMAL (the corpus midband, 12 of 23 sites)`;
   } else {
     state = 'lush';
-    why.foliage = `stylingRichness ${fp.stylingRichness} >= ${B.foliageState.normal} → LUSH (top of the corpus; 4 of 23 sites)`;
+    why.foliage = `visual richness ${richness.toFixed(3)} >= ${B.foliageState.normal} → LUSH (top of the corpus; 4 of 23 sites)`;
   }
 
   // --- density: ink carries visual mass, styling says how much of it is design
@@ -173,24 +208,28 @@ export function buildDna(fp, domain){
   else if (fp.inkCoverage < B.density.normal) density = 'normal';
   else density = 'dense';
   let damped = false;
-  if (fp.stylingRichness < 0.30 && density === 'dense') { density = 'normal'; damped = true; }
+  if (richness < 0.30 && density === 'dense') { density = 'normal'; damped = true; }
   why.density = damped
-    ? `inkCoverage ${fp.inkCoverage} alone reads DENSE, but stylingRichness ${fp.stylingRichness} < 0.30 — visible mass without much authored design → damped to NORMAL (restrained foliage despite mass)`
+    ? `inkCoverage ${fp.inkCoverage} alone reads DENSE, but visual richness ${richness.toFixed(3)} < 0.30 — visible mass without much authored design → damped to NORMAL (restrained foliage despite mass)`
     : `inkCoverage ${fp.inkCoverage} → ${density.toUpperCase()}` +
       (state === 'lush' && density === 'airy' ? ' (high styling + low ink = developed but AIRY)' : '');
 
-  // --- flowers: design colour only. A flowerless tree is a valid result.
+  // --- DECORATION: richness decides WHETHER, palette decides only WHAT COLOUR.
+  // `richness` is stylingRichness, raised by the disagreement override where the DOM
+  // cannot see the page (see visualRichness above).
   let amount;
-  const c = fp.designColorfulness;
-  if (fp.designChromaticRatio < B.accentFloor) {
-    amount = 'none';
-    why.flowers = `design chromatic coverage ${fp.designChromaticRatio} < ${B.accentFloor} — no meaningful accent colour exists, so no flowers are forced (flowerless is a valid result)`;
-  } else if (c < B.flowers.none)   { amount='none';     why.flowers = `design colourfulness ${c} < ${B.flowers.none} → NONE`; }
-  else if (c < B.flowers.few)      { amount='few';      why.flowers = `design colourfulness ${c} in [${B.flowers.none}, ${B.flowers.few}) → FEW`; }
-  else if (c < B.flowers.medium)   { amount='medium';   why.flowers = `design colourfulness ${c} in [${B.flowers.few}, ${B.flowers.medium}) → MEDIUM`; }
-  else                             { amount='abundant'; why.flowers = `design colourfulness ${c} >= ${B.flowers.medium} → ABUNDANT`; }
-  if (amount !== 'none' && fp.paletteSource === 'media-masked') {
-    why.flowers += `; colour taken from the media-masked palette (photography excluded from the accent)`;
+  const R = richness;
+  if (R < B.decoration.none)        { amount='none';     why.flowers = `visual richness ${R.toFixed(3)} < ${B.decoration.none} → NONE (too little design to carry ornament)`; }
+  else if (R < B.decoration.few)    { amount='few';      why.flowers = `visual richness ${R.toFixed(3)} in [${B.decoration.none}, ${B.decoration.few}) → FEW`; }
+  else if (R < B.decoration.medium) { amount='medium';   why.flowers = `visual richness ${R.toFixed(3)} in [${B.decoration.few}, ${B.decoration.medium}) → MEDIUM`; }
+  else                              { amount='abundant'; why.flowers = `visual richness ${R.toFixed(3)} >= ${B.decoration.medium} → ABUNDANT`; }
+  // colour, and ONLY colour, comes from the palette. No chroma is not a reason for no
+  // flowers — it is a reason for pale ones.
+  const hasChroma = fp.designChromaticRatio >= B.accentFloor;
+  if (!hasChroma && amount !== 'none') {
+    why.flowers += `; the site has no meaningful chromatic accent (chromatic coverage ${fp.designChromaticRatio} < ${B.accentFloor}), so the flowers are pale rather than absent`;
+  } else if (amount !== 'none' && fp.paletteSource === 'media-masked') {
+    why.flowers += `; colour from the media-masked palette (photography excluded from the accent)`;
   }
 
   // --- skeleton: gentle. Text is deliberately the lesser term so text-heavy sites
@@ -231,7 +270,10 @@ export function buildDna(fp, domain){
   const fruitOn = eligible && roll < BANDS.fruitRate;
   if (fruitOn) why.fruit = `seeded trait: seed ${seed} → roll ${roll.toFixed(3)} < ${BANDS.fruitRate} and the tree is eligible (not bare, not winter, foliage ${state}). Represents nothing about the website, deliberately.`;
 
-  const flowers = flowerPair(fp.palette.primary, fp.palette.secondary);
+  // colour source: the site's accent when it has one, ivory when it does not.
+  const petalSource   = hasChroma ? fp.palette.primary   : achromaticPetal(fp.palette.ground);
+  const centreSource  = hasChroma ? fp.palette.secondary : achromaticPetal(fp.palette.ground);
+  const flowers = flowerPair(petalSource, centreSource);
 
   const terrain = state === 'bare' ? 'sparse'
     : botanicalState === 'winter' ? 'winter'

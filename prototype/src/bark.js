@@ -39,6 +39,7 @@ const GLSL_FRAG_LIB = /* glsl */ `
   uniform vec3 uBarkFurrow;
   uniform vec3 uBarkInner;
   uniform vec3 uBarkYoung;
+  uniform vec3 uBarkShoot;
   uniform vec3 uBarkLichen;
   uniform float uBarkDepth;
   uniform float uBarkLichenAmt;
@@ -84,6 +85,17 @@ const GLSL_FRAG_LIB = /* glsl */ `
     return vec3(sqrt(f1), sqrt(f2), id);
   }
 
+  // Node positions along a shoot. MUST match nodePulse() in limbmesh.js, which
+  // raises the swelling this darkens. Golden-ratio jitter, not a sin-hash: it
+  // has to agree between float64 on the CPU and float32 here.
+  float bkNode(float z) {
+    float u = z / 0.21;
+    float cell = floor(u);
+    float f0 = 0.3 + 0.4 * fract(cell * 0.618034);
+    float d = (u - cell - f0) / 0.075;
+    return exp(-d * d);
+  }
+
   // Plates and fissures.
   //
   // Furrowed bark is a CELLULAR structure: long plates separated by narrow
@@ -95,7 +107,7 @@ const GLSL_FRAG_LIB = /* glsl */ `
   // fp is the pixel footprint in bark space: each layer fades to its own mean
   // as it approaches the pixel, so the bark neither sparkles nor brightens at
   // distance. plateRnd identifies the plate, for plate-to-plate colour.
-  float bkHeight(vec3 p, float fp, out float plateRnd) {
+  float bkHeight(vec3 p, float fp, float yg, out float plateRnd) {
     // Warp at three scales. The finest one matters most: raw Voronoi borders
     // are straight line segments, and straight fissures read as vector
     // outlines drawn onto planks. Bark tears; its edges are ragged.
@@ -140,7 +152,16 @@ const GLSL_FRAG_LIB = /* glsl */ `
 
     float top = 0.74 + (c1.z - 0.5) * 0.28 + lump * 0.3 + grain * 0.5;
     top *= mix(1.0, mix(0.66, 1.0, brk), kb);
-    return clamp(mix(0.72, ramp * top, k1), 0.0, 1.0);
+    float hOld = clamp(mix(0.72, ramp * top, k1), 0.0, 1.0);
+    if (yg < 0.01) return hOld;
+
+    // YOUNG WOOD is smooth but not featureless: fine striation along the shoot,
+    // lenticels (small pale pores, elongated ACROSS it) and a ring at each node.
+    float stri = (bkNoise(vec3(p.xy * 150.0, p.z * 5.0)) - 0.5) * (1.0 - smoothstep(0.25, 0.7, fp * 150.0));
+    vec3 lc = bkCells(vec3(p.xy * 55.0, p.z * 120.0) + 3.7);
+    float lent = (1.0 - smoothstep(0.1, 0.24, lc.x)) * step(0.6, lc.z) * (1.0 - smoothstep(0.25, 0.7, fp * 110.0));
+    float hY = clamp(0.6 + stri * 0.3 + lent * 0.32 + bkNode(p.z) * 0.22, 0.0, 1.0);
+    return mix(hOld, hY, yg);
   }
 
   // Bump from a height field via surface derivatives (Mikkelsen).
@@ -174,7 +195,8 @@ export function makeBarkMaterial(opts = {}) {
     uBarkPlate: { value: C(palette.plate, 0x6e645a) },
     uBarkFurrow: { value: C(palette.furrow, 0x33271f) },
     uBarkInner: { value: C(palette.inner, 0x553c2c) },
-    uBarkYoung: { value: C(palette.young, 0x75665a) },
+    uBarkYoung: { value: C(palette.young, 0x5b4a3f) },
+    uBarkShoot: { value: C(palette.shoot, 0x43302a) },
     uBarkLichen: { value: C(palette.lichen, 0xa3ab92) },
     uBarkDepth: { value: depth },
     uBarkLichenAmt: { value: lichen },
@@ -208,12 +230,14 @@ export function makeBarkMaterial(opts = {}) {
         ${GLSL_FRAG_LIB}`)
       .replace('#include <color_fragment>', /* glsl */ `#include <color_fragment>
         // Young wood: thin limbs carry smooth, tight, paler bark.
-        float bkYoung = 1.0 - smoothstep(0.016, 0.07, vBarkR);
+        // Plate bark starts early: a branch the thickness of a wrist already has
+        // fissures. Only genuinely thin wood is smooth.
+        float bkYoung = 1.0 - smoothstep(0.008, 0.045, vBarkR);
         vec3 bkDx = dFdx(vBark);
         vec3 bkDy = dFdy(vBark);
         float bkFp = max(length(bkDx), length(bkDy));
         float bkPlate;
-        float bkH = bkHeight(vBark, bkFp, bkPlate);
+        float bkH = bkHeight(vBark, bkFp, bkYoung, bkPlate);
 
         // Fissure floor -> warm inner bark on the fissure walls -> weathered
         // grey plate. The middle term matters: inner bark is redder than either
@@ -240,7 +264,19 @@ export function makeBarkMaterial(opts = {}) {
                        * (1.0 - bkYoung) * smoothstep(0.25, 0.7, bkH) * uBarkLichenAmt;
         bkCol = mix(bkCol, uBarkLichen * mix(0.85, 1.1, bkPlate), bkLichen * 0.7);
 
-        vec3 bkYoungCol = uBarkYoung * mix(0.88, 1.1, bkPlate) * mix(0.9, 1.08, bkMacro);
+        // Young wood darkens and reddens toward the newest growth. Against the
+        // sky a twig reads DARK; pale tan shoots are what read as tentacles.
+        float bkNewest = 1.0 - smoothstep(0.004, 0.016, vBarkR);
+        vec3 bkYoungCol = mix(uBarkYoung, uBarkShoot, bkNewest);
+        float bkStri = bkNoise(vec3(vBark.xy * 150.0, vBark.z * 5.0));
+        bkYoungCol *= mix(0.84, 1.14, bkStri) * mix(0.9, 1.1, bkMacro);
+        // Lenticels: pale pores, elongated across the shoot.
+        vec3 bkLc = bkCells(vec3(vBark.xy * 55.0, vBark.z * 120.0) + 3.7);
+        float bkLent = (1.0 - smoothstep(0.1, 0.24, bkLc.x)) * step(0.6, bkLc.z)
+                     * (1.0 - smoothstep(0.25, 0.7, bkFp * 110.0));
+        bkYoungCol = mix(bkYoungCol, uBarkPlate * 1.25, bkLent * 0.55);
+        // Node rings: darker, where the mesh swells.
+        bkYoungCol *= 1.0 - 0.32 * bkNode(vBark.z);
         bkCol = mix(bkCol, bkYoungCol, bkYoung);
 
         // Cavity: furrows are dark because light cannot reach into them.
@@ -252,22 +288,23 @@ export function makeBarkMaterial(opts = {}) {
         diffuseColor.rgb *= bkCol;`)
       .replace('#include <roughnessmap_fragment>', /* glsl */ `#include <roughnessmap_fragment>
         roughnessFactor = mix(1.0, 0.94, bkH);
-        roughnessFactor = mix(roughnessFactor, 0.66, bkYoung * 0.8);
+        roughnessFactor = mix(roughnessFactor, 0.58, bkYoung * 0.85);   // young bark has a slight sheen
         roughnessFactor = mix(roughnessFactor, 0.93, bkLichen);`)
       .replace('#include <lights_physical_fragment>', /* glsl */ `#include <lights_physical_fragment>
         // Bark is porous and self-shadowing at the micro scale; left at the
         // default dielectric F0 it picks up a satin sheen that reads as varnish.
-        material.specularColor *= 0.3;
-        material.specularF90 *= 0.3;`)
+        float bkSpec = mix(0.3, 0.75, bkYoung);   // old bark is porous; young bark is not
+        material.specularColor *= bkSpec;
+        material.specularF90 *= bkSpec;`)
       .replace('#include <normal_fragment_maps>', /* glsl */ `#include <normal_fragment_maps>
         {
           float depth = clamp(vBarkR * 0.2, 0.001, 0.04) * uBarkDepth * (1.0 - 0.82 * bkYoung);
           float bkTmp;
-          float hx = bkHeight(vBark + bkDx, bkFp, bkTmp);
-          float hy = bkHeight(vBark + bkDy, bkFp, bkTmp);
+          float hx = bkHeight(vBark + bkDx, bkFp, bkYoung, bkTmp);
+          float hy = bkHeight(vBark + bkDy, bkFp, bkYoung, bkTmp);
           normal = bkPerturb(-vViewPosition, normal, vec2(hx - bkH, hy - bkH) * depth, faceDirection);
         }`);
   };
-  mat.customProgramCacheKey = () => 'bark-v7';
+  mat.customProgramCacheKey = () => 'bark-v8';
   return mat;
 }

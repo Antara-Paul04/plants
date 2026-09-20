@@ -1,0 +1,205 @@
+{
+ "control-raw": {
+  "accentPixels": 32,
+  "regions": 1,
+  "topShare": 1,
+  "meanRegionPx": 32,
+  "largestRegionFrac": 0.0003,
+  "bigRegions": 0,
+  "concentration": 0.989
+ },
+ "cern-first-web": {
+  "accentPixels": 1721,
+  "regions": 26,
+  "topShare": 0.064,
+  "meanRegionPx": 65.9,
+  "largestRegionFrac": 0.001,
+  "bigRegions": 0,
+  "concentration": 0.193
+ },
+ "better-mfw": {
+  "accentPixels": 537,
+  "regions": 6,
+  "topShare": 0.35,
+  "meanRegionPx": 88.2,
+  "largestRegionFrac": 0.0008,
+  "bigRegions": 0,
+  "concentration": 0.575
+ },
+ "yale-art": {
+  "accentPixels": 4280,
+  "regions": 74,
+  "topShare": 0.464,
+  "meanRegionPx": 57.5,
+  "largestRegionFrac": 0.0085,
+  "bigRegions": 1,
+  "concentration": 0.255
+ },
+ "threejs-example": {
+  "accentPixels": 18509,
+  "regions": 93,
+  "topShare": 0.326,
+  "meanRegionPx": 195.6,
+  "largestRegionFrac": 0.0537,
+  "bigRegions": 8,
+  "concentration": 0.029
+ },
+ "unsplash": {
+  "accentPixels": 124,
+  "regions": 3,
+  "topShare": 0.685,
+  "meanRegionPx": 41.3,
+  "largestRegionFrac": 0.0003,
+  "bigRegions": 0,
+  "concentration": 0.793
+ },
+ "craigslist": {
+  "accentPixels": 10957,
+  "regions": 390,
+  "topShare": 0.007,
+  "meanRegionPx": 27.4,
+  "largestRegionFrac": 0.0005,
+  "bigRegions": 0,
+  "concentration": 0.004
+ },
+ "bruno-simon": {
+  "accentPixels": 109732,
+  "regions": 1,
+  "topShare": 1,
+  "meanRegionPx": 109728,
+  "largestRegionFrac": 0.9934,
+  "bigRegions": 1,
+  "concentration": 0.989
+ },
+ "mfw": {
+  "accentPixels": 0,
+  "regions": 0,
+  "topShare": 0,
+  "meanRegionPx": 0,
+  "concentration": 0,
+  "largestRegionFrac": 0
+ },
+ "threejs": {
+  "accentPixels": 367,
+  "regions": 14,
+  "topShare": 0.144,
+  "meanRegionPx": 25.4,
+  "largestRegionFrac": 0.0005,
+  "bigRegions": 0,
+  "concentration": 0.372
+ },
+ "spacejam-1996": {
+  "accentPixels": 0,
+  "regions": 0,
+  "topShare": 0,
+  "meanRegionPx": 0,
+  "concentration": 0,
+  "largestRegionFrac": 0
+ },
+ "sive-rs": {
+  "accentPixels": 3998,
+  "regions": 129,
+  "topShare": 0.104,
+  "meanRegionPx": 28.7,
+  "largestRegionFrac": 0.0012,
+  "bigRegions": 0,
+  "concentration": 0.057
+ },
+ "stripe": {
+  "accentPixels": 4967,
+  "regions": 33,
+  "topShare": 0.752,
+  "meanRegionPx": 137.5,
+  "largestRegionFrac": 0.0103,
+  "bigRegions": 1,
+  "concentration": 0.492
+ },
+ "gov-uk": {
+  "accentPixels": 63258,
+  "regions": 123,
+  "topShare": 0.874,
+  "meanRegionPx": 514.1,
+  "largestRegionFrac": 0.1671,
+  "bigRegions": 1,
+  "concentration": 0.481
+ },
+ "apple": {
+  "accentPixels": 30,
+  "regions": 1,
+  "topShare": 1,
+  "meanRegionPx": 26,
+  "largestRegionFrac": 0.0001,
+  "bigRegions": 0,
+  "concentration": 0.989
+ },
+ "awwwards": {
+  "accentPixels": 110,
+  "regions": 1,
+  "topShare": 1,
+  "meanRegionPx": 110,
+  "largestRegionFrac": 0.0003,
+  "bigRegions": 0,
+  "concentration": 0.989
+ },
+ "nasa": {
+  "accentPixels": 86,
+  "regions": 3,
+  "topShare": 0.341,
+  "meanRegionPx": 27.3,
+  "largestRegionFrac": 0.0001,
+  "bigRegions": 0,
+  "concentration": 0.604
+ },
+ "tailwind": {
+  "accentPixels": 959,
+  "regions": 53,
+  "topShare": 0.076,
+  "meanRegionPx": 15.1,
+  "largestRegionFrac": 0.0002,
+  "bigRegions": 0,
+  "concentration": 0.042
+ },
+ "figma": {
+  "accentPixels": 15941,
+  "regions": 6,
+  "topShare": 0.695,
+  "meanRegionPx": 2651.7,
+  "largestRegionFrac": 0.0334,
+  "bigRegions": 2,
+  "concentration": 0.765
+ },
+ "linear": {
+  "accentPixels": 0,
+  "regions": 0,
+  "topShare": 0,
+  "meanRegionPx": 0,
+  "concentration": 0,
+  "largestRegionFrac": 0
+ },
+ "wikipedia": {
+  "accentPixels": 7754,
+  "regions": 203,
+  "topShare": 0.052,
+  "meanRegionPx": 37.6,
+  "largestRegionFrac": 0.0012,
+  "bigRegions": 0,
+  "concentration": 0.028
+ },
+ "vercel": {
+  "accentPixels": 0,
+  "regions": 0,
+  "topShare": 0,
+  "meanRegionPx": 0,
+  "concentration": 0,
+  "largestRegionFrac": 0
+ },
+ "cosmos-so": {
+  "accentPixels": 1917,
+  "regions": 13,
+  "topShare": 0.204,
+  "meanRegionPx": 144.9,
+  "largestRegionFrac": 0.0012,
+  "bigRegions": 0,
+  "concentration": 0.416
+ }
+}

@@ -106,6 +106,58 @@ should live here.
 
 ---
 
+## Human-supplied direction — 2026-09-20
+
+**This supersedes the bark direction the surface work was heading toward.**
+
+### 1 · A stylised 3D tree (image supplied in conversation, not yet saved)
+
+The named target for surface language. Referenced for:
+
+- **warm light-tan trunk** carrying only broad, soft, low-contrast grooves — no deep
+  fissuring
+- **smooth flowing root buttress** into the ground
+- **large, individually readable leaves** — clear teardrop shapes in two or three bright
+  greens, not a uniform green mass
+- **matte throughout, zero specular sheen** — clay or marzipan, never polished wood
+- soft even light with gentle occlusion; no harsh shadow
+
+Explicitly rejected by the same direction: **deep fissured veteran-oak bark.**
+
+### 2 · Pinterest board "foliage props" — 24 pins, `pinterest.com/justo409/foliage-props`
+
+Supplied as component inspiration. A login wall blocked all but ~6 pins; those seen
+were lupine and foxglove flower spires (purple / pink / white / cream), ivy and vine
+leaf sheets with small pink flowers, a wildflower meadow sheet, pink blossom clusters,
+and a faceted mossy rock cluster on a grass base. Board keywords: *cartoon tree assets,
+tree game asset, toon tree*.
+
+The consistent quality across them, and the reason it is here:
+
+- **componentised** — flowers, leaf clusters, vines and rocks authored as identifiable
+  units, not scattered primitives
+- **flowers have species character** — lupine spires, blossom clusters — rather than
+  generic five-petal dots
+- **leaf clusters are the unit**, not the individual leaf card
+- hand-painted, soft-shaded, clean silhouettes, saturated but not garish
+
+### The reconciliation, which matters
+
+This does **not** reverse the structural work, and it does not contradict the earlier
+rejection of "asset-store look". The earlier direction rejected *crude* simplification;
+these references are *refined* simplification. Correct taper, real junction anatomy and
+deep ramification are all visible in reference 1 and all still required.
+
+> **Form stays botanical. Surface simplifies.** What simplifies is material and detail,
+> never proportion or topology.
+
+**Neither reference is saved locally.** Reference 1 was pasted into conversation;
+reference 2 is behind a login. Both should be captured into this folder — as should the
+human's original cherry-blossom render, still uncollected. That is the human's call to
+make, not an agent's.
+
+---
+
 ## GATE 1 — the naked structure
 
 **The tree is rendered with zero foliage and must stand alone as a sculptural object.**

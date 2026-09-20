@@ -191,6 +191,8 @@ const SKELETON = {
   },
 };
 
+const BARK_RELIGHT = 0.3;
+
 /** Parse a '#rrggbb' from the contract, tolerating null. */
 function hex(v, fallback = null) {
   if (typeof v !== 'string' || !/^#[0-9a-f]{6}$/i.test(v)) return fallback;
@@ -310,7 +312,21 @@ export function resolveDNA(input) {
     labels: { fState, fDens, bState, complexity, flowerAmt, terrain: terrainKey },
 
     background: { top: bgTop, bottom: bgBot },
-    bark: botany.bark,
+    // RELIGHT COMPENSATION. The bark palette above was tuned by eye while the
+    // tree was being rendered inside-out (see the winding note in tree.js), so
+    // it was tuned against surfaces whose normals faced AWAY from the key.
+    // Correctly lit, the same colours come out 4.9x brighter — measured on the
+    // bare tree: trunk linear luminance 0.039 -> 0.190 — and the trunk turns
+    // pale terracotta. The dark trunk is not an accident to discard: the human's
+    // reference was cited for its dark-trunk-against-bright-canopy contrast. So
+    // the geometry is fixed AND the reviewed tone is kept, by scaling albedo
+    // here rather than re-picking every colour. Not the full 4.9x: the lit side
+    // is now allowed to be lighter than the old flat tone, because there is a
+    // real lit side. One knob, for Taste to move.
+    bark: {
+      light: botany.bark.light.clone().multiplyScalar(BARK_RELIGHT),
+      dark: botany.bark.dark.clone().multiplyScalar(0.55),
+    },
 
     skeleton: {
       primaries: skel.primaries,

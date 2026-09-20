@@ -35,7 +35,7 @@ function radialFor(radius) {
   if (radius > 0.075) return 36;
   if (radius > 0.03) return 22;
   if (radius > 0.012) return 12;
-  return 8;
+  return 10;
 }
 
 /** Ring spacing along the limb, likewise. */
@@ -63,6 +63,25 @@ function relief(x, y, z) {
   let h2 = 1 - Math.abs(n);
   h2 = h2 * h2;
   return (h * 0.68 + h2 * 0.32) - 0.42; // roughly zero-mean, so limbs keep their radius
+}
+
+/**
+ * Where the NODES are along a shoot — the slight swellings where buds and
+ * leaves attach. A smooth tapering tube is a tentacle; a shoot has joints.
+ *
+ * bark.js evaluates this same function on the same coordinate (arc length plus
+ * the limb's offset), so the ring the shader darkens sits exactly on the
+ * swelling the mesh raises. The jitter is a golden-ratio sequence rather than a
+ * sin-hash on purpose: it has to give the same answer in float64 here and in
+ * float32 on the GPU, and sin-hashes do not.
+ */
+export const NODE_SPACING = 0.21;
+export function nodePulse(z) {
+  const u = z / NODE_SPACING;
+  const cell = Math.floor(u);
+  const f0 = 0.3 + 0.4 * ((cell * 0.618034) % 1 + 1) % 1;
+  const d = (u - cell - f0) / 0.075;
+  return Math.exp(-d * d);
 }
 
 /**
@@ -122,9 +141,22 @@ function sweepLimb(pts, radii, opts = {}) {
     rad += Math.min(bulge, rad * 0.24);
 
     if (baseBlend > 0) rad *= 1 + baseBlend * Math.exp(-t * 14);
-    // Only the last stretch tapers. Tapering from the midpoint turned every
-    // shoot into a cone, and a tree covered in cones is a thorn bush.
-    if (terminal) rad *= 1 - smoothstep(0.8, 1.0, t) * 0.9;
+    // A shoot holds its diameter and ends in a BUD. Tapering over a fraction
+    // of the limb's length made long shoots into needles and, earlier, every
+    // shoot into a cone — a tree covered in cones is a thorn bush. So the end
+    // is shaped in WORLD units from the tip: a short narrowing, a small ovoid
+    // bud, then closed to a point.
+    if (terminal) {
+      const toTip = length - arc;
+      rad *= 0.5 + 0.5 * smoothstep(0.0, 0.16, toTip);
+      const bd = (toTip - 0.034) / 0.026;
+      rad *= 1 + 1.15 * Math.exp(-bd * bd);
+      rad *= smoothstep(0.0, 0.014, toTip);
+    }
+
+    // Nodes: young wood swells slightly where buds and leaves attach.
+    const young = 1 - smoothstep(0.01, 0.034, rad);
+    if (young > 0) rad *= 1 + 0.2 * young * nodePulse(arc + zOff);
 
     // Root flare and buttresses. Angular, not radial — a cone reads as a
     // funnel, whereas lobes that run down into the ground read as roots.

@@ -70,7 +70,16 @@ function limbGeometry(pts, r0, r1, opts = {}) {
     for (let j = 0; j < radial; j++) {
       const a = i * (radial + 1) + j;
       const b = a + radial + 1;
-      idx.push(a, b, a + 1, b, b + 1, a + 1);
+      // WINDING. Rings advance N -> B and three's Frenet frames have
+      // B = T x N, so the order this used to have — (a, b, a+1) — has its normal
+      // pointing INTO the limb. The whole tree rendered inside-out: what was on
+      // screen was the inner face of each tube's far wall, with every normal
+      // reversed. A convex tube under flat colour looks the same either way,
+      // which is how it survived two visual passes; it was found in Gate 1,
+      // where a real material showed geometry INSIDE the limbs straight through
+      // them (1000 of 1000 trunk triangles measured inward). Outward is
+      // (a, a+1, b). See docs/TREE-SYSTEM.md.
+      idx.push(a, a + 1, b, b, a + 1, b + 1);
     }
   }
   // Cap BOTH ends. Closing the tip stops twigs reading as open pipes — but
@@ -86,7 +95,7 @@ function limbGeometry(pts, r0, r1, opts = {}) {
   nor.push(tv.x, tv.y, tv.z);
   for (let j = 0; j < radial; j++) {
     const a = steps * (radial + 1) + j;
-    idx.push(a, tipIdx, a + 1);
+    idx.push(a, a + 1, tipIdx);          // faces +T, out of the tip
   }
 
   const start = curve.getPointAt(0);
@@ -95,7 +104,7 @@ function limbGeometry(pts, r0, r1, opts = {}) {
   const bv = curve.getTangentAt(0);
   nor.push(-bv.x, -bv.y, -bv.z);
   for (let j = 0; j < radial; j++) {
-    idx.push(j + 1, baseIdx, j); // reversed winding: this cap faces backward
+    idx.push(j, baseIdx, j + 1);         // faces -T, out of the base
   }
 
   const g = new THREE.BufferGeometry();

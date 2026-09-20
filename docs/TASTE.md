@@ -95,6 +95,17 @@ place by being observed, not assumed.
   become the loudest thing in the frame.** Quieting the turf under a bare tree works,
   and it immediately promotes whatever was left at full summer value — stones, sky —
   to the brightest object in a picture whose whole point was to be quiet.
+- **The surface language is smooth and clay-like, not rugged.** Human direction,
+  2026-09-20, with a supplied reference: a warm light-tan trunk carrying only broad
+  soft grooves, a smooth flowing root buttress, large individually-readable leaves in
+  two or three bright greens, matte materials with no specular sheen, soft even light.
+  Deep fissured veteran-oak bark is explicitly **not** wanted.
+  **Form stays botanical; surface simplifies.** This does not reverse the structural
+  work — correct taper, real junction anatomy and deep ramification are all visible in
+  the reference and all still required. What simplifies is *material and detail*, never
+  *proportion or topology*. The earlier "high fidelity" direction was about quality of
+  craft, not quantity of detail; crude simplification is still rejected, refined
+  simplification is the target.
 - **Restraint is subtraction from abundance; boring is the absence of decision.** The
   test is to remove one more thing: if the image gets worse it was restrained, and if
   nothing changes it was boring. A restrained tree is at a minimum where every element
