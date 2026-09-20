@@ -61,21 +61,21 @@ export async function measureAccentRegions(arg) {
   const meanRegionPx = real.length ? realTotal / real.length : 0;
   const frame = W * H;
 
-  // CONCENTRATION: high when accent colour lives in FEW LARGE areas, low when it is
-  // scattered across MANY SMALL ones. Deliberately combines both, because either alone
-  // is foolable — one big region plus noise, or many medium regions.
-  const bigRegions = real.filter(s => s / frame > 0.004).length;
-  const concentration = Math.max(0, Math.min(1,
-      0.55 * topShare
-    + 0.45 * (1 - Math.min(1, real.length / 40))
-    - (bigRegions > 6 ? 0.15 : 0)));
+  // CONCENTRATION = share of accent area held by the single largest region, GATED on
+  // that region being large in absolute terms. Region COUNT is deliberately not used:
+  // it fought the direct measure and made gov.uk (one hero band at 87% of accent area,
+  // plus scattered links) read as distributed. The absolute gate removes the opposite
+  // error — awwwards has exactly one accent region, but it is 0.03% of the frame, which
+  // is not concentration, it is just a speck.
+  const largestRegionFrac = real.length ? real[0] / frame : 0;
+  const MIN_FRAC = 0.01;
+  const concentration = largestRegionFrac >= MIN_FRAC ? topShare : 0;
 
   return {
     accentPixels, regions: real.length,
     topShare: +topShare.toFixed(3),
     meanRegionPx: +meanRegionPx.toFixed(1),
-    largestRegionFrac: +(real.length ? real[0] / frame : 0).toFixed(4),
-    bigRegions,
+    largestRegionFrac: +largestRegionFrac.toFixed(4),
     concentration: +concentration.toFixed(3)
   };
 }

@@ -303,6 +303,49 @@ geometry problems flat colour had been hiding. Recorded because each one will bi
 Resolution is now spent where the radius is: 56 radial segments on the trunk down to 8
 on shoots; 167k triangles for the bare tree, 76k for sparse (was 37k / 12k).
 
+### Shoots: the thorns were the RADIUS LAW, not the twigs — EXPERIMENT
+
+**Status: EXPERIMENT.** Renders, with before/after:
+`references/experiments/gate1-twigs-2026-09-20/`.
+
+Twigs had read as thorns, then tentacles, through every Gate 1 pass, and good bark made
+them the worst thing in the frame. Tip shaping and a young-wood material changed nothing
+visible, and the unchanged triangle count was the clue: no limb was ever thin enough to
+reach the thin-shoot code paths. Measured on an UNBRANCHED shoot:
+
+> base-to-tip radii 0.0257, 0.0240, 0.0223, 0.0204, 0.0184, 0.0161, 0.0135, 0.0101, 0.0040
+
+A 6.4:1 cone, jumping 0.004 → 0.0101 in its first segment. The cause was the constant
+`grow` term in `assignRadii` — added in the first radius pass so unbranched limbs would
+thicken toward their base, noted at the time as "enormous on a twig" when the proportional
+`taper` was introduced, and never removed. **No material or tip treatment can fix a
+silhouette that comes from the radius law.**
+
+**Fix:** secondary thickening fades in with thickness (`shootR`) instead of applying from
+the tip — a current-year shoot holds its diameter; wood thickens as it ages. Shoots now
+run 0.0044 → 0.0040, parallel-sided. Because that term had been doing most of the
+thickening, the trunk collapsed (first fork 0.296 → 0.118) and `grow` was **re-matched by
+measurement** to the reviewed trees rather than by eye: 2.8e-4 for bare (fork 0.2944 vs
+0.2955), 1.48e-4 for sparse (0.166 vs 0.1656 — fewer segments to accumulate over, so it
+needs its own value). Proportions are as judged; only the shoots changed.
+
+Shoots also gained what the uncoupled brief asked for: a world-unit tip (short narrowing,
+ovoid bud, closed point) rather than a fraction-of-length taper that made long shoots into
+needles; node swellings, which `bark.js` darkens at the same positions via a shared
+`nodePulse` (golden-ratio jitter, because a sin-hash disagrees between float64 on the CPU
+and float32 on the GPU); and a young-wood material that darkens and reddens toward the
+newest growth, with striation and lenticels. Against sky a twig reads DARK — pale tan
+shoots were half of the tentacle reading.
+
+**OPEN — for the twig/proportion joint tuning Taste holds:**
+
+- **A missing middle order.** Thick limbs now carry hair-thin shoots with little between.
+  That is honest — a branchlet bearing five twigs *is* thin — and real trees close the gap
+  with far more twigs per branch. It is a density question, so it is coupled.
+- Shoots at radius 0.004 may drop out at thumbnail size. `tip` sets the whole thickness
+  ladder, so that too belongs to the joint tuning.
+- The trunk-base clamp (0.34) still flattens the bottom of the bare trunk.
+
 ---
 
 ## Invariant characteristics

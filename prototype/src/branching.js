@@ -228,6 +228,8 @@ export function growSkeleton(r, cloud, opts = {}, existing = null) {
   return nodes;
 }
 
+const smoothstepJS = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+
 /**
  * Thickness by da Vinci's rule, applied leaf-to-root.
  *
@@ -241,7 +243,7 @@ export function growSkeleton(r, cloud, opts = {}, existing = null) {
  * tree whose limbs are perfect cylinders between forks looks like plumbing.
  */
 export function assignRadii(nodes, opts = {}) {
-  const { tip = 0.006, alpha = 2.2, grow = 3.4e-5, taper = 0.013, max = 0.34 } = opts;
+  const { tip = 0.006, alpha = 2.2, grow = 2.8e-4, taper = 0.013, max = 0.34, shootR = 0.0055 } = opts;
 
   // Children are always added after their parent, so reverse order is
   // leaf-to-root without needing a sort.
@@ -261,7 +263,18 @@ export function assignRadii(nodes, opts = {}) {
     // modelled as a small percentage per segment instead. That thickens
     // everything toward its base at the same relative rate, which is what
     // actually happens as a limb lays down another year of wood.
-    n.r = Math.min(max, Math.pow(s + grow, 1 / alpha) * (1 + taper));
+    //
+    // `grow` is secondary thickening, and it must NOT apply to a current-year
+    // shoot. Applied everywhere, a constant addition dominates thin wood:
+    // measured on an unbranched shoot, radius ran 0.0257 -> 0.004 over nine
+    // segments, jumping 0.004 -> 0.0101 in the first one. Every shoot was a
+    // 6:1 cone, which is precisely the thorn the twigs kept reading as — and no
+    // amount of tip shaping or material could fix it, because it was the radius
+    // law. A shoot holds its diameter; wood thickens as it ages. So `grow`
+    // fades in with thickness instead of applying from the tip.
+    const r0 = Math.pow(s, 1 / alpha);
+    const g = grow * smoothstepJS(shootR, shootR * 3.2, r0);
+    n.r = Math.min(max, Math.pow(s + g, 1 / alpha) * (1 + taper));
   }
   return nodes;
 }

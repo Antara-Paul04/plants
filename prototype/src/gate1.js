@@ -49,6 +49,7 @@ const PRESETS = {
   sparse: {
     rx: 2.75, ry: 1.55, cy: 3.45, trunkMin: 7,
     c1: 155, k1: 6.0, c2: 430, k2: 3.0, i2: 9, tip: 0.005, minStub: 0.3,
+    grow: 1.48e-4,   // matched to the reviewed sparse trunk (fork 0.1656); fewer segments to accumulate over
   },
 };
 const preset = PRESETS[q.get('preset')] || PRESETS.bare;
@@ -68,8 +69,11 @@ const P = {
   hollow: num('hollow', 0.42),
   wobble: num('wobble', 0.16),
   tip: num('tip', 0.004),
-  grow: num('grow', 3.4e-5),
+  // Re-matched by measurement after secondary thickening was gated off young
+  // shoots: 2.8e-4 restores the reviewed tree's first-fork radius (0.2955).
+  grow: num('grow', 2.8e-4),
   taper: num('taper', 0.013),
+  shootR: num('shootR', 0.0055),
   smooth: num('smooth', 3),
   minStub: num('minStub', 0.3),
   maxChildren: num('kids', 2),
@@ -247,7 +251,7 @@ const r = rng(P.seed);
 const skel = buildSkeleton(r, {
   cloud: { count: P.points, cy: P.cy, rx: P.rx, ry: P.ry, rz: P.rx, hollow: P.hollow },
   grow: { D: P.D, influence: P.influence, kill: P.kill, wobble: P.wobble, maxChildren: P.maxChildren, trunkMin: P.trunkMin },
-  radii: { tip: P.tip, alpha: P.alpha, grow: P.grow, taper: P.taper },
+  radii: { tip: P.tip, alpha: P.alpha, grow: P.grow, taper: P.taper, shootR: P.shootR },
   smooth: P.smooth,
   minStub: P.minStub,
   coarseCount: P.coarseCount, coarseKill: P.coarseKill, coarseInfluence: P.coarseInfluence,

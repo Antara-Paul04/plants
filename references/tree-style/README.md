@@ -126,11 +126,25 @@ Explicitly rejected by the same direction: **deep fissured veteran-oak bark.**
 
 ### 2 · Pinterest board "foliage props" — 24 pins, `pinterest.com/justo409/foliage-props`
 
-Supplied as component inspiration. A login wall blocked all but ~6 pins; those seen
-were lupine and foxglove flower spires (purple / pink / white / cream), ivy and vine
-leaf sheets with small pink flowers, a wildflower meadow sheet, pink blossom clusters,
-and a faceted mossy rock cluster on a grass base. Board keywords: *cartoon tree assets,
-tree game asset, toon tree*.
+Supplied as component inspiration; viewed in full. Board keywords: *cartoon tree
+assets, tree game asset, toon tree*. What is on it:
+
+**Trees** — *New Super Lucky's Tale* (ArtStation): chunky tan trunks, rounded blobby
+canopies. *Hamgfx24*: a thick tapered trunk with pronounced smooth root buttress and a
+canopy of large individually-readable leaves in clumped masses. *Behance*: layered
+green canopies with visible leaf-clump silhouettes, plus bamboo, palms, ferns. *Magic
+Tree*, Liza Fursova: painterly red canopy on a floating island.
+
+**Plants and flowers** — *pixelatedcrown*: lupine and hollyhock spires in purple, pink,
+cream. *Stylized Plants*, Fred Taylor: lily pads, reeds, cattails. An ArtStation
+wildflower set: cornflowers, daisies, marigolds. *Stylized Low Poly*: mushrooms.
+
+**Rocks** — *Rock study*, Emma Dubost, and *The Flock*: faceted, soft-shaded, mossy
+stone; pale mauve monoliths. Plus a *GAME ART Tips* texture/geometry breakdown.
+
+The consistent character: chunky simplified silhouettes, soft gradient hand-painted
+shading, bright harmonious palettes, and **every plant authored as a discrete prop with
+species identity** rather than as scattered primitives.
 
 The consistent quality across them, and the reason it is here:
 
@@ -168,16 +182,26 @@ Judged at **three sizes** — thumbnail (~140px), hero, and close — and from *
 four azimuths**, because the baseline's predecessor was strong from two angles and
 lopsided from a third.
 
+**REVISED 2026-09-20** after the human's style direction. The original criteria 3, 5, 7
+and 8 were calibrated against a *photograph* of a real winter tree, which is not the
+target. Nothing on the supplied references carries a fine twig haze; their crowns are
+clustered leaf masses on chunky readable limbs. Criteria 1, 2 and 6 are unchanged —
+they are about correctness of form, which the references honour fully.
+
 | # | Criterion | Fails if |
 | --- | --- | --- |
-| 1 | **Taper** — every child 0.70–0.80 × its parent radius, no exceptions along any path root-to-tip | any junction where a child reads as thick as its parent |
-| 2 | **Junctions** — swell and flow out of the parent, with a ridge at the top of the union | any visible telescoping step or floating flange |
-| 3 | **Ramification** — 6+ orders, several hundred terminal twigs, continuous size gradient | you can count the twigs; or a visible step where "twigs" begin |
-| 4 | **Terminations** — every tip tapers to a point or a bud | any flat or blunt-chopped end anywhere |
-| 5 | **Crown envelope at thumbnail** — resolves into a soft rounded mass, not a spray of sticks | reads as a Y with spikes at 140px |
-| 6 | **Growth history** — asymmetry, a dominant leader, stunted and out-competed limbs | limbs leave at similar angles with similar lengths |
-| 7 | **Root flare** — the trunk widens into the ground | the trunk enters the turf as a cylinder |
-| 8 | **Bark** — describes the form's curvature | flat-shaded facet patches reading as modelling errors, or noise for its own sake |
+| 1 | **Taper** — every child 0.70–0.80 × its parent radius along any path root-to-tip | any junction where a child reads as thick as its parent |
+| 2 | **Junctions** — swell and flow out of the parent | any visible telescoping step or floating flange |
+| 3 | **Ramification — REVISED** — 4–5 orders, limbs staying **chunky and individually readable to the tip** | it reads as a wire haze; or the primary limbs can be counted on one hand |
+| 4 | **Terminations** — every tip tapers; no flat cuts | any blunt-chopped end anywhere |
+| 5 | **Bare silhouette at thumbnail — REVISED** — reads as a deliberate sculptural object | reads as a post, a spray of sticks, or a solid knot at 140px |
+| 6 | **Growth history** — asymmetry, a dominant leader, out-competed limbs | limbs leave at similar angles with similar lengths |
+| 7 | **Root flare — REVISED, target named** — a pronounced **smooth flowing buttress** into the ground | the trunk enters the turf as a cylinder, or the flare is fissured rather than smooth |
+| 8 | **Bark — REVISED, target named** — warm light tan, broad soft low-contrast grooves, **matte** | deep fissuring, specular sheen, or a visible tiling or mirror seam |
+
+**Moved to Gate 2:** *crown mass at thumbnail.* Under the new direction that mass comes
+from clustered foliage rather than from twig density, so it cannot be judged on a naked
+tree. It stops being the Gate 1 blocker and becomes the foliage gate's central test.
 
 **Two standing constraints this phase may not trade away:** the tree must work at two
 distances (silhouette at thumbnail, real reward close up), and the narrow-FOV miniature
@@ -185,10 +209,16 @@ feel — the prototype's strongest single discovery — is not discarded casuall
 
 **The bar:** something you would stop scrolling to look at. Not "improved".
 
-### Result, as of `db716de` — **REVISE**
+### Result — **REVISE**, against the revised criteria above
 
 Held by `taste`. Foliage may not start. Recorded here because a verdict that lives only
 in messages keeps getting lost.
+
+The revision shortens the list considerably. Taper and junctions still pass. Ramification
+at depth 4–5 is now **in range** rather than failing — what remains wrong there is that
+the terminal shoots are thin thorn-like stubs instead of chunky tapering twigs. The three
+live failures are **terminations, root flare and bark**, and all three now have named
+targets rather than open questions. Re-judgement when the restyled surface lands.
 
 | Criterion | | Note |
 | --- | --- | --- |
