@@ -159,6 +159,7 @@ export const FAILURES = {
   TIMEOUT:       'That website took too long to load.',
   REDIRECTED:    'That address sent us somewhere else.',
   EMPTY_PAGE:    'There was nothing on that page to look at.',
+  NOT_A_PAGE:    'That address is a file rather than a web page.',
   NOT_RENDERED:  'That website did not finish drawing for us.',
   REFUSED:       'That website refused to let us look at it.',
   OFFLINE:       'We could not reach the internet just now — this is our problem, not that site\'s.',
@@ -174,6 +175,18 @@ function normalizeUrl(input) {
   try { u = new URL(raw); } catch { return null; }
   if (!/^https?:$/.test(u.protocol)) return null;
   if (!u.hostname.includes('.') || /\s/.test(u.hostname)) return null;
+  // A HOSTNAME IS LABELS, NOT PUNCTUATION. "..." contains a dot and passed, so we
+  // went to the network for it and came back "We could not reach that website" —
+  // which is false and unhelpful: we never should have tried. Every label must
+  // carry at least one alphanumeric, and the last one (the TLD) must be letters.
+  // An IP address is exempt: it is a valid host with no letters in it at all.
+  const isIPv4 = /^\d{1,3}(\.\d{1,3}){3}$/.test(u.hostname);
+  if (!isIPv4) {
+    const labels = u.hostname.split('.');
+    if (labels.length < 2) return null;
+    if (labels.some((l) => !/[a-z0-9]/i.test(l))) return null;
+    if (!/^[a-z]{2,}$/i.test(labels[labels.length - 1])) return null;
+  }
   return u;
 }
 const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./,''); } catch { return null; } };
@@ -325,6 +338,16 @@ async function runAnalysis(u, domain, budget, T0, left) {
                  : (status === 403 || status === 401 || status === 429) ? 'BLOCKED' : 'UNREACHABLE';
       return fail(domain, code, 'HTTP ' + status);
     }
+    // NOT A WEB PAGE. A PDF, an image or a download answers perfectly well and
+    // has no design to read — Chrome renders a PDF in a viewer with no page text,
+    // so it used to come back EMPTY_PAGE: "there was nothing to read", which is
+    // both wrong and faintly insulting about a 30-page paper. Say what it is.
+    try {
+      const ctype = String((await resp.headerValue('content-type')) || '').toLowerCase();
+      if (ctype && !/^\s*(text\/html|application\/xhtml)/.test(ctype)) {
+        return fail(domain, 'NOT_A_PAGE', ctype.split(';')[0].trim());
+      }
+    } catch { /* no headers to read; carry on and judge it on what renders */ }
     if (INTERSTITIAL.test(probe.title) || INTERSTITIAL.test(probe.text)) {
       return fail(domain, 'BLOCKED', 'interstitial: ' + probe.title.slice(0, 80));
     }

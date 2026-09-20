@@ -177,6 +177,9 @@ const FAILURE_COPY = {
   NOT_FOUND:   [(d) => `We could not find a page at ${d}.`, false],
   REDIRECTED:  [(d) => `${d} sent us somewhere else, so we stopped.`, false],
   EMPTY_PAGE:  [(d) => `There was nothing on ${d} to read.`, false],
+  // A PDF or an image is not a failure of the site and not a failure of ours —
+  // there is simply no design there to grow a tree from.
+  NOT_A_PAGE:  [() => 'That address is a file rather than a web page, so there is no design to read.', false],
 };
 
 function failureText(failure, domain) {
