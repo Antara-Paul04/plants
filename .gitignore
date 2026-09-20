@@ -44,3 +44,8 @@ tmp/
 # references/ is tracked on purpose — screenshots and visual tests are project
 # context, not build artefacts. If a large binary asset ever needs excluding,
 # exclude that file specifically rather than the directory.
+
+# Site survey captures — 63MB of 2x full-page PNGs. The analysis (INDEX.md,
+# results.json, sites.txt) is committed; the images stay local for review.
+references/experiments/site-survey-*/*.png
+references/experiments/site-survey-*/_failed/

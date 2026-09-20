@@ -1,0 +1,113 @@
+# Site survey 2026-09-20 — input list for:
+#   node tools/capture.mjs references/experiments/site-survey-2026-09-20 --survey --sites-file <this file>
+# Format: site  category. Chosen for spread of visual design, not subject matter.
+
+# --- continuity: already in analysis/probe/corpus.js
+info.cern.ch                      continuity · raw HTML
+bettermotherfuckingwebsite.com    continuity · deliberately minimal
+stripe.com                        continuity · rich, animated
+github.com                        continuity · dark
+en.wikipedia.org                  continuity · text-heavy
+lingscars.com                     continuity · maximalist
+
+# --- raw / unstyled
+danluu.com                        raw/unstyled · personal blog
+text.npr.org                      raw/unstyled · news
+example.com                       raw/unstyled · microsite
+
+# --- deliberately minimal
+paulgraham.com                    minimal · very old web
+gwern.net                         minimal · text-heavy, designed
+daringfireball.net                minimal · dark slate blog
+
+# --- dark mode
+raycast.com                       dark · very new web
+netflix.com                       dark · image-led
+store.steampowered.com            dark · e-commerce
+brittanychiang.com                dark · portfolio
+
+# --- monochrome
+nothing.tech                      monochrome · dark
+teenage.engineering               monochrome · light, product
+
+# --- maximalist
+arngren.net                       maximalist · e-commerce chaos
+cameronsworld.net                 maximalist · geocities collage, animated
+
+# --- WebGL / canvas
+lusion.co                         webgl · studio
+earth.nullschool.net              webgl/canvas · full-frame visualisation
+shadertoy.com                     webgl · dark gallery
+
+# --- photography / image-led
+magnumphotos.com                  photography
+pinterest.com                     image-led · grid
+pentagram.com                     image-led · portfolio
+
+# --- text-heavy / giant archives
+news.ycombinator.com              text-heavy · app-ish
+plato.stanford.edu                text-heavy · institutional
+archive.org                       giant archive
+arxiv.org                         giant archive · old institutional
+
+# --- editorial
+newyorker.com                     editorial
+pudding.cool                      editorial · illustration-led
+theverge.com                      editorial · dark, loud
+
+# --- news
+bbc.com                           news
+nytimes.com                       news
+drudgereport.com                  news · very old web
+
+# --- docs
+developer.mozilla.org             docs · modern
+docs.python.org                   docs · classic
+
+# --- dashboards / app UI
+play.grafana.org                  dashboard · dark
+excalidraw.com                    app UI · canvas
+openstreetmap.org                 app UI · map
+
+# --- e-commerce
+amazon.com                        e-commerce · dense
+ikea.com                          e-commerce · image-led
+aesop.com                         e-commerce · restrained
+
+# --- government / institutional
+irs.gov                           government
+india.gov.in                      government
+mit.edu                           institutional
+
+# --- personal blogs
+maggieappleton.com                personal blog · illustration-led
+joshwcomeau.com                   personal blog · playful, animated
+
+# --- portfolios
+rauno.me                          portfolio · very new web
+
+# --- illustration-led
+duolingo.com                      illustration-led · bright
+mailchimp.com                     illustration-led · yellow
+
+# --- animation-heavy
+species-in-pieces.com             animation-heavy · microsite
+
+# --- very old web
+berkshirehathaway.com             very old web · near-unstyled
+dolekemp96.org                    very old web · 1996
+spacejam.com/1996                 very old web · 1996 (corpus)
+
+# --- very new web
+anthropic.com                     very new web · warm, restrained
+openai.com                        very new web · likely bot-blocked
+
+# --- non-Latin scripts
+yahoo.co.jp                       non-Latin · Japanese, dense portal
+baidu.com                         non-Latin · Chinese, minimal
+aljazeera.net                     non-Latin · Arabic, RTL news
+kantei.go.jp                      non-Latin · Japanese government
+
+# --- single-page microsites
+isitchristmas.com                 microsite
+zombo.com                         microsite · very old web
