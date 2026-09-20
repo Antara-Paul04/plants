@@ -482,7 +482,12 @@ async function showExample() {
   // opening frame.
   try { gallery = await (await fetch('/gallery.json')).json(); }
   catch { return restoreInvite(); }       // no gallery: the island stands, as before
-  const pool = EXAMPLE_POOL.filter((s) => gallery?.sites?.[s]);
+  // `?example=<domain>` shows one specific gallery tree instead of a random pick.
+  // The opening frame is the first thing anyone sees and there is otherwise no
+  // way to look at a particular one twice — which is what judging it requires.
+  // Any measured site in gallery.json, not only the four in the pool.
+  const want = new URLSearchParams(location.search).get('example');
+  const pool = (want && gallery?.sites?.[want] ? [want] : EXAMPLE_POOL).filter((s) => gallery?.sites?.[s]);
   if (!pool.length) return restoreInvite();
   if (busy || lastUrl) return;
   const site = pool[Math.floor(Math.random() * pool.length)];
