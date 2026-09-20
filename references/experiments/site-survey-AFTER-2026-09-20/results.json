@@ -1,0 +1,194 @@
+[
+  {
+    "site": "info.cern.ch",
+    "category": "continuity · raw HTML",
+    "file": "info.cern.ch.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 8735,
+        "analysisMs": 2753,
+        "load1": 4.3,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.44,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "info.cern.ch",
+    "url": "https://info.cern.ch/",
+    "live": true,
+    "timingMs": 2753,
+    "e2eMs": 5721,
+    "stamp": "grown in 4.1s",
+    "fingerprint": {
+      "authored": 0.1,
+      "stylingRichness": 0.069,
+      "inkCoverage": 0.018,
+      "colorfulness": 0.09,
+      "designColorfulness": 0.09,
+      "designChromaticRatio": 0.0096,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.076,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#9b9bf8",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "bare",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e5eb",
+      "seed": 446285954,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "bettermotherfuckingwebsite.com",
+    "category": "continuity · deliberately minimal",
+    "file": "_failed/bettermotherfuckingwebsite.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "exceeded 20000ms",
+        "ms": 20342,
+        "analysisMs": null,
+        "load1": 3.9,
+        "cpuBefore": 0.37,
+        "cpuDuring": 0.36,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "exceeded 20000ms",
+        "ms": 20197,
+        "analysisMs": null,
+        "load1": 3.4,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.37,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "exceeded 20000ms"
+    },
+    "shown": "We could not finish reading bettermotherfuckingwebsite.com. Big, richly built sites often outrun us.",
+    "domain": "bettermotherfuckingwebsite.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 20187,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "stripe.com",
+    "category": "continuity · rich, animated",
+    "file": "stripe.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 7546,
+        "analysisMs": 3432,
+        "load1": 3.9,
+        "cpuBefore": 0.32,
+        "cpuDuring": 0.43,
+        "waitedForQuietMs": 1506
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "stripe.com",
+    "url": "https://stripe.com/in",
+    "live": true,
+    "timingMs": 3432,
+    "e2eMs": 4531,
+    "stamp": "grown in 4.1s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.521,
+      "inkCoverage": 0.122,
+      "colorfulness": 0.397,
+      "designColorfulness": 0.026,
+      "designChromaticRatio": 0.002,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.779,
+      "canvasArea": 0,
+      "textDensity": 0.097,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#334456",
+        "secondary": "#191e3d"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "airy"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#3b6591",
+        "secondary": "#a5acda"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e5e8eb",
+      "seed": 3876993847,
+      "rareCat": false
+    }
+  }
+]

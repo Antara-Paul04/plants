@@ -698,3 +698,52 @@ Every aesthetic judgement made on that corpus — the bloom ladder, the environm
 restrained-versus-boring band — was formed on a sample we now know to be biased by an
 accident of measurement. Nothing is necessarily wrong. But the standing check Taste asked
 for is now overdue, and it should run against a corpus captured on a quiet machine.
+
+---
+
+# L17 — NIGHT HAS GONE NEAR-BLACK. Open, unowned, and a regression.
+
+Visible in `references/experiments/reliability-sweep-2026-09-20/_same-dna-old-vs-new-renderer.png`
+— the same ten sites, **identical DNA**, afternoon renderer beside tonight's.
+
+`daringfireball.net` is the case. In the old renderer it was a daylit tree on a blue-grey
+ground. In the new one the sky is near-black and the tree is **dark on dark**: at thumbnail
+size the crown barely separates from the background, and the pale trunk is the only thing
+reading at all.
+
+This matters more than one site, for two reasons:
+
+1. **11 of 56 corpus sites go to night.** It is the single most distinguishing environment
+   state we have — Taste called the night tree "the best-looking thing in the product" and
+   said that if you needed one image to show someone what this project is, it was that one.
+   That was hours before this render.
+2. **It is a regression, not a known limitation.** The night work passed its own review. What
+   changed since is the ground-darker-than-trunk rule, which deliberately takes turf value
+   DOWN — and visual-3d flagged at the time that "night turf is not fixed by this rule (turf
+   brighter than the trunk's SHADOW side); it follows the night level pick." That note was
+   about night turf being too *light*. The composite result appears to be too dark.
+
+**Unowned.** No `visual-3d` session is reachable, and `taste` — who would rule on whether it
+is too dark or correctly moody — is also gone. Recorded so the next session holding either
+role finds it rather than rediscovering it from a screenshot.
+
+**Do not fix this by raising exposure.** The project's night was built day-for-night on
+purpose: night comes from colour, direction and contrast, never from a dim image. That ban
+stands; the question is which of the three has drifted.
+
+## Also unowned: Gate 1 crown ramification
+
+Still REVISE, still shipping, and now the bottleneck for four separate problems — bloom
+cannot reach the crown's middle (even approved `abundant` manages 8.6% there against 36% at
+the rim), foliage density saturates at 227 clusters because the tree runs out of twig, only 7
+of 146 attachment points face the camera at the crown's centre, and Taste's antler verdict.
+
+The criterion is precise and written down in `references/tree-style/README.md`: **4–5 orders
+and roughly 100–150 limbs** (the tree has 47), with **terminal shoots at 6:1 minimum**
+long-to-thick. Taste's own note records why those two numbers exist — its first revision
+constrained orders and thickness but set no floor on count and said nothing about aspect
+ratio, "so a 47-limb tree of short thick prongs was fully compliant and read as antlers".
+
+**The tension to name before starting:** more limbs feed the implicit-surface wood, which is
+already the dominant cost. Growth is 15–21 s end-to-end and most of it is the build, not the
+analysis. Measure early and report the number even if the tree is unfinished.
