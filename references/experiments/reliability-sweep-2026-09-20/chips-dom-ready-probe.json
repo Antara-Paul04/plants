@@ -1,0 +1,221 @@
+[
+  {
+    "site": "arxiv.org",
+    "round": 1,
+    "load1": 6.4,
+    "dclMs": 1271,
+    "error": null,
+    "ttfb": 252,
+    "htmlDone": 312,
+    "domInteractive": 1075,
+    "dclInPage": 1075,
+    "slow": [
+      "792ms link arxiv.org/static/browse/0.3.4/css/arXiv-print.css",
+      "758ms script arxiv.org/static/base/1.0.1/js/arxiv-header.js",
+      "666ms img arxiv.org/static/base/1.0.1/images/funders/schmid"
+    ]
+  },
+  {
+    "site": "news.ycombinator.com",
+    "round": 1,
+    "load1": 6.4,
+    "dclMs": 1618,
+    "error": null,
+    "ttfb": 1066,
+    "htmlDone": 1068,
+    "domInteractive": 1554,
+    "dclInPage": 1554,
+    "slow": [
+      "470ms img news.ycombinator.com/s.gif",
+      "469ms script news.ycombinator.com/hn.js",
+      "284ms img news.ycombinator.com/y18.svg"
+    ]
+  },
+  {
+    "site": "gwern.net",
+    "round": 1,
+    "load1": 6.4,
+    "dclMs": 3058,
+    "error": null,
+    "ttfb": 849,
+    "htmlDone": 893,
+    "domInteractive": 1473,
+    "dclInPage": 2948,
+    "slow": [
+      "1872ms script gwern.net/static/js/script.js",
+      "1030ms script www.googletagmanager.com/gtag/js",
+      "876ms css gwern.net/static/font/ssf4/SourceSerif4-Text-BASI"
+    ]
+  },
+  {
+    "site": "info.cern.ch",
+    "round": 1,
+    "load1": 6.7,
+    "dclMs": 1274,
+    "error": null,
+    "ttfb": 1213,
+    "htmlDone": 1214,
+    "domInteractive": 1233,
+    "dclInPage": 1233,
+    "slow": []
+  },
+  {
+    "site": "github.com",
+    "round": 1,
+    "load1": 6.7,
+    "dclMs": 5274,
+    "error": null,
+    "ttfb": 673,
+    "htmlDone": 1182,
+    "domInteractive": 1989,
+    "dclInPage": 5235,
+    "slow": [
+      "4275ms script github.githubassets.com/assets/landing-pages-c9feb9c552275862.j",
+      "3752ms other github.githubassets.com/assets/marketing-header-7a17cb9ace4aa2b",
+      "3750ms other github.githubassets.com/assets/4s-dcdc1eda07e93686.js"
+    ]
+  },
+  {
+    "site": "arxiv.org",
+    "round": 2,
+    "load1": 6.5,
+    "dclMs": 431,
+    "error": null,
+    "ttfb": 158,
+    "htmlDone": 192,
+    "domInteractive": 422,
+    "dclInPage": 422,
+    "slow": [
+      "250ms link arxiv.org/static/browse/0.3.4/css/arXiv-print.css",
+      "243ms img arxiv.org/static/base/1.0.1/images/arxiv-logo-pri",
+      "225ms script arxiv.org/static/base/1.0.1/js/arxiv-header.js"
+    ]
+  },
+  {
+    "site": "news.ycombinator.com",
+    "round": 2,
+    "load1": 6.5,
+    "dclMs": 1208,
+    "error": null,
+    "ttfb": 840,
+    "htmlDone": 843,
+    "domInteractive": 1184,
+    "dclInPage": 1184,
+    "slow": [
+      "295ms img news.ycombinator.com/s.gif",
+      "294ms script news.ycombinator.com/hn.js",
+      "294ms img news.ycombinator.com/y18.svg"
+    ]
+  },
+  {
+    "site": "gwern.net",
+    "round": 2,
+    "load1": 7.4,
+    "dclMs": 2569,
+    "error": null,
+    "ttfb": 1348,
+    "htmlDone": 1355,
+    "domInteractive": 1928,
+    "dclInPage": 2469,
+    "slow": [
+      "1031ms script www.googletagmanager.com/gtag/js",
+      "897ms script gwern.net/static/js/script.js",
+      "512ms css gwern.net/static/font/ssf4/SourceSerif4-Text-BASI"
+    ]
+  },
+  {
+    "site": "info.cern.ch",
+    "round": 2,
+    "load1": 7.4,
+    "dclMs": 722,
+    "error": null,
+    "ttfb": 683,
+    "htmlDone": 683,
+    "domInteractive": 696,
+    "dclInPage": 696,
+    "slow": []
+  },
+  {
+    "site": "github.com",
+    "round": 2,
+    "load1": 7.4,
+    "dclMs": 12003,
+    "error": null,
+    "ttfb": 357,
+    "htmlDone": 2209,
+    "domInteractive": 2499,
+    "dclInPage": 11829,
+    "slow": [
+      "10752ms other github.githubassets.com/assets/marketing-header-7a17cb9ace4aa2b",
+      "10750ms other github.githubassets.com/assets/4s-dcdc1eda07e93686.js",
+      "10749ms other github.githubassets.com/assets/tua-c4ca62c5e0e0318e.js"
+    ]
+  },
+  {
+    "site": "arxiv.org",
+    "round": 3,
+    "load1": 10.3,
+    "dclMs": 711,
+    "error": null,
+    "ttfb": 401,
+    "htmlDone": 433,
+    "domInteractive": 690,
+    "dclInPage": 690,
+    "slow": [
+      "269ms link arxiv.org/static/browse/0.3.4/css/arXiv-print.css",
+      "250ms script arxiv.org/static/base/1.0.1/js/arxiv-header.js",
+      "249ms img arxiv.org/static/base/1.0.1/images/funders/simons"
+    ]
+  },
+  {
+    "site": "news.ycombinator.com",
+    "round": 3,
+    "load1": 10.4,
+    "dclMs": 1247,
+    "error": null,
+    "ttfb": 864,
+    "htmlDone": 866,
+    "domInteractive": 1188,
+    "dclInPage": 1188,
+    "slow": [
+      "265ms img news.ycombinator.com/s.gif",
+      "264ms script news.ycombinator.com/hn.js",
+      "262ms img news.ycombinator.com/y18.svg"
+    ]
+  },
+  {
+    "site": "gwern.net",
+    "round": 3,
+    "load1": 10.4,
+    "dclMs": 5651,
+    "error": null,
+    "ttfb": 1516,
+    "htmlDone": 2227,
+    "domInteractive": 3539,
+    "dclInPage": 5540,
+    "slow": [
+      "3256ms script www.googletagmanager.com/gtag/js",
+      "3116ms script gwern.net/static/js/script.js",
+      "3113ms link gwern.net/static/img/icon/icons.svg"
+    ]
+  },
+  {
+    "site": "info.cern.ch",
+    "round": 3,
+    "load1": 10,
+    "dclMs": 2110,
+    "error": null,
+    "ttfb": 1956,
+    "htmlDone": 1959,
+    "domInteractive": 1992,
+    "dclInPage": 1992,
+    "slow": []
+  },
+  {
+    "site": "github.com",
+    "round": 3,
+    "load1": 9.6,
+    "dclMs": 30021,
+    "error": "page.goto: Timeout 30000ms exceeded."
+  }
+]

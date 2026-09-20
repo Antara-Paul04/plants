@@ -10,8 +10,9 @@
         "ok": true,
         "code": null,
         "detail": null,
-        "ms": 14470,
-        "analysisMs": 4082
+        "ms": 19027,
+        "analysisMs": 3579,
+        "load1": 18.3
       }
     ],
     "harnessError": null,
@@ -20,9 +21,9 @@
     "domain": "info.cern.ch",
     "url": "https://info.cern.ch/",
     "live": true,
-    "timingMs": 4082,
-    "e2eMs": 11352,
-    "stamp": "grown in 9.8s",
+    "timingMs": 3579,
+    "e2eMs": 15823,
+    "stamp": "grown in 10.4s",
     "fingerprint": {
       "authored": 0.1,
       "stylingRichness": 0.069,
@@ -69,10 +70,10 @@
     },
     "siteMetrics": {
       "url": "https://info.cern.ch/",
-      "dclMs": 2015,
+      "dclMs": 2890,
       "error": null,
       "nodesAtDcl": 16,
-      "loadMs": 2047,
+      "loadMs": 2939,
       "finalUrl": "https://info.cern.ch/",
       "nodes": 16,
       "scripts": 0,
@@ -82,7 +83,7 @@
       "iframes": 0,
       "canvases": 0,
       "htmlKB": 1,
-      "ttfbMs": 1931,
+      "ttfbMs": 2519,
       "requests": 1,
       "transferKB": 2,
       "shot": true
@@ -91,102 +92,53 @@
   {
     "site": "news.ycombinator.com",
     "category": "chip",
-    "file": "_failed/news.ycombinator.com.png",
-    "ok": false,
+    "file": "news.ycombinator.com.png",
+    "ok": true,
     "attempts": 2,
     "attemptLog": [
       {
         "ok": false,
         "code": "TIMEOUT",
         "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 37656,
-        "analysisMs": null
+        "ms": 12573,
+        "analysisMs": null,
+        "load1": 16.5
       },
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 31708,
-        "analysisMs": null
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "TIMEOUT",
-      "message": "That website took too long to load.",
-      "detail": "page.goto: Timeout 8000ms exceeded."
-    },
-    "shown": "We could not finish reading news.ycombinator.com. Big, richly built sites often outrun us.",
-    "domain": "news.ycombinator.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 31685,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null,
-    "siteMetrics": {
-      "url": "https://news.ycombinator.com",
-      "dclMs": 11064,
-      "error": null,
-      "nodesAtDcl": 817,
-      "loadMs": 12224,
-      "finalUrl": "https://news.ycombinator.com/",
-      "nodes": 817,
-      "scripts": 1,
-      "blockingScripts": 0,
-      "stylesheets": 1,
-      "images": 2,
-      "iframes": 0,
-      "canvases": 0,
-      "htmlKB": 33,
-      "ttfbMs": 8376,
-      "requests": 6,
-      "transferKB": 6,
-      "shot": true
-    }
-  },
-  {
-    "site": "arxiv.org",
-    "category": "chip",
-    "file": "arxiv.org.png",
-    "ok": true,
-    "attempts": 1,
-    "attemptLog": [
       {
         "ok": true,
         "code": null,
         "detail": null,
-        "ms": 22698,
-        "analysisMs": 14113
+        "ms": 14628,
+        "analysisMs": 6487,
+        "load1": 17
       }
     ],
     "harnessError": null,
     "failure": null,
     "shown": null,
-    "domain": "arxiv.org",
-    "url": "https://arxiv.org/",
+    "domain": "news.ycombinator.com",
+    "url": "https://news.ycombinator.com/",
     "live": true,
-    "timingMs": 14113,
-    "e2eMs": 19652,
-    "stamp": "grown in 19.1s",
+    "timingMs": 6487,
+    "e2eMs": 11569,
+    "stamp": "grown in 10.9s",
     "fingerprint": {
-      "authored": 0.7,
-      "stylingRichness": 0.321,
-      "inkCoverage": 0.189,
-      "colorfulness": 0.292,
-      "designColorfulness": 0.292,
-      "designChromaticRatio": 0.1051,
-      "warmShareOfChroma": 0,
-      "imageArea": 0.008,
+      "authored": 0.5,
+      "stylingRichness": 0.259,
+      "inkCoverage": 0.112,
+      "colorfulness": 0.277,
+      "designColorfulness": 0.277,
+      "designChromaticRatio": 0.0214,
+      "warmShareOfChroma": 1,
+      "imageArea": 0,
       "canvasArea": 0,
-      "textDensity": 0.931,
-      "accentConcentration": 0,
+      "textDensity": 0.803,
+      "accentConcentration": 0.889,
       "hasVisibleMotion": false,
       "palette": {
-        "ground": "#ffffff",
-        "primary": "#a1a1f8",
-        "secondary": "#a1b9d6"
+        "ground": "#f6f6ef",
+        "primary": "#f37b2b",
+        "secondary": null
       },
       "paletteSource": "whole-frame"
     },
@@ -196,30 +148,90 @@
         "complexity": "normal"
       },
       "foliage": {
-        "state": "normal",
-        "density": "normal"
+        "state": "sparse",
+        "density": "airy"
       },
       "botanicalState": "normal",
       "flowers": {
         "amount": "few",
-        "primary": "#a1a1f8",
-        "secondary": "#466fa0"
+        "primary": "#f37b2b",
+        "secondary": null
       },
       "fruit": {
         "enabled": false,
         "color": null
       },
-      "terrain": "normal",
-      "background": "#e5e5eb",
-      "seed": 1356002849,
+      "terrain": "sparse",
+      "background": "#ebebe2",
+      "seed": 2307374702,
       "rareCat": false
     },
     "siteMetrics": {
-      "url": "https://arxiv.org/",
-      "dclMs": 3903,
+      "url": "https://news.ycombinator.com/",
+      "dclMs": 11207,
+      "error": null,
+      "nodesAtDcl": 817,
+      "loadMs": 13233,
+      "finalUrl": "https://news.ycombinator.com/",
+      "nodes": 817,
+      "scripts": 1,
+      "blockingScripts": 0,
+      "stylesheets": 1,
+      "images": 2,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 33,
+      "ttfbMs": 6780,
+      "requests": 6,
+      "transferKB": 6,
+      "shot": true
+    }
+  },
+  {
+    "site": "arxiv.org",
+    "category": "chip",
+    "file": "_failed/arxiv.org.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 10673,
+        "analysisMs": null,
+        "load1": 12.7
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9354,
+        "analysisMs": null,
+        "load1": 11.1
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading arxiv.org. Big, richly built sites often outrun us.",
+    "domain": "arxiv.org",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 9334,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null,
+    "siteMetrics": {
+      "url": "https://arxiv.org",
+      "dclMs": 3326,
       "error": null,
       "nodesAtDcl": 414,
-      "loadMs": 4325,
+      "loadMs": 3616,
       "finalUrl": "https://arxiv.org/",
       "nodes": 414,
       "scripts": 5,
@@ -229,7 +241,7 @@
       "iframes": 0,
       "canvases": 0,
       "htmlKB": 37,
-      "ttfbMs": 3042,
+      "ttfbMs": 1425,
       "requests": 16,
       "transferKB": 353,
       "shot": true
@@ -246,8 +258,9 @@
         "ok": true,
         "code": null,
         "detail": null,
-        "ms": 22466,
-        "analysisMs": 14686
+        "ms": 14848,
+        "analysisMs": 6605,
+        "load1": 15.8
       }
     ],
     "harnessError": null,
@@ -256,13 +269,13 @@
     "domain": "gwern.net",
     "url": "https://gwern.net/",
     "live": true,
-    "timingMs": 14686,
-    "e2eMs": 19368,
-    "stamp": "grown in 18.9s",
+    "timingMs": 6605,
+    "e2eMs": 11735,
+    "stamp": "grown in 11.3s",
     "fingerprint": {
       "authored": 0.7,
-      "stylingRichness": 0.431,
-      "inkCoverage": 0.135,
+      "stylingRichness": 0.437,
+      "inkCoverage": 0.138,
       "colorfulness": 0,
       "designColorfulness": 0,
       "designChromaticRatio": 0,
@@ -305,12 +318,12 @@
     },
     "siteMetrics": {
       "url": "https://gwern.net/",
-      "dclMs": 4335,
+      "dclMs": 16627,
       "error": null,
-      "nodesAtDcl": 1926,
-      "loadMs": null,
+      "nodesAtDcl": 2012,
+      "loadMs": 16793,
       "finalUrl": "https://gwern.net/",
-      "nodes": 2090,
+      "nodes": 2012,
       "scripts": 7,
       "blockingScripts": 2,
       "stylesheets": 2,
@@ -318,118 +331,16 @@
       "iframes": 0,
       "canvases": 0,
       "htmlKB": 139,
-      "ttfbMs": 1519,
-      "requests": 23,
-      "transferKB": 796,
+      "ttfbMs": 1334,
+      "requests": 19,
+      "transferKB": 736,
       "shot": true
     }
   },
   {
     "site": "google.com",
     "category": "popular · search",
-    "file": "_failed/google.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "exceeded 20000ms",
-        "ms": 29170,
-        "analysisMs": null
-      },
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "exceeded 20000ms",
-        "ms": 40368,
-        "analysisMs": null
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "TIMEOUT",
-      "message": "That website took too long to load.",
-      "detail": "exceeded 20000ms"
-    },
-    "shown": "We could not finish reading google.com. Big, richly built sites often outrun us.",
-    "domain": "google.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 40345,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null,
-    "siteMetrics": {
-      "url": "https://google.com",
-      "dclMs": 24049,
-      "error": null,
-      "nodesAtDcl": 466,
-      "loadMs": 26518,
-      "finalUrl": "https://www.google.com/",
-      "nodes": 484,
-      "scripts": 21,
-      "blockingScripts": 0,
-      "stylesheets": 2,
-      "images": 6,
-      "iframes": 0,
-      "canvases": 0,
-      "htmlKB": 218,
-      "ttfbMs": 15158,
-      "requests": 34,
-      "transferKB": 823,
-      "shot": true
-    }
-  },
-  {
-    "site": "youtube.com",
-    "category": "popular · video",
-    "file": "_failed/youtube.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 22469,
-        "analysisMs": null
-      },
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 18875,
-        "analysisMs": null
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "TIMEOUT",
-      "message": "That website took too long to load.",
-      "detail": "page.goto: Timeout 8000ms exceeded."
-    },
-    "shown": "We could not finish reading youtube.com. Big, richly built sites often outrun us.",
-    "domain": "youtube.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 18847,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null,
-    "siteMetrics": {
-      "url": "https://youtube.com",
-      "dclMs": null,
-      "error": "page.goto: Timeout 30000ms exceeded.",
-      "shot": false
-    }
-  },
-  {
-    "site": "apple.com",
-    "category": "popular · brand",
-    "file": "apple.com.png",
+    "file": "google.com.png",
     "ok": true,
     "attempts": 1,
     "attemptLog": [
@@ -437,253 +348,83 @@
         "ok": true,
         "code": null,
         "detail": null,
-        "ms": 20911,
-        "analysisMs": 12031
+        "ms": 18578,
+        "analysisMs": 9036,
+        "load1": 23.3
       }
     ],
     "harnessError": null,
     "failure": null,
     "shown": null,
-    "domain": "apple.com",
-    "url": "https://www.apple.com/",
+    "domain": "google.com",
+    "url": "https://www.google.com/",
     "live": true,
-    "timingMs": 12031,
-    "e2eMs": 17844,
-    "stamp": "grown in 16.6s",
+    "timingMs": 9036,
+    "e2eMs": 15258,
+    "stamp": "grown in 14.1s",
     "fingerprint": {
       "authored": 0.8,
-      "stylingRichness": 0.561,
-      "inkCoverage": 0.351,
-      "colorfulness": 0.138,
-      "designColorfulness": 0.027,
-      "designChromaticRatio": 0.0012,
+      "stylingRichness": 0.393,
+      "inkCoverage": 0.146,
+      "colorfulness": 0.049,
+      "designColorfulness": 0.049,
+      "designChromaticRatio": 0.0042,
       "warmShareOfChroma": 0,
-      "imageArea": 1,
+      "imageArea": 0,
       "canvasArea": 0,
-      "textDensity": 0.065,
+      "textDensity": 0.051,
       "accentConcentration": 0,
       "hasVisibleMotion": false,
       "palette": {
-        "ground": "#f5f5f7",
-        "primary": "#a0c6eb",
-        "secondary": "#b4d2ef"
-      },
-      "paletteSource": "media-masked"
-    },
-    "dna": {
-      "morphology": "broad",
-      "skeleton": {
-        "complexity": "normal"
-      },
-      "foliage": {
-        "state": "lush",
-        "density": "normal"
-      },
-      "botanicalState": "flowering",
-      "flowers": {
-        "amount": "abundant",
-        "primary": "#d1d1e5",
-        "secondary": "#66669d"
-      },
-      "fruit": {
-        "enabled": false,
-        "color": null
-      },
-      "terrain": "lush",
-      "background": "#e5e5ea",
-      "seed": 3197224656,
-      "rareCat": false
-    },
-    "siteMetrics": {
-      "url": "https://www.apple.com/",
-      "dclMs": 5978,
-      "error": null,
-      "nodesAtDcl": 2069,
-      "loadMs": 6559,
-      "finalUrl": "https://www.apple.com/",
-      "nodes": 2099,
-      "scripts": 17,
-      "blockingScripts": 1,
-      "stylesheets": 10,
-      "images": 51,
-      "iframes": 0,
-      "canvases": 0,
-      "htmlKB": 305,
-      "ttfbMs": 2446,
-      "requests": 49,
-      "transferKB": 2280,
-      "shot": true
-    }
-  },
-  {
-    "site": "netflix.com",
-    "category": "popular · video",
-    "file": "_failed/netflix.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 33494,
-        "analysisMs": null
-      },
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 32611,
-        "analysisMs": null
-      }
-    ],
-    "harnessError": null,
-    "failure": {
-      "code": "TIMEOUT",
-      "message": "That website took too long to load.",
-      "detail": "page.goto: Timeout 8000ms exceeded."
-    },
-    "shown": "We could not finish reading netflix.com. Big, richly built sites often outrun us.",
-    "domain": "netflix.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 32565,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null,
-    "siteMetrics": {
-      "url": "https://netflix.com",
-      "dclMs": null,
-      "error": "page.goto: Timeout 30000ms exceeded.",
-      "shot": false
-    }
-  },
-  {
-    "site": "spotify.com",
-    "category": "popular · music",
-    "file": "spotify.com.png",
-    "ok": true,
-    "attempts": 1,
-    "attemptLog": [
-      {
-        "ok": true,
-        "code": null,
-        "detail": null,
-        "ms": 28226,
-        "analysisMs": 19030
-      }
-    ],
-    "harnessError": null,
-    "failure": null,
-    "shown": null,
-    "domain": "spotify.com",
-    "url": "https://open.spotify.com/",
-    "live": true,
-    "timingMs": 19030,
-    "e2eMs": 25019,
-    "stamp": "grown in 24.0s",
-    "fingerprint": {
-      "authored": 1,
-      "stylingRichness": 0.474,
-      "inkCoverage": 0.485,
-      "colorfulness": 0.282,
-      "designColorfulness": 0.282,
-      "designChromaticRatio": 0.0854,
-      "warmShareOfChroma": 0.319,
-      "imageArea": 0,
-      "canvasArea": 0,
-      "textDensity": 0.122,
-      "accentConcentration": 0.218,
-      "hasVisibleMotion": false,
-      "palette": {
-        "ground": "#121212",
-        "primary": "#ae4a51",
-        "secondary": "#ae7858"
+        "ground": "#22242a",
+        "primary": "#b6daf2",
+        "secondary": "#596e8d"
       },
       "paletteSource": "whole-frame"
     },
     "dna": {
       "morphology": "broad",
       "skeleton": {
-        "complexity": "normal"
+        "complexity": "simple"
       },
       "foliage": {
         "state": "normal",
-        "density": "dense"
+        "density": "airy"
       },
-      "botanicalState": "flowering",
+      "botanicalState": "winter",
       "flowers": {
-        "amount": "medium",
-        "primary": "#b0484f",
-        "secondary": "#e4d2c7"
+        "amount": "none",
+        "primary": null,
+        "secondary": null
       },
       "fruit": {
         "enabled": false,
         "color": null
       },
-      "terrain": "normal",
-      "background": "#241a1b",
-      "seed": 1640848914,
+      "terrain": "winter",
+      "background": "#232427",
+      "seed": 2006368837,
       "rareCat": false
     },
     "siteMetrics": {
-      "url": "https://open.spotify.com/",
-      "dclMs": 14951,
+      "url": "https://www.google.com/",
+      "dclMs": 1777,
       "error": null,
-      "nodesAtDcl": 72,
-      "loadMs": null,
-      "finalUrl": "https://open.spotify.com/",
-      "nodes": 73,
-      "scripts": 13,
-      "blockingScripts": 1,
-      "stylesheets": 1,
-      "images": 0,
+      "nodesAtDcl": 478,
+      "loadMs": 2976,
+      "finalUrl": "https://www.google.com/",
+      "nodes": 485,
+      "scripts": 21,
+      "blockingScripts": 0,
+      "stylesheets": 2,
+      "images": 6,
       "iframes": 0,
       "canvases": 0,
-      "htmlKB": 159,
-      "ttfbMs": 2169,
-      "requests": 35,
-      "transferKB": 1549,
+      "htmlKB": 219,
+      "ttfbMs": 477,
+      "requests": 33,
+      "transferKB": 796,
       "shot": true
     }
-  },
-  {
-    "site": "instagram.com",
-    "category": "popular · social",
-    "file": "_failed/instagram.com.png",
-    "ok": false,
-    "attempts": 2,
-    "attemptLog": [
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 18304,
-        "analysisMs": null
-      },
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 27756,
-        "analysisMs": null
-      }
-    ],
-    "harnessError": "page.waitForResponse: Target page, context or browser has been closed",
-    "failure": {
-      "code": "TIMEOUT",
-      "message": "That website took too long to load.",
-      "detail": "page.goto: Timeout 8000ms exceeded."
-    },
-    "shown": "We could not finish reading instagram.com. Big, richly built sites often outrun us.",
-    "domain": "instagram.com",
-    "url": null,
-    "live": true,
-    "timingMs": null,
-    "e2eMs": 18282,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null
   }
 ]

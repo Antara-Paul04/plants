@@ -593,3 +593,73 @@ are computed, not new information about the website.
 - This is also a candidate cause for part of **L14** (ten trees sharing one cream fallback):
   if ranking picks near-neutral washes, more sites end up with a "primary" that the accent
   floor then rejects.
+
+---
+
+# L16 — THE 8-SECOND TIMEOUT MEASURES OUR MACHINE, NOT THE WEBSITE
+
+**Found by the test session, 2026-09-20. The most important diagnosis of the day, and it
+invalidates several of my own findings.**
+
+## The evidence
+
+The four chips, requested simultaneously against the same server:
+
+| concurrent | result |
+| --- | --- |
+| 1 | 1/1 pass, 3.8 s |
+| 2 | 2/2 pass, ≤3.7 s |
+| 4 | 4/4 pass, but analysis **doubles** — arxiv 7.1 s, gwern 7.2 s, at the 8 s cliff |
+| 8 | **5/8 pass.** HN fails; gwern fails twice. All `page.goto: Timeout 8000ms exceeded` |
+
+At load average 29, news.ycombinator.com, google, youtube, netflix and instagram all timed
+out twice each — every one of which I had measured passing an hour earlier. Minutes later on
+a quiet machine: news.ycombinator.com 3.9 s, google.com 4.2 s. Same sites, same server.
+
+**`NAV_MS = 8000` is therefore a reading of our CPU and bandwidth at that instant.** Tonight
+"busy" was several Claude sessions and a test harness. In production, "busy" is eight
+visitors. **A product whose failure rate scales with its own popularity is a worse problem
+than one that cannot read heavy sites.**
+
+## It is NOT heavy-DOM versus light-DOM
+
+That was Taste's sharpened hypothesis and mine before it, and the test session killed it:
+**news.ycombinator.com — 817 nodes, ONE script, 6 KB — failed.** Nothing about that page is
+heavy.
+
+The real gate: **`domcontentloaded` does not fire until every deferred and module script has
+been downloaded AND EXECUTED.** Measured on github.com across three plain visits: DOM-ready
+at 5.3 s, 12.0 s and >30 s, each time waiting on bundles from `github.githubassets.com`.
+
+So the limit gates on **(the site's JS payload) ÷ (our bandwidth and CPU at that moment)** —
+which cuts across design quality exactly as Taste said, but points at a completely different
+fix from "prefer lighter sites".
+
+## We are waiting for an event we do not need
+
+The analyzer measures **pixels from a screenshot**. The site's JavaScript finishing is not a
+precondition for that. This also explains why my `NAV_MS` 8→20 experiment failed: **it waited
+longer for the same wrong event**, so it bought seconds rather than reliability.
+
+The direction the evidence points: navigate with `waitUntil: 'commit'` (the response has
+started) and spend the budget in the settle/screenshot stage that already exists.
+
+**NOT DONE, deliberately, and this is the caveat that matters.** It interacts with a live
+bug: we already measure loading screens as pages — lusion.co's tree came from its black
+preloader (ink 0.012, a false WINTER) and play.grafana.org from a spinner. Moving to
+`'commit'` makes measuring an unpainted page **more** likely. The change is only safe
+alongside real **visual-stability detection** in the settle stage. That is a piece of
+analysis work, not a constant swap.
+
+## Findings this invalidates — mine, and they were presented with confidence
+
+1. **"nike.com, hm.com and samsung.com time out; adidas, zara and uniqlo pass."** Measured
+   concurrently with the sweep on a loaded machine. Almost certainly our load. **Discarded.**
+2. **"github.com is intermittent"** — true, but the cause was us, not github.
+3. **"6 of 8 popular sites pass"** — a reading of one moment's machine load, not a rate.
+4. **The whole heavy-DOM framing**, which I relayed to two sessions as if settled.
+
+**The standing lesson: any site-reliability number measured on this machine while anything
+else is running is a measurement of the machine.** The sweep now records load average beside
+every attempt so each failure can be read as "site" or "us". Nothing measured without it
+should be quoted.

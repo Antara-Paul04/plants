@@ -666,6 +666,7 @@ export async function growTree(M, q, env, opts = {}) {
       ...folT,
       atBloom: num('leafAtBloom', folT.atBloom), nearTo: num('leafNear', folT.nearTo),
       nearRadius: num('leafNearR', folT.nearRadius), elsewhere: num('leafElsewhere', folT.elsewhere),
+      inner: q.has('leafInner') ? num('leafInner', 1) : (folT.inner ?? null),
     };
 
     // WARNING FOR ANYONE JUDGING COLOUR FROM A URL: `fc` and `fc2` given by hand go

@@ -563,6 +563,20 @@ export const BLOOM_FOLIAGE = {
  */
 export function foliageScales(spots, bloomSites, rel) {
   const out = new Float32Array(spots.length).fill(rel.elsewhere);
+  // `inner` (optional): the scale for non-flowering foliage DEEP in the crown, easing
+  // out to `elsewhere` at the shell. The middle of any view of a crown is mostly its
+  // inside and its far side seen through it (only 7 of 146 twigs face the camera at
+  // the centre), so it is the INNER foliage that decides whether bloom shows through
+  // the middle — while the shell, seen edge-on at the rim, is what keeps the tree
+  // reading as a tree in leaf.
+  if (rel.inner != null && rel.inner < rel.elsewhere && spots.length) {
+    const { c, e } = crownBox(spots);
+    for (let i = 0; i < spots.length; i++) {
+      const s = spots[i].pos;
+      const d = Math.hypot((s.x - c.x) / (e.x || 1), (s.y - c.y) / (e.y || 1), (s.z - c.z) / (e.z || 1));
+      out[i] = lerp(rel.inner, rel.elsewhere, smoothstep(0.35, 0.95, d));
+    }
+  }
   const bloom = bloomSites.map((i) => spots[i].pos);
   const on = new Set(bloomSites);
   for (let i = 0; i < spots.length; i++) {
@@ -570,7 +584,8 @@ export function foliageScales(spots, bloomSites, rel) {
     if (!(rel.nearRadius > 0) || !bloom.length) continue;
     let d = Infinity;
     for (const b of bloom) d = Math.min(d, b.distanceTo(spots[i].pos));
-    out[i] = lerp(Math.min(rel.nearTo, rel.elsewhere), rel.elsewhere, smoothstep(0.25 * rel.nearRadius, rel.nearRadius, d));
+    const base = out[i];
+    out[i] = Math.min(base, lerp(Math.min(rel.nearTo, rel.elsewhere), rel.elsewhere, smoothstep(0.25 * rel.nearRadius, rel.nearRadius, d)));
   }
   return out;
 }
