@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Plants — every website grows differently</title>
     <meta name="description" content="Paste a website address and watch a tree grow from its visual design — how much styling it has, how dense it is, what colour it is. Every website grows differently." />
+    <!-- The SVG is the source of truth; the rasters exist because it is not
+         enough alone. Safari has never reliably used an SVG favicon, browsers
+         and crawlers request /favicon.ico whatever the markup says, and iOS
+         wants apple-touch-icon.png for "Add to Home Screen". All three were
+         404s. Generated from the SVG by tools/icons.mjs. -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#dbe4ea" />
 
     <!-- THE LINK PREVIEW IS THE WHOLE FIRST IMPRESSION for a product that is
