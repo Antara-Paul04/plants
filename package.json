@@ -1,0 +1,11 @@
+{
+  "name": "plants",
+  "private": true,
+  "type": "module",
+  "description": "Paste a website URL, get a tree grown from its visual design.",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "playwright-core": "^1.63.0",
+    "@sparticuz/chromium": "^131.0.0"
+  }
+}

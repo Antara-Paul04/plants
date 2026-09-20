@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "node tools/build-static.mjs",
+  "outputDirectory": "public",
+  "functions": {
+    "api/grow.js": {
+      "maxDuration": 60,
+      "memory": 1769
+    }
+  }
+}

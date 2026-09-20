@@ -65,10 +65,25 @@ async function getBrowser() {
   if (_browser && _browser.isConnected()) return _browser;
   if (_starting) return _starting;
   _starting = (async () => {
-    if (!CHROME) throw new Error('no Chrome binary found — set PLANTS_CHROME to one');
+    // LOCAL first: a Chrome already on this machine, which is what every
+    // measurement in this repo was taken against. SERVERLESS second: a lambda has
+    // no browser and no writable filesystem outside /tmp, so @sparticuz/chromium
+    // unpacks one at first launch and reports where it put it — which is why
+    // PLANTS_CHROME is checked but deliberately NOT existence-tested.
+    let exe = CHROME;
+    let extra = [];
+    if (!exe) {
+      const mod = await import('@sparticuz/chromium').catch(() => null);
+      if (!mod) throw new Error('no Chrome binary found — set PLANTS_CHROME, or install @sparticuz/chromium');
+      const pkg = mod.default ?? mod;
+      exe = await pkg.executablePath();
+      // Its args carry the single-process and /dev/shm settings a lambda needs;
+      // ours carry the rendering rules every measurement was calibrated with.
+      extra = pkg.args ?? [];
+    }
     _browser = await chromium.launch({
-      executablePath: CHROME, headless: true,
-      args: ['--hide-scrollbars','--mute-audio','--disable-features=IsolateOrigins,site-per-process','--font-render-hinting=none']
+      executablePath: exe, headless: true,
+      args: [...extra, '--hide-scrollbars','--mute-audio','--disable-features=IsolateOrigins,site-per-process','--font-render-hinting=none']
     });
     _browser.on('disconnected', () => { _browser = null; _scratch = null; });
     _starting = null;

@@ -70,3 +70,8 @@ references/experiments/retest-*/_site/
 references/experiments/retest-*/_failed/
 references/experiments/retest-*/**/*.png
 references/experiments/retest-*/*.png
+
+# Deployment build output and dependencies
+public/
+node_modules/
+.vercel/
