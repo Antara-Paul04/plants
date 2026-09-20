@@ -28,7 +28,37 @@ have to become true before it can run anywhere else.
       `analysis/results/dna.json` and serves `prototype/src` straight from the
       working tree.
 
-### 2. It must not fail more the more people use it — **NOT STARTED, AND THIS IS THE GATE**
+### 2. It must not fail more the more people use it — **PASSING, with thin margins**
+
+**Re-verified 2026-09-21, 01:0x, after everything that shipped tonight:**
+
+```
+8 concurrent requests   8 / 8 passed   wall 16.2s   (load average 5.0 before)
+  info.cern.ch  8.8s   ·  danluu.com    9.7s
+  news.yc       9.5s   ·  text.npr.org 10.4s
+  arxiv.org    11.2s   ·  example.com   8.5s
+  gwern.net    16.1s   ·  paulgraham   13.8s
+```
+
+Baseline before any of tonight's work was **0 of 8** on this machine.
+
+**But read the margins, not the pass.** `gwern.net` took 16.1 s of a 20 s budget
+under concurrency, and `bettermotherfuckingwebsite.com` takes 15.9 s of it even
+*alone*, because its https black-holes before anything else can happen. And
+everything got slower tonight: on a quiet machine both times, analysis median
+went **6.4 s → 10.2 s** and on-screen **8.3 s → 11.9 s**, because the page walk
+that fixed image-heavy sites is paid for by every site, including a 16-node page
+with no images.
+
+So the gate passes on this laptop, at load 5, on eight *deliberately fast* sites.
+It has perhaps four seconds of headroom where it used to have ten. Before
+deploying, either buy some of that back (the page walk could be conditional on a
+page actually having lazy images) or raise the budget knowing the tail is 7% of
+sites.
+
+---
+
+### 2b. The original text, kept because the reasoning still applies
 
 This is the one that matters, and it is easy to mistake for a performance
 concern rather than a deployment blocker.
