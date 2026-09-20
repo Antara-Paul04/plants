@@ -95,6 +95,14 @@ place by being observed, not assumed.
   become the loudest thing in the frame.** Quieting the turf under a bare tree works,
   and it immediately promotes whatever was left at full summer value — stones, sky —
   to the brightest object in a picture whose whole point was to be quiet.
+- **Spread encodes how much room the tree had, and the viewer reads that as fortune.**
+  A tree narrows and sheds its lower limbs when competition starves it of light, so a
+  tall bare column or a tight crown says *this specimen lost* before any other reading
+  gets a chance. Tested at both ends: few limbs held narrow read as stunted and the
+  same few held wide read as airy and chosen; many limbs held narrow read as a boxed-in
+  street tree and the same many held wide read as an established open-grown specimen.
+  **Nothing in this family should be narrow.** Hold the width roughly constant and let
+  density be what varies.
 - **What makes a tree look expensive is proportion and topology, not resolution.**
   Broken taper, junctions that step instead of swelling, and too few branch orders are
   the whole of the asset-store look, and no amount of subdivision touches any of them.

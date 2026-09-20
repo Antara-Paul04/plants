@@ -36,6 +36,7 @@ const P = {
   taper: num('taper', 0.013),
   smooth: num('smooth', 3),
   maxChildren: num('kids', 2),
+  trunkMin: num('trunkMin', 11),
   coarseCount: num('c1', 190),
   coarseKill: num('k1', 5.5),
   coarseInfluence: num('i1', 20),
@@ -59,7 +60,7 @@ const r = rng(P.seed);
 
 const skel = buildSkeleton(r, {
   cloud: { count: P.points, cy: P.cy, rx: P.rx, ry: P.ry, rz: P.rx, hollow: P.hollow },
-  grow: { D: P.D, influence: P.influence, kill: P.kill, wobble: P.wobble, maxChildren: P.maxChildren },
+  grow: { D: P.D, influence: P.influence, kill: P.kill, wobble: P.wobble, maxChildren: P.maxChildren, trunkMin: P.trunkMin },
   radii: { tip: P.tip, alpha: P.alpha, grow: P.grow, taper: P.taper },
   smooth: P.smooth,
   coarseCount: P.coarseCount, coarseKill: P.coarseKill, coarseInfluence: P.coarseInfluence,

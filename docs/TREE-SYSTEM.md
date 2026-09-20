@@ -215,10 +215,13 @@ concept rests on: unstyled HTML must not read as deliberate minimalism.
 
 **Tested on the new structural model, same seed, only architecture varied:**
 
-| | nodes | limbs | forks | depth | reads as |
-| --- | --- | --- | --- | --- | --- |
-| BARE spec | 1329 | 219 | 218 | 4 | a mature tree with its entire branch system exposed |
-| SPARSE spec | 236 | 37 | 36 | 3 | a young, lightly-branched tree carrying few shoots |
+| | nodes | limbs | crown | reads as |
+| --- | --- | --- | --- | --- |
+| BARE | 1273 | 213 | rx 2.35 / ry 2.15 / cy 4.15, trunk 8 | a mature tree with its whole branch system exposed |
+| SPARSE | 402 | 61 | rx 2.75 / ry 1.55 / cy 3.45, trunk 7 | an open, wide-spreading tree carrying few limbs |
+
+**Sparse is the BROADEST tree in the set, not the thinnest.** That inverts the obvious
+move and it is the whole fix — see below.
 
 Renders: `references/experiments/gate1-2026-09-20/pair-{bare,sparse}-architecture.png`.
 
@@ -234,9 +237,27 @@ The levers are the second growth pass and the crown envelope: attractor count an
 distance for the fine pass, plus crown width/height. They are independent of foliage
 entirely, so the two states cannot converge by both being given fewer leaves.
 
-**OPEN:** whether the sparse tree, which currently reads young and wand-like, still reads
-as *designed restraint* rather than as *a poor tree* once foliage returns. That is a
-Gate 5 question and a human one.
+#### Sparse must be broad, or it reads as deprivation — EXPERIMENT
+
+The first attempt made sparse *small and thin*, which is the instinctive move and is
+wrong. Taste's diagnosis: **losing the lower limbs is what a tree does when it is starved
+of light by competition, so a tall bare column with a tuft on top says "this specimen
+lost" before any other reading gets a chance.** Sparseness plus a high narrow crown is
+not restraint, it is deprivation — which inverts the product's meaning, because a sparse
+tree must never mean a bad website.
+
+The fix is entirely in the crown envelope; no new logic was needed. Widen the crown past
+even the bare tree's, flatten it, lower its centre, and shorten the clear trunk. **Few
+limbs held WIDE read as airy and chosen; the same few limbs held narrow and high read as
+stunted.** Before and after at
+`references/experiments/gate1-2026-09-20/sparse-{A-stunted-BEFORE,B-broad-AFTER}.png`.
+
+Bare was checked for the same disease and has a milder case: its clear trunk was also
+long, but a dense crown compensates, and lowering its branching a little was enough. It
+reads as a mature specimen rather than a deprived one.
+
+**OPEN:** whether broad-and-open still reads as *designed restraint* rather than merely
+*a different tree* once foliage returns. That is a Gate 5 question and a human one.
 ---
 
 ## Invariant characteristics
