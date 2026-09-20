@@ -95,6 +95,10 @@ function renderWhy(dna) {
 
 // --- grow -----------------------------------------------------------------
 async function grow(raw) {
+  // Timed from here, not from the server's analysis alone. The wood is built by
+  // marching cubes AFTER /api/grow returns, and that is the larger half of the
+  // wait — reporting the analysis time told the user 2.9s while they sat for 13.
+  const t0 = performance.now();
   state('analyzing', 'Reading your website…');
 
   let data;
@@ -114,9 +118,18 @@ async function grow(raw) {
   state('growing', 'Growing something…');
   await new Promise((r) => requestAnimationFrame(r));
 
+  // WAIT FOR THE MESH. mountTree returns in ~60ms with the island up and the
+  // wood still building, so resolving the result here announced success about
+  // ten seconds before the tree existed: caption, "grown in Xs" and a Why panel
+  // reading "its tree shows its skeleton" — over an empty patch of grass. That
+  // is worse than a spinner, because it does not read as waiting, it reads as
+  // finished and wrong. Worst precisely on BARE sites, where a user may believe
+  // the empty island IS their tree.
   try {
-    if (tree) tree.setDNA(data.dna);
-    else tree = mountTree($('scene'), data.dna, { autoRotate: true });
+    const settled = tree
+      ? tree.setDNA(data.dna)
+      : (tree = mountTree($('scene'), data.dna, { autoRotate: true })).ready;
+    await settled;          // null/undefined for engines that build synchronously
   } catch (err) {
     console.error(err);
     return state('error', 'The tree failed to grow. See the console.');
@@ -124,7 +137,7 @@ async function grow(raw) {
 
   state('ready');
   domainEl.textContent = data.domain;
-  stampEl.textContent = data.timingMs ? `grown in ${(data.timingMs / 1000).toFixed(1)}s` : '';
+  stampEl.textContent = `grown in ${((performance.now() - t0) / 1000).toFixed(1)}s`;
   renderWhy(data.dna);
   cacheNote.hidden = data.live !== false;
   if (data.live === false) {
