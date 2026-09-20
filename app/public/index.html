@@ -251,7 +251,16 @@
 
     <div class="ui">
       <div class="wordmark">Plants<b>every website grows differently</b></div>
-      <footer><a href="/compare.html">comparison grid</a></footer>
+      <!-- NO LINK TO /compare.html. It is still there and still works, and the
+           team should keep using it — but it is a debug harness, not a page for
+           visitors. README already says "that view is for us, not for users",
+           so the public link was the thing contradicting the decision, not its
+           removal. It renders with the OLD v0 engine, so the twelve trees in it
+           do not look like the one a visitor just grew (different bark, crown,
+           grass and rocks from the same DNA); it prints triangle counts, leaf
+           and blossom counts, a detail figure and a snapshot timestamp; it is
+           titled "(internal)"; and it blocks the main thread for 4.5-6s in one
+           unyielding task. Reachable directly at /compare.html. -->
 
       <div class="overlay" id="overlay">
         <div class="spinner" id="spinner" hidden></div>
