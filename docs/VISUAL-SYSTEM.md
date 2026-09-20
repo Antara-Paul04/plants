@@ -876,6 +876,9 @@ Rulings: `docs/briefs/WIND-AND-MOTION.md`. Code: `applySway` (`util.js`), the wi
 - **Known, stated rather than fixed:** three's shadow pass uses a depth material that never sees
   the sway, so the foliage's cast shadow is its rest pose. V0 shipped the same way; with rigid
   wood the trunk's own shadow is simply correct.
-- **Cost: not yet measured on a quiet machine.** No geometry, no draw calls, no extra programs;
-  per-VERTEX work, so it is the same in a 140px thumbnail as on a full-bleed page.
+- **Cost: not measurable.** 14 programs with and without, 15 draw calls with and without, best
+  frame 4.29 ms without and 4.33 ms with, inside a 0.3 ms run-to-run spread. It is per-VERTEX
+  work, so it is the same in a 140px thumbnail as on a full-bleed page — whose own per-FRAGMENT
+  cost, measured on the same tree, is 3.3 ms (today's stage) against 5.0 ms (1440x900 @2x).
+  Measured on a quiet machine: taken under load, "wind on" once came out FASTER than "wind off".
 

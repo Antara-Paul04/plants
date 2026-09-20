@@ -71,8 +71,43 @@ short and stiff. That ordering is the physically right one, and it was not tuned
 
 - **The foliage's cast shadow is its rest pose.** three's shadow pass uses a depth material that
   never sees the sway. V0 shipped the same way. With rigid wood the trunk's shadow is simply correct.
-- **Cost is NOT in this file yet.** The machine was at load average 35–39 while this was done, and
-  a frame time measured then is a measurement of the machine.
+
+## Cost — measured once the machine was quiet (load ~5, no sweep running)
+
+`gate2.html?preset=bare&seed=7&flowers=medium&fruit=1`, 2048x1536 buffer, 819k triangles. Frames
+rendered back to back with a forced GPU sync (a hidden pane never fires `requestAnimationFrame`, so
+a frame counter measures nothing). `wind=0` installs no hook at all, so it is a true baseline;
+runs were interleaved off / on / off / on.
+
+| | programs | draw calls | triangles | best ms/frame |
+| --- | --- | --- | --- | --- |
+| `wind=0` | 14 | 15 | 819,320 | 4.29 |
+| wind on (pivot) | 14 | 15 | 819,320 | 4.33 |
+
+**+0.04 ms, inside a run-to-run spread of about 0.3 ms: not measurable.** No geometry, no draw
+call and no extra program — a swaying material's program REPLACES its matte one, one for one. While
+the machine was still loaded, "wind on" once measured FASTER than "wind off" (4.6 vs 7.0 ms), which
+is what a number taken on a busy machine is worth.
+
+Sway is per-VERTEX, so it costs the same in a 140px thumbnail as on a full-bleed page. The page's
+size is a separate, per-FRAGMENT cost, measured on the same tree (pixel ratio capped at 2, as
+`viewer.js` already does):
+
+| frame | buffer | ms/frame |
+| --- | --- | --- |
+| today: the 62vh square stage on a 900px-tall retina screen | 1116x1116 · 1.25 MP | 3.33 |
+| full-bleed 1440x900 @1.5x | 2160x1350 · 2.92 MP | 4.00 |
+| full-bleed 1440x900 @2x | 2880x1800 · 5.18 MP | 5.03 |
+| full-bleed 1920x1080 @2x | 3840x2160 · 8.29 MP | 6.09 |
+
+About 2.9 ms fixed plus 0.39 ms per megapixel, on THIS machine (a fast one): full-bleed is 4.1x the
+pixels for 1.5x the frame time. Nothing needs doing here. On a GPU that only just holds 60 fps on
+today's stage the same ratio gives ~40 fps full-bleed, and a pixel BUDGET (cap total pixels, let the
+ratio float between 1.5 and 2) is the answer if that is ever seen. Not built: no evidence it is needed.
+
+*A trap, recorded:* `renderer.setSize(w, h)` multiplies by the pixel ratio. A first pass of this
+table benched buffers four times the size it labelled them. Set the pixel ratio to 1 before sizing
+a buffer by hand.
 
 ## Files
 
