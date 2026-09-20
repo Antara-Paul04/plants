@@ -48,7 +48,10 @@ const LOAD_MS     = 4500;    // bounded wait for subresources AFTER dom-ready. N
 const READY_MS    = 7000;    // poll for a parseable document after commit
 const STABLE_MS   = 9000;    // ceiling on visual-stability settling
 const POLL_MS     = 250;
-const SHOT_MS     = 5000;
+const STABLE_HITS = 3;       // consecutive identical readings, not 2
+const MIN_SETTLE  = 1500;    // stability cannot be accepted before this
+const GROW_EPS    = 1.02;    // >2% more painted area counts as "still arriving"
+const SHOT_MS     = 9000;    // the capture IS the measurement; do not starve it
 const MOTION_GAP  = 1000;    // validated protocol: 5 frames at 1s. A SHORT 3-frame check
 const MOTION_MAX  = 5;       // is a subset of it, so stopping early when it already reads
                              // non-zero is faithful, not a different method.
@@ -195,7 +198,23 @@ async function runAnalysis(u, domain, budget, T0, left) {
     const tNav = now();
     let resp = null, navErr = null;
     try {
-      resp = await page.goto(u.href, { waitUntil: 'commit', timeout: Math.min(NAV_MS, Math.max(2500, left() - 6000)) });
+      // A timeout BEFORE commit means nothing answered — the port may be dead, and http
+      // is the only thing that can help. A timeout AFTER commit means the site answered
+      // and is merely slow, where http would change nothing. `commit` makes the two
+      // distinguishable, so the retry can be aimed precisely.
+      // bettermotherfuckingwebsite.com black-holes on 443 (no TCP in 25s) and answers on
+      // 80 in 0.64s. With info.cern.ch it is the crux the project rests on.
+      const firstNav = Math.min(NAV_MS, Math.max(2500, left() - 9000));
+      try {
+        resp = await page.goto(u.href, { waitUntil: 'commit', timeout: firstNav });
+      } catch (e1) {
+        const preCommit = /Timeout|ERR_CONNECTION_TIMED_OUT|ERR_ADDRESS_UNREACHABLE/.test(String(e1.message));
+        if (preCommit && u.protocol === 'https:' && left() > 6000) {
+          const httpUrl = 'http://' + u.host + u.pathname + u.search;
+          resp = await page.goto(httpUrl, { waitUntil: 'commit', timeout: Math.max(3000, Math.min(8000, left() - 5000)) });
+          t.httpFallback = true;
+        } else { throw e1; }
+      }
       // commit only means headers; wait for a document we can actually read
       await page.waitForFunction(() => document.readyState !== 'loading' && !!document.body,
         { timeout: Math.max(1000, Math.min(READY_MS, left() - 5000)), polling: 200 }).catch(() => {});
@@ -255,27 +274,64 @@ async function runAnalysis(u, domain, budget, T0, left) {
     // Moving navigation earlier makes that failure MORE likely, so this is the part that
     // has to carry it.
     const tSettle = now();
-    let prev = null, lastSig = null, stable = 0, settled = false;
-    while (left() > 6000 && now() - tSettle < STABLE_MS) {
+    // PAGE-DEFINED EVENT FIRST, sampling second.
+    // The BEFORE build produced identical DNA on 10 of 10 sites measured hours apart
+    // because it waited for an event the PAGE defines. My settle waits for a condition I
+    // define by sampling, and sampling is inherently less repeatable — raycast flipped
+    // between flowering and winter across identical runs. So take both: a bounded wait
+    // for 'load', which is where raycast's imagery actually arrives, then stability
+    // sampling for what 'load' misses. Bounded, so it cannot reintroduce the timeout that
+    // made us abandon 'load' as the navigation condition in the first place.
+    await page.waitForLoadState('load', { timeout: Math.max(1500, Math.min(6000, left() * 0.35)) }).catch(() => {});
+    let prev = null, lastSig = null, stable = 0, settled = false, peakPaint = 0;
+    // Settle gets a SHARE of what remains, never all of it. Waiting for paint is right;
+    // waiting for paint until the deadline passes is not — under 8-way contention that
+    // turned a passing concurrency test into 0/8.
+    const settleCap = Math.max(1200, Math.min(STABLE_MS, left() * 0.55));
+    while (left() > 5000 && now() - tSettle < settleCap) {
       const sig = await page.evaluate(() => {
         const all = document.querySelectorAll('body *');
-        let geo = 0, n = 0;
+        let geo = 0, n = 0, painted = 0, scanned = 0;
+        const VW = innerWidth, LIM = innerHeight * 3;
         for (const el of all) {
           const r = el.getBoundingClientRect();
           if (r.width > 40 && r.height > 20) {
             geo += (Math.round(r.x) + Math.round(r.y) * 3 + Math.round(r.width) * 7 + Math.round(r.height) * 11) % 1000003;
-            if (++n > 400) break;
+            n++;
           }
+          // painted area: the cheap DOM stand-in for "how dark is this page yet".
+          // Capped so a huge DOM cannot make polling expensive.
+          if (scanned < 600 && r.width >= 4 && r.height >= 4 && r.top < LIM && r.bottom > 0) {
+            scanned++;
+            const cs = getComputedStyle(el);
+            let own = ''; for (const c of el.childNodes) if (c.nodeType === 3) own += c.nodeValue;
+            const bg = cs.backgroundColor;
+            if ((bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'rgb(255, 255, 255)') ||
+                (cs.backgroundImage && cs.backgroundImage !== 'none') || own.trim().length) {
+              painted += Math.min(r.width, VW) * Math.min(r.height, LIM);
+            }
+          }
+          if (n > 400 && scanned >= 600) break;
         }
-        return { els: all.length, text: (document.body.innerText || '').trim().length, geo, boxes: n };
+        return { els: all.length, text: (document.body.innerText || '').trim().length, geo, boxes: n, painted };
       }).catch(() => null);
       if (!sig) break;
       lastSig = sig;                                  // ALWAYS the most recent reading
       // a preloader is a page with almost nothing on it; do not accept it as settled
       const hasContent = sig.text >= 40 || sig.boxes >= 8;
+      // STILL ARRIVING? A page whose painted area is climbing is not finished, whatever
+      // its DOM signature says. Without this the loop settled during a PAUSE: raycast.com
+      // was photographed at ~18% of its own final ink and grew a colourless winter tree
+      // from a vivid red site — fast, stable-looking and wrong.
+      const roomLeft = (now() - tSettle) < settleCap * 0.92;
+      if (roomLeft && sig.painted > peakPaint * GROW_EPS) { peakPaint = sig.painted; stable = 0; prev = sig; await page.waitForTimeout(POLL_MS); continue; }
+      if (sig.painted > peakPaint) peakPaint = sig.painted;
       const same = prev && sig.els === prev.els && sig.text === prev.text && sig.geo === prev.geo;
       stable = same ? stable + 1 : 0;
-      if (hasContent && stable >= 2) { settled = true; break; }
+      // three consecutive agreements, and never before MIN_SETTLE — two frames matching
+      // inside a loading pause is not evidence that loading has stopped.
+      const minSettle = Math.min(MIN_SETTLE, settleCap * 0.5);
+      if (hasContent && stable >= STABLE_HITS && (now() - tSettle) >= minSettle) { settled = true; break; }
       prev = sig;
       await page.waitForTimeout(POLL_MS);
     }
@@ -336,8 +392,13 @@ async function runAnalysis(u, domain, budget, T0, left) {
       // ZERO links — tesla 3 elements / 191 chars, adidas 15 boxes / 1127 chars.
       // "Small" cannot be the test; "not a site" can.
       if (post.links === 0 && post.chars < 1500 && post.boxes < 20) {
-        return fail(domain, 'BLOCKED',
-          `no links, ${post.chars} chars, ${post.boxes} boxes — a notice page, not a website`);
+        // A notice page has PAINTED its notice. An app shell that never rendered has not,
+        // and calling that "blocked" tells the user something false about the site.
+        const painted = (lastSig && lastSig.painted) || 0;
+        const unpainted = painted < (VW * VH * 0.02);
+        return fail(domain, unpainted ? 'NOT_RENDERED' : 'BLOCKED',
+          unpainted ? `nothing painted (${post.chars} chars, ${post.boxes} boxes) — the page did not render, it is not refusing us`
+                    : `no links, ${post.chars} chars, ${post.boxes} boxes — a notice page, not a website`);
       }
     }
 
@@ -389,15 +450,26 @@ async function runAnalysis(u, domain, budget, T0, left) {
 
     // ---- one screenshot for colour
     const tShot = now();
-    const clipH = Math.min(m.docHeight, VH * 3);
-    let shot;
-    const shotMs = Math.max(3000, Math.min(SHOT_MS, left() - 1200));
-    try {
-      shot = await page.screenshot({ type: 'png', fullPage: true, clip: { x: 0, y: 0, width: VW, height: clipH }, animations: 'disabled', timeout: shotMs });
-    } catch {
-      // a tall/complex page can blow the clip budget — fall back to the viewport alone
-      shot = await page.screenshot({ type: 'png', animations: 'disabled', timeout: Math.max(2500, left() - 500) });
+    let clipH = Math.min(m.docHeight, VH * 3);
+    // The analysis region is three viewports. If we can only capture one, we are
+    // measuring a different thing and must say so: magnumphotos.com's full capture timed
+    // out, silently fell back to the viewport, and reported colourfulness 0.000 — because
+    // its first screen is a white hero and all its photography is below it. A photography
+    // site with no photographs. Degrade in steps, and record which step we reached.
+    let shot = null, captureScope = 'v3';
+    const clipAt = h => ({ x: 0, y: 0, width: VW, height: Math.max(VH, Math.min(m.docHeight, h)) });
+    const attempts = [
+      ['v3', () => page.screenshot({ type: 'png', fullPage: true, clip: clipAt(VH * 3), animations: 'disabled', timeout: Math.max(3000, Math.min(SHOT_MS, left() - 1500)) })],
+      ['v2', () => page.screenshot({ type: 'png', fullPage: true, clip: clipAt(VH * 2), animations: 'disabled', timeout: Math.max(2500, Math.min(6000, left() - 1200)) })],
+      ['v1', () => page.screenshot({ type: 'png', animations: 'disabled', timeout: Math.max(2000, left() - 800) })]
+    ];
+    for (const [scope, take] of attempts) {
+      try { shot = await take(); captureScope = scope; break; } catch (e) { /* try a smaller region */ }
     }
+    if (!shot) return fail(domain, 'NOT_RENDERED', 'could not capture the page within the time budget');
+    t.captureScope = captureScope;
+    if (captureScope === 'v2') clipH = Math.min(m.docHeight, VH * 2);
+    else if (captureScope === 'v1') clipH = VH;
     t.screenshot = now() - tShot;
 
     const tPix = now();
@@ -421,7 +493,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
     }
 
     t.total = now() - T0;
-    return { ok: true, domain, url: finalUrl, settleReason: t.settleReason, fingerprint: toFingerprint(m, pixels, accent, hasMotion), timingMs: t };
+    return { ok: true, domain, url: finalUrl, settleReason: t.settleReason, captureScope, httpFallback: !!t.httpFallback, fingerprint: toFingerprint(m, pixels, accent, hasMotion), timingMs: t };
   } catch (e) {
     const msg = String(e && e.message || e).split('\n')[0];
     return fail(domain, /Timeout|timeout/.test(msg) ? 'TIMEOUT' : 'INTERNAL', msg);
