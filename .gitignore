@@ -60,3 +60,6 @@ references/experiments/site-survey-*/_site/
 references/experiments/reliability-sweep-*/pairs/
 references/experiments/reliability-sweep-*/_site/
 references/experiments/reliability-sweep-*/*.png
+references/experiments/site-survey-AFTER-*/pairs/
+references/experiments/site-survey-AFTER-*/_site/
+references/experiments/site-survey-AFTER-*/*.png

@@ -1,0 +1,45 @@
+BEFORE /Users/antarapaul/Desktop/plants/references/experiments/site-survey-2026-09-20
+AFTER  /Users/antarapaul/Desktop/plants/references/experiments/site-survey-AFTER-2026-09-20
+shared sites 64 · grew in both 48
+
+PASS RATE (shared sites)
+  before 56/64 · after 50/64
+  now grows : store.steampowered.com (was TIMEOUT), magnumphotos.com (was TIMEOUT)
+  now fails : bettermotherfuckingwebsite.com (TIMEOUT), lusion.co (NOT_RENDERED), pinterest.com (BLOCKED), play.grafana.org (BLOCKED), amazon.com (EMPTY_PAGE), aesop.com (BLOCKED), species-in-pieces.com (REFUSED), isitchristmas.com (EMPTY_PAGE)
+  code moved: baidu.com TIMEOUT→REFUSED
+
+FRUIT
+  prevalence: before 6/56 · after 13/50 · among sites that grew in both: 6 → 13 of 48
+  gained: github.com (lush, flowering), cameronsworld.net (normal, normal), news.ycombinator.com (sparse, normal), newyorker.com (normal, flowering), developer.mozilla.org (lush, flowering), ikea.com (normal, autumn), irs.gov (lush, flowering), rauno.me (normal, normal), aljazeera.net (lush, flowering)
+  lost  : stripe.com, raycast.com
+  concentrated, not bare, not canvas — yet NO fruit after: —
+  winter WITH fruit after: —
+  fruit WITHOUT flowers after: —
+  winter sites after, with their accent concentration: gwern.net 0, raycast.com 0, magnumphotos.com 0, bbc.com 0
+
+DNA DISTRIBUTION (sites that grew in both)
+  foliage before: normal 25 · lush 14 · sparse 7 · bare 2
+  foliage after : normal 25 · lush 14 · sparse 7 · bare 2
+  flowers before: medium 19 · few 15 · abundant 8 · none 6
+  flowers after : medium 19 · few 15 · none 9 · abundant 5
+  season  before: flowering 27 · normal 19 · winter 1 · autumn 1
+  season  after : flowering 24 · normal 19 · winter 3 · autumn 2
+  DNA changed: stripe.com [lush/abundant/flowering → lush/medium/flowering], raycast.com [lush/abundant/flowering → lush/none/winter], pudding.cool [normal/medium/flowering → normal/few/autumn], bbc.com [normal/medium/flowering → normal/none/winter], drudgereport.com [sparse/few/normal → sparse/none/normal], openai.com [lush/abundant/flowering → lush/medium/flowering]
+
+IDENTICAL FINGERPRINTS among AFTER successes (a bot wall measured as the site)
+  none
+
+ACCEPTANCE — bot walls must now FAIL honestly …
+  tesla.com: not in AFTER
+  adidas.com: not in AFTER
+  dribbble.com: not in AFTER
+  imdb.com: not in AFTER
+  tiktok.com: not in AFTER
+… while genuinely unstyled sites must still GROW BARE
+  info.cern.ch: GREW bare/normal, ink 0.018, richness 0.069  (before: bare, ink 0.018)
+  danluu.com: GREW bare/normal, ink 0.073, richness 0.056  (before: bare, ink 0.073)
+ACCEPTANCE — must no longer be measured as a loading screen (ink near 0 = still a preloader)
+  lusion.co: FAILED NOT_RENDERED — "We could not read that website."  (before: normal, ink 0.012)
+  play.grafana.org: FAILED BLOCKED — "play.grafana.org does not allow us to look at it."  (before: sparse, ink 0.001)
+
+contact sheet → /Users/antarapaul/Desktop/plants/references/experiments/site-survey-AFTER-2026-09-20/_before-after.png
