@@ -422,6 +422,37 @@ other (full chunky crown against open, wide and few-limbed).
 - Gate 1 is not wired to DNA yet. `mountTree`/`setDNA`/`dispose` are untouched; the new
   pipeline sits behind `gate1.html` only.
 
+### Gate 1 ramification — built, judged blind nine times, NOT passed — EXPERIMENT (2026-09-21)
+
+**Status: EXPERIMENT, OFF by default (`ramify=1`); `ramify=0` is the tree before it, bit for
+bit.** Full record, the sheets the panel saw and every number:
+`references/experiments/gate1-ramify-2026-09-21/`.
+
+- **The antlers were one line of the radius law.** `assignRadiiRatio` caps a limb's base at 16%
+  of its length; as a radius that is a length:diameter of 3.1:1, which is exactly the worst shoot
+  measured (median 5.4:1, 59% under 6:1). Written to stop warts, it licensed prongs.
+- **Count cannot be bought with attractors** — it makes the prongs worse (79% of shoots under 6:1
+  at 100 limbs, 89% at 166). And **limbs are cheap**: the wood field's cost is the trunk and the
+  primaries; 2.1x the limbs is +13% field.
+- **Built:** 6:1 by construction; thorns on thick wood dropped; shoots sprouted on thin wood,
+  acrotonic and spiralled, never a comb; nothing leaves the asked envelope; tapering, bending
+  tips; collars sized from the host; hooks cut and regrown. 93 limbs, 6 orders, 0% under 6:1, on
+  its envelope; junctions and terminations went from FAIL to PASS with the panel's criteria judge.
+- **It did not pass, and tuning will not pass it.** Beyond order 2 everything is ONE CALIBRE: a
+  lateral takes 0.75 of its host's local radius from the host's already-tapered outer part, so the
+  real step per order is ~0.45 and the tree hits the `tipMin` floor in two or three orders. That
+  is the art direction's own tension — chunky to the tip against a gradient that continues — not a
+  parameter. The crown is also a shell from behind (the cloud is hollowed by design), and
+  colonization's tips still hook. The panel's adversary: "a signature of the growth model, not of
+  its parameters."
+- **The bare tree and the leafy tree want opposite skeletons.** At 140px the judge who looked
+  hardest preferred TODAY's tree (a bold armature) and called the ramified one the best skeleton
+  for a crown and today's the worst. Measured: 323 clusters against 146 at the same spacing, and
+  4 → 14 camera-facing attachment points in the crown's middle. The foliage ladder would need
+  re-calibrating (~x2.15 on spacing for `bare`) before it could ship under leaves.
+- **`envelope` stays 1.** Drawing the cloud in regrows a different, NARROWER tree (sparse: radius
+  2.57 → 2.32). At 1 a site keeps its trunk and its primaries when the switch flips.
+
 ---
 
 ## Invariant characteristics

@@ -113,7 +113,9 @@ function* thickWoodSteps(limbs, r, opts = {}) {
     }
     chains.push({
       pts, rad, isTrunk,
-      k: clamp(radii[0] * 0.95, 0.03, 0.2),
+      // `blend` is set only on the limbs of a RAMIFIED tree (branching.js: a collar sized from
+      // the host). Without it this is the blend every tree has always had.
+      k: L.blend ?? clamp(radii[0] * 0.95, 0.03, 0.2),
       seed: rr(r, 0, 20),
       grooves: true,
       f1: grooveFreq(radii[0]),

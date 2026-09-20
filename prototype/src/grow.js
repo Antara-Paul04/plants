@@ -81,6 +81,9 @@ export const PRESETS = {
   },
 };
 
+// See `ramify` in growTree. '0' until Gate 1's ramification passes its panel.
+const RAMIFY_DEFAULT = '0';
+
 /** The parameter readers and the resolved structure/light bag, for one source. */
 export function resolveParams(q) {
   const preset = PRESETS[q.get('preset')] || PRESETS.bare;
@@ -602,6 +605,20 @@ export async function growTree(M, q, env, opts = {}) {
     minStub: P.minStub,
     radiusLaw: P.law,
     ratio: { trunk: P.trunk, ratioLo: P.ratioLo, ratioHi: P.ratioHi, power: P.power, tipMin: P.tipMin },
+    // Gate 1's ramification (branching.js, ramifyLimbs). `ramify=0` is the tree as it
+    // was before it, bit for bit: a way back that needs no deploy.
+    //
+    // OFF BY DEFAULT UNTIL IT HAS BEEN JUDGED. This file grows the product's trees, and
+    // the product is live: default-on would change every tree anyone grows the moment
+    // this is committed. `ramify=1` to see it. Flipping RAMIFY_DEFAULT is the ship.
+    ramify: (q.get('ramify') ?? RAMIFY_DEFAULT) === '0' ? null : {
+      aspectLo: num('shootLo', 7), aspectHi: num('shootHi', 11), thorn: num('thorn', 0.5),
+      stretch: num('shootStretch', 0.85), sprout: num('sprout', 0),
+      sproutOn: [num('sproutMinR', 0.04), num('sproutMaxR', 0.105)],
+      sproutGap: [num('sproutGapLo', 0.34), num('sproutGapHi', 0.95)],
+      rounds: num('sproutRounds', 2), clear: num('sproutClear', 0.17), envelope: num('ramEnvelope', 1),
+      curl: num('curl', 1.95), collar: num('collar', 0.6), reach: num('reach', 1.0), fork: num('fork', 0.7),
+    },
     coarseCount: P.coarseCount, coarseKill: P.coarseKill, coarseInfluence: P.coarseInfluence,
     fineCount: P.fineCount, fineKill: P.fineKill, fineInfluence: P.fineInfluence, fineShell: P.fineShell,
     tipCount: P.tipCount, tipKill: P.tipKill, tipInfluence: P.tipInfluence, tipShell: P.tipShell, tipD: P.tipD, tipWobble: P.tipWobble,

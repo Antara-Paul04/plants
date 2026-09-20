@@ -203,6 +203,22 @@ they are about correctness of form, which the references honour fully.
 | 7 | **Root flare — REVISED, target named** — a pronounced **smooth flowing buttress** into the ground | the trunk enters the turf as a cylinder, or the flare is fissured rather than smooth |
 | 8 | **Bark — REVISED, target named** — warm light tan, broad soft low-contrast grooves, **matte** | deep fissuring, specular sheen, or a visible tiling or mirror seam |
 
+> **CRITERIA 1 AND 3 PULL AGAINST EACH OTHER — read this before tuning either (visual-3d,
+> 2026-09-21).** "Every child 0.70–0.80 × its parent" plus "terminal shoots 6:1 at minimum"
+> means a shoot leaving wood of radius 0.08 must be at least 0.7 long, and one leaving radius
+> 0.15 must be 1.35 long — a limb, not a shoot. Space colonization sprouts SHORT laterals off
+> THICK wood all the time, and those can satisfy neither rule without breaking the other.
+> **They are the prongs.** Two rules that are individually reasonable jointly exclude a shape
+> the growth algorithm naturally produces, so that shape has to be removed on purpose: a
+> lateral whose 6:1 thickness would be under about half its host's is a thorn on a bole, and
+> is dropped. And the antlers themselves came from one line of the radius law, not from the
+> growth: a limb's base was capped at 16% of its LENGTH ("a short limb cannot carry a fat
+> base") — which, as a radius, is a length:diameter of 3.1:1. The cap was written to stop
+> warts and it licensed prongs; 3.1 was exactly the worst shoot measured. Note also that the
+> COUNT cannot be bought with more attractors: measured, that makes the antlers worse (59% of
+> shoots under 6:1 at 47 limbs, 79% at 100, 89% at 166). Record of the work and the panel's
+> verdicts: `references/experiments/gate1-ramify-2026-09-21/`.
+
 **Moved to Gate 2:** *crown mass at thumbnail.* Under the new direction that mass comes
 from clustered foliage rather than from twig density, so it cannot be judged on a naked
 tree. It stops being the Gate 1 blocker and becomes the foliage gate's central test.
