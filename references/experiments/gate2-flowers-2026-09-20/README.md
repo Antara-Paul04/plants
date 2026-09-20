@@ -11,16 +11,16 @@ graded per environment state through a `bloom` entry in `ENVS`.
 
 Three flower FORMS — a form is a property of the tree, one tree carries one:
 
-| `form=` | what it is | tris / cluster |
+| `grammar=` | what it is | tris / cluster |
 |---|---|---|
-| `blossom` | open five-petalled flowers packed over a dome (cherry, apple) | ~1.9k |
-| `magnolia` | two or three large upright goblets, two whorls | ~2.5k |
-| `wisteria` | a bunch of three hanging racemes, tapering to buds | ~2.3k |
+| `cluster` | open five-petalled flowers packed over a dome (cherry, apple) | ~1.9k |
+| `statement` | two or three large upright goblets, two whorls | ~2.5k |
+| `pendant` | a bunch of three hanging racemes, tapering to buds | ~2.3k |
 
 Fruit: a lathed pome with a blush cheek and a stalk, oversized on purpose (radius 0.16),
 hung in ones, twos and threes on the lower outside of the crown, kept off flowering sites.
 
-Parameters: `flowers=none|few|medium|abundant`, `form=`, `fc=` / `fc2=` (hex, the site's two
+Parameters: `flowers=none|few|medium|abundant`, `grammar=`, `fc=` / `fc2=` (hex, the site's two
 colours), `fruit=1`, `fruitc=`, `lift=`, `pale=`, `leafAtBloom=`, `bloom=` (explicit fraction),
 `leafHide=1` (debug).
 

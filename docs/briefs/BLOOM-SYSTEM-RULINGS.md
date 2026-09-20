@@ -295,3 +295,77 @@ implementation is allowed — **do not preserve bad architecture because work ha
 into it.**
 
 Report to Lead. Do not commit to `main`; I integrate.
+
+---
+
+# Re-sequencing and two new rulings — after test-session data, 2026-09-20
+
+The test session measured the 56-site corpus against this directive. Two findings change the
+order of work.
+
+## L13 — L6 is promoted to the HIGHEST-priority item. Blue is 18 of 56 accents.
+
+I had L6 (local foliage contrast adaptation) fifth in visual-3d's package, filed under
+fairness. It is not a fairness item. **Blue is the single most common accent on the web
+corpus — 18 of 56 sites, very nearly a third.** A systematic weakness in cool accents is
+therefore not an edge case affecting a few unlucky sites; it is a defect affecting a third of
+every tree the product will ever make.
+
+Measured cool-accent sites available for the matrix: irs.gov `#1465a2`, github.com `#0b0d40`,
+aljazeera.net `#201a50`, india.gov.in `#160f67`, newyorker.com `#56a2d0`, and at the very
+light end kantei.go.jp `#dde8fd` and openstreetmap.org `#aad3df` — which also give us case
+(D-adjacent) *very light* accents, where L6 must push local foliage **deeper** rather than
+lighter.
+
+**Revised visual-3d order: L3 rename → L5 foliage relationship → L7 debug views → L6 local
+contrast → L1 grammar selection → L8 winter → L11 composition → performance.** L5 and L7 stay
+ahead of L6 only because L7's debug views are how L6 gets judged at all.
+
+## L14 — The achromatic palette collapses to a single cream. Analysis item.
+
+The test session found that **all four near-achromatic sites — openai.com,
+species-in-pieces.com, bbc.com, pentagram.com — receive the identical flower pair
+`#e5e5d1` / `#9d9d66`.**
+
+This is by construction, and the construction was a reasonable fix for a worse bug.
+`achromaticPetal()` in `analysis/lib/mapping.js` borrows the ground's hue only when the
+ground has saturation ≥ 0.05; otherwise it uses a fixed warm cream at hue 42. The comment
+records why: a greyscale ground reports hue 0, which is **red**, and borrowing it "gave four
+unrelated sites the same pink ivory." So the pink was fixed by substituting one constant for
+another — and every truly greyscale site now converges on that constant.
+
+Why this matters rather than being cosmetic: §13 of the directive is explicit that a
+sophisticated monochrome site must not look boring, and that it may take "white / ivory /
+grey botanical accents **where the source palette supports that**." The palette is not being
+asked to support it. Note in particular that **openai.com is light and species-in-pieces.com
+is dark**, and they currently receive the same petal — two sites that look nothing alike,
+issued identical bloom.
+
+**This is not a request for a new metric** (§14 stands). The information already exists in
+the fingerprint — ground lightness, ink colour, the unmasked palette. Analysis: use what is
+already measured to differentiate achromatic sites, or report back that the existing
+measurements genuinely cannot separate them, which would itself be a finding worth having.
+
+## Test-matrix status, measured
+
+| case | status |
+|---|---|
+| A warm | raycast `#c7273a` abundant · pinterest `#e91d3c` · anthropic `#c86e51` · drudgereport `#f48a8a` few |
+| B maroon/burgundy | **no real site in 56.** Nearest is mit.edu's *fruit* colour `#ad1f35`. Hand-picked site needed |
+| C cool | 18 available — see L13 |
+| D orange/yellow | mailchimp `#cdb523` · amazon `#f7d945` · pudding.cool `#f1b24c` · rauno.me `#fbfb04` · ikea `#feda01` (autumn) |
+| E achromatic-rich | openai · species-in-pieces · bbc · pentagram — **all four identical, see L14** |
+| F/G/H ladder | blue: daringfireball/arxiv → irs.gov/newyorker → github/aljazeera. Red: drudgereport → pinterest → raycast |
+| I fruit only | **none.** May be structurally unreachable — fruit needs a concentrated accent, which almost always clears the richness floor that grants flowers. Test session to determine which |
+| J flower + fruit | 6 sites, all flowering: stripe, raycast, mit, joshwcomeau, kantei, zombo |
+| K winter no fruit | gwern.net. **lusion.co is a FALSE winter** — the analyzer measured its black preloader (ink 0.012). Keep it out |
+| L winter + fruit | **none — impossible by construction today.** The gate reads `botanicalState !== 'winter'`. L10 removes it, so this case should APPEAR. If it does not, something else is wrong |
+| M ≥2 grammars | blue-medium group: irs.gov, newyorker, india.gov.in, yahoo.co.jp, zombo, en.wikipedia |
+
+**Falsifiable predictions for the post-change re-survey**, both mine:
+
+1. Fruit prevalence roughly **doubles from 6/56 (10.7%) to ~12/56**, because L9 deletes a
+   coin-flip that was denying a measured trait to half of all eligible sites.
+2. Winter-with-fruit goes from **0 to non-zero**, per L10.
+
+If either fails it is a more useful result than if it succeeds.
