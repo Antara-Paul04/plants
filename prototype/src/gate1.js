@@ -43,24 +43,23 @@ const { makeRenderer, fitCamera } = await import(`./viewer.js${bust}`);
 // so it was silently ignored and the reviewed trees were pruned at the default.
 // These presets reproduce the trees that were actually judged.
 const PRESETS = {
-  // Taste's rule, tested at both ends: "Nothing in this family should be narrow.
-  // Hold the width roughly constant and let DENSITY be what varies" — and "buy
-  // air with width, never by flattening": a flat crown reads as savanna at any
-  // width, a domed one stays ours. So both states share a broad, domed envelope
-  // and differ in how much structure fills it (334 limbs against 76).
+  // CHUNKY, to the revised Gate 1 (references/tree-style/README.md): 4-5 orders,
+  // limbs individually readable to the tip, never a wire haze; every child
+  // 0.70-0.80 x its parent; a bare silhouette that reads as a deliberate
+  // sculptural object at 140px. Crown MASS is no longer this gate's job — on the
+  // human's references it comes from clustered foliage, not from twig density.
   //
-  // Attractor counts scale with the envelope's volume, so widening did not thin
-  // the branching that was judged. `grow` is re-matched BY MEASUREMENT so the
-  // first-fork radius is what was reviewed (bare 0.2955, sparse 0.1656) — a
-  // wider crown feeds more tips into da Vinci's rule and would otherwise
-  // quietly thicken the trunk.
+  // Taste's width rule still holds: nothing narrow, width roughly constant,
+  // density is what varies; buy air with width, never by flattening.
   bare: {
     rx: 2.9, ry: 2.15, cy: 4.15, trunkMin: 8,
-    c1: 350, k1: 5.0, c2: 2740, k2: 1.4, i2: 11, tip: 0.004, minStub: 0.3, grow: 1.8e-4,
+    c1: 300, k1: 4.6, c2: 700, k2: 2.4, i2: 9, minStub: 0.62,
+    trunk: 0.31,
   },
   sparse: {
     rx: 2.9, ry: 2.05, cy: 3.95, trunkMin: 7,
-    c1: 190, k1: 6.0, c2: 520, k2: 3.0, i2: 9, tip: 0.005, minStub: 0.3, grow: 0.97e-4,
+    c1: 170, k1: 6.0, c2: 220, k2: 3.6, i2: 9, minStub: 0.62,
+    trunk: 0.23,
   },
 };
 const preset = PRESETS[q.get('preset')] || PRESETS.bare;
@@ -86,6 +85,12 @@ const P = {
   taper: num('taper', 0.013),
   shootR: num('shootR', 0.0055),
   rmax: num('rmax', 0.42),
+  law: q.get('law') || 'ratio',
+  trunk: num('trunk', 0.3),
+  ratioLo: num('ratioLo', 0.7),
+  ratioHi: num('ratioHi', 0.8),
+  power: num('power', 0.5),
+  tipMin: num('tipMin', 0.034),
   smooth: num('smooth', 3),
   minStub: num('minStub', 0.3),
   maxChildren: num('kids', 2),
@@ -273,6 +278,8 @@ const skel = buildSkeleton(r, {
   radii: { tip: P.tip, alpha: P.alpha, grow: P.grow, taper: P.taper, shootR: P.shootR, max: P.rmax },
   smooth: P.smooth,
   minStub: P.minStub,
+  radiusLaw: P.law,
+  ratio: { trunk: P.trunk, ratioLo: P.ratioLo, ratioHi: P.ratioHi, power: P.power, tipMin: P.tipMin },
   coarseCount: P.coarseCount, coarseKill: P.coarseKill, coarseInfluence: P.coarseInfluence,
   fineCount: P.fineCount, fineKill: P.fineKill, fineInfluence: P.fineInfluence, fineShell: P.fineShell,
   tipCount: P.tipCount, tipKill: P.tipKill, tipInfluence: P.tipInfluence, tipShell: P.tipShell, tipD: P.tipD, tipWobble: P.tipWobble,
@@ -352,7 +359,7 @@ controls.maxPolarAngle = Math.PI * 0.52;
 controls.update();
 
 // --- stats -----------------------------------------------------------------
-const tris = geo.index.count / 3 + (thick.geometry ? thick.geometry.attributes.position.count / 3 : 0);
+const tris = (geo ? geo.index.count / 3 : 0) + (thick.geometry ? thick.geometry.attributes.position.count / 3 : 0);
 const forks = skel.nodes.filter((n) => n.children.length > 1).length;
 const hud = document.getElementById('hud');
 hud.textContent =
@@ -382,4 +389,6 @@ function tick() {
 }
 tick();
 document.body.classList.add('ready');
-window.__gate1 = { skel, geo, thick, tris, P, camera, controls, scene, renderer };
+window.__gate1 = { skel, geo, thick, tris, P, camera, controls, scene, renderer,
+  orders: Math.max(...skel.limbs.map((l) => l.depth)) + 1,
+  primaries: skel.limbs.filter((l) => l.depth === 1).length };

@@ -32,7 +32,11 @@ import { edgeTable, triTable } from 'three/addons/objects/MarchingCubes.js';
 import { clamp, smoothstep, rr } from './util.js';
 import { groove, grooveFreq, relaxedRadii } from './limbmesh.js';
 
-export const CUT = 0.04;
+// Below the chunky tips' minimum radius, so in the chunky style EVERY limb lives
+// in the field to its tip: each tip is a smooth dome and there is no hand-over to
+// a tube at all. (The hand-over showed as a chisel cut and a notch near the tips.)
+// Tubes remain only for genuinely thin wood, which the chunky style does not have.
+export const CUT = 0.02;
 const BIG = 1e9;
 
 /** Polynomial smooth minimum; k is the blend width in world units. */
@@ -73,9 +77,10 @@ export function buildThickWood(limbs, r, opts = {}) {
   for (const L of limbs) {
     const radii = relaxedRadii(L.chain);
     let c = radii.findIndex((x) => x < CUT);
-    if (c === -1) c = radii.length - 1;          // thick to the very end (does not happen in practice)
-    if (c < 2) { cuts.set(L, 0); continue; }      // barely thick: leave it to the tube mesher
-    cuts.set(L, c);
+    const whole = c === -1;                       // thick to the very tip: no tube takes over
+    if (whole) c = radii.length - 1;
+    if (c < 2 && !whole) { cuts.set(L, 0); continue; }   // barely thick: leave it to the tube mesher
+    cuts.set(L, whole ? L.chain.length : c);
 
     const pts = [], rad = [];
     if (L.parentLimb) {
@@ -86,8 +91,9 @@ export function buildThickWood(limbs, r, opts = {}) {
       rad.push(radii[0]);
     }
     for (let i = 0; i <= c; i++) { pts.push(L.chain[i].pos.clone()); rad.push(radii[i]); }
-    // Sink the last stretch inside the tube that takes over from here.
-    rad[rad.length - 1] *= 0.72;
+    // Sink the last stretch inside the tube that takes over from here — only if
+    // one does. A limb that is field to its tip ends in its own rounded dome.
+    if (!whole) rad[rad.length - 1] *= 0.72;
 
     const isTrunk = !L.parentLimb;
     if (isTrunk) {
@@ -187,8 +193,11 @@ export function buildThickWood(limbs, r, opts = {}) {
               // A cross-section is never a circle; integer frequencies close the ring.
               d -= rl * (0.05 * Math.cos(3 * th + c.seed) + 0.03 * Math.cos(5 * th - c.seed * 1.7 + arc * 1.3));
               if (c.grooves) {
-                const depth = clamp((rl - 0.018) * 0.17, 0, 0.05) * (c.isTrunk ? 1 : smoothstep(0.08, 0.6, arc));
-                if (depth > 0) { g = groove(th, z0 + t * len, c.seed, c.f1); d += depth * g; g *= clamp(depth / 0.02, 0, 1); }
+                // Grooves only where the grid can carry them. On thinner limbs they
+                // are narrower than a couple of voxels and alias into a zipper; the
+                // named target is broad soft grooves on the TRUNK in any case.
+                const depth = clamp((rl - 0.085) * 0.24, 0, 0.05) * (c.isTrunk ? 1 : smoothstep(0.08, 0.6, arc));
+                if (depth > 0) { g = groove(th, z0 + t * len, c.seed, c.f1, c.isTrunk); d += depth * g; g *= clamp(depth / 0.02, 0, 1); }
               }
             }
             if (d < tmp[idx]) {

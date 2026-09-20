@@ -192,7 +192,7 @@ they are about correctness of form, which the references honour fully.
 | --- | --- | --- |
 | 1 | **Taper** — every child 0.70–0.80 × its parent radius along any path root-to-tip | any junction where a child reads as thick as its parent |
 | 2 | **Junctions** — swell and flow out of the parent | any visible telescoping step or floating flange |
-| 3 | **Ramification — REVISED** — 4–5 orders, limbs staying **chunky and individually readable to the tip** | it reads as a wire haze; or the primary limbs can be counted on one hand |
+| 3 | **Ramification — REVISED** — 4–5 orders, limbs staying **chunky and individually readable to the tip**. *Chunky is not uniform:* the size gradient must continue all the way out, every shoot still thinner than its parent and still tapering to a point | it reads as a wire haze; **or as antlers or coral**, which is what same-thickness forking prongs give; or the primary limbs can be counted on one hand |
 | 4 | **Terminations** — every tip tapers; no flat cuts | any blunt-chopped end anywhere |
 | 5 | **Bare silhouette at thumbnail — REVISED** — reads as a deliberate sculptural object | reads as a post, a spray of sticks, or a solid knot at 140px |
 | 6 | **Growth history** — asymmetry, a dominant leader, out-competed limbs | limbs leave at similar angles with similar lengths |

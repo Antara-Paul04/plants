@@ -55,7 +55,7 @@ function stepFor(radius) {
  * exactly — no seam. The phases drift slowly with arc length, so grooves wander,
  * merge and fade rather than running rule-straight, and nothing repeats.
  */
-export function groove(theta, z, seed, f1 = 8) {
+export function groove(theta, z, seed, f1 = 8, fine = true) {
   const p1 = noise3(z * 0.42, seed, 1.7) * 2.6;
   const p2 = noise3(z * 0.55, seed, 9.1) * 2.6;
   const p3 = noise3(z * 0.7, seed, 23.4) * 2.6;
@@ -66,7 +66,7 @@ export function groove(theta, z, seed, f1 = 8) {
   const f2 = Math.round(f1 * 1.6), f3 = Math.round(f1 * 2.4);
   let v = 0.5 * Math.cos(f1 * theta + p1)
         + 0.32 * Math.cos(f2 * theta + p2 + 1.3)
-        + 0.18 * Math.cos(f3 * theta + p3 + 4.1);
+        + (fine ? 0.18 * Math.cos(f3 * theta + p3 + 4.1) : 0);   // the finest harmonic is below what the voxel grid carries on a limb
   // Grooves come and go along the limb; a groove that never stops is a flute
   // on a column, and that is architecture, not a tree.
   v *= 0.6 + 0.4 * noise3(z * 0.8, seed + 40, 5.5);
@@ -168,22 +168,10 @@ function sweepLimb(pts, radii, opts = {}) {
       rad *= 1 + 0.5 * nearUnion;
       if (past < 0.12) rad = Math.min(rad, hostR * 0.86);
     }
-    // A shoot holds its diameter and ends in a BUD. Tapering over a fraction
-    // of the limb's length made long shoots into needles and, earlier, every
-    // shoot into a cone — a tree covered in cones is a thorn bush. So the end
-    // is shaped in WORLD units from the tip: a short narrowing, a small ovoid
-    // bud, then closed to a point.
-    if (terminal) {
-      const toTip = length - arc;
-      rad *= 0.5 + 0.5 * smoothstep(0.0, 0.16, toTip);
-      const bd = (toTip - 0.034) / 0.026;
-      rad *= 1 + 1.15 * Math.exp(-bd * bd);
-      rad *= smoothstep(0.0, 0.014, toTip);
-    }
-
-    // Nodes: young wood swells slightly where buds and leaves attach.
-    const young = 1 - smoothstep(0.01, 0.034, rad);
-    if (young > 0) rad *= 1 + 0.12 * young * nodePulse(arc + zOff);
+    // A chunky twig ends in a ROUNDED tip. The limb already tapers along its own
+    // length (the ratio radius law), so the end only has to close — as a dome,
+    // in world units. No needle, no bud: the references are clean silhouettes.
+    if (terminal) rad *= Math.sqrt(clamp((length - arc) / Math.max(rad * 1.6, 0.03), 0, 1));
 
     // Root buttress, in WORLD height above the turf rather than as a fraction
     // of the limb (the trunk limb now runs to the top of the tree, so a
@@ -425,5 +413,6 @@ export function buildLimbs(limbs, r, opts = {}) {
 
   // Normals are already correct per limb (and seam-closed). Recomputing them on
   // the merged mesh would reopen every seam.
-  return BufferGeometryUtils.mergeGeometries(geos, false);
+  // In the chunky style every limb can be in the field, leaving nothing to sweep.
+  return geos.length ? BufferGeometryUtils.mergeGeometries(geos, false) : null;
 }

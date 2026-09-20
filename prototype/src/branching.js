@@ -370,18 +370,81 @@ export function extractLimbs(nodes) {
     const laterals = [];
     let cur = start;
     while (cur.children.length) {
-      const kids = cur.children.slice().sort((a, b) => b.r - a.r);
+      // Dominant child: the heaviest subtree when weights exist (ratio law),
+      // otherwise the thickest (da Vinci law).
+      const kids = cur.children.slice().sort((a, b) => (b.w ?? b.r) - (a.w ?? a.r));
       for (let i = 1; i < kids.length; i++) laterals.push([kids[i], chain.length - 1]);
       chain.push(kids[0]);
       cur = kids[0];
     }
     const limb = { chain, depth, parentLimb: parentLimb || null, parentIndex, attach: [] };
     limbs.push(limb);
-    if (parentLimb) parentLimb.attach.push({ index: parentIndex, r: start.r });
+    if (parentLimb) parentLimb.attach.push({ index: parentIndex, r: start.r, limb });
     for (const [k, idx] of laterals) walk(k, depth + 1, limb, idx);
   };
 
   walk(root, 0, null, 0);
+  return limbs;
+}
+
+/**
+ * Subtree weight: the total length of wood each node carries. Decides which
+ * child CONTINUES a limb at a fork — the leader is the one with the most tree
+ * beyond it — without needing radii first.
+ */
+export function assignWeights(nodes) {
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    const n = nodes[i];
+    n.w = 0;
+    for (const c of n.children) n.w += c.w + c.pos.distanceTo(n.pos);
+  }
+  return nodes;
+}
+
+/**
+ * Thickness by RATIO — the stylised law, and the one the art direction wants.
+ *
+ * The human's references are chunky: every limb stays individually readable to
+ * its tip, and the revised Gate 1 asks that every child be 0.70-0.80 x its
+ * parent. Da Vinci's rule cannot give that. It conserves cross-section, so a
+ * small lateral is a small FRACTION of its parent and terminal shoots come out
+ * hair-thin — a fine winter-tree haze, which was the right answer to the wrong
+ * reference (a photograph of a real tree).
+ *
+ * Here each limb tapers along ITS OWN length, from its base radius to a rounded
+ * tip, and every lateral starts at a fixed fraction of its parent's radius at
+ * the point it leaves. Two consequences worth having:
+ *   - every tip tapers, by construction — no flat cuts anywhere;
+ *   - trunk thickness is a FREE parameter. Under da Vinci the trunk was the sum
+ *     of its tips, so shoot density and proportion could not be tuned apart;
+ *     that coupling does not exist here.
+ *
+ * `power` < 1 keeps a limb thick for most of its length and tapers it late —
+ * chunky — where 1 would be a cone and a cone is a thorn.
+ */
+export function assignRadiiRatio(limbs, opts = {}, r = Math.random) {
+  const { trunk = 0.3, ratioLo = 0.7, ratioHi = 0.8, power = 0.62, tipMin = 0.016 } = opts;
+  for (const L of limbs) {
+    const chain = L.chain;
+    const s = [0];
+    for (let i = 1; i < chain.length; i++) s.push(s[i - 1] + chain[i].pos.distanceTo(chain[i - 1].pos));
+    const total = Math.max(s[s.length - 1], 1e-6);
+
+    let base = trunk;
+    if (L.parentLimb) {
+      const host = L.parentLimb.chain[L.parentIndex];
+      base = host.r * (ratioLo + (ratioHi - ratioLo) * r());
+      // A short limb cannot carry a fat base: it would be a wart, not a twig.
+      base = Math.min(base, Math.max(tipMin * 1.6, total * 0.16));
+    }
+    for (let i = 0; i < chain.length; i++) {
+      chain[i].r = Math.max(tipMin, base * Math.pow(1 - s[i] / total, power));
+    }
+    if (L.parentLimb) {
+      const a = L.parentLimb.attach.find((x) => x.limb === L);
+      if (a) a.r = chain[0].r;
+    }
+  }
   return limbs;
 }
 
@@ -460,8 +523,14 @@ export function buildSkeleton(r, opts = {}) {
 
   nodes = pruneStubs(nodes, opts.minStub ?? 0.3);
   smoothChains(nodes, opts.smooth ?? 3);
-  assignRadii(nodes, opts.radii);
-  return { nodes, limbs: extractLimbs(nodes), cloud: fineCloud };
+  if (opts.radiusLaw === 'davinci') {
+    assignRadii(nodes, opts.radii);
+    return { nodes, limbs: extractLimbs(nodes), cloud: fineCloud };
+  }
+  assignWeights(nodes);
+  const limbs = extractLimbs(nodes);
+  assignRadiiRatio(limbs, opts.ratio, r);
+  return { nodes, limbs, cloud: fineCloud };
 }
 
 export { clamp, lerp };

@@ -380,6 +380,48 @@ were scaled with the envelope's volume so widening did not thin the judged branc
 0.298 vs 0.2955; sparse 0.166 vs 0.1656). The radius clamp went 0.34 → 0.42, so the bare
 trunk base now tapers naturally into the buttress instead of flattening.
 
+### Chunky: the ratio radius law, and the whole tree in the field — EXPERIMENT
+
+**Status: EXPERIMENT, to the revised Gate 1** (`references/tree-style/README.md`): 4–5
+orders, limbs chunky and readable to the tip, every child 0.70–0.80 × its parent, never a
+wire haze; crown mass moves to Gate 2 and comes from foliage. Renders, with a true-size
+140px sheet and the wire-haze BEFORE: `references/experiments/gate1-chunky-2026-09-20/`.
+
+**The radius law changed, not just its numbers.** "Every child 0.70–0.80 × its parent" is
+not something da Vinci's rule can produce: it conserves cross-section, so a small lateral
+is a small *fraction* of its parent and terminal shoots come out hair-thin. That was the
+right answer to the wrong reference (a photograph of a real tree). `assignRadiiRatio`
+is the stylised law instead: each limb tapers along ITS OWN length from a base radius to a
+rounded tip (`power` 0.5 — thick for most of its length, tapering late; 1.0 would be a cone,
+and a cone is a thorn), and every lateral starts at 0.70–0.80 of its parent's radius where
+it leaves. Limb dominance at a fork comes from subtree weight, since radii no longer exist
+when limbs are extracted. `?law=davinci` keeps the old law for comparison.
+
+Two consequences worth having: every tip tapers by construction, and **trunk thickness is a
+free parameter.** Under da Vinci the trunk was the sum of its tips, so shoot density and
+proportion could not be tuned apart — the coupling that stalled the twig work. It is gone.
+
+**The whole tree now lives in the implicit surface.** With chunky tips there is nothing thin
+enough to need a swept tube, so `CUT` sits below the minimum tip radius: every union is
+filleted, every tip is a smooth dome, and the field-to-tube hand-over (which showed as a
+chisel cut and a notch near the tips) no longer exists. Grooves are limited to wood the
+voxel grid can carry — narrower ones aliased into a zipper — which matches the named target
+of broad soft grooves on the TRUNK.
+
+**Measured:** bare 47 limbs / 4 orders / 8 primaries / 212k triangles; sparse 18 / 4 / 5 /
+109k. At a true 140px both read as deliberate silhouettes and are distinguishable from each
+other (full chunky crown against open, wide and few-limbed).
+
+**OPEN:**
+- **Build time is ~1.7 s bare, ~0.6 s sparse** (15M-voxel grid). Too slow for the product:
+  needs a coarser voxel, a narrow-band grid or a worker before it ships.
+- Seed 7 grows one limb that curls back into a ring. A space-colonization artefact; a
+  curl limit on growth direction would remove it. Not done.
+- Sparse has 5 primaries, which is on the revised criterion's failure line for a BARE tree;
+  whether that is right for the sparse state is Taste's call.
+- Gate 1 is not wired to DNA yet. `mountTree`/`setDNA`/`dispose` are untouched; the new
+  pipeline sits behind `gate1.html` only.
+
 ---
 
 ## Invariant characteristics
