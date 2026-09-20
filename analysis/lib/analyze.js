@@ -249,11 +249,39 @@ const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./,''); } c
 // A brand redirecting to its own country site is the same brand. From this network every
 // global brand sends us to .in, so without this no global brand can grow a tree at all.
 // Compare the first label only; a parked page or squatter will not match it.
+// Suffixes that are two labels long, so the registrable domain is three.
+// Without these, example.co.uk and other.co.uk would share a "brand".
+const TWO_PART_SUFFIX = new Set([
+  'co.uk','org.uk','ac.uk','gov.uk','me.uk','net.uk','sch.uk','nhs.uk',
+  'co.jp','ne.jp','or.jp','ac.jp','go.jp',
+  'com.au','net.au','org.au','edu.au','gov.au',
+  'co.nz','net.nz','org.nz','govt.nz','co.za','org.za',
+  'com.br','com.cn','com.mx','com.ar','com.tr','com.sg','com.hk','com.tw',
+  'com.pl','com.ua','com.ng','com.pk','com.ph','com.vn','com.my',
+  'co.kr','co.id','co.th','co.il','co.ke','co.ve',
+  'co.in','net.in','org.in','gov.in','ac.in','edu.in','res.in',
+]);
+// The part of a hostname that identifies who owns it: the last two labels,
+// or three when the last two are a public suffix rather than a name.
+const registrable = (host) => {
+  const p = String(host || '').toLowerCase().split('.').filter(Boolean);
+  if (p.length <= 2) return p.join('.');
+  const lastTwo = p.slice(-2).join('.');
+  return TWO_PART_SUFFIX.has(lastTwo) ? p.slice(-3).join('.') : lastTwo;
+};
 const sameBrand = (a, b) => {
   if (!a || !b) return false;
   if (a === b || a.endsWith('.' + b) || b.endsWith('.' + a)) return true;
+  // SAME OWNER IS THE SAME BRAND, whatever the subdomain does. The first-label
+  // test below has a three-character floor — it stops "en.foo.com" matching
+  // "en.bar.com" — and that floor was rejecting en.m.wikipedia.org when it
+  // redirected to en.wikipedia.org, its own desktop site. Every two-letter
+  // language subdomain was caught by it, which is most of Wikipedia.
+  const ra = registrable(a);
+  if (ra && ra === registrable(b)) return true;
   const la = a.split('.')[0], lb = b.split('.')[0];
   if (!la || !lb || la.length < 3 || lb.length < 3) return false;
+  // A global brand redirecting to its own country site: nike.com -> nike.in.
   return la === lb || la.includes(lb) || lb.includes(la);
 };
 
