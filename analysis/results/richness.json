@@ -1,0 +1,272 @@
+{
+ "SYNTH-wall": {
+  "edgeDensity": 0,
+  "axisAlignedRatio": 0,
+  "toneLevels": 3,
+  "contrastRange": 0.036,
+  "regionCount": 7,
+  "coarseEdgeDensity": 0,
+  "scalePersistence": 0,
+  "meanGradient": 13.59
+ },
+ "SYNTH-blank": {
+  "edgeDensity": 0,
+  "axisAlignedRatio": 0,
+  "toneLevels": 1,
+  "contrastRange": 0,
+  "regionCount": 1,
+  "coarseEdgeDensity": 0,
+  "scalePersistence": 0,
+  "meanGradient": 0
+ },
+ "SYNTH-gradient": {
+  "edgeDensity": 0,
+  "axisAlignedRatio": 0,
+  "toneLevels": 20,
+  "contrastRange": 0.478,
+  "regionCount": 19,
+  "coarseEdgeDensity": 0,
+  "scalePersistence": 0,
+  "meanGradient": 2.52
+ },
+ "apple": {
+  "edgeDensity": 0.1218,
+  "axisAlignedRatio": 0.692,
+  "toneLevels": 8,
+  "contrastRange": 0.962,
+  "regionCount": 7,
+  "coarseEdgeDensity": 0.2461,
+  "scalePersistence": 1,
+  "meanGradient": 43.06
+ },
+ "awwwards": {
+  "edgeDensity": 0.0722,
+  "axisAlignedRatio": 0.697,
+  "toneLevels": 10,
+  "contrastRange": 0.729,
+  "regionCount": 13,
+  "coarseEdgeDensity": 0.1626,
+  "scalePersistence": 1,
+  "meanGradient": 25.14
+ },
+ "better-mfw": {
+  "edgeDensity": 0.1262,
+  "axisAlignedRatio": 0.542,
+  "toneLevels": 1,
+  "contrastRange": 0.184,
+  "regionCount": 8,
+  "coarseEdgeDensity": 0.1949,
+  "scalePersistence": 1,
+  "meanGradient": 34.14
+ },
+ "bruno-simon": {
+  "edgeDensity": 0.0994,
+  "axisAlignedRatio": 0.515,
+  "toneLevels": 12,
+  "contrastRange": 0.322,
+  "regionCount": 20,
+  "coarseEdgeDensity": 0.1783,
+  "scalePersistence": 1,
+  "meanGradient": 22.92
+ },
+ "cern-first-web": {
+  "edgeDensity": 0.0928,
+  "axisAlignedRatio": 0.554,
+  "toneLevels": 1,
+  "contrastRange": 0.095,
+  "regionCount": 3,
+  "coarseEdgeDensity": 0.1514,
+  "scalePersistence": 1,
+  "meanGradient": 28.12
+ },
+ "control-raw": {
+  "edgeDensity": 0.0655,
+  "axisAlignedRatio": 0.547,
+  "toneLevels": 1,
+  "contrastRange": 0,
+  "regionCount": 3,
+  "coarseEdgeDensity": 0.1117,
+  "scalePersistence": 1,
+  "meanGradient": 21.92
+ },
+ "cosmos-so": {
+  "edgeDensity": 0.0498,
+  "axisAlignedRatio": 0.528,
+  "toneLevels": 2,
+  "contrastRange": 0.575,
+  "regionCount": 3,
+  "coarseEdgeDensity": 0.1096,
+  "scalePersistence": 1,
+  "meanGradient": 16.41
+ },
+ "craigslist": {
+  "edgeDensity": 0.2275,
+  "axisAlignedRatio": 0.661,
+  "toneLevels": 5,
+  "contrastRange": 0.278,
+  "regionCount": 11,
+  "coarseEdgeDensity": 0.3612,
+  "scalePersistence": 1,
+  "meanGradient": 54.68
+ },
+ "figma": {
+  "edgeDensity": 0.0587,
+  "axisAlignedRatio": 0.645,
+  "toneLevels": 4,
+  "contrastRange": 0.555,
+  "regionCount": 5,
+  "coarseEdgeDensity": 0.1223,
+  "scalePersistence": 1,
+  "meanGradient": 21.5
+ },
+ "gov-uk": {
+  "edgeDensity": 0.1386,
+  "axisAlignedRatio": 0.631,
+  "toneLevels": 4,
+  "contrastRange": 0.61,
+  "regionCount": 4,
+  "coarseEdgeDensity": 0.2456,
+  "scalePersistence": 1,
+  "meanGradient": 40.75
+ },
+ "linear": {
+  "edgeDensity": 0.1036,
+  "axisAlignedRatio": 0.557,
+  "toneLevels": 4,
+  "contrastRange": 0.227,
+  "regionCount": 6,
+  "coarseEdgeDensity": 0.1707,
+  "scalePersistence": 1,
+  "meanGradient": 33.17
+ },
+ "lings-cars": {
+  "edgeDensity": 0.1088,
+  "axisAlignedRatio": 0.59,
+  "toneLevels": 6,
+  "contrastRange": 0.231,
+  "regionCount": 7,
+  "coarseEdgeDensity": 0.2334,
+  "scalePersistence": 1,
+  "meanGradient": 29.1
+ },
+ "mfw": {
+  "edgeDensity": 0.2416,
+  "axisAlignedRatio": 0.544,
+  "toneLevels": 2,
+  "contrastRange": 0.396,
+  "regionCount": 10,
+  "coarseEdgeDensity": 0.392,
+  "scalePersistence": 1,
+  "meanGradient": 78.56
+ },
+ "nasa": {
+  "edgeDensity": 0.1201,
+  "axisAlignedRatio": 0.593,
+  "toneLevels": 29,
+  "contrastRange": 1,
+  "regionCount": 17,
+  "coarseEdgeDensity": 0.2393,
+  "scalePersistence": 1,
+  "meanGradient": 48.86
+ },
+ "sive-rs": {
+  "edgeDensity": 0.0717,
+  "axisAlignedRatio": 0.646,
+  "toneLevels": 1,
+  "contrastRange": 0.238,
+  "regionCount": 1,
+  "coarseEdgeDensity": 0.1381,
+  "scalePersistence": 1,
+  "meanGradient": 20.53
+ },
+ "spacejam-1996": {
+  "edgeDensity": 0.4078,
+  "axisAlignedRatio": 0.409,
+  "toneLevels": 7,
+  "contrastRange": 0.302,
+  "regionCount": 6,
+  "coarseEdgeDensity": 0.5203,
+  "scalePersistence": 1,
+  "meanGradient": 83.36
+ },
+ "stripe": {
+  "edgeDensity": 0.1036,
+  "axisAlignedRatio": 0.574,
+  "toneLevels": 9,
+  "contrastRange": 0.403,
+  "regionCount": 2,
+  "coarseEdgeDensity": 0.2019,
+  "scalePersistence": 1,
+  "meanGradient": 35.21
+ },
+ "tailwind": {
+  "edgeDensity": 0.1322,
+  "axisAlignedRatio": 0.553,
+  "toneLevels": 4,
+  "contrastRange": 0.875,
+  "regionCount": 4,
+  "coarseEdgeDensity": 0.2322,
+  "scalePersistence": 1,
+  "meanGradient": 64.24
+ },
+ "threejs-example": {
+  "edgeDensity": 0.2679,
+  "axisAlignedRatio": 0.592,
+  "toneLevels": 20,
+  "contrastRange": 0.803,
+  "regionCount": 13,
+  "coarseEdgeDensity": 0.3787,
+  "scalePersistence": 1,
+  "meanGradient": 69.36
+ },
+ "threejs": {
+  "edgeDensity": 0.4221,
+  "axisAlignedRatio": 0.559,
+  "toneLevels": 32,
+  "contrastRange": 0.958,
+  "regionCount": 24,
+  "coarseEdgeDensity": 0.6805,
+  "scalePersistence": 1,
+  "meanGradient": 95.09
+ },
+ "unsplash": {
+  "edgeDensity": 0.2387,
+  "axisAlignedRatio": 0.604,
+  "toneLevels": 29,
+  "contrastRange": 0.906,
+  "regionCount": 39,
+  "coarseEdgeDensity": 0.5216,
+  "scalePersistence": 1,
+  "meanGradient": 64.46
+ },
+ "vercel": {
+  "edgeDensity": 0.0758,
+  "axisAlignedRatio": 0.554,
+  "toneLevels": 2,
+  "contrastRange": 0.09,
+  "regionCount": 4,
+  "coarseEdgeDensity": 0.1364,
+  "scalePersistence": 1,
+  "meanGradient": 30.3
+ },
+ "wikipedia": {
+  "edgeDensity": 0.3158,
+  "axisAlignedRatio": 0.57,
+  "toneLevels": 15,
+  "contrastRange": 0.456,
+  "regionCount": 9,
+  "coarseEdgeDensity": 0.4022,
+  "scalePersistence": 1,
+  "meanGradient": 84.08
+ },
+ "yale-art": {
+  "edgeDensity": 0.1856,
+  "axisAlignedRatio": 0.573,
+  "toneLevels": 12,
+  "contrastRange": 0.584,
+  "regionCount": 15,
+  "coarseEdgeDensity": 0.3258,
+  "scalePersistence": 1,
+  "meanGradient": 52.43
+ }
+}

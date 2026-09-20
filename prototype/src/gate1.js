@@ -102,73 +102,144 @@ const canvas = document.getElementById('scene');
 const renderer = makeRenderer(canvas);
 const TM = { neutral: THREE.NeutralToneMapping, aces: THREE.ACESFilmicToneMapping, agx: THREE.AgXToneMapping };
 renderer.toneMapping = TM[q.get('tm')] ?? THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = P.exposure;
 const uniforms = { time: { value: 0 } };
 
-// --- sky, used twice: as the backdrop and as the thing the bark reflects -----
-const SKY_TOP = new THREE.Color(0x4f95c8);
-const SKY_HORIZON = new THREE.Color(0xdfe6e4);
-const SKY_GROUND = new THREE.Color(0x6f6a55);
+// --- environment states ------------------------------------------------------
+// An environment is an ART-DIRECTED STATE, not a sampled hex value. Translating
+// a dark website's ground colour literally into a dark scene gives muddy gloom:
+// a dark website does not mean a dark tree. Every value below moves together —
+// sky, key, fill, rim, image-based light, exposure — because that is what makes
+// it a lighting state rather than a background swap.
+//
+// NIGHT is "moonlit diorama, not brightness slider at 20%". The tree stays
+// properly exposed; what says night is COLOUR (a cool key, an indigo sky),
+// DIRECTION (the moon is a three-quarter backlight, so every limb carries a
+// silver edge and shadows fall toward the viewer) and CONTRAST (a high
+// key-to-fill ratio with shadows that are deep blue, never black). That is how
+// day-for-night has always been shot, and it is why it reads as night rather
+// than as an underexposed afternoon.
+const ENVS = {
+  day: {
+    skyTop: 0x4f95c8, skyHorizon: 0xdfe6e4, skyGround: 0x6f6a55,
+    glow: { color: 0xfff0d8, power: 14, size: 9, dir: [5.6, 8.4, 5.4] },
+    key: { color: 0xfff0dc, intensity: 3.3, dir: [5.6, 8.4, 5.4], shadowRadius: 2.4 },
+    fill: null,
+    rim: { color: 0xbcd6ee, intensity: 0.75, dir: [-6.5, 4.2, -5.6] },
+    env: 0.85, exposure: 1.0,
+  },
+  night: {
+    // The sky sits DARKER than the lit tree, so the tree is the brightest thing
+    // in the frame — a first attempt had it the other way round, and the tree
+    // became a black cut-out on a bright blue card.
+    skyTop: 0x04060d, skyHorizon: 0x151e38, skyGround: 0x070a12,
+    glow: { color: 0xcdd9ff, power: 12, size: 7, dir: [-5.2, 7.4, 6.2] },
+    // The moon LIGHTS the tree, from the front quarter. Two lessons in it:
+    //  - a pure backlight fails, because rough dark bark returns almost nothing
+    //    to the camera and a back-lit tree is simply a silhouette;
+    //  - a SATURATED blue key fails too, because warm-brown bark has almost no
+    //    blue reflectance, so the wood goes black with a wet blue sheen.
+    // Real moonlight is near-white — reflected sunlight; the blue is
+    // perceptual — so the key is only gently cool and the night colour is
+    // carried by the sky, the shadows and the ground instead.
+    // A soft-edged SPOT rather than a directional: the light pools on the
+    // island and falls away at its rim, which is what makes it a diorama
+    // rather than a landscape at night.
+    key: { color: 0xc9d6ff, intensity: 4.4, dir: [-5.2, 7.4, 6.2], shadowRadius: 1.6, spot: { angle: 0.33, penumbra: 1.0 } },
+    // The silver edge: a second light from behind, doing what a backlit moon
+    // would do if bark were not so rough.
+    fill: { color: 0xdfe8ff, intensity: 2.2, dir: [6.0, 4.2, -6.2] },
+    // A faint warm kicker keeps the wood reading as WOOD rather than slate.
+    rim: { color: 0xffc890, intensity: 0.3, dir: [7.0, 1.8, 3.0] },
+    // Ground response is its own value, because no light can do it: turf that
+    // is lit at all by a cool key stays daytime green and becomes the brightest
+    // thing in the frame. At night colour drains toward blue-grey and value
+    // drops; the tree is the hero, the ground is where it stands.
+    // Over-graded, this reads as FROST — pale blue-white turf is snow, and
+    // that is a season, not a time of day. It has to stay recognisably grass.
+    ground: { sat: 0.5, value: 0.36, tint: 0x5f7fae, tintAmt: 0.2 },
+    env: 1.0, exposure: 1.15,
+  },
+};
+const ENV = ENVS[q.get('envstate')] || ENVS.day;
+renderer.toneMappingExposure = ENV.exposure * P.exposure;
+
 function skyDome(radius, withGround) {
+  const top = new THREE.Color(ENV.skyTop), hor = new THREE.Color(ENV.skyHorizon), gnd = new THREE.Color(ENV.skyGround);
   const g = new THREE.SphereGeometry(radius, 48, 24);
   const pos = g.attributes.position;
   const col = [];
   const c = new THREE.Color();
   for (let i = 0; i < pos.count; i++) {
     const y = pos.getY(i) / radius;
-    if (y >= 0) c.copy(SKY_HORIZON).lerp(SKY_TOP, Math.pow(y, 0.42));
-    else c.copy(SKY_HORIZON).lerp(withGround ? SKY_GROUND : SKY_HORIZON, Math.min(1, -y * 3.2));
+    if (y >= 0) c.copy(hor).lerp(top, Math.pow(y, 0.42));
+    else c.copy(hor).lerp(withGround ? gnd : hor, Math.min(1, -y * 3.2));
     col.push(c.r, c.g, c.b);
   }
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   return new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, depthWrite: false }));
 }
+const dirOf = (a) => new THREE.Vector3(...a).normalize();
 
-const KEY_DIR = new THREE.Vector3(5.6, 8.4, 5.4).normalize();
+// Grade a ground colour for the environment state: drain saturation toward its
+// own luminance, pull it toward the state's tint, drop its value.
+function gradeGround(hex) {
+  const c = new THREE.Color(hex);
+  const G = ENV.ground;
+  if (!G) return c;
+  const l = c.r * 0.2126 + c.g * 0.7152 + c.b * 0.0722;
+  c.lerp(new THREE.Color(l, l, l), 1 - G.sat);
+  c.lerp(new THREE.Color(G.tint).multiplyScalar(l * 1.4), G.tintAmt);
+  return c.multiplyScalar(G.value);
+}
 
 // Image-based light. Without an environment a rough dielectric has nothing to
-// reflect and every shadowed surface goes to the same dead value — which is a
-// large part of why unsurfaced renders read as plastic. The env carries a warm
-// soft "sun" in the key direction so the fill has a direction too.
+// reflect and every shadowed surface falls to the same dead value. The env
+// carries a soft glow in the key direction so the ambient has a direction too.
+let envTex;
 {
   const envScene = new THREE.Scene();
   envScene.add(skyDome(50, true));
-  const sun = new THREE.Mesh(
-    new THREE.SphereGeometry(9, 24, 16),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(0xfff0d8).multiplyScalar(14), toneMapped: false })
+  const glow = new THREE.Mesh(
+    new THREE.SphereGeometry(ENV.glow.size, 24, 16),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(ENV.glow.color).multiplyScalar(ENV.glow.power), toneMapped: false })
   );
-  sun.position.copy(KEY_DIR).multiplyScalar(42);
-  envScene.add(sun);
+  glow.position.copy(dirOf(ENV.glow.dir)).multiplyScalar(42);
+  envScene.add(glow);
   const pm = new THREE.PMREMGenerator(renderer);
-  var envTex = pm.fromScene(envScene, 0.03).texture;
+  envTex = pm.fromScene(envScene, 0.03).texture;
   pm.dispose();
 }
 
 const scene = new THREE.Scene();
 scene.add(skyDome(60, false));
 scene.environment = envTex;
-scene.environmentIntensity = P.env;
+scene.environmentIntensity = ENV.env * (P.env / 0.85);
 
-// Key: warm, high and to the side, so it RAKES across the trunk. Bark relief is
-// only visible under grazing light; a frontal key flattens it completely.
-const key = new THREE.DirectionalLight(0xfff0dc, P.keyI);
-key.position.copy(KEY_DIR).multiplyScalar(14);
+// Key. By day it rakes across the trunk from the side — bark relief is only
+// visible under grazing light, and a frontal key flattens it completely.
+const keyI = ENV.key.intensity * (P.keyI / 3.3);
+const key = ENV.key.spot
+  ? new THREE.SpotLight(ENV.key.color, keyI, 0, ENV.key.spot.angle, ENV.key.spot.penumbra, 0) // decay 0: a moon does not fall off
+  : new THREE.DirectionalLight(ENV.key.color, keyI);
+key.position.copy(dirOf(ENV.key.dir)).multiplyScalar(ENV.key.spot ? 17 : 14);
 key.castShadow = true;
 key.shadow.mapSize.set(4096, 4096);
 key.shadow.camera.near = 1;
 key.shadow.camera.far = 34;
 const S = 6.2;
-Object.assign(key.shadow.camera, { left: -S, right: S, top: S, bottom: -S });
+if (!ENV.key.spot) Object.assign(key.shadow.camera, { left: -S, right: S, top: S, bottom: -S });
 key.shadow.bias = -0.0002;
 key.shadow.normalBias = 0.028;
-key.shadow.radius = 2.4;
+key.shadow.radius = ENV.key.shadowRadius;
 key.target.position.set(0, 2.6, 0);
 scene.add(key, key.target);
 
-// Cool rim from behind, to lift the shadow-side silhouette off the sky.
-const rim = new THREE.DirectionalLight(0xbcd6ee, 0.75);
-rim.position.set(-6.5, 4.2, -5.6);
-scene.add(rim);
+for (const L of [ENV.fill, ENV.rim]) {
+  if (!L) continue;
+  const d = new THREE.DirectionalLight(L.color, L.intensity);
+  d.position.copy(dirOf(L.dir)).multiplyScalar(12);
+  scene.add(d);
+}
 
 // --- build -------------------------------------------------------------------
 const t0 = performance.now();
@@ -201,8 +272,13 @@ tree.receiveShadow = true;
 scene.add(tree);
 
 if (P.showGround) {
-  scene.add(buildIsland(r, {}));
-  scene.add(buildGrass(r, uniforms, { detail: 0.6 }));
+  // The product's NORMAL terrain palette, graded for the environment state.
+  const terrain = {
+    lo: gradeGround(0x5e9e37), mid: gradeGround(0x81c246), hi: gradeGround(0xa8d95c),
+    soilHi: gradeGround(0xa07b58), soilLo: gradeGround(0x6a5663),
+  };
+  scene.add(buildIsland(r, terrain));
+  scene.add(buildGrass(r, uniforms, { ...terrain, detail: 0.6 }));
 }
 if (P.showCloud) {
   const g = new THREE.BufferGeometry().setFromPoints(skel.cloud);

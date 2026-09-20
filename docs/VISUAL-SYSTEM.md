@@ -184,6 +184,45 @@ the same dead value. ACES tone mapping. The product rig is untouched.
 - The stylised island and grass now visibly mismatch the tree's fidelity.
 - Whether `botanicalState` should shift the bark palette (winter greyer, autumn warmer).
 
+### Environment states, and a first NIGHT — EXPERIMENT
+
+**Status: EXPERIMENT. Taste is specifying the environment set; this is a prototype for it
+to judge, not a decision.** The human's second defect after "low-poly": the scene
+environment was a *literal colour translation* — a dark site's ground colour became a dark
+scene background, and the result was muddy gloom. **A dark website does not mean a dark
+tree.** An environment is an art-directed STATE in which sky, key, fill, rim, image-based
+light, ground response and exposure move together (`ENVS` in `prototype/src/gate1.js`,
+`?envstate=day|night`). The brief for night: *moonlit diorama, not brightness slider at 20%.*
+
+**Night comes from colour, direction and contrast — never from low exposure.** The tree
+stays properly exposed, as in day-for-night cinematography. Three attempts; the two
+failures are kept in `references/experiments/gate1-surface-2026-09-20/night-FAILED-*`:
+
+1. **Moon as a backlight → a black cut-out on a bright blue card.** Rough dark bark
+   returns almost nothing to the camera, so a back-lit tree is just a silhouette; and the
+   sky was brighter than the subject. *The sky must sit darker than the lit tree.*
+2. **Saturated blue key → black wood with a wet blue sheen.** Warm-brown bark has almost
+   no blue reflectance, so a strongly coloured key is simply absorbed. Real moonlight is
+   near-white (reflected sunlight); its blueness is perceptual. **The key stays near-white;
+   the night colour is carried by the sky, the shadows and the ground.**
+3. **What works:** a gently cool, strong moon from the front quarter, as a soft-edged SPOT
+   so light pools on the island (the "diorama"); a second cool light from behind for the
+   silver edge a real backlit moon would give smoother bark; a faint warm kicker so the
+   wood stays wood rather than slate; a dark restrained sky, lighter at the horizon.
+
+**Ground response cannot come from the lights.** Turf lit at all by a cool key stays
+daytime green and becomes the brightest thing in the frame. It needs its own per-state
+grade — saturation drained, value dropped, pulled toward the state's tint — through the
+same terrain-palette mechanism dormancy uses. Over-graded it reads as FROST, which is a
+season, not a time of day.
+
+**On designing materials for two lighting conditions (asked by Lead):** physically-based
+materials are relightable for free — the bark needed zero changes for night. What breaks
+is anything with light BAKED IN. The V0 foliage and blossom materials carry day-tuned
+emissive floors, which will glow at night. At Gate 2, every emissive or baked-light term
+must scale with the environment state, and foliage/flowers/fruit need a per-state grade
+like the ground's. Cheap if designed in; a retrofit otherwise.
+
 ---
 
 ## Overall art direction
