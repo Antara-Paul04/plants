@@ -192,3 +192,65 @@ Plants must never claim "this is a cherry tree."
    signal and gave the corpus's most sophisticated site (linear.app, maximum styling
    richness, achromatic) *no ornament at all*. Richness decides **whether** there is bloom;
    colour decides **what colour** it is. This is the Linear failure and it must not return.
+
+---
+
+## D9 — The page opens on a real tree, labelled as an example
+
+**Status:** DECIDED, 2026-09-21. Reverses an earlier reasoned decision; both are recorded.
+
+The immersive shell opened on an empty island: sky, bare earth, and an invitation card.
+The argument for it was sound and is kept in `app/public/app.js` beside the code that
+overturns it — a DEFAULT tree would draw a `DEFAULT_DNA` belonging to no website, which
+breaks the rule that we never draw a value we did not measure; and it would compete with
+the tree the user is about to ask for.
+
+**What changed is that the frame was looked at rather than reasoned about.** Framed for a
+tree and given none, it is a cropped brown disc filling the lower third with the
+invitation floating in dead centre — the same place the status card sits. It does not
+read as a planter waiting for something. It reads as a page that failed to load, and it
+is also, precisely, what our FAILURE state looks like. A visitor arriving from a link has
+no idea yet that trees are the point.
+
+So the page opens on DNA measured by the ordinary analyzer from an ordinary site
+(`app/public/gallery.json`), with the same "Why this tree?" panel a live result gets,
+**because it is the same kind of object**. The first objection does not apply: nothing
+unmeasured is drawn. The second is answered by the renderer rather than by argument —
+`setDNA` aborts a build in flight and holds the old scene until the new one is whole, so
+a visitor who types while it is still building simply takes it over.
+
+**The label is the whole of its honesty.** The panel names the site and says "an example",
+and it persists through the read that replaces it, because the caption describes the
+picture on screen and not the request in flight. Without that, the first grow of a
+session shows a stranger's tree, unattributed, for ten to thirty seconds.
+
+Consequences accepted: the opening costs a wood build (~2.0s of blocked main thread on a
+4x-throttled CPU), and the crown's fixed opening azimuth now greets every visitor — which
+is why "a crown whose faces differ" was promoted from a rendering curiosity to a live
+product defect.
+
+**Not chosen:** a night example. `linear.app` measures as a lush, abundantly flowering
+night tree and would be striking, but the human has rejected a night scene once before on
+taste grounds, and Taste owns that call. The pool is day trees until someone with the
+authority looks at it.
+
+---
+
+## D10 — A website is on the public internet
+
+**Status:** DECIDED, 2026-09-21.
+
+Loopback, private ranges, link-local (including the cloud metadata address), carrier-grade
+NAT, multicast, the IPv6 equivalents, the names `localhost`, `*.local`, `*.internal`, and
+the integer and hex spellings that exist to get past exactly this check are not websites
+and are refused before any navigation. Credentials in a URL are stripped rather than
+forwarded.
+
+Nothing leaked when this was probed — the sandbox had nothing listening — but that is the
+runtime's accident and not our rule. The cost was already real and visible: `10.0.0.1`
+held a serverless function for 15.8s waiting on a route that cannot answer, which is our
+budget, spendable from outside, one request at a time.
+
+**Known and not closed:** DNS rebinding. A public hostname whose A record points into
+private space still gets one navigation, because the check is on the name rather than on
+what it resolves to.

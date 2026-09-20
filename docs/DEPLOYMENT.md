@@ -58,6 +58,32 @@ sites.
 
 ---
 
+### 2a. Re-run against the DEPLOYMENT, 2026-09-21 — **8 / 8**
+
+Point 4 of "what to do when the gate opens" said to re-run the reliability sweep
+against the deployed URL and not against localhost, because every number in this
+repo was measured on one laptop and several were thrown out for exactly that
+reason. It had never been done. It has now:
+
+```
+8 concurrent requests   8 / 8 passed   wall 22.2s
+  info.cern.ch 10.6s  ·  danluu.com     7.9s
+  news.yc      10.6s  ·  text.npr.org   8.1s
+  arxiv.org    13.3s  ·  example.com    9.4s
+  gwern.net    22.0s  ·  paulgraham.com 19.5s
+```
+
+**The concurrency worry does not transfer, and the reason matters.** §2b below is
+about eight requests sharing one machine's CPU; a serverless function gets its
+own. What survives is the COLD-START tail, which is a different problem wearing
+the same numbers: gwern took 22.0s here against 16.1s on the laptop, and the
+same URL has been measured at 10.3s and 27.9s minutes apart purely on whether
+the function was warm. The budget is 45s deployed (`api/grow.js`) against 20s
+local for exactly this reason.
+
+So the gate's §2 is passing where it is deployed, on eight deliberately fast
+sites, with the tail owned by cold starts rather than by contention.
+
 ### 2b. The original text, kept because the reasoning still applies
 
 This is the one that matters, and it is easy to mistake for a performance
