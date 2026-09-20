@@ -109,3 +109,44 @@ falls below the bottom edge. `nominalExtents` frames 1.5 of the island's 1.95 de
 ("the point below is soil-coloured and may fall out of frame"), and a wide frame is height-bound,
 so it crops exactly what the square one crops — no more.
 
+---
+
+# FAILURE on a full-bleed page: "why is my screen brown" (found by the human on the deployed product)
+
+`growEarth`'s failure extents (`prototype/src/grow.js`). **EXPERIMENT.**
+
+The failure state was framed TIGHT on the island (3.3 x 5.6, centred on the soil) so that it would
+not draw a tree-shaped void — a failure must not picture the tree it is saying it could not
+produce. That reasoning stands. The NUMBERS were judged in a 62vh square box. With the scene as the
+whole window a tight fit is height-bound, the lens closes to 16.7°, and on the human's ~2000x1250
+window **the island fills 83% of the width and 80% of the height**: it stops being an object in a
+world and becomes a texture, with the failure card stuck on it like a label
+(`failure-2000x1250-A-today.png`). It was predicted here (`failure-16x9.png`, "the island IS the
+page") and then shipped anyway, on the state it was true of.
+
+**Now: 7.8 x 8.6, aimed at y 1.5 — a small plot in a world.** The shell CENTRES its failure
+message, so the island cannot be centred too (the card becomes a sticker again) and cannot sit
+just under it (`...-B-object-in-a-world.png`: the card clips the island's far rim, which reads as
+an accident). The frame is aimed ABOVE the soil so the message floats clear of the island and
+captions it (`...-K-card-centred.png`). Measured through the handle's own `setEarth()`:
+
+| window | lens | island: share of width | island: from / to, down the frame |
+| --- | --- | --- | --- |
+| 2000x1250, BEFORE | 16.7° | **83%** | 13% – 93% |
+| 2000x1250 | 36.1° | **37%** | 57% – 94% |
+| 1280x720 | 36.1° | 34% | 57% – 94% |
+| 700x700 | 39.6° | 54% | 57% – 90% |
+| 375x812 phone | 39.6° (camera stepped back to 26.4) | 54% | 53% – 68% |
+
+The sky above the island is about 5 units; a tree stands about 6.8. It is not the void idle draws.
+
+**What this costs, stated plainly: failure now sits close to IDLE.** At 2000x1250 idle is 34% of
+the width at 68%–100%; failure is 37% at 57%–94%. Same island, nearly the same size, a tenth of
+the frame higher, with its whole body in view where idle crops the tip. With a centred message
+there is no frame that is BOTH "a small island in a world, clear of the card" AND far from idle:
+they are told apart by the copy, the card's colour, and a small move of the camera. If they must
+differ more, the lever is the shell's, not the lens: put the failure message somewhere other than
+the centre and the island can be centred and small (try 8.4 x 9.4 aimed at -0.55).
+
+On a phone the card's lower edge just touches the island's far rim (island top at 53%).
+

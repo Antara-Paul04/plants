@@ -51,7 +51,12 @@ const POLL_MS     = 250;
 const STABLE_HITS = 3;       // consecutive identical readings, not 2
 const MIN_SETTLE  = 1500;    // stability cannot be accepted before this
 const GROW_EPS    = 1.02;    // >2% more painted area counts as "still arriving"
-const SHOT_MS     = 9000;    // the capture IS the measurement; do not starve it
+const SHOT_MS     = 9000;    // the capture IS the measurement; do not starve it.
+                             // Scales with the budget: a caller that grants 45s
+                             // (a cold serverless browser) should not still be
+                             // capturing on a ceiling tuned for a warm 20s one —
+                             // monopo.london cleared navigation on the larger
+                             // budget and then failed at the screenshot.
 const MOTION_GAP  = 1000;    // validated protocol: 5 frames at 1s. A SHORT 3-frame check
 const MOTION_MAX  = 5;       // is a subset of it, so stopping early when it already reads
                              // non-zero is faithful, not a different method.
@@ -221,6 +226,9 @@ async function scratchDiff(frames) {
 
 export async function analyzeUrl(url, opts = {}) {
   const budget = opts.budgetMs || BUDGET_MS;
+  // The capture keeps its share of whatever budget it was given, rather than a
+  // constant tuned for the default one.
+  const shotMs = Math.round(SHOT_MS * (budget / BUDGET_MS));
   const T0 = now();
   const left = () => budget - (now() - T0);
 
@@ -554,7 +562,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
     let shot = null, captureScope = 'v3';
     const clipAt = h => ({ x: 0, y: 0, width: VW, height: Math.max(VH, Math.min(m.docHeight, h)) });
     const attempts = [
-      ['v3', () => page.screenshot({ type: 'png', fullPage: true, clip: clipAt(VH * 3), animations: 'disabled', timeout: Math.max(3000, Math.min(SHOT_MS, left() - 1500)) })],
+      ['v3', () => page.screenshot({ type: 'png', fullPage: true, clip: clipAt(VH * 3), animations: 'disabled', timeout: Math.max(3000, Math.min(shotMs, left() - 1500)) })],
       ['v2', () => page.screenshot({ type: 'png', fullPage: true, clip: clipAt(VH * 2), animations: 'disabled', timeout: Math.max(4000, Math.min(7000, left() - 1000)) })],
       ['v1', () => page.screenshot({ type: 'png', animations: 'disabled', timeout: Math.max(3500, left() - 600) })]
     ];

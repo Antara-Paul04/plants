@@ -33,7 +33,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const result = await analyzeUrl(url);
+    // A LARGER BUDGET THAN LOCAL, because the browser here is always cold.
+    //
+    // BUDGET_MS is 20s and was tuned against a laptop that keeps one browser warm
+    // between requests: 3-8s warm against 14-21s cold. A lambda gets no such
+    // reuse, so a site this laptop reads in 13s can exceed 20s here purely on the
+    // launch — monopo.london was exactly that, growing locally and timing out
+    // deployed.
+    //
+    // 45s sits inside maxDuration 60 with room for the response, and it is raised
+    // HERE rather than in analyze.js so the local default — and every measurement
+    // ever taken against it — is unchanged by construction.
+    const result = await analyzeUrl(url, { budgetMs: 45000 });
     if (!result || result.ok === false) {
       res.status(200).json({
         ok: false, live: true,

@@ -729,6 +729,14 @@ Renders and measurements: `references/experiments/ground-value-2026-09-20/`.
 - **Nothing in it draws a missing tree.** No contact shading where a trunk would stand, and it
   is framed on the ISLAND — framed like a tree scene it is a small island under a tree-shaped
   void, which is the very thing it must not say.
+- **But not TIGHT on the island (2026-09-21, found by the human on the deployed page).** The tight
+  fit was judged in a 62vh square box; with the scene as the whole window it filled 83% of a
+  2000px-wide screen and stopped being an object — "why is my screen brown", with the failure card
+  stuck on it like a label. It is now a small plot in a world (about a third of a desktop window's
+  width, in the lower half, the host's centred message floating clear above it), under a sky too
+  short to hold a tree. **A framing number carries the frame it was judged in**; every one here
+  was judged in a square box. It now sits close to idle, which is recorded, not hidden:
+  `references/experiments/framing-2026-09-21/`.
 - **IDLE is the same island, framed the opposite way (2026-09-21) — EXPERIMENT.** Before anyone
   has named a website the page shows sky and this island (`mountIdle` / `handle.setIdle()`).
   For failure the tree-shaped void is a lie, so failure frames on the island; for idle the same

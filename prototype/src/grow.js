@@ -908,10 +908,24 @@ export function growEarth(M, q, env, opts = {}) {
   const tree = new THREE.Group();   // empty on purpose: hosts treat every result alike
   return {
     tree, ground, earth: true, idle, skel: null, stats: { earth: true, idle }, season: null,
-    // FAILURE: framed on the ISLAND. Framed like a tree scene it is a small island
-    // under a tree-shaped void — which draws the missing tree, the very thing this
-    // is not. IDLE: framed as the tree scene, because there the void is the point.
-    extents: idle ? nominalExtents(q) : { height: 3.3, width: 5.6, targetY: -0.55 },
+    // FAILURE is framed on the island's PLOT, not on a tree's. Framed like a tree
+    // scene it is a small island under a tree-shaped void — which draws the missing
+    // tree, the very thing this is not. IDLE is framed as the tree scene, because
+    // there the void is the point.
+    //
+    // But not TIGHT on the island, which is what this was (3.3 x 5.6, centred on the
+    // soil). That was judged in a 62vh square box. On a page where the scene is the
+    // whole window a tight fit is height-bound, the lens closes to 16 degrees, and the
+    // island fills 83% of a 2000px-wide window: it stops reading as an object in a
+    // world and becomes a TEXTURE, with the failure card stuck on it like a label —
+    // "why is my screen brown". Found by the human on the deployed product.
+    //
+    // So the island is a small plot in a world: about 37% of a desktop window's width,
+    // in the lower half, with a horizon above it. The host centres its failure message,
+    // and the frame is aimed ABOVE the soil so that the message floats clear of the
+    // island and captions it rather than covering it. The sky above is ~5 units — too
+    // short to hold a tree (they stand ~6.8), so it is not the void idle draws.
+    extents: idle ? nominalExtents(q) : { height: 7.8, width: 8.6, targetY: 1.5 },
     dispose() { M.util.disposeObject(tree); M.util.disposeObject(ground); },
   };
 }
