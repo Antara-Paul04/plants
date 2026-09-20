@@ -545,7 +545,9 @@ export function pickSites(spots, r, opts = {}) {
 // it visible, not distance.
 export const SEAT_MAX = 0.26;
 export const BLOOM_MIN_CLUSTERS = 6;
-export const BLOOM_FRACTION = { none: 0, few: 0.1, medium: 0.33, abundant: 0.62 };
+// medium 0.27 -> 0.40 (Taste): 0.27 -> 0.33 was a 22% move across a gap that read as
+// near-zero. Crown bloom share at 140px is now few 6% / medium 21% / abundant 33%.
+export const BLOOM_FRACTION = { none: 0, few: 0.1, medium: 0.4, abundant: 0.62 };
 
 /**
  * L5 — bloom amount controls a FOLIAGE RELATIONSHIP, not just a count.
@@ -574,11 +576,23 @@ export const BLOOM_FOLIAGE = {
   // clusters only extended the one drift that was already chosen — placement luck,
   // not placement design (one real tree had all its touches on one side).
   few:      { atBloom: 0.9,  nearTo: 1,    nearRadius: 0,    elsewhere: 1,    outer: 0.65, field: 1,    strata: 4 },
-  // A flowering LIMB, not a flowering twig: the foliage AROUND the bloom gives
-  // way too. Reducing only the twig's own cluster was not enough — debug view C
-  // showed its full-size NEIGHBOURS doing the hiding (they are 0.4 apart and
-  // 0.55 across). Bloom also comes in off the rim, so it is there to be seen.
-  medium:   { atBloom: 0.42, nearTo: 0.55, nearRadius: 1.1,  elsewhere: 0.88, outer: 0,    field: 0.8,  strata: 6 },
+  // A flowering LIMB, not a flowering twig: the foliage AROUND the bloom gives way
+  // too (debug view C showed full-size NEIGHBOURS doing the hiding), and bloom comes
+  // in off the rim. Re-tuned 2026-09-20 to Taste's ruling, by measurement and a blind
+  // panel (references/experiments/medium-2026-09-20/):
+  //   - `elsewhere` 0.88 -> 0.75. It is the lever that opens the crown's middle — but
+  //     what it reveals there is WOOD, not bloom (leaf cover in the middle third
+  //     70% -> 41% across the sweep while bloom moved 3.8% -> 6.1%): the crown is a
+  //     hollow shell. Below about 0.7 the tree reads thin and unwell before its
+  //     centre ever reads pink, so the lever stops here.
+  //   - `bands`: bloom arrived as a cap on top and a fringe below while the height
+  //     band where the scaffold limbs fork — the middle of every view — carried the
+  //     least. Weighting that band's share is WHICH twigs flower, not where a flower
+  //     sits: middle-band bloom 22% -> 27% of the band.
+  //   - `nearTo` 0.55 -> 0.7, `nearRadius` 1.1 -> 0.8: at 40% bloom nearly every twig
+  //     is "near" one, so the old values quietly thinned the WHOLE crown. These keep
+  //     the crown mass the panel judged healthy (leaf cover 30%, unchanged).
+  medium:   { atBloom: 0.42, nearTo: 0.7,  nearRadius: 0.8,  elsewhere: 0.75, outer: 0,    field: 0.8,  strata: 6, bands: [1, 1.4, 0.8] },
   // Peak bloom: the whole tree is in the phase. The field is nearly flat here —
   // with a strong one the 38% of twigs NOT flowering were one contiguous leafy
   // patch, which read as a second, green plant standing in a pink one.

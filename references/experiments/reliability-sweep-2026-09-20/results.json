@@ -1429,5 +1429,3005 @@
     "stamp": null,
     "fingerprint": null,
     "dna": null
+  },
+  {
+    "site": "nike.com",
+    "category": "popular · brand e-commerce",
+    "file": "_failed/nike.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "REDIRECTED",
+        "detail": "landed on nike.in",
+        "ms": 9909,
+        "analysisMs": null,
+        "load1": 33.3,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 10545
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 16883,
+        "analysisMs": null,
+        "load1": 75.6,
+        "cpuBefore": 0.6,
+        "cpuDuring": 0.6,
+        "waitedForQuietMs": 46503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading nike.com. Big, richly built sites often outrun us.",
+    "domain": "nike.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 16792,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "adidas.com",
+    "category": "popular · brand e-commerce",
+    "file": "adidas.com.png",
+    "ok": true,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9478,
+        "analysisMs": null,
+        "load1": 58.9,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.52,
+        "waitedForQuietMs": 9045
+      },
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 17442,
+        "analysisMs": 8242,
+        "load1": 50.4,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 3029
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "adidas.com",
+    "url": "https://www.adidas.com/",
+    "live": true,
+    "timingMs": 8242,
+    "e2eMs": 14285,
+    "stamp": "grown in 13.5s",
+    "fingerprint": {
+      "authored": 0.1,
+      "stylingRichness": 0.056,
+      "inkCoverage": 0.007,
+      "colorfulness": 0,
+      "designColorfulness": 0,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "bare",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e8e8e8",
+      "seed": 1613785082,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "zara.com",
+    "category": "popular · brand e-commerce",
+    "file": "_failed/zara.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 11051,
+        "analysisMs": null,
+        "load1": 50.5,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9257,
+        "analysisMs": null,
+        "load1": 40.9,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 23069
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading zara.com. Big, richly built sites often outrun us.",
+    "domain": "zara.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 9230,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "ikea.com",
+    "category": "popular · brand e-commerce",
+    "file": "ikea.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 28557,
+        "analysisMs": 16834,
+        "load1": 48.2,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 3003
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "ikea.com",
+    "url": "https://www.ikea.com/",
+    "live": true,
+    "timingMs": 16834,
+    "e2eMs": 25479,
+    "stamp": "grown in 23.0s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.477,
+      "inkCoverage": 0.526,
+      "colorfulness": 0.7,
+      "designColorfulness": 1,
+      "designChromaticRatio": 0.3622,
+      "warmShareOfChroma": 1,
+      "imageArea": 0.749,
+      "canvasArea": 0,
+      "textDensity": 0.377,
+      "accentConcentration": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fffefb",
+        "primary": "#feda01",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "autumn",
+      "flowers": {
+        "amount": "few",
+        "primary": "#f5d30a",
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "autumn",
+      "background": "#eceae4",
+      "seed": 1335115236,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "airbnb.com",
+    "category": "popular · travel",
+    "file": "_failed/airbnb.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "exceeded 20000ms",
+        "ms": 20649,
+        "analysisMs": null,
+        "load1": 32.3,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.46,
+        "waitedForQuietMs": 4548
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 13827,
+        "analysisMs": null,
+        "load1": 28.5,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1500
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading airbnb.com. Big, richly built sites often outrun us.",
+    "domain": "airbnb.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 13717,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "booking.com",
+    "category": "popular · travel",
+    "file": "_failed/booking.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/",
+        "ms": 2857,
+        "analysisMs": null,
+        "load1": 26.5,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.6,
+        "waitedForQuietMs": 4509
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/",
+        "ms": 3413,
+        "analysisMs": null,
+        "load1": 24.5,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://booking.com/"
+    },
+    "shown": "We could not reach booking.com just now.",
+    "domain": "booking.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 3388,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "uber.com",
+    "category": "popular · brand",
+    "file": "_failed/uber.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/",
+        "ms": 2100,
+        "analysisMs": null,
+        "load1": 23,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 3003
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/",
+        "ms": 2348,
+        "analysisMs": null,
+        "load1": 21.3,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1506
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://uber.com/"
+    },
+    "shown": "We could not reach uber.com just now.",
+    "domain": "uber.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2323,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "bbc.com",
+    "category": "popular · news",
+    "file": "_failed/bbc.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/",
+        "ms": 2541,
+        "analysisMs": null,
+        "load1": 20.2,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/",
+        "ms": 2552,
+        "analysisMs": null,
+        "load1": 19.7,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bbc.com/"
+    },
+    "shown": "We could not reach bbc.com just now.",
+    "domain": "bbc.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2507,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "cnn.com",
+    "category": "popular · news",
+    "file": "_failed/cnn.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/",
+        "ms": 2479,
+        "analysisMs": null,
+        "load1": 19.6,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/",
+        "ms": 2557,
+        "analysisMs": null,
+        "load1": 18.4,
+        "cpuBefore": 0.45,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 1508
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://cnn.com/"
+    },
+    "shown": "We could not reach cnn.com just now.",
+    "domain": "cnn.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2532,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "theguardian.com",
+    "category": "popular · news",
+    "file": "_failed/theguardian.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/",
+        "ms": 2340,
+        "analysisMs": null,
+        "load1": 18.4,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/",
+        "ms": 1746,
+        "analysisMs": null,
+        "load1": 17.3,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.69,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://theguardian.com/"
+    },
+    "shown": "We could not reach theguardian.com just now.",
+    "domain": "theguardian.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1708,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "espn.com",
+    "category": "popular · sport",
+    "file": "_failed/espn.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/",
+        "ms": 2234,
+        "analysisMs": null,
+        "load1": 16.6,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/",
+        "ms": 2555,
+        "analysisMs": null,
+        "load1": 17.1,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://espn.com/"
+    },
+    "shown": "We could not reach espn.com just now.",
+    "domain": "espn.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2532,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "imdb.com",
+    "category": "popular · reference",
+    "file": "_failed/imdb.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/",
+        "ms": 2108,
+        "analysisMs": null,
+        "load1": 18.1,
+        "cpuBefore": 0.35,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/",
+        "ms": 1714,
+        "analysisMs": null,
+        "load1": 18.1,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://imdb.com/"
+    },
+    "shown": "We could not reach imdb.com just now.",
+    "domain": "imdb.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1683,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "weather.com",
+    "category": "popular · utility",
+    "file": "_failed/weather.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/",
+        "ms": 2094,
+        "analysisMs": null,
+        "load1": 16.9,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/",
+        "ms": 2040,
+        "analysisMs": null,
+        "load1": 16.6,
+        "cpuBefore": 0.36,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://weather.com/"
+    },
+    "shown": "We could not reach weather.com just now.",
+    "domain": "weather.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1996,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "yahoo.com",
+    "category": "popular · portal",
+    "file": "_failed/yahoo.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/",
+        "ms": 2120,
+        "analysisMs": null,
+        "load1": 16.6,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/",
+        "ms": 2076,
+        "analysisMs": null,
+        "load1": 16.8,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://yahoo.com/"
+    },
+    "shown": "We could not reach yahoo.com just now.",
+    "domain": "yahoo.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2036,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "bing.com",
+    "category": "popular · search",
+    "file": "_failed/bing.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/",
+        "ms": 2045,
+        "analysisMs": null,
+        "load1": 15.6,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/",
+        "ms": 2605,
+        "analysisMs": null,
+        "load1": 15,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://bing.com/"
+    },
+    "shown": "We could not reach bing.com just now.",
+    "domain": "bing.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2554,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "duckduckgo.com",
+    "category": "popular · search",
+    "file": "_failed/duckduckgo.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/",
+        "ms": 2661,
+        "analysisMs": null,
+        "load1": 14.6,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/",
+        "ms": 1946,
+        "analysisMs": null,
+        "load1": 14.6,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://duckduckgo.com/"
+    },
+    "shown": "We could not reach duckduckgo.com just now.",
+    "domain": "duckduckgo.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1918,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "microsoft.com",
+    "category": "popular · brand",
+    "file": "_failed/microsoft.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/",
+        "ms": 2346,
+        "analysisMs": null,
+        "load1": 14.1,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/",
+        "ms": 2279,
+        "analysisMs": null,
+        "load1": 13.1,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://microsoft.com/"
+    },
+    "shown": "We could not reach microsoft.com just now.",
+    "domain": "microsoft.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2227,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "samsung.com",
+    "category": "popular · brand",
+    "file": "_failed/samsung.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/",
+        "ms": 2000,
+        "analysisMs": null,
+        "load1": 12.7,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/",
+        "ms": 2077,
+        "analysisMs": null,
+        "load1": 12.7,
+        "cpuBefore": 0.37,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 1501
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://samsung.com/"
+    },
+    "shown": "We could not reach samsung.com just now.",
+    "domain": "samsung.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 2022,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "tesla.com",
+    "category": "popular · brand",
+    "file": "_failed/tesla.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/",
+        "ms": 2022,
+        "analysisMs": null,
+        "load1": 12.1,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/",
+        "ms": 20669,
+        "analysisMs": null,
+        "load1": 49.7,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.73,
+        "waitedForQuietMs": 1508
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": "page.goto: net::ERR_INTERNET_DISCONNECTED at https://tesla.com/"
+    },
+    "shown": "We could not reach tesla.com just now.",
+    "domain": "tesla.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 20521,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "paypal.com",
+    "category": "popular · finance",
+    "file": "paypal.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 16311,
+        "analysisMs": 9053,
+        "load1": 40.2,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.53,
+        "waitedForQuietMs": 6019
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "paypal.com",
+    "url": "https://www.paypal.com/in/home",
+    "live": true,
+    "timingMs": 9053,
+    "e2eMs": 13269,
+    "stamp": "grown in 12.7s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.576,
+      "inkCoverage": 0.269,
+      "colorfulness": 0.678,
+      "designColorfulness": 0.678,
+      "designChromaticRatio": 0.2457,
+      "warmShareOfChroma": 0.047,
+      "imageArea": 0.041,
+      "canvasArea": 0,
+      "textDensity": 0.029,
+      "accentConcentration": 0.996,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#60ccfd",
+        "secondary": "#a47c6a"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#64caf9",
+        "secondary": "#6f4c3c"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#64caf9"
+      },
+      "terrain": "lush",
+      "background": "#e5e9eb",
+      "seed": 1540969957,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "chatgpt.com",
+    "category": "popular · app",
+    "file": "chatgpt.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 10822,
+        "analysisMs": 4278,
+        "load1": 32.9,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.5,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "chatgpt.com",
+    "url": "https://chatgpt.com/",
+    "live": true,
+    "timingMs": 4278,
+    "e2eMs": 7772,
+    "stamp": "grown in 7.4s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.43,
+      "inkCoverage": 0.032,
+      "colorfulness": 0,
+      "designColorfulness": 0,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.122,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e6e6e6",
+      "seed": 848323451,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "canva.com",
+    "category": "popular · app",
+    "file": "canva.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20802,
+        "analysisMs": 12417,
+        "load1": 24,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "canva.com",
+    "url": "https://www.canva.com/",
+    "live": true,
+    "timingMs": 12417,
+    "e2eMs": 17714,
+    "stamp": "grown in 17.0s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.498,
+      "inkCoverage": 0.807,
+      "colorfulness": 1,
+      "designColorfulness": 1,
+      "designChromaticRatio": 0.768,
+      "warmShareOfChroma": 0.143,
+      "imageArea": 0.068,
+      "canvasArea": 0,
+      "textDensity": 0.247,
+      "accentConcentration": 0.317,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#4db6cb",
+        "secondary": "#f19866"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#4db6cb",
+        "secondary": "#743b1b"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5eaeb",
+      "seed": 2654667963,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "zoom.us",
+    "category": "popular · app",
+    "file": "_failed/zoom.us.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9875,
+        "analysisMs": null,
+        "load1": 27.1,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9306,
+        "analysisMs": null,
+        "load1": 24.2,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.52,
+        "waitedForQuietMs": 3008
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading zoom.us. Big, richly built sites often outrun us.",
+    "domain": "zoom.us",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 9266,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "starbucks.com",
+    "category": "popular · brand",
+    "file": "starbucks.com.png",
+    "ok": true,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9188,
+        "analysisMs": null,
+        "load1": 20.3,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.5,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 13695,
+        "analysisMs": 6794,
+        "load1": 17.3,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "starbucks.com",
+    "url": "https://www.starbucks.com/",
+    "live": true,
+    "timingMs": 6794,
+    "e2eMs": 10650,
+    "stamp": "grown in 10.0s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.528,
+      "inkCoverage": 0.527,
+      "colorfulness": 0.554,
+      "designColorfulness": 0.499,
+      "designChromaticRatio": 0.3203,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.249,
+      "canvasArea": 0,
+      "textDensity": 0.178,
+      "accentConcentration": 0.345,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#066646",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#0bc184",
+        "secondary": "#98e7cc"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e5ebe9",
+      "seed": 1052359332,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "disney.com",
+    "category": "popular · brand",
+    "file": "disney.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 21004,
+        "analysisMs": 13785,
+        "load1": 17.5,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.51,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "disney.com",
+    "url": "https://www.disney.com/",
+    "live": true,
+    "timingMs": 13785,
+    "e2eMs": 17970,
+    "stamp": "grown in 17.4s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.484,
+      "inkCoverage": 0.387,
+      "colorfulness": 0.453,
+      "designColorfulness": 0.277,
+      "designChromaticRatio": 0.0566,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.753,
+      "canvasArea": 0,
+      "textDensity": 0.084,
+      "accentConcentration": 0.96,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#2a60b3",
+        "secondary": "#6cb0e9"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#2a60b3",
+        "secondary": "#a5cbea"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#2a60b3"
+      },
+      "terrain": "normal",
+      "background": "#e5e7eb",
+      "seed": 2207435646,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "nintendo.com",
+    "category": "popular · brand",
+    "file": "nintendo.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 11199,
+        "analysisMs": 4790,
+        "load1": 15.4,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 1500
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "nintendo.com",
+    "url": "https://www.nintendo.com/region-selector/",
+    "live": true,
+    "timingMs": 4790,
+    "e2eMs": 8151,
+    "stamp": "grown in 7.4s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.432,
+      "inkCoverage": 0.143,
+      "colorfulness": 0.784,
+      "designColorfulness": 0.784,
+      "designChromaticRatio": 0.1127,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.005,
+      "canvasArea": 0,
+      "textDensity": 0.12,
+      "accentConcentration": 0.987,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#e60516",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#e2091a",
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e5",
+      "seed": 3780695619,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "lego.com",
+    "category": "popular · brand",
+    "file": "lego.com.png",
+    "ok": true,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 8962,
+        "analysisMs": null,
+        "load1": 13.7,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.44,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 19382,
+        "analysisMs": 11401,
+        "load1": 15.8,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.47,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "lego.com",
+    "url": "https://www.lego.com/en-in",
+    "live": true,
+    "timingMs": 11401,
+    "e2eMs": 16341,
+    "stamp": "grown in 15.9s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.544,
+      "inkCoverage": 0.75,
+      "colorfulness": 0.832,
+      "designColorfulness": 0.111,
+      "designChromaticRatio": 0.0676,
+      "warmShareOfChroma": 1,
+      "imageArea": 1,
+      "canvasArea": 0,
+      "textDensity": 0.123,
+      "accentConcentration": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#312902",
+        "secondary": "#2e2003"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "dense"
+      },
+      "botanicalState": "autumn",
+      "flowers": {
+        "amount": "few",
+        "primary": "#9d8307",
+        "secondary": "#dfbd77"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#9d8307"
+      },
+      "terrain": "autumn",
+      "background": "#ebeae5",
+      "seed": 3261547115,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "stripe.com",
+    "category": "design-led",
+    "file": "stripe.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 17043,
+        "analysisMs": 10167,
+        "load1": 17.2,
+        "cpuBefore": 0.35,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 3004
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "stripe.com",
+    "url": "https://stripe.com/in",
+    "live": true,
+    "timingMs": 10167,
+    "e2eMs": 13998,
+    "stamp": "grown in 13.5s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.587,
+      "inkCoverage": 0.222,
+      "colorfulness": 0.53,
+      "designColorfulness": 0.137,
+      "designChromaticRatio": 0.0301,
+      "warmShareOfChroma": 0.694,
+      "imageArea": 0.427,
+      "canvasArea": 0.273,
+      "textDensity": 0.225,
+      "accentConcentration": 0.76,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#fcdfb0",
+        "secondary": "#735ffd"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#fcdfb0",
+        "secondary": "#432fca"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#fcdfb0"
+      },
+      "terrain": "lush",
+      "background": "#ebe9e5",
+      "seed": 3876993847,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "github.com",
+    "category": "design-led · dark",
+    "file": "_failed/github.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9014,
+        "analysisMs": null,
+        "load1": 16.4,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.46,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9345,
+        "analysisMs": null,
+        "load1": 15.1,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.52,
+        "waitedForQuietMs": 1505
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading github.com. Big, richly built sites often outrun us.",
+    "domain": "github.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 9313,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "figma.com",
+    "category": "design-led",
+    "file": "figma.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 15303,
+        "analysisMs": 8850,
+        "load1": 17.1,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1501
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "figma.com",
+    "url": "https://www.figma.com/",
+    "live": true,
+    "timingMs": 8850,
+    "e2eMs": 12261,
+    "stamp": "grown in 11.8s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.397,
+      "inkCoverage": 0.124,
+      "colorfulness": 0.165,
+      "designColorfulness": 0.017,
+      "designChromaticRatio": 0.0001,
+      "warmShareOfChroma": 0.167,
+      "imageArea": 0.105,
+      "canvasArea": 0,
+      "textDensity": 0.063,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#ff6c64",
+        "secondary": "#6bdc9f"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#e5e5d1",
+        "secondary": "#9d9d66"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e5",
+      "seed": 238067588,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "linear.app",
+    "category": "design-led · dark",
+    "file": "linear.app.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 17142,
+        "analysisMs": 10135,
+        "load1": 14.2,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.52,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "linear.app",
+    "url": "https://linear.app/",
+    "live": true,
+    "timingMs": 10135,
+    "e2eMs": 14086,
+    "stamp": "grown in 13.6s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.606,
+      "inkCoverage": 0.278,
+      "colorfulness": 0.027,
+      "designColorfulness": 0.016,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.541,
+      "canvasArea": 0,
+      "textDensity": 0.179,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#08090a",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#d1dbe5",
+        "secondary": "#66829d"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#191c1f",
+      "seed": 896593017,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "vercel.com",
+    "category": "design-led",
+    "file": "vercel.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 21046,
+        "analysisMs": 9927,
+        "load1": 27.1,
+        "cpuBefore": 0.37,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "vercel.com",
+    "url": "https://vercel.com/",
+    "live": true,
+    "timingMs": 9927,
+    "e2eMs": 17935,
+    "stamp": "grown in 13.2s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.437,
+      "inkCoverage": 0.041,
+      "colorfulness": 0,
+      "designColorfulness": 0,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.237,
+      "canvasArea": 0,
+      "textDensity": 0.062,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fafafa",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e6e6e6",
+      "seed": 1666752833,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "notion.com",
+    "category": "design-led",
+    "file": "notion.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 15986,
+        "analysisMs": 10077,
+        "load1": 23.3,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.53,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "notion.com",
+    "url": "https://www.notion.com/",
+    "live": true,
+    "timingMs": 10077,
+    "e2eMs": 12951,
+    "stamp": "grown in 12.4s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.601,
+      "inkCoverage": 0.082,
+      "colorfulness": 0.138,
+      "designColorfulness": 0.127,
+      "designChromaticRatio": 0.0134,
+      "warmShareOfChroma": 0.002,
+      "imageArea": 0.641,
+      "canvasArea": 0,
+      "textDensity": 0.062,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fefefe",
+        "primary": "#c6efcf",
+        "secondary": "#298ae2"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "airy"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#c6efcf",
+        "secondary": "#3385cf"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e5ebe6",
+      "seed": 3947408655,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "framer.com",
+    "category": "design-led",
+    "file": "framer.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20528,
+        "analysisMs": 13616,
+        "load1": 21.6,
+        "cpuBefore": 0.45,
+        "cpuDuring": 0.54,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "framer.com",
+    "url": "https://www.framer.com/",
+    "live": true,
+    "timingMs": 13616,
+    "e2eMs": 17499,
+    "stamp": "grown in 17.0s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.555,
+      "inkCoverage": 0.211,
+      "colorfulness": 0.312,
+      "designColorfulness": 0.015,
+      "designChromaticRatio": 0.0004,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.231,
+      "canvasArea": 0,
+      "textDensity": 0.11,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#010101",
+        "primary": "#17425f",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#e5e5d1",
+        "secondary": "#9d9d66"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#161b1e",
+      "seed": 3418399511,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "theverge.com",
+    "category": "design-led · editorial",
+    "file": "_failed/theverge.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9104,
+        "analysisMs": null,
+        "load1": 21.3,
+        "cpuBefore": 0.37,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "exceeded 20000ms",
+        "ms": 20849,
+        "analysisMs": null,
+        "load1": 27.5,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "exceeded 20000ms"
+    },
+    "shown": "We could not finish reading theverge.com. Big, richly built sites often outrun us.",
+    "domain": "theverge.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 20801,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "awwwards.com",
+    "category": "design-led · gallery",
+    "file": "_failed/awwwards.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9415,
+        "analysisMs": null,
+        "load1": 25.2,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.51,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 8912,
+        "analysisMs": null,
+        "load1": 22.2,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.51,
+        "waitedForQuietMs": 1505
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading awwwards.com. Big, richly built sites often outrun us.",
+    "domain": "awwwards.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 8886,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "dribbble.com",
+    "category": "design-led · gallery",
+    "file": "dribbble.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 15780,
+        "analysisMs": 8114,
+        "load1": 19.6,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.47,
+        "waitedForQuietMs": 1506
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "dribbble.com",
+    "url": "https://dribbble.com/",
+    "live": true,
+    "timingMs": 8114,
+    "e2eMs": 12703,
+    "stamp": "grown in 12.3s",
+    "fingerprint": {
+      "authored": 0.1,
+      "stylingRichness": 0.056,
+      "inkCoverage": 0.262,
+      "colorfulness": 0.255,
+      "designColorfulness": 0.255,
+      "designChromaticRatio": 0.1616,
+      "warmShareOfChroma": 0.001,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0,
+      "accentConcentration": 0.962,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#7e8444",
+        "secondary": "#ee77a5"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "bare",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#ebebe5",
+      "seed": 1931842284,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "daringfireball.net",
+    "category": "designed · light DOM",
+    "file": "daringfireball.net.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 17977,
+        "analysisMs": 11180,
+        "load1": 19.4,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.47,
+        "waitedForQuietMs": 1505
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "daringfireball.net",
+    "url": "https://daringfireball.net/",
+    "live": true,
+    "timingMs": 11180,
+    "e2eMs": 14944,
+    "stamp": "grown in 14.3s",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.332,
+      "inkCoverage": 0.073,
+      "colorfulness": 0.093,
+      "designColorfulness": 0.093,
+      "designChromaticRatio": 0.0028,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.006,
+      "canvasArea": 0,
+      "textDensity": 0.534,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#4a525a",
+        "primary": "#6a6ae9",
+        "secondary": "#8588c7"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#6a6ae9",
+        "secondary": "#32356e"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#2d3237",
+      "seed": 2798544868,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "kottke.org",
+    "category": "designed · light DOM",
+    "file": "kottke.org.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 15733,
+        "analysisMs": 9434,
+        "load1": 16.8,
+        "cpuBefore": 0.45,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "kottke.org",
+    "url": "https://kottke.org/",
+    "live": true,
+    "timingMs": 9434,
+    "e2eMs": 12699,
+    "stamp": "grown in 12.3s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.469,
+      "inkCoverage": 0.352,
+      "colorfulness": 0.449,
+      "designColorfulness": 0.116,
+      "designChromaticRatio": 0.0128,
+      "warmShareOfChroma": 0.301,
+      "imageArea": 0.237,
+      "canvasArea": 0,
+      "textDensity": 0.234,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#af4b48",
+        "secondary": "#835258"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#af4b48",
+        "secondary": "#e1c8cb"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e5",
+      "seed": 2414604579,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "simonwillison.net",
+    "category": "designed · light DOM",
+    "file": "simonwillison.net.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 12613,
+        "analysisMs": 5956,
+        "load1": 15.3,
+        "cpuBefore": 0.36,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "simonwillison.net",
+    "url": "https://simonwillison.net/",
+    "live": true,
+    "timingMs": 5956,
+    "e2eMs": 9581,
+    "stamp": "grown in 9.3s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.412,
+      "inkCoverage": 0.281,
+      "colorfulness": 0.205,
+      "designColorfulness": 0.201,
+      "designChromaticRatio": 0.0843,
+      "warmShareOfChroma": 0.002,
+      "imageArea": 0.098,
+      "canvasArea": 0,
+      "textDensity": 0.707,
+      "accentConcentration": 0.19,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fdfdfd",
+        "primary": "#9f9fe8",
+        "secondary": "#906fa7"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#9f9fe8",
+        "secondary": "#704a8a"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e5eb",
+      "seed": 146425533,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "jvns.ca",
+    "category": "designed · light DOM",
+    "file": "jvns.ca.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 13877,
+        "analysisMs": 5740,
+        "load1": 14.2,
+        "cpuBefore": 0.36,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1501
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "jvns.ca",
+    "url": "https://jvns.ca/",
+    "live": true,
+    "timingMs": 5740,
+    "e2eMs": 10765,
+    "stamp": "grown in 10.3s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.346,
+      "inkCoverage": 0.464,
+      "colorfulness": 0.344,
+      "designColorfulness": 0.31,
+      "designChromaticRatio": 0.0262,
+      "warmShareOfChroma": 1,
+      "imageArea": 0.333,
+      "canvasArea": 0,
+      "textDensity": 0.48,
+      "accentConcentration": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#8b8e95",
+        "primary": "#ff772c",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#f77934",
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e2dcd8",
+      "seed": 72994052,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "craigslist.org",
+    "category": "old web · light DOM",
+    "file": "craigslist.org.png",
+    "ok": true,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9242,
+        "analysisMs": null,
+        "load1": 13.7,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.46,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 19187,
+        "analysisMs": 12358,
+        "load1": 13.3,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.46,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "craigslist.org",
+    "url": "https://www.craigslist.org/area/bangalore",
+    "live": true,
+    "timingMs": 12358,
+    "e2eMs": 16143,
+    "stamp": "grown in 15.3s",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.373,
+      "inkCoverage": 0.061,
+      "colorfulness": 0.03,
+      "designColorfulness": 0.03,
+      "designChromaticRatio": 0.0016,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.63,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a2a2ee",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e4e4e7",
+      "seed": 403037984,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "developer.mozilla.org",
+    "category": "docs",
+    "file": "developer.mozilla.org.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 15786,
+        "analysisMs": 7684,
+        "load1": 19.9,
+        "cpuBefore": 0.37,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "developer.mozilla.org",
+    "url": "https://developer.mozilla.org/en-US/",
+    "live": true,
+    "timingMs": 7684,
+    "e2eMs": 12590,
+    "stamp": "grown in 12.0s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.522,
+      "inkCoverage": 0.45,
+      "colorfulness": 0.411,
+      "designColorfulness": 0.411,
+      "designChromaticRatio": 0.1301,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.678,
+      "accentConcentration": 0.722,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#4d0589",
+        "secondary": "#a72bbe"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#6f08c4",
+        "secondary": "#da98e7"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e8e5eb",
+      "seed": 4072649635,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "docs.python.org",
+    "category": "docs",
+    "file": "docs.python.org.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 10495,
+        "analysisMs": 3345,
+        "load1": 25.9,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.53,
+        "waitedForQuietMs": 9167
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "docs.python.org",
+    "url": "https://docs.python.org/3/",
+    "live": true,
+    "timingMs": 3345,
+    "e2eMs": 7435,
+    "stamp": "grown in 6.9s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.378,
+      "inkCoverage": 0.216,
+      "colorfulness": 0.117,
+      "designColorfulness": 0.117,
+      "designChromaticRatio": 0.0244,
+      "warmShareOfChroma": 0.003,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.45,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#8abed7",
+        "secondary": "#fce586"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#8abed7",
+        "secondary": "#8d7821"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e9eb",
+      "seed": 518412198,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "react.dev",
+    "category": "docs",
+    "file": "react.dev.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20486,
+        "analysisMs": 13116,
+        "load1": 29,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1505
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "react.dev",
+    "url": "https://react.dev/",
+    "live": true,
+    "timingMs": 13116,
+    "e2eMs": 17439,
+    "stamp": "grown in 16.8s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.539,
+      "inkCoverage": 0.207,
+      "colorfulness": 0.097,
+      "designColorfulness": 0.097,
+      "designChromaticRatio": 0.0323,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.141,
+      "accentConcentration": 0.673,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fefefe",
+        "primary": "#d7e7f9",
+        "secondary": "#d9ebf9"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#c1daf6",
+        "secondary": "#358cd0"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e5e8eb",
+      "seed": 762303277,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "stackoverflow.com",
+    "category": "docs · Q&A",
+    "file": "_failed/stackoverflow.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "HTTP 403",
+        "ms": 3533,
+        "analysisMs": null,
+        "load1": 27.8,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.47,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "HTTP 403",
+        "ms": 1942,
+        "analysisMs": null,
+        "load1": 26.4,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.56,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "BLOCKED",
+      "message": "That website blocked us from looking at it.",
+      "detail": "HTTP 403"
+    },
+    "shown": "stackoverflow.com does not allow us to look at it.",
+    "domain": "stackoverflow.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 1914,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "gov.uk",
+    "category": "government",
+    "file": "gov.uk.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 11568,
+        "analysisMs": 5152,
+        "load1": 26,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "gov.uk",
+    "url": "https://www.gov.uk/",
+    "live": true,
+    "timingMs": 5152,
+    "e2eMs": 8542,
+    "stamp": "grown in 8.1s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.494,
+      "inkCoverage": 0.242,
+      "colorfulness": 0.544,
+      "designColorfulness": 0.544,
+      "designChromaticRatio": 0.1963,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.007,
+      "canvasArea": 0,
+      "textDensity": 0.208,
+      "accentConcentration": 0.874,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#2d7abc",
+        "secondary": "#2b8765"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#2d7abc",
+        "secondary": "#b4e7d4"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e8eb",
+      "seed": 884767395,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "usa.gov",
+    "category": "government",
+    "file": "usa.gov.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20894,
+        "analysisMs": 12507,
+        "load1": 22.4,
+        "cpuBefore": 0.35,
+        "cpuDuring": 0.61,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "usa.gov",
+    "url": "https://www.usa.gov/",
+    "live": true,
+    "timingMs": 12507,
+    "e2eMs": 17807,
+    "stamp": "grown in 17.2s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.502,
+      "inkCoverage": 0.528,
+      "colorfulness": 0.387,
+      "designColorfulness": 0.283,
+      "designChromaticRatio": 0.3434,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.125,
+      "canvasArea": 0,
+      "textDensity": 0.333,
+      "accentConcentration": 0.593,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#c5e4ec",
+        "secondary": "#163352"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#c5e4ec",
+        "secondary": "#367dc9"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e5eaeb",
+      "seed": 1821544162,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "nasa.gov",
+    "category": "government",
+    "file": "_failed/nasa.gov.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9405,
+        "analysisMs": null,
+        "load1": 20.8,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 3007
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 11153,
+        "analysisMs": null,
+        "load1": 18.7,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 3006
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading nasa.gov. Big, richly built sites often outrun us.",
+    "domain": "nasa.gov",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 11105,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
   }
 ]

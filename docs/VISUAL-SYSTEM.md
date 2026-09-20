@@ -757,3 +757,55 @@ Renders: `references/experiments/floating-bloom-2026-09-20/`.
   colour, which the rulings forbid for bloom; whether fruit is different is Lead's and the
   human's call. And: "the render can only refuse to pass judgment; 'we could not read this' has
   to be carried by the failure card's copy" — a scoping question for Lead.
+
+### Medium bloom, re-tuned to Taste's ruling — and what the ruling could not reach (2026-09-20)
+
+`references/experiments/medium-2026-09-20/` (`SHEET-medium-sweep.png`, `SHEET-medium-result.png`,
+`SHEET-medium-final.png`, `BLIND-*.png` + `BLIND-key.txt`). Taste failed `medium`: "a green tree
+with pink around the edges; the crown's centre third is solid green". Ordered fix: make the
+foliage reduction bite in the middle third FIRST (`elsewhere`), THEN fraction 0.40, re-judge at
+140px. Done in that order, MEASURED at a true 140px, then judged blind by three independent
+read-only judges (ladder / tree health / adversary).
+
+- **`elsewhere` opens the middle — onto WOOD, not bloom.** Across the sweep leaf cover in the
+  crown's middle third fell 70% → 41% while bloom there moved 3.8% → 6.1%. The crown is a
+  hollow shell: behind the leaf in the middle of any view is limb and the far side. **Even the
+  approved `abundant` has only 8.6% bloom in its middle third against 36% at its rim.** So the
+  literal complaint describes something no amount of thinning achieves, and below about 0.7 the
+  tree reads thin and unwell before its centre ever reads pink.
+- **The fraction is what moves total bloom:** 13.6% of the crown at 0.27, ~19% at 0.40.
+- **Blind panel:** the old setting came LAST with all three. D (0.40 / 0.62) and C (0.40 / 0.75)
+  tied on Borda. C taken: the health judge's objection to D is disqualifying — its crown is
+  thinner than `abundant`'s and the two converge at 70px — and the ladder judge called C "the
+  safe alternative with no other cost" and the best-spaced.
+- **All three judges independently named the real remaining problem: DISTRIBUTION.** Bloom
+  arrived as a cap on top and a fringe below; the height band where the scaffold limbs fork
+  carried the least. Fixed as "which twigs flower" — `bands`, a per-height-band quota weight in
+  the stratified selection — never by moving a flower: middle-band bloom 22% → 27% of the band.
+- **A hidden cost, found by measurement:** at 40% bloom nearly every twig is "near" one, so the
+  near-bloom reduction (`nearTo` 0.55, radius 1.1) was quietly thinning the WHOLE crown. Now
+  0.7 / 0.8, which keeps the crown mass the panel judged healthy (leaf cover 30%, unchanged).
+- **Result, crown bloom share at 140px: few 6% / medium 21% / abundant 33%**; leaf cover
+  61% / 30% / 15%. Holds in all three grammars and on real conditioned colours.
+- **Dead lever removed:** an "inner foliage" scale measured zero effect — a hollow crown has
+  no inner foliage. **Step 4 (re-judge scaled seasons) is moot:** autumn was the only state
+  that scaled bloom and it no longer flowers.
+- **Still true, and NOT fixed:** the adversarial judge passed no candidate — the middle of the
+  frame is wood and far-shell in every amount. Putting bloom THERE needs flowering twigs on
+  the camera-facing middle of the shell, which is crown STRUCTURE (Gate 1's ramification,
+  already REVISE), not bloom tuning.
+
+### Small queue, same day
+
+- `GRAMMAR_COMPAT`: pendant × broad is now recorded as TASTE's ruling, with its reasoning
+  (a broad crown's wide underside is what hanging clusters hang from) and its guard.
+- The `?fc=` warning now says what Taste said: bypassing the conditioner is not merely
+  unrepresentative, it is the FAILING case — blue passes because of `conditionFlower`.
+- **Winter buds follow their own lightness.** Pale buds vanished (cream on tan wood against
+  pale sky: "as though analysis failed"): now bigger, more numerous, in a deep dark scale cup —
+  a two-tone object that reads on any ground. Dark buds read as blight: now swell to a lighter
+  tip inside their own hue, in a pale cup. Improved, still wants Taste's eye on cream.
+- **Pendant florets are folded bells.** Three wide two-row petals were flat diamonds — harmless
+  while petals paled to the edge, a column of flat squares once dark petals went solid.
+- The debug pages get V0's autumn and winter ground (the product always had them via
+  `resolveDNA`); a `season=winter` tree had been standing on a summer lawn.
