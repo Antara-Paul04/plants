@@ -1,0 +1,50 @@
+[
+  {
+    "site": "heisenbergg.com",
+    "round": 1,
+    "load1": 50.5,
+    "dclMs": 7059,
+    "error": null,
+    "ttfb": 947,
+    "htmlDone": 1424,
+    "domInteractive": 6760,
+    "dclInPage": 6844,
+    "slow": [
+      "2116ms video heisenbergg.com/work/x/20260419_2045830620476305408_pos",
+      "2010ms video heisenbergg.com/work/x/20260515_2055342499208794112_pos",
+      "1996ms video heisenbergg.com/work/x/20260525_2058976959431094272_pos"
+    ]
+  },
+  {
+    "site": "heisenbergg.com",
+    "round": 2,
+    "load1": 52.6,
+    "dclMs": 3240,
+    "error": null,
+    "ttfb": 352,
+    "htmlDone": 405,
+    "domInteractive": 1565,
+    "dclInPage": 2142,
+    "slow": [
+      "1716ms script static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7",
+      "1665ms video heisenbergg.com/work/x/20260419_2045830620476305408_pos",
+      "1662ms video heisenbergg.com/work/x/20260514_2054863113946861568_pos"
+    ]
+  },
+  {
+    "site": "heisenbergg.com",
+    "round": 3,
+    "load1": 53.9,
+    "dclMs": 1566,
+    "error": null,
+    "ttfb": 250,
+    "htmlDone": 609,
+    "domInteractive": 1418,
+    "dclInPage": 1528,
+    "slow": [
+      "815ms script static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7",
+      "783ms video heisenbergg.com/work/x/20260514_2054863113946861568_pos",
+      "782ms video heisenbergg.com/work/x/20260526_2059313305102249984_pos"
+    ]
+  }
+]

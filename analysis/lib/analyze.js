@@ -36,7 +36,11 @@ const BUDGET_MS   = 20000;   // hard ceiling for the whole analysis
 // EVERY time, while DOM-ready was 5.3s / 12s / >30s. All the variance is in the script
 // tail, and we measure pixels from a screenshot — the site's JS finishing is not a
 // precondition for that. Raising the old timeout only waited longer for the wrong event.
-const NAV_MS      = 9000;
+// Generous ON PURPOSE, and this is not the trap of waiting longer for the wrong event.
+// 'commit' is a NETWORK event that reliably arrives (HTML complete measured 1.2-2.2s on
+// every github visit); it is slow here only because the CPU is starved. Waiting longer
+// for DOM-ready was futile because that event may never fire. These are different.
+const NAV_MS      = 15000;
 const LOAD_MS     = 4500;    // bounded wait for subresources AFTER dom-ready. Needed:
                              // without it figma.com measured before its imagery painted
                              // and classified as WINTER — a colourful site read as
@@ -97,6 +101,7 @@ export const FAILURES = {
   TIMEOUT:       'That website took too long to load.',
   REDIRECTED:    'That address sent us somewhere else.',
   EMPTY_PAGE:    'There was nothing on that page to look at.',
+  NOT_RENDERED:  'That website did not finish drawing for us.',
   INTERNAL:      'Something went wrong while looking at that website.'
 };
 const fail = (domain, code, detail) => ({ ok: false, domain, failure: { code, message: FAILURES[code] || FAILURES.INTERNAL, detail: detail || null } });
@@ -231,7 +236,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
     // Moving navigation earlier makes that failure MORE likely, so this is the part that
     // has to carry it.
     const tSettle = now();
-    let prev = null, stable = 0, settled = false;
+    let prev = null, lastSig = null, stable = 0, settled = false;
     while (left() > 6000 && now() - tSettle < STABLE_MS) {
       const sig = await page.evaluate(() => {
         const all = document.querySelectorAll('body *');
@@ -246,6 +251,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
         return { els: all.length, text: (document.body.innerText || '').trim().length, geo, boxes: n };
       }).catch(() => null);
       if (!sig) break;
+      lastSig = sig;                                  // ALWAYS the most recent reading
       // a preloader is a page with almost nothing on it; do not accept it as settled
       const hasContent = sig.text >= 40 || sig.boxes >= 8;
       const same = prev && sig.els === prev.els && sig.text === prev.text && sig.geo === prev.geo;
@@ -254,12 +260,46 @@ async function runAnalysis(u, domain, budget, T0, left) {
       prev = sig;
       await page.waitForTimeout(POLL_MS);
     }
-    rec.settleReason = settled ? 'stable' : 'deadline';
+    t.settleReason = settled ? 'stable' : 'deadline';
     await Promise.race([
       page.evaluate(() => document.fonts ? document.fonts.ready : null).catch(() => {}),
       page.waitForTimeout(600)
     ]);
+
+    // DOM-geometry stability is NOT visual stability: an image finishing its load changes
+    // pixels without moving a single rect. Using the DOM proxy alone measured stripe.com
+    // at ink 0.042 against 0.122 when fully painted — a materially different tree.
+    // So confirm with actual frames, which is what "successive frame diffs until the page
+    // stops changing" means. Bounded, and it reuses the diff we already have.
+    // Compared as raw PNG buffers in Node. PNG encoding is deterministic, so identical
+    // bytes means an identical frame — exact, free, and crucially it touches no shared
+    // resource. Routing this through the one scratch page deadlocked 8 concurrent
+    // requests contending on a single page.
+    if (settled) {
+      let lastFrame = null;
+      for (let i = 0; i < 4 && left() > 7000; i++) {
+        let f;
+        try { f = await page.screenshot({ type: 'png', timeout: 4000 }); }
+        catch (e) { break; }
+        if (lastFrame && Buffer.compare(lastFrame, f) === 0) break;   // visually settled
+        lastFrame = f;
+        await page.waitForTimeout(450);
+      }
+    }
     t.settle = now() - tSettle;
+
+    // Post-settle emptiness. The early gate runs before content has had a chance; this
+    // one runs after. play.grafana.org delivers 20 elements, 25 characters and ZERO
+    // painted boxes and never changes — measuring that produces a confident fingerprint
+    // of a spinner, which is the worst failure mode this probe has.
+    // Use the LATEST reading, never `prev` — when the loop exits early under contention
+    // `prev` is stale or null, and treating that as the page's final state rejected
+    // stripe, github, wikipedia, linear and tailwind as empty. Only judge emptiness on a
+    // reading we actually took.
+    const after = lastSig || { text: 0, boxes: 0, els: 0, unknown: true };
+    if (!after.unknown && after.text < 50 && after.boxes < 5) {
+      return fail(domain, 'EMPTY_PAGE', `after settling: ${after.els} elements, ${after.text} chars, ${after.boxes} boxes`);
+    }
 
     // ---- measure rendered DOM (~20ms) — no motion sampling
     const tDom = now();
@@ -298,12 +338,12 @@ async function runAnalysis(u, domain, budget, T0, left) {
     const tShot = now();
     const clipH = Math.min(m.docHeight, VH * 3);
     let shot;
-    const shotMs = Math.max(1500, Math.min(SHOT_MS, left() - 1500));
+    const shotMs = Math.max(3000, Math.min(SHOT_MS, left() - 1200));
     try {
       shot = await page.screenshot({ type: 'png', fullPage: true, clip: { x: 0, y: 0, width: VW, height: clipH }, animations: 'disabled', timeout: shotMs });
     } catch {
       // a tall/complex page can blow the clip budget — fall back to the viewport alone
-      shot = await page.screenshot({ type: 'png', animations: 'disabled', timeout: Math.max(1200, left() - 600) });
+      shot = await page.screenshot({ type: 'png', animations: 'disabled', timeout: Math.max(2500, left() - 500) });
     }
     t.screenshot = now() - tShot;
 
@@ -321,8 +361,14 @@ async function runAnalysis(u, domain, budget, T0, left) {
     }).catch(() => null);
     t.pixels = now() - tPix;
 
+    const inkNow = 1 - (pixels.all ? pixels.all.whitespaceRatio : 1);
+    if (!after.unknown && inkNow < 0.02 && after.boxes >= 50) {
+      return fail(domain, 'NOT_RENDERED',
+        `DOM has ${after.boxes} boxes and ${after.text} chars but the frame is ${(inkNow * 100).toFixed(1)}% inked — the page did not paint`);
+    }
+
     t.total = now() - T0;
-    return { ok: true, domain, url: finalUrl, fingerprint: toFingerprint(m, pixels, accent, hasMotion), timingMs: t };
+    return { ok: true, domain, url: finalUrl, settleReason: t.settleReason, fingerprint: toFingerprint(m, pixels, accent, hasMotion), timingMs: t };
   } catch (e) {
     const msg = String(e && e.message || e).split('\n')[0];
     return fail(domain, /Timeout|timeout/.test(msg) ? 'TIMEOUT' : 'INTERNAL', msg);

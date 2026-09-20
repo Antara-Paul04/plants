@@ -63,6 +63,17 @@ node app/server.js     # → http://localhost:5170
   popularity.** The fix (measure an earlier, stable event) is blocked on visual
   stability detection, because we already measure loading screens as pages.
   See L16 in `docs/briefs/BLOOM-SYSTEM-RULINGS.md`.
+- **WE MEASURE BOT WALLS AS WEBSITES.** tesla.com, adidas.com and dribbble.com all
+  "succeed" on a block page and are told their site "is essentially unstyled HTML".
+  All three produce a *byte-identical* fingerprint. The validity gate checks the
+  FIRST response; these blocks arrive as a redirect after it. A confident wrong
+  answer is worse than a failure, and BARE is the state where it is most
+  insulting. Also imdb.com `normal` on ink 0.016, tiktok.com `winter` on a blank
+  frame.
+- **59% of sites grow a tree** (47 of 79 swept). The failures are the script tail,
+  not DOM weight and not design richness: first byte is identical at 576 ms for
+  both groups, DOM nodes 954 vs 1,111, scripts 17 vs 49, DOM-ready 2.3 s vs 12.4 s.
+  linear.app at 5,160 nodes passes; x.com at 212 fails.
 - **Any reliability number measured while anything else runs on this machine is a
   measurement of the machine.** Several findings were discarded for this.
 - **The middle still collapses.** 41 of 56 surveyed sites land in the middle two

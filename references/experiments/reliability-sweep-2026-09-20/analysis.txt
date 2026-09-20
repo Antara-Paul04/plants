@@ -1,0 +1,142 @@
+SITES 79 · grew 47 · failed 32 · failure rate 41%
+first-try success 38 · needed a 2nd try 9: arxiv.org (TIMEOUT), discord.com (TIMEOUT), adidas.com (TIMEOUT), starbucks.com (TIMEOUT), lego.com (TIMEOUT), craigslist.org (TIMEOUT), mit.edu (TIMEOUT), imdb.com (TIMEOUT), tesla.com (INTERNAL)
+
+FAILURES BY CODE
+  TIMEOUT      27  youtube.com, netflix.com, spotify.com, x.com, twitch.tv, amazon.com, ebay.com, walmart.com, etsy.com, nike.com, zara.com, airbnb.com, zoom.us, github.com, theverge.com, awwwards.com, nasa.gov, who.int, europa.eu, spacejam.com/1996, bbc.com, cnn.com, espn.com, weather.com, yahoo.com, duckduckgo.com, microsoft.com
+  BLOCKED      3  stackoverflow.com, lingscars.com, nytimes.com
+  UNREACHABLE  1  reddit.com
+  EMPTY_PAGE   1  archive.org
+
+FAILURE DETAIL STRINGS
+   47 × TIMEOUT: page.goto: Timeout 8000ms exceeded.
+    7 × BLOCKED: HTTP 403
+    5 × TIMEOUT: exceeded 20000ms
+    2 × UNREACHABLE: 
+    1 × INTERNAL: page.evaluate: Execution context was destroyed, most likely because of a navigation
+    1 × REDIRECTED: landed on nike.in
+    1 × EMPTY_PAGE: 
+
+TIMING (successes)
+  analysis only : median   9.2s · p90  13.8s · max  16.8s
+  on screen     : median  14.0s · p90  18.8s · max  26.5s
+  tree build    : median   4.8s (on screen minus analysis)
+  on screen > 15s: 19 of 47 · > 20s: 4
+  product stamp vs harness: stamp under-reports by median   0.7s (page load + harness overhead)
+  time to FAIL  : median   9.6s for the first attempt · max  22.2s
+
+HYPOTHESIS — does analysis time follow DOM WEIGHT or DESIGN RICHNESS? (Spearman, successes)
+  DOM nodes            rho  0.41  (n=45)
+  scripts              rho  0.45  (n=45)
+  transfer KB          rho  0.37  (n=45)
+  requests             rho  0.44  (n=45)
+  HTML KB              rho  0.56  (n=45)
+  plain-visit DCL ms   rho  0.25  (n=44)
+  plain-visit load ms  rho  0.59  (n=34)
+  stylingRichness      rho  0.37  (n=47)
+  inkCoverage          rho  0.27  (n=47)
+  authored             rho  0.35  (n=47)
+  richness vs DOM nodes: rho 0.41 (n=45) — how separable the two explanations are
+
+PASS vs FAIL — weight of the page (plain visit, same conditions as the analyzer)
+  DCL ms       pass median   2335 · TIMEOUT median  12931
+  load ms      pass median   3428 · TIMEOUT median  13807
+  DOM nodes    pass median    954 · TIMEOUT median   1111
+  scripts      pass median     17 · TIMEOUT median     49
+  transfer KB  pass median    526 · TIMEOUT median   1193
+  HTML KB      pass median    198 · TIMEOUT median    324
+  TTFB ms      pass median    576 · TIMEOUT median    576
+
+  richness of sites that TIMEOUT now (from earlier runs where they passed): netflix.com 0.472, amazon.com 0.529, github.com 0.578, theverge.com 0.596, bbc.com 0.491
+  median richness of passes: 0.443
+
+TIMEOUTS — is the SITE slow, or are WE? (plain-visit DCL against the 8000ms limit)
+  etsy.com               plain DCL   0.6s ← WE timed out; a plain visit did not · 9 nodes · 2 scripts · ttfb 409ms · 
+  airbnb.com             plain DCL   1.4s ← WE timed out; a plain visit did not · 635 nodes · 54 scripts · ttfb 576ms · redirected → https://www.airbnb.co.in/?locale=en
+  theverge.com           plain DCL   2.1s ← WE timed out; a plain visit did not · 5013 nodes · 94 scripts · ttfb 374ms · 
+  walmart.com            plain DCL   3.5s ← WE timed out; a plain visit did not · 1111 nodes · 212 scripts · ttfb 555ms · 
+  zoom.us                plain DCL   3.7s ← WE timed out; a plain visit did not · 1932 nodes · 91 scripts · ttfb 462ms · redirected → https://www.zoom.com/
+  europa.eu              plain DCL   5.9s ← WE timed out; a plain visit did not · 758 nodes · 24 scripts · ttfb 394ms · 
+  amazon.com             plain DCL   6.3s ← WE timed out; a plain visit did not · 39 nodes · 0 scripts · ttfb 502ms · 
+  bbc.com                plain DCL   7.8s ← WE timed out; a plain visit did not · 2803 nodes · 110 scripts · ttfb 721ms · 
+  zara.com               plain DCL   8.5s ← genuinely over 8s · 791 nodes · 49 scripts · ttfb 240ms · 
+  yahoo.com              plain DCL   9.8s ← genuinely over 8s · 1214 nodes · 152 scripts · ttfb 2136ms · 
+  github.com             plain DCL  11.1s ← genuinely over 8s · 1803 nodes · 15 scripts · ttfb 181ms · 
+  weather.com            plain DCL  12.9s ← genuinely over 8s · 2108 nodes · 189 scripts · ttfb 1275ms · 
+  awwwards.com           plain DCL  12.9s ← genuinely over 8s · 617 nodes · 25 scripts · ttfb 2300ms · 
+  who.int                plain DCL  13.0s ← genuinely over 8s · 2251 nodes · 56 scripts · ttfb 543ms · 
+  nike.com               plain DCL  13.1s ← genuinely over 8s · 1605 nodes · 43 scripts · ttfb 2533ms · redirected → https://www.nike.in/
+  youtube.com            plain DCL  13.8s ← genuinely over 8s · 2293 nodes · 49 scripts · ttfb 547ms · 
+  espn.com               plain DCL  14.9s ← genuinely over 8s · 3506 nodes · 33 scripts · ttfb 2360ms · redirected → https://www.espn.in/
+  cnn.com                plain DCL  15.4s ← genuinely over 8s · 3766 nodes · 89 scripts · ttfb 452ms · 
+  ebay.com               plain DCL  16.6s ← genuinely over 8s · 773 nodes · 53 scripts · ttfb 1820ms · 
+  duckduckgo.com         plain DCL  17.2s ← genuinely over 8s · 343 nodes · 42 scripts · ttfb 875ms · 
+  nasa.gov               plain DCL  17.7s ← genuinely over 8s · 2577 nodes · 38 scripts · ttfb 393ms · 
+  microsoft.com          plain DCL  18.9s ← genuinely over 8s · 786 nodes · 168 scripts · ttfb 1158ms · 
+  x.com                  plain DCL  24.2s ← genuinely over 8s · 212 nodes · 1 scripts · ttfb 537ms · 
+  spotify.com            plain DCL  30.1s ← genuinely over 8s · 969 nodes · 30 scripts · ttfb 1547ms · 
+  netflix.com            plain DCL   –  s ← plain visit failed too: null · 102 nodes · 5 scripts · ttfb 1944ms · 
+  twitch.tv              plain DCL   –  s ← plain visit failed too: null · 180 nodes · 75 scripts · ttfb 619ms · 
+  spacejam.com/1996      plain DCL   –  s ← plain visit failed too: page.goto: Timeout 30000ms exceeded. · ? nodes · ? scripts · ttfb ?ms · 
+
+HEAVIEST PASSES / LIGHTEST FAILURES (DOM nodes)
+  heaviest passes : linear.app 5160n/10.1s, theguardian.com 4899n/12.1s, samsung.com 3761n/14.2s, framer.com 3096n/13.6s, stripe.com 2840n/10.2s, kottke.org 2751n/9.4s
+  lightest failures: stackoverflow.com 4n [BLOCKED], etsy.com 9n [TIMEOUT], nytimes.com 9n [BLOCKED], reddit.com 17n [UNREACHABLE], amazon.com 39n [TIMEOUT], lingscars.com 48n [BLOCKED]
+
+SLOWEST ON SCREEN
+  mit.edu                  on screen  26.5s · analysis   9.0s · 379 nodes
+  ikea.com                 on screen  25.5s · analysis  16.8s · 1459 nodes
+  discord.com              on screen  23.7s · analysis  16.1s · 1196 nodes
+  uber.com                 on screen  20.3s · analysis  15.3s · 2681 nodes
+  samsung.com              on screen  18.8s · analysis  14.2s · 3761 nodes
+  theguardian.com          on screen  18.0s · analysis  12.1s · 4899 nodes
+  disney.com               on screen  18.0s · analysis  13.8s · 492 nodes
+  vercel.com               on screen  17.9s · analysis   9.9s · 1125 nodes
+
+LOADING STAGES — plain visit under the analyzer's conditions (n=76 sites with stage data)
+  stage (ms)            grew a tree n=45                  TIMEOUT n=26                      
+  ttfb                  median    576 · p90   1676 · missing 0median    576 · p90   2300 · missing 0
+  htmlDone              median   1029 · p90   2145 · missing 0median    931 · p90   8357 · missing 1
+  firstContentfulPaint  median   1480 · p90   3756 · missing 2median   2516 · p90  12852 · missing 3
+  domInteractive        median   1700 · p90   4763 · missing 2median   4173 · p90  14870 · missing 3
+  domReady              median   2261 · p90   7439 · missing 2median  12377 · p90  18879 · missing 3
+
+  Of 26 TIMEOUT sites, in a plain visit: HTML complete < 8s: 22 · first contentful paint < 8s: 20 · domInteractive < 8s: 14 · DOM-ready < 8s: 8 · never DOM-ready in 30s: 2
+
+  per TIMEOUT site:  ttfb / html / FCP / interactive / DOM-ready   · scripts before DOM-ready
+   amazon.com              502 /   503 /     — /   518 /   518   · 0 scripts, 0 KB · cpu 0.45→0.41
+   etsy.com                409 /   411 /     — /   586 /   586   · 1 scripts, 0 KB · cpu 0.42→0.5
+   theverge.com            374 /   427 /   812 /   676 /  2098   · 53 scripts, 1247 KB · cpu 0.33→0.38
+   walmart.com             555 /   862 /  1312 /   864 /  3391   · 79 scripts, 1334 KB · cpu 0.48→0.46
+   zoom.us                 462 /   492 /  1116 /  1096 /  3686   · 83 scripts, 227 KB · cpu 0.28→0.39
+   europa.eu               394 /   395 /  4684 /  4647 /  4649   · 8 scripts, 96 KB · cpu 0.42→0.37
+   zara.com                240 /   441 /  6712 /  6566 /  6653   · 26 scripts, 1352 KB · cpu 0.4→0.43
+   bbc.com                 721 /   896 /   796 /   908 /  7752   · 81 scripts, 1252 KB · cpu 0.4→0.44
+   yahoo.com              2136 /  8357 /  6664 /  8595 /  8595   · 3 scripts, 38 KB · cpu 0.45→0.51
+   espn.com               2360 /  3684 /  5096 / 10991 / 10991   · 8 scripts, 248 KB · cpu 0.48→0.48
+   github.com              181 /   549 /  1112 /   961 / 11111   · 91 scripts, 1701 KB · cpu 0.34→0.36
+   weather.com            1275 /  1706 /  4204 /  4173 / 12377   · 65 scripts, 1340 KB · cpu 0.41→0.56
+   awwwards.com           2300 /  2497 /  2516 /  2513 / 12889   · 12 scripts, 593 KB · cpu 0.35→0.4
+   who.int                 543 /   715 /  4128 / 12980 / 12981   · 43 scripts, 309 KB · cpu 0.46→0.39
+   nike.com               2533 /  4056 /  3068 / 10803 / 13059   · 7 scripts, 366 KB · cpu 0.47→0.45
+   youtube.com             547 /  3688 /  4968 / 13681 / 13682   · 8 scripts, 61 KB · cpu 0.46→0.53
+   cnn.com                 452 / 14240 /  1596 / 14870 / 14878   · 19 scripts, 194 KB · cpu 0.44→0.46
+   ebay.com               1820 / 12026 / 13092 / 13137 / 15672   · 13 scripts, 172 KB · cpu 0.42→0.44
+   duckduckgo.com          875 /  1547 /  1168 /  1549 / 16423   · 22 scripts, 285 KB · cpu 0.39→0.48
+   nasa.gov                393 /   644 /  2008 /  2909 / 17678   · 22 scripts, 198 KB · cpu 0.42→0.41
+   microsoft.com          1158 /  1775 / 12852 / 15854 / 18879   · 132 scripts, 1088 KB · cpu 0.41→0.39
+   x.com                   537 /   931 /  1744 /  1711 / 24121   · 246 scripts, 0 KB · cpu 0.47→0.47
+   spotify.com            1547 /  1711 / 31676 / 30041 / 30042   · 7 scripts, 1695 KB · cpu 0.44→0.49
+   netflix.com            1944 /     — /     — /     — /     —   · 3 scripts, 747 KB · cpu 0.44→0.53
+   twitch.tv               619 /   736 /   800 /     — /     —   · 63 scripts, 1149 KB · cpu 0.5→0.46
+   airbnb.com              576 /  1198 /  1072 /     — /     —   · 39 scripts, 1012 KB · cpu 0.39→0.39
+
+  DOM-ready minus domInteractive (the script tail): median 78ms · p90 10150ms · max 33982ms
+  DOM-ready time vs script KB before it: rho 0.56 (n=70) · vs DOM nodes: rho 0.30 (n=70)
+
+CPU AT THE MOMENT OF EACH ATTEMPT
+  attempts 120 · cpu before: median 0.43 max 0.6 · failed attempts' cpu before: median 0.43 · ok attempts': 0.43
+  attempts that started above 0.55 busy: ebay.com 0.6, nike.com 0.6
+
+SUSPICIOUS TREES (grew, but look wrong)
+  tiktok.com             normal/airy winter · rich 0.416 · ink 0 — almost nothing on screen when measured
+  disney.com             normal/normal flowering · rich 0.484 · redirects: analyzer https://www.disney.com/ vs plain visit http://www.disney.in/

@@ -54,3 +54,9 @@ references/experiments/site-survey-*/_failed/
 # regenerable from results.json plus a re-shoot; the analysis stays committed.
 references/experiments/site-survey-*/pairs/
 references/experiments/site-survey-*/_site/
+# Reliability sweep — 122MB of trees, site shots and pairs across 79 sites. The
+# analysis (INDEX.md, analysis.txt, results.json) is committed; the images stay
+# local, and are regenerable from results.json plus a re-shoot.
+references/experiments/reliability-sweep-*/pairs/
+references/experiments/reliability-sweep-*/_site/
+references/experiments/reliability-sweep-*/*.png
