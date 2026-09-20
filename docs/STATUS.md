@@ -74,6 +74,28 @@ until the visitor grows their own.
 
 ## Known limitations
 
+- **The opening frame does not reach budget phones.** The page opens on a real
+  example tree, which lands fine at 4x CPU throttle and takes **15-20 s at 6x**
+  (a cheap Android, cold cache) — so the visitor most likely to arrive from a
+  link still meets sky and an empty island for fifteen seconds. Cumulative
+  long-task on the opening frame: 1986 ms → **3298 ms** at 4x with the example,
+  6478 ms at 6x, worst single task 461-500 ms. Against the build's 10 ms slicing
+  budget that names one phase that is not yielding — the skeleton, below. The
+  centre invitation card is gone while it builds, so the wait reads as arriving
+  rather than as finished-and-empty, but nothing is faster.
+- **`medium`'s wreath was one camera angle.** Averaged round the tree, approved
+  `abundant` carries 31-42% of its bloom in the crown's middle third against
+  34-37% at the rim. Every bloom judgement on this project was read off
+  `gate2.html?preset=bare&seed=7` from the default camera, which is that tree's
+  *worst* face. The real defect is a crown whose FACES DIFFER, and only 4-7
+  attachment points project into the middle of any view (mean 5.0), so a bare
+  middle is a coin flip over a handful of twigs. See R12 in `AGENTS.md`.
+- **A login wall can grow a tree.** `x.com/home` and `instagram.com` are measured
+  and presented as those sites — a false result rather than an error. Open
+  product question: is a login wall "that site's design"?
+- **DNS rebinding is not closed.** Private address literals are refused (D10),
+  but a public hostname whose A record points into private space still gets one
+  navigation, because the check is on the name and not on what it resolves to.
 - **The 8-second navigation timeout measures OUR machine, not the website.**
   The four chips requested at once: 1 passes in 3.8 s, 4 pass with analysis
   *doubled* to the cliff, 8 gives 5/8. `domcontentloaded` waits for every deferred
@@ -95,8 +117,14 @@ until the visitor grows their own.
 - **Accents are ranked by pixel count** (`probe/pixels.js`), so the biggest wash
   beats the actual brand colour — stripe.com grows a cream tree and its real blue
   reaches only the flower centre. Same root cause as ikea's false autumn. See L15.
-- **Gate 1 is still REVISE** on crown ramification — the crown reads as antlers,
-  and it now ships.
+- **Gate 1 is NOT PASSED and the work is inert.** Three cycles, nine blind
+  verdicts, nothing passed; today's tree placed last or second-last in 8 of 9
+  ("antlers", "a hat rack with foliage") and a ramified tree first in 8 of 9, so
+  what ships is worse than work that is still not good enough. Four causes, none
+  a parameter: one calibre beyond order 2, a crown that is a shell, colonization
+  hooks, and no leader. `RAMIFY_DEFAULT` is `'0'`; flipping it is the ship.
+  **The bare tree and the leafy tree want opposite skeletons** — the same
+  armature judged best for a foliated crown is worst at 140 px.
 - The skeleton is a 90–200 ms block, the longest remaining stall. End-to-end
   growth is 15–21 s, most of it the tree build, not analysis.
 - Analysis runs in **light mode only**; `motion` is excluded as unrepeatable.
