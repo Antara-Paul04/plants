@@ -432,7 +432,7 @@ function crownBox(spots) {
  * flowers, and it is the only place a viewer can see it.
  */
 export function pickSites(spots, r, opts = {}) {
-  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null, minCount = 0 } = opts;
+  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null, minCount = 0, minDist = 0 } = opts;
   if (!spots.length || fraction <= 0) return [];
   const { c, e } = crownBox(spots);
   const ox = r() * 50, oy = r() * 50, oz = r() * 50;
@@ -448,9 +448,26 @@ export function pickSites(spots, r, opts = {}) {
     scored.push({ i, score });
   });
   const want = Math.min(spots.length, Math.max(1, minCount, Math.round(spots.length * fraction)));
+  // `minDist` keeps chosen sites apart. Sites are 0.4 apart along a limb, so a good
+  // score run takes three or four NEIGHBOURS in a row; with two or three fruit each
+  // that was nine fruit shoulder to shoulder in one arc — "a grape bunch, the loudest
+  // object in the image". Greedy in priority order, then topped up WITHOUT the
+  // constraint if it cannot otherwise reach the count: spacing is a preference, the
+  // count is the contract.
+  const spaced = (ordered) => {
+    if (!(minDist > 0)) return ordered.slice(0, want).map((x) => x.i);
+    const out = [], late = [];
+    for (const x of ordered) {
+      if (out.length >= want) break;
+      const p = spots[x.i].pos;
+      if (out.every((j) => spots[j].pos.distanceTo(p) >= minDist)) out.push(x.i); else late.push(x.i);
+    }
+    for (const j of late) { if (out.length >= want) break; out.push(j); }
+    return out;
+  };
   if (!(strata > 1)) {
     scored.sort((a, b) => b.score - a.score);
-    return scored.slice(0, want).map((x) => x.i);
+    return spaced(scored);
   }
   // STRATIFIED: the crown is cut into sectors of compass direction (and an upper
   // and lower band), and each takes its own share by score. Unstratified, a
@@ -477,13 +494,27 @@ export function pickSites(spots, r, opts = {}) {
   }
   // Largest-remainder top-up, best-scored first among each group's next-in-line.
   rest.sort((a, b) => (a.rank - b.rank) || (b.score - a.score));
-  for (const x of rest) { if (picked.length >= want) break; picked.push(x); }
-  return picked.slice(0, want).map((x) => x.i);
+  if (!(minDist > 0)) {
+    for (const x of rest) { if (picked.length >= want) break; picked.push(x); }
+    return picked.slice(0, want).map((x) => x.i);
+  }
+  return spaced([...picked, ...rest]);
 }
 
 // How much of the crown blooms at each DNA amount. Exaggerated on purpose — the
 // steps have to be different trees at thumbnail size, not degrees of one.
 // The fewest bloom clusters a flowering tree may carry, whatever its size. Taste's number.
+// The furthest a bloom's base may stand off its twig. A bloom is ATTACHED: its dome
+// is about a quarter of a unit across the base, so past that there is sky between
+// the flower and the wood and it floats — "half of the flowers are in the air" (the
+// human, on a `few` tree in the product). The stand-off had been tied to the radius
+// of the leaf ball under the bloom, a leftover of the three banned attempts to beat
+// occlusion by pushing flowers outward; at `few` that ball is nearly full size, so
+// blooms stood a median 0.58 off the wood (0.29 at medium, 0.21 at abundant, which
+// is why only `few` broke). Clamped HERE, inside the builder, so no caller can float
+// one. A flower nestles in its leaves; the foliage relationship (L5) is what makes
+// it visible, not distance.
+export const SEAT_MAX = 0.26;
 export const BLOOM_MIN_CLUSTERS = 6;
 export const BLOOM_FRACTION = { none: 0, few: 0.1, medium: 0.33, abundant: 0.62 };
 
@@ -679,7 +710,7 @@ export function buildFlowers(spots, r, opts = {}) {
         // face of the crown plain green.
         radial.copy(sp.pos).sub(box.c).normalize();
         ax.copy(radial).multiplyScalar(0.8).addScaledVector(sp.axis, 0.45).normalize();
-        p.copy(sp.pos).addScaledVector(ax, proud * seat * sp.scale);   // the leaf ball's own radius: ON it, not in it
+        p.copy(sp.pos).addScaledVector(ax, Math.min(proud, SEAT_MAX) * seat * sp.scale);
       }
       q.setFromUnitVectors(UP, ax);
       q2.setFromAxisAngle(ax, r() * Math.PI * 2);
@@ -750,7 +781,7 @@ function fruitGeometry(r, color, opts) {
  */
 export function chooseFruitSites(spots, r, opts = {}) {
   const { sites = 22, exclude = null } = opts;
-  return pickSites(spots, r, { fraction: Math.min(1, sites / spots.length), freq: 0.6, outer: 0.6, low: 0.45, old: 0.5, field: 0.4, strata: 6, exclude });
+  return pickSites(spots, r, { fraction: Math.min(1, sites / spots.length), freq: 0.6, outer: 0.6, low: 0.45, old: 0.5, field: 0.4, strata: 6, exclude, minDist: opts.minDist ?? 0.95 });
 }
 
 export function bloomExclusion(spots, fruitSites, radius = 0.75) {
@@ -782,12 +813,15 @@ export function buildFruit(spots, r, opts = {}) {
     if (outward.lengthSq() > 1e-6) outward.normalize();
     const n = r() < 0.3 ? 1 : r() < 0.65 ? 2 : 3;
     const side = new THREE.Vector3().crossVectors(outward, UP).normalize();
+    // Identical repeated spheres are the procedural tell. Each spur has its own
+    // size, led by one fruit with the others smaller beside it.
+    const spur = rr(r, 0.78, 1.16);
     for (let k = 0; k < n; k++) {
       const pos = sp.pos.clone()
         .addScaledVector(outward, (0.3 + 0.06 * k) * sp.scale)
         .addScaledVector(UP, -(0.3 + rr(r, 0, 0.16) + 0.1 * k))
         .addScaledVector(side, (k - (n - 1) / 2) * radius * 1.7);
-      places.push({ pos, scale: rr(r, 0.86, 1.14) });
+      places.push({ pos, scale: spur * (k === 0 ? rr(r, 0.98, 1.1) : rr(r, 0.7, 0.92)) });
     }
   }
   const mat = matte('fruit-matte-v1');

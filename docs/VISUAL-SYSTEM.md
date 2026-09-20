@@ -696,3 +696,27 @@ Renders and measurements: `references/experiments/ground-value-2026-09-20/`.
   problem, and the value-only local contrast (L6) cannot reach it by design. Any accent inside
   the foliage's own hue family has this problem; autumn just makes it common, because autumn
   foliage occupies the whole warm half of the wheel.
+
+### Bare earth — the failure state (2026-09-20)
+
+`growEarth` (grow.js), `handle.setEarth()` and `mountEarth(canvas, opts)` (main.js),
+`bareEarth` in `buildIsland`. Renders: `references/experiments/autumn-fruit-and-bare-earth-2026-09-20/`.
+
+- **A failure must never be drawn as a deficiency in the site** (Taste). When a big site times
+  out the site has not failed, we have; a seed, a sprout or a stunted tree would say "there was
+  too little here to grow anything" about exactly the richest sites on the web.
+- **It is BARE because terrain is measured too.** An empty island wearing a lawn and its usual
+  stones fabricates data that was never obtained — the same lie, told more quietly. So: the
+  island's own form, no grass, no stones, no tree; always the day state (no background was
+  measured either).
+- **It shares nothing with a SUCCESSFUL bare tree** (info.cern.ch: leafless, on dormant turf
+  with stones). That tree has turf AND stones AND a trunk; this has none of the three. That
+  separation is the acceptance test.
+- **Nothing in it draws a missing tree.** No contact shading where a trunk would stand, and it
+  is framed on the ISLAND — framed like a tree scene it is a small island under a tree-shaped
+  void, which is the very thing it must not say.
+- The handle is the same one a tree gets, so a retry that succeeds is `handle.setDNA(dna)`, and
+  a tree followed by a failure is `handle.setEarth()`. Both verified, with the same swap
+  discipline as `setDNA`: a build in flight is abandoned, the old scene stays up until the new
+  one is ready, everything replaced is freed. **The product does not call it yet — that is
+  `app/`, and web's.**

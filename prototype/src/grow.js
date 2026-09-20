@@ -254,8 +254,14 @@ export function createEnvironment(renderer, q, P) {
   const ENVS = envTable(q);
   const name = ENVS[q.get('envstate')] ? q.get('envstate') : 'day';
   const ENV = ENVS[name];
-  renderer.toneMappingExposure = ENV.exposure * P.exposure;
-  renderer.toneMapping = TONE[q.get('tm') || ENV.tone] ?? THREE.NeutralToneMapping;
+  // Tone mapping and exposure are part of the state — but they are RENDERER state,
+  // so they are applied when this environment goes ON SCREEN (`apply`), not when it
+  // is created. A host builds the next environment up front and keeps the old scene
+  // up until the new tree is whole; applied here, the old scene was re-rendered under
+  // the NEXT state's tone mapping for the whole build (a day island under night's
+  // ACES, every material recompiled), and for good if that build then failed.
+  const exposure = ENV.exposure * P.exposure;
+  const toneMapping = TONE[q.get('tm') || ENV.tone] ?? THREE.NeutralToneMapping;
 
   // Image-based light. Without an environment a rough dielectric has nothing to
   // reflect and every shadowed surface falls to the same dead value. The env
@@ -309,6 +315,7 @@ export function createEnvironment(renderer, q, P) {
 
   return {
     name, ENV, scene,
+    apply() { renderer.toneMappingExposure = exposure; renderer.toneMapping = toneMapping; },
     gradeGround: (hex) => gradeColor(new THREE.Color(hex), ENV.ground),
     dispose() {
       sky.geometry.dispose(); sky.material.dispose();
@@ -755,7 +762,14 @@ export function growEarth(M, q, env) {
   const { P } = resolveParams(q);
   const ground = new THREE.Group();
   const terrain = {};
-  for (const k of Object.keys(NORMAL_TERRAIN)) terrain[k] = gradeColor(new THREE.Color(NORMAL_TERRAIN[k]), env.ENV.ground);
+  // OUR earth: the soil of a successful island, not a different substance. The first
+  // version used the summer soil undarkened and came out a quarter lighter and twice
+  // as chromatic as the soil under a successful bare tree — "the hue of a baked
+  // potato". This is halfway between the summer and the dormant soil, which is the
+  // family every successful island's soil already lives in.
+  for (const k of Object.keys(NORMAL_TERRAIN)) {
+    terrain[k] = gradeColor(new THREE.Color(NORMAL_TERRAIN[k]).lerp(new THREE.Color(DORMANT_TERRAIN[k]), 0.55).multiplyScalar(0.86), env.ENV.ground);
+  }
   ground.add(M.island.buildIsland(M.util.rng(P.seed * 13 + 505), { ...terrain, bareEarth: true }));
   const tree = new THREE.Group();   // empty on purpose: hosts treat every result alike
   return {

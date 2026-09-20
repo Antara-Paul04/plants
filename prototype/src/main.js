@@ -116,6 +116,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
           // one is whole — a half-swapped scene is worse than a late one.
           if (shown || abort.signal.aborted) return;
           env.scene.add(ground);
+          env.apply();
           shown = { env, built: null, ground };
           groundShown = true;
           frame(ex);
@@ -126,6 +127,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
       const old = shown;
       env.scene.add(built.tree);
       if (!groundShown) env.scene.add(built.ground);
+      env.apply();
       shown = { env, built };
       frame(ex);
       reveal = opts.reveal === false ? null : { t0: performance.now(), group: built.tree };
@@ -170,6 +172,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
       const built = growEarth(M, q, env);
       const old = shown;
       env.scene.add(built.ground);
+      env.apply();
       shown = { env, built };
       reveal = null;
       frame(built.extents);
@@ -243,7 +246,14 @@ function mountTreeNew(canvas, dna, opts = {}) {
       if (resumeTimer) clearTimeout(resumeTimer);
       if (pending) pending.abort.abort();
       controls.dispose();
-      if (shown) { shown.built?.dispose(); shown.env.dispose(); }
+      if (shown) {
+        // An island shown early, for a tree that never finished, has no `built` —
+        // only a ground that HAS been rendered and so is on the GPU.
+        const s = shown; shown = null;
+        if (s.built) s.built.dispose();
+        else if (s.ground) modules.then((M) => M.util.disposeObject(s.ground));
+        s.env.dispose();
+      }
       renderer.dispose();
     },
   };
@@ -329,21 +339,32 @@ function mountTreeV0(canvas, dna = DEFAULT_DNA, opts = {}) {
     resumeTimer = setTimeout(() => (controls.autoRotate = autoRotate), 2500);
   });
 
+  // ONE CONTRACT for every handle: setDNA() and setEarth() both return promises and
+  // may be called in any order. The shipped engine has no bare-earth state, so a
+  // failure hands the canvas over to the new engine, which does; after that the
+  // handle is the new engine's (a later setDNA grows the new tree — the way back to
+  // v0 is a fresh mount). Without this a `?engine=v0` page threw on its first failure.
+  let takeover = null;
+  const v0Dispose = () => {
+    cancelAnimationFrame(raf);
+    if (resumeTimer) clearTimeout(resumeTimer);
+    controls.dispose();
+    if (built) built.dispose();
+    renderer.dispose();
+  };
   return {
     engine: 'v0',
     ready: Promise.resolve(),
-    setDNA,
+    setEarth() {
+      if (!takeover) { v0Dispose(); takeover = mountTreeNew(canvas, null, { ...opts, earth: true }); return takeover.ready; }
+      return takeover.setEarth();
+    },
+    setDNA: (next) => (takeover ? takeover.setDNA(next) : Promise.resolve(setDNA(next))),
     get current() { return built; },
     scene: () => scene,
     camera,
     controls,
     renderer,
-    dispose() {
-      cancelAnimationFrame(raf);
-      if (resumeTimer) clearTimeout(resumeTimer);
-      controls.dispose();
-      if (built) built.dispose();
-      renderer.dispose();
-    },
+    dispose() { if (takeover) takeover.dispose(); else v0Dispose(); },
   };
 }

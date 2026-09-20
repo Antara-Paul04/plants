@@ -114,9 +114,15 @@ export function dnaToParams(dna) {
   // buds are a natural bud tone rather than an accent nobody measured.
   if (winter && !primary) params.budNatural = '1';
 
-  // fruit. V0's gate is reused for a tree in leaf; in winter the contract's own
-  // flag is honoured directly, because persistent berries ARE winter's fruit (L8).
-  const fruitOn = winter ? !!dna?.fruit?.enabled : v0.fruit.enabled;
+  // fruit. The CONTRACT's flag is honoured directly; only `bare` refuses it (a bare
+  // tree is an unstyled site and carries no ornament, by definition). The shipped
+  // renderer's own gate is deliberately NOT reused here: it also demands a minimum
+  // leaf amount (>= 0.28) and refuses winter. Winter's persistent berries ARE its
+  // fruit (L8); and a SPARSE AUTUMN site fails the amount test by arithmetic
+  // (0.3 x 0.88 = 0.264), which — now that fruit is autumn's only carrier — would
+  // leave a site that earned the fruit trait with neither flowers nor fruit. A
+  // measured trait is never deleted because composition is inconvenient (L11).
+  const fruitOn = !!dna?.fruit?.enabled;
   if (fruitOn && !bare) {
     params.fruit = '1';
     params.fruitc = hexStr(v0.fruit.color);

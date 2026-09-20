@@ -385,10 +385,10 @@ or fruit. **The contract is unchanged.**
 | `skeleton.complexity` | structure preset: `simple`→`sparse` (few limbs held WIDE), `normal`→`mid`, `rich`→`bare` (the full judged structure). A `bare` tree always gets the rich one — its skeleton is the whole show |
 | `foliage.state` | `bare` → leafless and unornamented; else cluster spacing, leaves per cluster, how far down the limb is in leaf. Exaggerated: subtler steps were one tree at 140px |
 | `foliage.density` | within-state variation of spacing (airy ×1.2, dense ×0.85) |
-| `botanicalState` | FOUR values. `flowering` = fresher greens; `autumn` = V0's ported palette, leaf amount 0.88, flowers ×0.4; `winter` = thin sage crown + buds (berries if fruiting), dormant ground |
+| `botanicalState` | FOUR values. `flowering` = fresher greens; `autumn` = V0's ported palette, leaf amount 0.88, **no flowers — fruit is its carrier**; `winter` = thin sage crown + buds (berries if fruiting), dormant ground |
 | `flowers.amount` | the bloom ladder AND its foliage relationship |
 | `flowers.primary` / `.secondary` | petal / centre, passed through UNTOUCHED — they arrive conditioned |
-| `fruit` | V0's gate reused in leaf; in winter the contract's flag is honoured directly (berries) |
+| `fruit` | the contract's flag, honoured directly; only `bare` refuses it. V0's extra gate (leaf amount ≥ 0.28, not winter) is deliberately NOT reused — see below |
 | `terrain` | V0's palette and grass, via `resolveDNA`, then graded by the environment state |
 | `background` | **day or night, nothing else** (linear luminance < 0.06). Never a scene colour — that mapping is a standing ban. 11 of 56 surveyed sites are night; the split is cleanly bimodal |
 
@@ -406,3 +406,25 @@ or fruit. **The contract is unchanged.**
    architectures; the contract has three complexities.
 4. **Night + a dark accent is dim.** github (navy bloom, night) and lusion (winter, night) are
    the weakest trees in the acceptance set. It follows whichever night level is picked.
+
+**Autumn carries no flowers; fruit is its carrier (the human, 2026-09-20).** *"i hate the green
+flowers on it, autumn trees do not have flowers on them."* This WITHDRAWS Lead's earlier ruling
+(autumn bloom decreases ×0.4 rather than vanishing; finding 3 above) — withdrawn, not deleted,
+because its reasoning explains the replacement: it existed so an autumn site could still
+express its accent when flowers were the only carrier anyone had in mind. Autumn is the
+fruiting season, so fruit is botanically right rather than a workaround, and it is the only
+thing that works: an autumn crown owns the whole warm half of the hue wheel, so a warm accent
+in bloom is a hue collapse that no count fixes (ikea, 6 → 15 clusters: 2% of a thumbnail
+changed) and that the value-only local contrast cannot reach by design. Fruit reads by size,
+form and placement — **even ikea's own yellow reads at 140px as fruit**
+(`references/experiments/autumn-fruit-and-bare-earth-2026-09-20/SHEET-autumn-fruit.png`).
+
+5. **THE HOLE — an autumn site WITHOUT the fruit trait carries no accent at all**, and ikea,
+   the only real site that reaches autumn, is one. Not papered over: which carrier an
+   unfruiting autumn tree gets (winter's buds?) is a contract question, not the renderer's.
+6. **The shipped renderer's fruit gate is not reused by the new tree.** It demands leaf amount
+   ≥ 0.28 on top of the contract's flag, which by arithmetic denies fruit to `sparse/airy` in
+   any season (0.24), `sparse/airy/autumn` (0.211) and `sparse/normal/autumn` (0.264). With
+   fruit now autumn's only carrier, a sparse autumn site that EARNED the trait would have got
+   neither flowers nor fruit. The new tree honours `fruit.enabled` directly; only `bare`
+   refuses it. (V0, behind `?engine=v0`, is unchanged and still blooms in autumn.)

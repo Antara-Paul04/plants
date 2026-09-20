@@ -11,13 +11,20 @@ const $ = (id) => document.getElementById(id);
 const form = $('form'), input = $('url'), go = $('go');
 const overlay = $('overlay'), spinner = $('spinner'), msg = $('msg');
 const result = $('result'), domainEl = $('domain'), stampEl = $('stamp');
-const whyList = $('whyList'), cacheNote = $('cacheNote'), retryBtn = $('retry');
+const whyList = $('whyList'), cacheNote = $('cacheNote'), retryBtn = $('retry'), sceneEl = $('scene');
 
 let tree = null;
 let busy = false;
 
 function state(s, text, retryable) {
   retryBtn.hidden = !(s === 'error' && retryable);
+  // A FAILURE MUST NOT SHOW THE PREVIOUS SITE'S TREE. The canvas keeps whatever
+  // it last drew, so after one success and one failure the error message was
+  // being rendered over a completely unrelated tree — telling the user we could
+  // not read their site while showing them someone else's. Worse than an empty
+  // box, because it looks like a result. (Taste's bare-earth island will fill
+  // this space properly; hiding it is the honest stopgap, not the destination.)
+  sceneEl.style.visibility = s === 'error' ? 'hidden' : '';
   const showOverlay = s !== 'ready';
   overlay.hidden = !showOverlay;
   spinner.hidden = !(s === 'analyzing' || s === 'growing');

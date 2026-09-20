@@ -30,6 +30,7 @@ const renderer = makeRenderer(canvas);
 const uniforms = { time: { value: 0 } };
 
 const env = createEnvironment(renderer, q, P);
+env.apply();
 const scene = env.scene;
 
 // Straight through, no slicing: this page is a measuring instrument and its

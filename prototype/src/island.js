@@ -26,6 +26,75 @@ export function topY(rad) {
 }
 
 /**
+ * The top of a BARE-EARTH island (the product's failure state).
+ *
+ * The lawn's dome was never designed to be seen: smooth-shaded, convex, rolling
+ * straight into the faceted soil with no edge. Undressed, it read as "a potato or a
+ * bread roll — a pillow on a crystal". This is the island's own form instead, in the
+ * soil's own language:
+ *   - a nearly FLAT plateau (ground is not convex), in chunky FLAT-SHADED facets on
+ *     the soil body's own 42 segments, gently worked so it is a surface, not a plate;
+ *   - the RIM LIP that identifies our island — the cap overhangs the drum, with a
+ *     shaded underside — which a lawn gives for free and bare earth has to build.
+ * It asserts nothing about any website: it is the stage.
+ */
+function earthCap(tp) {
+  const SSEG = 42, RINGF = [0.34, 0.62, 0.84, 1.0];
+  const LIP = 1.05, TOP = 0.1, UNDER = -0.015;
+  const pos = [], col = [], idx = [];
+  const hi = tp.soilHi.clone().offsetHSL(0, -0.03, 0.06), lo = tp.soilHi.clone().offsetHSL(0, 0, -0.02);
+  const wall = tp.soilHi.clone().multiplyScalar(0.74), under = tp.soilHi.clone().multiplyScalar(0.42);
+  const push = (x, y, z, c) => { pos.push(x, y, z); col.push(c.r, c.g, c.b); return pos.length / 3 - 1; };
+  const topAt = (x, z, f) => TOP + 0.03 * (1 - f * f) + 0.032 * noise3(x * 1.15 + 7.1, 0.7, z * 1.15 - 2.3);
+  const tone = (x, z) => lo.clone().lerp(hi, clamp(0.5 + 0.6 * noise3(x * 0.8 - 3.3, 1.9, z * 0.8 + 5.1), 0, 1));
+
+  const c0 = push(0, topAt(0, 0, 0), 0, tone(0, 0));
+  const ring = [];
+  RINGF.forEach((f, ri) => {
+    ring.push([]);
+    for (let s = 0; s < SSEG; s++) {
+      // Alternate rings are turned half a segment, so the facets are triangles of a
+      // worked surface and not a spider's web of radial quads.
+      const a = ((s + (ri % 2 ? 0.5 : 0)) / SSEG) * Math.PI * 2;
+      const rad = radiusAt(a) * f * LIP;
+      const x = Math.cos(a) * rad, z = Math.sin(a) * rad;
+      ring[ri].push(push(x, ri === RINGF.length - 1 ? TOP : topAt(x, z, f), z, tone(x, z)));
+    }
+  });
+  // Wound to face UP — (centre, next, this) — and then MEASURED, not assumed: this
+  // file has shipped inside-out twice.
+  for (let s = 0; s < SSEG; s++) idx.push(c0, ring[0][(s + 1) % SSEG], ring[0][s]);
+  for (let ri = 0; ri < RINGF.length - 1; ri++) for (let s = 0; s < SSEG; s++) {
+    const a = ring[ri][s], b = ring[ri][(s + 1) % SSEG], c = ring[ri + 1][s], d = ring[ri + 1][(s + 1) % SSEG];
+    idx.push(a, b, c, b, d, c);
+  }
+  // The lip: a short wall down from the rim, then an underside back in to the drum.
+  const rimTop = ring[RINGF.length - 1];
+  const rimLow = [], inner = [];
+  for (let s = 0; s < SSEG; s++) {
+    const a = ((s + ((RINGF.length - 1) % 2 ? 0.5 : 0)) / SSEG) * Math.PI * 2;
+    const R = radiusAt(a);
+    rimLow.push(push(Math.cos(a) * R * LIP, UNDER, Math.sin(a) * R * LIP, wall));
+    inner.push(push(Math.cos(a) * R * 0.97, UNDER, Math.sin(a) * R * 0.97, under));
+  }
+  for (let s = 0; s < SSEG; s++) {
+    const t = (s + 1) % SSEG;
+    idx.push(rimTop[s], rimTop[t], rimLow[s], rimTop[t], rimLow[t], rimLow[s]);      // wall, facing out
+    idx.push(rimLow[s], rimLow[t], inner[s], rimLow[t], inner[t], inner[s]);        // underside, facing down
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  const m = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.96, metalness: 0, flatShading: true }));
+  m.castShadow = true;
+  m.receiveShadow = true;
+  m.name = 'earthCap';
+  return m;
+}
+
+/**
  * Contact occlusion at the foot of the trunk: 1 down in the crevice where
  * bark, root and turf meet, 0 out on the open lawn.
  *
@@ -158,7 +227,8 @@ export function buildIsland(r, params = {}) {
     new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, metalness: 0 })
   );
   topMesh.receiveShadow = true;
-  group.add(topMesh);
+  if (params.bareEarth) { topGeo.dispose(); topMesh.material.dispose(); group.add(earthCap(tp)); }
+  else group.add(topMesh);
 
   // --- soil body ---------------------------------------------------------
   // Holds its width for a shoulder before tapering to a soft point. Tapering

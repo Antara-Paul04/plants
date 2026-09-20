@@ -65,6 +65,7 @@
       window.__wired = { tree, dna, syncMs, params: dnaToParams(dna).params };
 
       const report = (label, built, ms) => {
+        if (built && built.earth) { hud.textContent = `${label}\nBARE EARTH — the failure state. No DNA, so nothing to describe.\nready in ${ms.toFixed(0)} ms`; return; }
         hud.textContent = `${label}\n${describeDNA(window.__wired.dna)}\nmountTree returned in ${syncMs.toFixed(1)} ms · tree ready in ${ms.toFixed(0)} ms · worst frame gap ${worst.toFixed(0)} ms\n` +
           `params ${JSON.stringify(window.__wired.params)}` + (built && built.stats ? `\n${(built.stats.tris / 1000).toFixed(0)}k wood tri · leaves ${JSON.stringify(built.stats.leaves)} · flowers ${JSON.stringify(built.stats.flowers)} · fruit ${JSON.stringify(built.stats.fruit)} · winter ${JSON.stringify(built.stats.winter)}` : '');
       };
@@ -72,7 +73,7 @@
       watching = false;
       window.__wired.readyMs = performance.now() - t0;
       window.__wired.worstGapMs = worst;
-      report(url.get('site') || 'DEFAULT_DNA', built, window.__wired.readyMs);
+      report(url.get('earth') === '1' ? 'earth' : (url.get('site') || 'DEFAULT_DNA'), built, window.__wired.readyMs);
 
       if (url.get('thenEarth') === '1') { await tree.setEarth(); hud.textContent += '\n-> setEarth()'; }
       if (url.get('then')) {
