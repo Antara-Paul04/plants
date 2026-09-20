@@ -665,6 +665,7 @@ export async function growTree(M, q, env, opts = {}) {
     // chooseBloomSites, after all scaling, so no caller can scale beneath it.
     const bloomSites = FLOWERS === 'none' ? [] : F.chooseBloomSites(spots, flowerRng, {
       amount: FLOWERS, mul: num('bloomMul', 1), fraction: q.has('bloom') ? num('bloom', 0.33) : null, exclude: keepOff,
+      bands: q.has('bands') ? q.get('bands').split(',').map(Number) : undefined, tip: q.has('tipBonus') ? num('tipBonus', 0.18) : undefined,
     });
 
     // L5: the amount decides what the flowering twigs — and their neighbours —

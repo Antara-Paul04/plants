@@ -446,7 +446,7 @@ function crownBox(spots) {
  * flowers, and it is the only place a viewer can see it.
  */
 export function pickSites(spots, r, opts = {}) {
-  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null, minCount = 0, minDist = 0 } = opts;
+  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null, minCount = 0, minDist = 0, bands = null, tip = 0.18 } = opts;
   if (!spots.length || fraction <= 0) return [];
   const { c, e } = crownBox(spots);
   const ox = r() * 50, oy = r() * 50, oz = r() * 50;
@@ -458,7 +458,7 @@ export function pickSites(spots, r, opts = {}) {
     if (exclude && exclude.has(i)) return;
     const d = new THREE.Vector3((s.pos.x - c.x) / (e.x || 1), (s.pos.y - c.y) / (e.y || 1), (s.pos.z - c.z) / (e.z || 1));
     const field = noise3(s.pos.x * freq + ox, s.pos.y * freq + oy, s.pos.z * freq + oz);
-    const score = fieldW * field + outer * d.length() + (s.tip ? 0.18 : 0) - low * d.y + old * ((s.rad ?? 0) / radMax) + jitter;
+    const score = fieldW * field + outer * d.length() + (s.tip ? tip : 0) - low * d.y + old * ((s.rad ?? 0) / radMax) + jitter;
     scored.push({ i, score });
   });
   const want = Math.min(spots.length, Math.max(1, minCount, Math.round(spots.length * fraction)));
@@ -494,15 +494,30 @@ export function pickSites(spots, r, opts = {}) {
   for (const sIt of scored) {
     const s = spots[sIt.i];
     const az = Math.atan2(s.pos.z - c.z, s.pos.x - c.x);
-    const k = (Math.floor(((az + Math.PI) / (2 * Math.PI)) * strata) % strata) * 2 + (s.pos.y > c.y ? 1 : 0);
-    if (!groups.has(k)) groups.set(k, []);
-    groups.get(k).push(sIt);
+    // Height bands: two by default; THREE when `bands` weights them. Bloom piled up as
+    // a cap on top and a fringe below while the band where the scaffold limbs fork —
+    // the middle of every view — carried the least of it, so a medium tree read as a
+    // flowering SHELL round a green core. `bands` = [lower, middle, upper] quota
+    // weights. This is still WHICH twigs flower; no flower moves.
+    const band = bands ? (s.pos.y < c.y - e.y / 3 ? 0 : s.pos.y > c.y + e.y / 3 ? 2 : 1) : (s.pos.y > c.y ? 1 : 0);
+    const k = (Math.floor(((az + Math.PI) / (2 * Math.PI)) * strata) % strata) * 3 + band;
+    if (!groups.has(k)) groups.set(k, { band, items: [] });
+    groups.get(k).items.push(sIt);
+  }
+  // Normalise the band weights by how many sites each band holds, so the TOTAL still
+  // comes out at `want` and the weights only move bloom BETWEEN bands.
+  let norm = 1;
+  if (bands) {
+    let n = 0, wn = 0;
+    for (const g of groups.values()) { n += g.items.length; wn += g.items.length * (bands[g.band] ?? 1); }
+    norm = wn > 0 ? n / wn : 1;
   }
   const picked = [];
   const rest = [];
-  for (const g of groups.values()) {
+  for (const grp of groups.values()) {
+    const g = grp.items;
     g.sort((a, b) => b.score - a.score);
-    const q = Math.floor(g.length * fraction);
+    const q = Math.min(g.length, Math.floor(g.length * fraction * (bands ? (bands[grp.band] ?? 1) * norm : 1)));
     picked.push(...g.slice(0, q));
     rest.push(...g.slice(q).map((x, j) => ({ ...x, rank: j })));
   }
@@ -667,7 +682,7 @@ export function chooseBloomSites(spots, r, opts = {}) {
   // ...and a fraction is not enough on a small tree: 10% of a sparse crown's forty
   // twigs is four, and of a simple one's twenty-five, two. "Touches" is a COUNT.
   const minCount = opts.fraction == null && flowering ? BLOOM_MIN_CLUSTERS : 0;
-  return pickSites(spots, r, { fraction: frac, minCount, outer: rel.outer, field: rel.field, strata: rel.strata ?? 0, exclude: opts.exclude ?? null });
+  return pickSites(spots, r, { fraction: frac, minCount, outer: rel.outer, field: rel.field, strata: rel.strata ?? 0, bands: opts.bands ?? rel.bands ?? null, tip: opts.tip ?? rel.tip ?? 0.18, exclude: opts.exclude ?? null });
 }
 
 /**

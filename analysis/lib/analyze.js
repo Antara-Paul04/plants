@@ -13,7 +13,17 @@ import { analysePixels, diffFrames } from '../probe/pixels.js';
 import { measureAccentRegions } from '../probe/accent-regions.js';
 import { buildDna } from './mapping.js';
 
-const CHROME = [
+// WHERE CHROME IS. The list below is this laptop's two cached copies — which is
+// fine for local development and is the reason the analyzer cannot leave it.
+// PLANTS_CHROME overrides, so the same code runs anywhere a Chrome exists
+// without editing source: a Linux CI box, a container, or a serverless build
+// that unpacks its own binary. Checked first and NOT existence-tested, because
+// on some hosts the binary is materialised at first launch.
+//
+// Deployment is gated on more than this (see docs/DEPLOYMENT.md) — a Chrome that
+// runs is necessary, not sufficient — but the hardcoded paths were the part that
+// made the question unaskable.
+const CHROME = process.env.PLANTS_CHROME || [
   '/Users/antarapaul/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
   '/Users/antarapaul/.cache/puppeteer/chrome/mac_arm-152.0.7977.75/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'
 ].find(p => fs.existsSync(p));
@@ -42,7 +52,7 @@ async function getBrowser() {
   if (_browser && _browser.isConnected()) return _browser;
   if (_starting) return _starting;
   _starting = (async () => {
-    if (!CHROME) throw new Error('no cached Chrome binary found');
+    if (!CHROME) throw new Error('no Chrome binary found — set PLANTS_CHROME to one');
     _browser = await chromium.launch({
       executablePath: CHROME, headless: true,
       args: ['--hide-scrollbars','--mute-audio','--disable-features=IsolateOrigins,site-per-process','--font-render-hinting=none']

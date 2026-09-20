@@ -539,5 +539,895 @@
     "stamp": null,
     "fingerprint": null,
     "dna": null
+  },
+  {
+    "site": "spotify.com",
+    "category": "popular · music",
+    "file": "_failed/spotify.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 13148,
+        "analysisMs": null,
+        "load1": 64.5,
+        "cpuBefore": 0.38,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 10281,
+        "analysisMs": null,
+        "load1": 58.9,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 18562
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading spotify.com. Big, richly built sites often outrun us.",
+    "domain": "spotify.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 10183,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "instagram.com",
+    "category": "popular · social",
+    "file": "instagram.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 19838,
+        "analysisMs": 10119,
+        "load1": 54,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 9039
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "instagram.com",
+    "url": "https://www.instagram.com/",
+    "live": true,
+    "timingMs": 10119,
+    "e2eMs": 16675,
+    "stamp": "grown in 15.5s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.509,
+      "inkCoverage": 0.18,
+      "colorfulness": 0.244,
+      "designColorfulness": 0.153,
+      "designChromaticRatio": 0.0393,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.256,
+      "canvasArea": 0,
+      "textDensity": 0.092,
+      "accentConcentration": 0.642,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a5c8f4",
+        "secondary": "#fd79ab"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#a5c8f4",
+        "secondary": "#bb2c62"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e5e8eb",
+      "seed": 903904724,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "facebook.com",
+    "category": "popular · social",
+    "file": "facebook.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20518,
+        "analysisMs": 9182,
+        "load1": 50.9,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 4531
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "facebook.com",
+    "url": "https://www.facebook.com/",
+    "live": true,
+    "timingMs": 9182,
+    "e2eMs": 17131,
+    "stamp": "grown in 14.2s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.477,
+      "inkCoverage": 0.177,
+      "colorfulness": 0.349,
+      "designColorfulness": 0.327,
+      "designChromaticRatio": 0.0418,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.362,
+      "canvasArea": 0,
+      "textDensity": 0.116,
+      "accentConcentration": 0.678,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#3786e8",
+        "secondary": "#8bc5fc"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#3786e8",
+        "secondary": "#1b4974"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e8eb",
+      "seed": 2828393398,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "x.com",
+    "category": "popular · social",
+    "file": "_failed/x.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 10605,
+        "analysisMs": null,
+        "load1": 43.1,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 10532
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9990,
+        "analysisMs": null,
+        "load1": 39.7,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 15117
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading x.com. Big, richly built sites often outrun us.",
+    "domain": "x.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 9943,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "tiktok.com",
+    "category": "popular · social",
+    "file": "tiktok.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 18042,
+        "analysisMs": 10930,
+        "load1": 31.6,
+        "cpuBefore": 0.37,
+        "cpuDuring": 0.5,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "tiktok.com",
+    "url": "https://www.tiktok.com/about?lang=en",
+    "live": true,
+    "timingMs": 10930,
+    "e2eMs": 14945,
+    "stamp": "grown in 14.3s",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.416,
+      "inkCoverage": 0,
+      "colorfulness": 0.014,
+      "designColorfulness": 0.014,
+      "designChromaticRatio": 0.0001,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.026,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fdfdfd",
+        "primary": "#69eef8",
+        "secondary": "#fa5b7b"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e4e7e7",
+      "seed": 1187096476,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "linkedin.com",
+    "category": "popular · social",
+    "file": "linkedin.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 15911,
+        "analysisMs": 8079,
+        "load1": 25.9,
+        "cpuBefore": 0.34,
+        "cpuDuring": 0.51,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "linkedin.com",
+    "url": "https://www.linkedin.com/",
+    "live": true,
+    "timingMs": 8079,
+    "e2eMs": 12870,
+    "stamp": "grown in 12.4s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.38,
+      "inkCoverage": 0.434,
+      "colorfulness": 0.167,
+      "designColorfulness": 0.14,
+      "designChromaticRatio": 0.0132,
+      "warmShareOfChroma": 0.092,
+      "imageArea": 0.101,
+      "canvasArea": 0,
+      "textDensity": 0.182,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#3d87e1",
+        "secondary": "#ca826d"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#3d87e1",
+        "secondary": "#693526"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e8eb",
+      "seed": 2463491792,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "reddit.com",
+    "category": "popular · social",
+    "file": "_failed/reddit.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": null,
+        "ms": 4548,
+        "analysisMs": null,
+        "load1": 24.5,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.51,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": false,
+        "code": "UNREACHABLE",
+        "detail": null,
+        "ms": 5675,
+        "analysisMs": null,
+        "load1": 25.4,
+        "cpuBefore": 0.45,
+        "cpuDuring": 0.54,
+        "waitedForQuietMs": 4515
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "UNREACHABLE",
+      "message": "We could not reach that website.",
+      "detail": null
+    },
+    "shown": "We could not reach reddit.com just now.",
+    "domain": "reddit.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 5488,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "whatsapp.com",
+    "category": "popular · brand",
+    "file": "whatsapp.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 16175,
+        "analysisMs": 8305,
+        "load1": 22.9,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "whatsapp.com",
+    "url": "https://www.whatsapp.com/",
+    "live": true,
+    "timingMs": 8305,
+    "e2eMs": 13087,
+    "stamp": "grown in 12.4s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.401,
+      "inkCoverage": 0.229,
+      "colorfulness": 0.191,
+      "designColorfulness": 0.129,
+      "designChromaticRatio": 0.0039,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.331,
+      "canvasArea": 0,
+      "textDensity": 0.024,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fcf5eb",
+        "primary": "#33c76a",
+        "secondary": "#b4e4bc"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#33c76a",
+        "secondary": "#c3e9c9"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe8e3",
+      "seed": 8309320,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "discord.com",
+    "category": "popular · brand",
+    "file": "discord.com.png",
+    "ok": true,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 11960,
+        "analysisMs": null,
+        "load1": 20.8,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.51,
+        "waitedForQuietMs": 1501
+      },
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 26824,
+        "analysisMs": 16100,
+        "load1": 29.9,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 1508
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "discord.com",
+    "url": "https://discord.com/",
+    "live": true,
+    "timingMs": 16100,
+    "e2eMs": 23736,
+    "stamp": "grown in 23.0s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.484,
+      "inkCoverage": 0.894,
+      "colorfulness": 0.802,
+      "designColorfulness": 0.802,
+      "designChromaticRatio": 0.8973,
+      "warmShareOfChroma": 0.035,
+      "imageArea": 1,
+      "canvasArea": 0,
+      "textDensity": 0.084,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#3a3b8b",
+        "primary": "#2e3394",
+        "secondary": "#2c296e"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#30369c",
+        "secondary": "#a5a2dc"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#2d2d41",
+      "seed": 1754216032,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "twitch.tv",
+    "category": "popular · video",
+    "file": "_failed/twitch.tv.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 20920,
+        "analysisMs": null,
+        "load1": 23.3,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.45,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 14465,
+        "analysisMs": null,
+        "load1": 22.7,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.54,
+        "waitedForQuietMs": 1519
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading twitch.tv. Big, richly built sites often outrun us.",
+    "domain": "twitch.tv",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 14272,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "wikipedia.org",
+    "category": "popular · reference",
+    "file": "wikipedia.org.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 13306,
+        "analysisMs": 5548,
+        "load1": 27.3,
+        "cpuBefore": 0.46,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 4509
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "wikipedia.org",
+    "url": "https://www.wikipedia.org/",
+    "live": true,
+    "timingMs": 5548,
+    "e2eMs": 10236,
+    "stamp": "grown in 9.4s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.339,
+      "inkCoverage": 0.087,
+      "colorfulness": 0.123,
+      "designColorfulness": 0.123,
+      "designChromaticRatio": 0.024,
+      "warmShareOfChroma": 0.036,
+      "imageArea": 0.023,
+      "canvasArea": 0,
+      "textDensity": 0.296,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#8eaae0",
+        "secondary": "#69a1bf"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#8eaae0",
+        "secondary": "#386983"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e7eb",
+      "seed": 2421341792,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "amazon.com",
+    "category": "popular · e-commerce",
+    "file": "_failed/amazon.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "INTERNAL",
+        "detail": "page.evaluate: Execution context was destroyed, most likely because of a navigation",
+        "ms": 8533,
+        "analysisMs": null,
+        "load1": 24.5,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.52,
+        "waitedForQuietMs": 1505
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 10736,
+        "analysisMs": null,
+        "load1": 22.6,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 1507
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading amazon.com. Big, richly built sites often outrun us.",
+    "domain": "amazon.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 10692,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "ebay.com",
+    "category": "popular · e-commerce",
+    "file": "_failed/ebay.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 17210,
+        "analysisMs": null,
+        "load1": 78,
+        "cpuBefore": 0.6,
+        "cpuDuring": 0.62,
+        "waitedForQuietMs": 45987
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 11927,
+        "analysisMs": null,
+        "load1": 66.5,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.54,
+        "waitedForQuietMs": 15285
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading ebay.com. Big, richly built sites often outrun us.",
+    "domain": "ebay.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 11900,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "walmart.com",
+    "category": "popular · e-commerce",
+    "file": "_failed/walmart.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9648,
+        "analysisMs": null,
+        "load1": 57.1,
+        "cpuBefore": 0.34,
+        "cpuDuring": 0.5,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9627,
+        "analysisMs": null,
+        "load1": 48.9,
+        "cpuBefore": 0.45,
+        "cpuDuring": 0.52,
+        "waitedForQuietMs": 1506
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading walmart.com. Big, richly built sites often outrun us.",
+    "domain": "walmart.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 9595,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "etsy.com",
+    "category": "popular · e-commerce",
+    "file": "_failed/etsy.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "HTTP 403",
+        "ms": 1642,
+        "analysisMs": null,
+        "load1": 45.7,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.54,
+        "waitedForQuietMs": 3003
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 8388,
+        "analysisMs": null,
+        "load1": 39.3,
+        "cpuBefore": 0.36,
+        "cpuDuring": 0.34,
+        "waitedForQuietMs": 3004
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading etsy.com. Big, richly built sites often outrun us.",
+    "domain": "etsy.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 8370,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
   }
 ]

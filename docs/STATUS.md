@@ -44,7 +44,10 @@ node app/server.js     # → http://localhost:5170
 
 ## Not started
 
-- Forest, sharing, accounts, **deployment**, mobile
+- Forest, sharing, accounts, mobile
+- **Deployment** — gated, not started. The instruction is to deploy once the
+  product works independently of this laptop; `docs/DEPLOYMENT.md` makes that
+  testable. The gate is the timeout, not the browser.
 - Additional tree species — one broad family, and `morphology` still has one value
 - Cat
 
