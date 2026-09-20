@@ -66,7 +66,15 @@ function renderWhy(dna) {
   add(FLOWERS[dna.flowers?.amount], cols.length ? cols : null);
 
   add(SKELETON[dna.skeleton?.complexity]);
-  if (dna.fruit?.enabled) rows.push({ label: 'Fruit', text: 'a rare quirk, seeded from the domain name — it means nothing' });
+  // Fruit is MEASURED, not a quirk. It used to be a seeded lottery and the copy
+  // said so honestly; it is now connected-component analysis over the accent
+  // pixels, and the distinction it draws against flowers is the point: flowers
+  // are the site's colour DISTRIBUTED, fruit is the same colour CONCENTRATED.
+  if (dna.fruit?.enabled) rows.push({
+    label: 'Fruit',
+    text: 'the accent colour sits in a few large areas rather than scattered through the page',
+    swatches: dna.fruit.color ? [dna.fruit.color] : null,
+  });
   if (dna.background) rows.push({ label: 'Scene colour', text: 'drawn from the page background', swatches: [dna.background] });
 
   whyList.replaceChildren(...rows.map((r) => {
