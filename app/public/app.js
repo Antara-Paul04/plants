@@ -5,7 +5,7 @@
 // The renderer is imported straight from the 3D domain (served at /tree/), so
 // this page can never drift from the prototype.
 
-import { mountTree, mountEarth } from '/tree/main.js';
+import { mountTree, mountEarth, mountIdle } from '/tree/main.js';
 import { dnaToParams } from '/tree/dna-params.js';
 
 const $ = (id) => document.getElementById(id);
@@ -13,6 +13,7 @@ const form = $('form'), input = $('url'), go = $('go');
 const overlay = $('overlay'), spinner = $('spinner'), msg = $('msg');
 const result = $('result'), domainEl = $('domain'), stampEl = $('stamp');
 const whyList = $('whyList'), cacheNote = $('cacheNote'), retryBtn = $('retry'), sceneEl = $('scene');
+const resultHead = $('resultHead');
 
 let tree = null;
 let busy = false;
@@ -22,6 +23,7 @@ function state(s, text, retryable) {
   const showOverlay = s !== 'ready';
   overlay.hidden = !showOverlay;
   overlay.classList.toggle('failed', s === 'error');
+  overlay.classList.toggle('busy', s === 'analyzing' || s === 'growing');
   spinner.hidden = !(s === 'analyzing' || s === 'growing');
   msg.textContent = text || '';
   msg.className = s === 'error' ? 'err' : '';
@@ -243,6 +245,7 @@ async function grow(raw) {
   }
 
   state('ready');
+  setSky(tree?.envName ?? null);
   domainEl.textContent = data.domain;
   stampEl.textContent = `grown in ${((performance.now() - t0) / 1000).toFixed(1)}s`;
   renderWhy(data.dna);
@@ -277,3 +280,62 @@ else state('idle', 'Paste a website address to grow its tree.');
 // Retry re-runs the same address. Worth offering because the failure really is
 // transient: a warm browser reads in 3-8s where a cold one takes 14-21s.
 retryBtn.addEventListener('click', () => { if (!busy && lastUrl) grow(lastUrl); });
+
+resultHead.addEventListener('click', () => {
+  const open = result.classList.toggle('open');
+  resultHead.setAttribute('aria-expanded', String(open));
+});
+
+// THE SKY IS NOW THE PAGE BACKGROUND, so the interface has to survive both ends
+// of it: pale daylight and a near-black night. 11 of 56 corpus sites go to
+// night, and without this the entire UI vanishes on them.
+//
+// The environment state is READ FROM THE DNA rather than guessed from the
+// rendered pixels, and via dnaToParams rather than by re-deriving the
+// luminance rule here — that rule lives in one place and a second copy would
+// drift, which is the same mistake this file already made once with the
+// accent floor.
+function setSky(name) {
+  // The renderer reports the sky that is ON SCREEN, not the one requested — on a
+  // swap that is the moment the new tree is whole. So the interface changes with
+  // the picture behind it rather than ahead of it. `null` (before the first
+  // frame, and always on ?engine=v0) means day.
+  document.body.classList.toggle('night', name === 'night');
+}
+
+// NO DEFAULT TREE ON LOAD, and the reason is worth keeping.
+//
+// The obvious immersive move is to open on a tree. Two things kill it. A default
+// tree pays the full 1.5-2.5s wood build, so the page would open on sky and
+// island anyway and then grow a tree nobody asked for, competing with the one
+// the user is about to request. And DEFAULT_DNA belongs to no website, which
+// sits badly beside the failure-state rule that we never draw a value we did
+// not measure.
+//
+// visual-3d proposed the elegant version — make the default tree PLANTS' OWN
+// PAGE, measured like any other site, so nothing on screen is ever unmeasured.
+// It cannot work, and this redesign is why: our page is now a full-bleed canvas,
+// so the analyzer would read canvasArea ~1.0 and hit the canvas-dominant
+// exclusion, the same degenerate reading that made bruno-simon score 1.0. The
+// product becomes unable to measure itself by becoming what it renders.
+//
+// So the page opens on sky and an empty island, with the idle copy as the
+// invitation. An empty planter waiting for something is a better first frame
+// than a stranger's tree.
+//
+// IDLE IS ITS OWN STATE, not a reuse of the failure island. Both are bare soil,
+// but failure frames TIGHT on the island on purpose — framed like a tree scene
+// it would draw a tree-shaped void, the very thing it is saying it could not
+// produce. Idle wants exactly that void, because here it is the invitation. So
+// idle is framed as a TREE scene: the island sits low with sky above it where
+// the tree will go, and measured through the handle the camera moves by ZERO
+// when the real tree arrives. Nothing jumps. That stillness is the whole idea.
+// ALWAYS, even when ?site= means a grow starts immediately. The analysis takes
+// 4-15s, and without this the page is the body's flat background for all of it —
+// on a full-bleed page that is not a loading state, it is a blank website. The
+// island goes up in ~60ms and the tree swaps into it when whole, so there is
+// never a frame with nothing in it. The grow path finds `tree` already set and
+// takes the setDNA branch, which is the same swap the renderer uses everywhere.
+try { tree = mountIdle(sceneEl, { autoRotate: true, onEnv: setSky }); }
+catch (err) { console.error(err); }
+

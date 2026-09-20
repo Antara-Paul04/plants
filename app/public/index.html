@@ -2,139 +2,237 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Plants — every website grows differently</title>
     <style>
+      /* THE SCENE IS THE PAGE.
+         The tree used to live in a rounded box on a cream page. It is now the
+         page: the canvas is fixed to the viewport, its sky IS the background,
+         and every control floats over it. Nothing has a page-coloured surface
+         behind it any more, so everything here has to stay legible over a sky
+         that ranges from pale daylight to near-black night. */
       :root {
-        color-scheme: light;
-        --ink: #2c2a27;
-        --muted: #7d7873;
-        --line: #e0dbd3;
-        --bg: #f7f3ec;
+        color-scheme: light dark;
+        --ink: #2b2926;
+        --muted: rgba(43, 41, 38, 0.62);
+        --surface: rgba(252, 250, 246, 0.82);
+        --surface-solid: rgba(252, 250, 246, 0.94);
+        --edge: rgba(43, 41, 38, 0.13);
         --accent: #3f6b3a;
+        --accent-ink: #fff;
       }
+      /* NIGHT. The environment state is known to app.js from the DNA, so the UI
+         is told rather than guessing from a screenshot. Without this the whole
+         interface disappears on an 11-of-56 slice of the corpus. */
+      body.night {
+        --ink: #f2efe9;
+        --muted: rgba(242, 239, 233, 0.66);
+        --surface: rgba(18, 22, 30, 0.72);
+        --surface-solid: rgba(18, 22, 30, 0.88);
+        --edge: rgba(242, 239, 233, 0.17);
+        --accent: #7fa978;
+        --accent-ink: #0e1218;
+      }
+
       * { box-sizing: border-box; }
-      html, body { margin: 0; height: 100%; }
+      html, body { margin: 0; height: 100%; overflow: hidden; }
       body {
-        background: var(--bg);
         color: var(--ink);
+        background: #dfe4ea;           /* only ever seen for one frame before the sky paints */
         font: 15px/1.55 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 0 20px;
+        -webkit-font-smoothing: antialiased;
       }
 
-      header { text-align: center; padding: 40px 0 22px; }
-      h1 { font-size: 27px; font-weight: 620; letter-spacing: -0.02em; margin: 0 0 5px; }
-      .tagline { color: var(--muted); margin: 0; font-size: 15px; }
+      /* The canvas is the page, not an element on it. */
+      #scene {
+        position: fixed; inset: 0;
+        width: 100%; height: 100%;
+        display: block;
+        z-index: 0;
+      }
 
-      form { display: flex; gap: 9px; width: 100%; max-width: 480px; margin: 0 0 8px; }
+      /* Everything else floats. The layer ignores pointer events so the scene
+         stays draggable everywhere except on an actual control. */
+      .ui {
+        position: fixed; inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right))
+                 max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-template-rows: auto 1fr auto;
+        gap: 14px;
+      }
+      .ui > * { pointer-events: auto; }
+
+      .wordmark {
+        grid-column: 1; grid-row: 1;
+        align-self: start; justify-self: start;
+        font-size: 14px; font-weight: 620; letter-spacing: -0.01em;
+        color: var(--muted);
+        user-select: none;
+      }
+
+      /* --- the dock: input, bottom-left ------------------------------------
+         Bottom-LEFT rather than centre because the trunk and island occupy the
+         lower middle of every composition, and the crown the upper middle. The
+         lower corners are the only reliably empty region across states. */
+      .dock {
+        grid-column: 1; grid-row: 3;
+        align-self: end; justify-self: start;
+        display: flex; flex-direction: column; gap: 8px;
+        max-width: min(420px, calc(100vw - 36px));
+      }
+
+      form { display: flex; gap: 7px; }
       input {
         flex: 1; min-width: 0;
-        padding: 11px 14px;
+        padding: 10px 13px;
         font: inherit; color: var(--ink);
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 9px;
+        background: var(--surface);
+        border: 1px solid var(--edge);
+        border-radius: 10px;
         outline: none;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
       }
-      input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(63,107,58,.13); }
+      input::placeholder { color: var(--muted); }
+      input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(63,107,58,.18); }
       button {
-        padding: 11px 17px;
+        padding: 10px 15px;
         font: inherit; font-weight: 560;
-        color: #fff; background: var(--accent);
-        border: 0; border-radius: 9px; cursor: pointer;
+        color: var(--accent-ink); background: var(--accent);
+        border: 0; border-radius: 10px; cursor: pointer;
         white-space: nowrap;
       }
-      button:hover:not(:disabled) { background: #355c31; }
-      button:disabled { opacity: .5; cursor: default; }
-
-      main { width: 100%; max-width: 760px; flex: 1; display: flex; flex-direction: column; align-items: center; }
+      button:hover:not(:disabled) { filter: brightness(1.08); }
+      button:disabled { opacity: .55; cursor: default; }
 
       .examples {
-        display: flex; flex-wrap: wrap; gap: 6px;
-        justify-content: center; align-items: baseline;
-        font-size: 13px; color: var(--muted);
-        max-width: 480px;
+        display: flex; flex-wrap: wrap; gap: 5px; align-items: baseline;
+        font-size: 12px; color: var(--muted);
       }
       .examples button {
-        padding: 3px 9px; font: inherit;
-        color: var(--muted); background: transparent;
-        border: 1px solid var(--line); border-radius: 20px;
-        cursor: pointer; font-weight: 400;
+        padding: 3px 9px; font: inherit; font-weight: 400;
+        color: var(--muted); background: var(--surface);
+        border: 1px solid var(--edge); border-radius: 20px;
+        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       }
-      .examples button:hover:not(:disabled) { color: var(--ink); border-color: #c9c2b7; background: #fdfbf7; }
-      /* Retry is offered only where the failure is genuinely transient — a warm
-         browser reads in 3-8s against 14-21s cold, so a second attempt often works. */
-      #retry {
-        margin-top: 14px; padding: 7px 16px; font: inherit; font-size: 14px;
-        color: var(--ink); background: #fdfbf7; border: 1px solid #c9c2b7;
-        border-radius: 999px; cursor: pointer;
-      }
-      #retry:hover { background: #fff; border-color: #a9a094; }
+      .examples button:hover:not(:disabled) { color: var(--ink); }
 
-      .stage {
-        width: 100%; aspect-ratio: 1 / 1; max-height: 62vh;
-        margin-top: 14px;
-        border: 1px solid var(--line); border-radius: 15px;
-        overflow: hidden; position: relative;
-        background: #eceade;
+      /* --- the reading panel: bottom-right ---------------------------------
+         "Why this tree?" is the intellectual payoff and must not be buried, but
+         it also must not be furniture. Collapsed it is one line — the domain and
+         how long it took. Expanded it is the reasoning. */
+      .result {
+        grid-column: 2; grid-row: 3;
+        align-self: end; justify-self: end;
+        max-width: min(360px, calc(100vw - 36px));
+        background: var(--surface); border: 1px solid var(--edge);
+        border-radius: 13px; overflow: hidden;
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
       }
-      canvas { display: block; width: 100%; height: 100%; }
+      .result[hidden] { display: none; }
+      .result-head {
+        display: flex; align-items: baseline; gap: 7px;
+        width: 100%; padding: 10px 13px;
+        background: transparent; border: 0; border-radius: 0;
+        color: var(--ink); font: inherit; text-align: left; cursor: pointer;
+      }
+      .result-head:hover { background: rgba(127,127,127,.08); filter: none; }
+      .domain { font-weight: 600; font-size: 15px; }
+      .stamp { color: var(--muted); font-size: 12px; font-weight: 400; }
+      .chev { margin-left: auto; color: var(--muted); font-size: 11px; transition: transform .18s; }
+      .result.open .chev { transform: rotate(180deg); }
 
+      .why-wrap { display: none; padding: 0 13px 12px; }
+      .result.open .why-wrap { display: block; }
+      .why { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+      .why li { display: flex; gap: 8px; align-items: baseline; font-size: 13px; }
+      .why b { font-weight: 560; min-width: 104px; }
+      .why span { color: var(--muted); }
+      .swatches { display: flex; gap: 4px; margin-left: 2px; }
+      .sw { width: 12px; height: 12px; border-radius: 3px; border: 1px solid rgba(127,127,127,.35); }
+
+      /* --- status, centred -------------------------------------------------- */
       .overlay {
-        position: absolute; inset: 0;
+        grid-column: 1 / -1; grid-row: 2;
+        align-self: center; justify-self: center;
         display: flex; flex-direction: column;
-        align-items: center; justify-content: center;
-        gap: 9px; text-align: center; padding: 26px;
+        align-items: center; gap: 10px; text-align: center;
         color: var(--muted);
+        pointer-events: none;
       }
       .overlay[hidden] { display: none; }
-      /* The failure message sits OVER the bare-earth island, so it needs a
-         ground of its own — dark red on brown soil was close to unreadable.
-         A judge put the principle well: an image can refuse to pass judgment on
-         a site, but it cannot say "we could not read this"; that sentence has to
-         be carried by the copy, so the copy has to be legible whatever is behind
-         it. Only the error state gets the card; the idle and loading messages sit
-         on a plain canvas and would look boxed-in. */
-      .overlay.failed #msg, .overlay.failed #retry {
-        background: rgba(253, 251, 247, 0.94);
-        border: 1px solid #e4ded4;
-        border-radius: 12px;
-        padding: 12px 18px;
-        max-width: 34em;
-        box-shadow: 0 2px 14px rgba(60, 48, 36, 0.10);
+      .overlay #retry { pointer-events: auto; }
+      /* WHILE GROWING, the status moves out of the middle. The canvas keeps the
+         PREVIOUS tree up until the new one is whole (the renderer's swap
+         discipline — no empty frame between two trees), so a centred card reads
+         as a finished result with a loading message stamped across it. That is
+         the same confusion as the false-completion bug, arriving from the other
+         direction. Idle and failure keep the centre: there the middle of the
+         frame is genuinely empty and the message IS the content. */
+      .overlay.busy {
+        grid-column: 1; grid-row: 3;
+        align-self: end; justify-self: start;
+        flex-direction: row; align-items: center; gap: 9px;
+        margin-bottom: 78px;
       }
-      .overlay.failed #retry { padding: 7px 16px; }
+      .overlay.busy #msg { font-size: 14px; padding: 8px 13px; }
+      /* The message sits over the scene — over a bare-earth island on a failure,
+         over open sky otherwise. It carries its own ground either way. A judge
+         put the rule: an image can refuse to pass judgment on a site, but it
+         cannot say "we could not read this" — that sentence has to be carried by
+         the copy, so the copy must be legible whatever is behind it. */
+      #msg {
+        background: var(--surface-solid); border: 1px solid var(--edge);
+        border-radius: 12px; padding: 11px 17px; max-width: min(34em, calc(100vw - 48px));
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      }
+      .overlay.failed #msg { color: #b4453a; }
+      body.night .overlay.failed #msg { color: #f2938a; }
+      #retry {
+        padding: 7px 16px; font-size: 14px; font-weight: 500;
+        color: var(--ink); background: var(--surface-solid);
+        border: 1px solid var(--edge); border-radius: 999px;
+      }
       .spinner {
         width: 19px; height: 19px; border-radius: 50%;
-        border: 2px solid var(--line); border-top-color: var(--accent);
+        border: 2px solid var(--edge); border-top-color: var(--accent);
         animation: spin .8s linear infinite;
       }
       @keyframes spin { to { transform: rotate(360deg); } }
 
-      .result { width: 100%; padding: 15px 3px 40px; }
-      .result[hidden] { display: none; }
-      .domain { font-weight: 600; font-size: 16px; }
-      .stamp { color: var(--muted); font-size: 13px; margin-left: 7px; font-weight: 400; }
-      .why { margin: 11px 0 0; padding: 0; list-style: none; display: grid; gap: 7px; }
-      .why li { display: flex; gap: 9px; align-items: baseline; font-size: 14px; }
-      .why b { font-weight: 560; min-width: 116px; }
-      .why span { color: var(--muted); }
-      .swatches { display: flex; gap: 5px; margin-left: 2px; }
-      .sw { width: 13px; height: 13px; border-radius: 3px; border: 1px solid rgba(0,0,0,.14); }
-
-      .err { color: #9a3b32; }
       .note {
-        margin-top: 10px; padding: 8px 11px;
-        background: #fdf4e3; border: 1px solid #ecdcb8; border-radius: 7px;
-        color: #7a5c22; font-size: 13px;
+        margin-top: 9px; padding: 7px 10px; font-size: 12px;
+        color: var(--muted); border: 1px solid var(--edge); border-radius: 9px;
       }
-      footer { padding: 0 0 30px; color: var(--muted); font-size: 12.5px; }
+      .note[hidden] { display: none; }
+
+      footer {
+        grid-column: 2; grid-row: 1;
+        align-self: start; justify-self: end;
+        font-size: 12px; color: var(--muted);
+      }
       footer a { color: inherit; }
-      @media (max-width: 560px) { form { flex-direction: column; } header { padding-top: 28px; } }
+
+      /* Phones: one column, the panel above the dock, both full width. A 9:19
+         viewport is the opposite framing problem from a wide desktop and the
+         corners stop being distinct places. */
+      @media (max-width: 640px) {
+        .ui { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto auto; gap: 10px; }
+        .wordmark { grid-column: 1; grid-row: 1; }
+        footer { display: none; }
+        .overlay { grid-column: 1; grid-row: 2; }
+        .result { grid-column: 1; grid-row: 3; justify-self: stretch; max-width: none; }
+        .dock { grid-column: 1; grid-row: 4; max-width: none; }
+      }
     </style>
+    <!-- The renderer is imported from /tree/, which imports bare "three". Without
+         this map the module graph never resolves and the scene never mounts —
+         which on a full-bleed page is not a broken canvas in a box, it is a
+         blank website. -->
     <script type="importmap">
       {
         "imports": {
@@ -145,57 +243,58 @@
     </script>
   </head>
   <body>
-    <header>
-      <h1>Plants</h1>
-      <p class="tagline">Every website grows differently.</p>
-    </header>
+    <canvas id="scene"></canvas>
 
-    <main>
-      <form id="form">
-        <input id="url" type="text" placeholder="news.ycombinator.com" autocomplete="off" spellcheck="false" autofocus />
-        <button id="go" type="submit">Grow my website</button>
-      </form>
+    <div class="ui">
+      <div class="wordmark">Plants</div>
+      <footer><a href="/compare.html">comparison grid</a></footer>
 
-      <div class="examples" id="examples">
-        <span>or try</span>
-        <!-- CHIPS MUST BE FAST, RELIABLE, THEN DIFFERENT — in that order (Taste).
-             A suggestion WE chose failing is the worst outcome in the product,
-             worse than having no chips at all, and retry does not rescue it
-             because the user meets the failure before they meet the retry.
-             stripe.com and github.com were both chips and both time out; the
-             old placeholder was stripe.com too. Latency counts as reliability:
-             daringfireball.net grows a lovely night tree but has been measured
-             between 10s and 25s, so it is not a chip.
-             Measured on the live path 2026-09-20 — state, then seconds:
-               info.cern.ch          bare,   no flowers          3.8s
-               news.ycombinator.com  sparse, orange #f37b2b      3.6s
-               arxiv.org             normal, periwinkle #a1a1f8  4.1s
-               gwern.net             normal, WINTER              9.1s
-             Four states, warm and cool accents, one seasonal. Re-measure before
-             changing any of them. -->
-        <button type="button" data-site="info.cern.ch" title="essentially unstyled HTML">info.cern.ch</button>
-        <button type="button" data-site="news.ycombinator.com" title="plain, with one strong accent">news.ycombinator.com</button>
-        <button type="button" data-site="arxiv.org" title="dense and academic">arxiv.org</button>
-        <button type="button" data-site="gwern.net" title="designed, and almost colourless">gwern.net</button>
-      </div>
-
-      <div class="stage">
-        <canvas id="scene"></canvas>
-        <div class="overlay" id="overlay">
-          <div class="spinner" id="spinner" hidden></div>
-          <div id="msg">Paste a website address to grow its tree.</div>
-          <button type="button" id="retry" hidden>Try again</button>
-        </div>
+      <div class="overlay" id="overlay">
+        <div class="spinner" id="spinner" hidden></div>
+        <div id="msg">Paste a website address to grow its tree.</div>
+        <button type="button" id="retry" hidden>Try again</button>
       </div>
 
       <div class="result" id="result" hidden>
-        <div><span class="domain" id="domain"></span><span class="stamp" id="stamp"></span></div>
-        <ul class="why" id="whyList"></ul>
-        <div class="note" id="cacheNote" hidden></div>
+        <button class="result-head" id="resultHead" type="button" aria-expanded="false">
+          <span class="domain" id="domain"></span>
+          <span class="stamp" id="stamp"></span>
+          <span class="chev">▲</span>
+        </button>
+        <div class="why-wrap">
+          <ul class="why" id="whyList"></ul>
+          <div class="note" id="cacheNote" hidden></div>
+        </div>
       </div>
-    </main>
 
-    <footer><a href="/compare.html">comparison grid</a> · internal V0</footer>
+      <div class="dock">
+        <form id="form">
+          <input id="url" type="text" placeholder="news.ycombinator.com" autocomplete="off" spellcheck="false" autofocus />
+          <button id="go" type="submit">Grow</button>
+        </form>
+        <div class="examples" id="examples">
+          <!-- CHIPS MUST BE FAST, RELIABLE, THEN DIFFERENT — in that order (Taste).
+               A suggestion WE chose failing is the worst outcome in the product,
+               worse than having no chips at all, and retry does not rescue it
+               because the user meets the failure before they meet the retry.
+               stripe.com and github.com were both chips and both timed out; the
+               old placeholder was stripe.com too. Latency counts as reliability:
+               daringfireball.net grows a lovely night tree but has been measured
+               between 10s and 25s, so it is not a chip.
+               Measured on the live path 2026-09-20 — state, then seconds:
+                 info.cern.ch          bare,   no flowers          3.8s
+                 news.ycombinator.com  sparse, orange #f37b2b      3.6s
+                 arxiv.org             normal, periwinkle #a1a1f8  4.1s
+                 gwern.net             normal, WINTER              9.1s
+               Four states, warm and cool accents, one seasonal. Re-measure before
+               changing any of them. -->
+          <button type="button" data-site="info.cern.ch" title="essentially unstyled HTML">info.cern.ch</button>
+          <button type="button" data-site="news.ycombinator.com" title="plain, with one strong accent">news.ycombinator.com</button>
+          <button type="button" data-site="arxiv.org" title="dense and academic">arxiv.org</button>
+          <button type="button" data-site="gwern.net" title="designed, and almost colourless">gwern.net</button>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="/app.js"></script>
   </body>
