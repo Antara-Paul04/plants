@@ -74,14 +74,26 @@ const fade = (t) => t * t * (3 - 2 * t);
  * A tuning value may be a number, or a { value } uniform to SHARE: every
  * material of one tree then answers to one object, and a host can change the
  * wind on a finished tree without rebuilding it.
+ *
+ * `pin` (a length, instanced materials only): each instance PIVOTS ABOUT ITS SEAT
+ * instead of drifting as a block — the offset grows linearly from nothing at the
+ * instance's origin to the full sway at `pin` away from it, which for a small
+ * sway is a rigid rotation about the point of attachment. It exists because the
+ * new tree's wood does not move (ruling W3): a cluster that translates whole
+ * slides across the twig it grows from, and on a winter tree, where nothing
+ * hides the contact, buds were measured travelling 64% of their twig's width.
+ * Pinned, nothing moves where it is attached, by construction — and a hanging
+ * raceme or a fruit on its spur swings from the top, as they do. Without `pin`
+ * the shader is what it always was, to the byte: V0 and the grass never see it.
  */
-export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo = 1.4, yHi = 4.4, local = false } = {}) {
+export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo = 1.4, yHi = 4.4, local = false, pin = null } = {}) {
   const prior = Object.hasOwn(material, 'onBeforeCompile') ? material.onBeforeCompile : null;
   const priorKey = Object.hasOwn(material, 'customProgramCacheKey') ? material.customProgramCacheKey
     // A hook with no key of its own is keyed by three on its SOURCE. Ours would
     // replace it, and two different prior hooks would then share one program.
     : prior ? () => prior.toString() : null;
   const U = (v) => (v !== null && typeof v === 'object' && 'value' in v ? v : { value: v });
+  const pinned = pin !== null && !local;
   material.onBeforeCompile = (shader, renderer) => {
     if (prior) prior.call(material, shader, renderer);
     shader.uniforms.uTime = uniforms.time;
@@ -89,14 +101,18 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
     shader.uniforms.uSwaySpeed = U(speed);
     shader.uniforms.uSwayLo = U(yLo);
     shader.uniforms.uSwayHi = U(yHi);
+    if (pinned) shader.uniforms.uSwayPin = U(pin);
     shader.vertexShader =
       'uniform float uTime;\nuniform float uSwayAmp;\nuniform float uSwaySpeed;\n' +
-      'uniform float uSwayLo;\nuniform float uSwayHi;\n' + shader.vertexShader;
+      'uniform float uSwayLo;\nuniform float uSwayHi;\n' + (pinned ? 'uniform float uSwayPin;\n' : '') + shader.vertexShader;
     const mask = local
       // grass: bend from the blade's own root, scaled by local height
       ? `float m = clamp(position.y, 0.0, 1.0); m = m * m;`
       // canopy: only the upper part of the tree moves, and it eases in
-      : `float m = smoothstep(uSwayLo, uSwayHi, wp.y);`;
+      : `float m = smoothstep(uSwayLo, uSwayHi, wp.y);` + (pinned ? `
+      #ifdef USE_INSTANCING
+        m *= clamp( length( wp.xyz - instanceMatrix[3].xyz ) / uSwayPin, 0.0, 1.0 );
+      #endif` : '');
     shader.vertexShader = shader.vertexShader.replace(
       '#include <project_vertex>',
       /* glsl */ `
@@ -116,7 +132,7 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
       `
     );
   };
-  const swayKey = local ? 'sway-local' : 'sway-world';
+  const swayKey = local ? 'sway-local' : pinned ? 'sway-world-pin' : 'sway-world';
   material.customProgramCacheKey = priorKey ? () => `${priorKey.call(material)}+${swayKey}` : () => swayKey;
 }
 

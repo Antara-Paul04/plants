@@ -459,7 +459,7 @@ const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8
  *                                rockHi,rockLo} as hex/THREE.Color, overriding the default
  *              rocks           — add V0's composed stones
  * @returns {{ tree, ground, skel, geo, thick, stats, extents, wind, dispose }}
- *          wind — null, or the tree's shared sway uniforms { amp, speed, yLo, yHi }
+ *          wind — null, or the tree's shared sway uniforms { amp, speed, yLo, yHi, pin }
  */
 export async function growTree(M, q, env, opts = {}) {
   const { uniforms = { time: { value: 0 } }, budgetMs = Infinity, signal = null, onGround = null, leavesDefault = '0' } = opts;
@@ -481,12 +481,19 @@ export async function growTree(M, q, env, opts = {}) {
   // The uniforms are SHARED by every material of this tree and handed back, so a host
   // can change the wind on a finished tree instead of paying for another build.
   const WIND = num('wind', 0.045);
-  const wind = WIND > 0
-    ? { amp: { value: WIND }, speed: { value: num('windSpeed', 0.85) }, yLo: { value: 0 }, yHi: { value: 1 } }
-    : null;
   // W3, DECIDED by the human (2026-09-20): "leaves swaying is enough." The WOOD IS
   // RIGID — as V0's was — so the bark material is deliberately never given the hook,
   // and the trunk, the buttress and their cast shadow stay exactly where they are.
+  //
+  // What follows from rigid wood: nothing growing on it may DRIFT, or it slides
+  // across the twig it is attached to. So every cluster pivots about its seat
+  // (`pin`, util.js applySway) — 0.5 is a leaf's length, so a leaf's tip gets the
+  // whole sway and its stalk none. `windPin=0` is the unpinned drift, for the A/B.
+  const WIND_PIN = num('windPin', 0.5);
+  const wind = WIND > 0
+    ? { amp: { value: WIND }, speed: { value: num('windSpeed', 0.85) }, yLo: { value: 0 }, yHi: { value: 1 },
+        pin: WIND_PIN > 0 ? { value: WIND_PIN } : null }
+    : null;
   // Phase timings (ms of main-thread work per phase). When the build is time-sliced
   // each phase also ends with a breath, so the longest STALL a page can see is the
   // longest single phase — which makes this table the thing to read when a host
@@ -792,7 +799,7 @@ export async function growTree(M, q, env, opts = {}) {
     tree, ground, skel, geo, thick, P, extents, season: SEASON, wind,
     cloud: P.showCloud ? new THREE.Points(new THREE.BufferGeometry().setFromPoints(skel.cloud), new THREE.PointsMaterial({ size: 0.04, color: 0xd06a6a })) : null,
     spots: dbgSpots, bloomSites: dbgBloom,
-    stats: { ...stats, phases, ground: groundInfo, wind: wind && { amp: WIND, yLo: +wind.yLo.value.toFixed(2), yHi: +wind.yHi.value.toFixed(2) }, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },
+    stats: { ...stats, phases, ground: groundInfo, wind: wind && { amp: WIND, yLo: +wind.yLo.value.toFixed(2), yHi: +wind.yHi.value.toFixed(2), pin: WIND_PIN > 0 ? WIND_PIN : 0 }, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },
     dispose() {
       M.util.disposeObject(tree);
       M.util.disposeObject(ground);

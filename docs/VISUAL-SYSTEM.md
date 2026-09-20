@@ -316,7 +316,7 @@ distinguishable by openness and visible limbs.
 **Cost:** 146 clusters, 278k triangles, 4 draw calls, ~15 ms to build. Foliage is cheap;
 the implicit-surface wood (~1.5–2.5 s) is still the whole performance problem.
 
-**OPEN:** no wind sway yet; foliage is not wired to DNA (`foliage.state`/`density`,
+**OPEN:** ~~no wind sway yet~~ (in — see *Wind on the new tree*); foliage is not wired to DNA (`foliage.state`/`density`,
 `botanicalState` palettes); flowers and fruit — which carry the website's colour — are next;
 cluster greens and leaf size are Taste's to judge against the actual board.
 
@@ -429,7 +429,13 @@ Any movement: idle sway, wind, settling on appearance, entrance transition, hove
 response. Note that *growth* animation is explicitly out of scope for V0 (DECISIONS D4)
 — this section is about everything else.
 
-- _unresolved_
+- **Wind is in on the new tree — EXPERIMENT.** Three things about it are DECIDED, by ruling
+  rather than by being built (`docs/briefs/WIND-AND-MOTION.md`): it is **ambient** — weather
+  in the world, never a property of the website (W1); **the crown moves and the trunk does
+  not** (W2); and **only what grows on the wood sways — the wood is rigid** (W3, the human:
+  "leaves swaying is enough"). Its amplitude and speed are V0's numbers carried over and are
+  still open. What building it taught is in *Wind on the new tree*, below.
+- _otherwise unresolved_
 
 ---
 
@@ -809,3 +815,52 @@ read-only judges (ladder / tree health / adversary).
   while petals paled to the edge, a column of flat squares once dark petals went solid.
 - The debug pages get V0's autumn and winter ground (the product always had them via
   `resolveDNA`); a `season=winter` tree had been standing on a summer lawn.
+
+### Wind on the new tree — EXPERIMENT (2026-09-21)
+
+Rulings: `docs/briefs/WIND-AND-MOTION.md`. Code: `applySway` (`util.js`), the wind block in
+`growTree` (`grow.js`). Evidence and every number below: `references/experiments/wind-2026-09-21/`.
+**Amplitude (0.045) and speed (0.85) are V0's, carried over — not a judgement. They are Taste's.**
+
+- **`applySway` used to ASSIGN `onBeforeCompile` and `customProgramCacheKey`; it now COMPOSES.**
+  Harmless in V0, where no swaying material had a hook. On the new tree every material does, and
+  the hook that would have been overwritten is the zero-specular rule: leaves, flowers, fruit,
+  buds and berries would all have regained the sheen, with no error anywhere. The prior hook now
+  runs first and the prior key stays in front (`leaf-matte-v1+sway-world-pin`). Still one program
+  per material KIND, never per tree; a material with no hook of its own gets byte-identical
+  shaders and key, so V0 and the grass are untouched. **Verified in the COMPILED shaders**, not
+  in our source — this is a failure that reports nothing.
+- **It is applied once, in `growTree`, over whatever the builders returned** — not inside each
+  builder. The new foliage shipped without wind because every builder had to remember to ask for
+  it and none did; a builder added later now cannot forget.
+- **On rigid wood, nothing growing on it may DRIFT.** `applySway` moves each instance as a block.
+  The wood does not move (W3), so a block that translates is sliding across the twig it grows
+  from. In a leafy crown the seat is buried in the leaf ball and it does not read. **In winter it
+  does:** buds were measured travelling 0.043 units on a twig 0.068 across — 64% of its width,
+  with nothing hiding the contact. Reported, not tuned away: lowering the amplitude until winter
+  stopped showing it would have taken the wind off every other tree.
+- **So everything PIVOTS ABOUT ITS SEAT (`pin`).** Every cluster, flower, fruit, bud and berry is
+  an instance whose origin IS its seat, so the offset is scaled by distance from that origin:
+  nothing at the seat, the whole sway a leaf's length (0.5) away. For a small sway that is a rigid
+  rotation about the point of attachment — one term, every carrier, and nothing can slide, by
+  construction. Pixels changing within 7px of a bud's seat: 25.1% drifting, 4.4% pivoting. A
+  hanging raceme and a fruit on its spur now swing from the top.
+- **The pivot sorts the states without being asked to.** A leafy crown keeps ~3/4 of its visible
+  motion (a leaf is as long as the pin, so its tip still gets everything); a winter tree calms to
+  40%, because a bud is short and stiff. A BARE tree does not move at all — it has nothing on it
+  that sways. Stillness is what a leafless tree does in a light wind, and the grass still moves,
+  so the scene is not dead. **Whether a still winter tree is right is Taste's to look at.**
+- **The height mask is each tree's own (W2):** still at the first real fork, full sway at the top
+  of the finished tree. V0's constants (1.4 / 4.4) belonged to a shorter tree and would have moved
+  this trunk. Measured: foliage hidden, two wind phases, **0 pixels differ**.
+- **The wind's uniforms are shared per tree and handed back** (`built.wind`), so amplitude, speed
+  and the pin change on a finished tree with no rebuild — which is how every A/B here was made.
+- **`wind=0` installs no hook at all** (shaders, keys and pixels as before wind existed);
+  `windPin=0` is the drift; **`t=SECONDS` on the gate pages pins the wind's clock.** A page that
+  is a measuring instrument cannot have two captures of one tree differ by where the wind was.
+- **Known, stated rather than fixed:** three's shadow pass uses a depth material that never sees
+  the sway, so the foliage's cast shadow is its rest pose. V0 shipped the same way; with rigid
+  wood the trunk's own shadow is simply correct.
+- **Cost: not yet measured on a quiet machine.** No geometry, no draw calls, no extra programs;
+  per-VERTEX work, so it is the same in a 140px thumbnail as on a full-bleed page.
+
