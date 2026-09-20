@@ -271,6 +271,43 @@
         }
       }
     </script>
+
+    <!-- THE MODULE GRAPH WAS DISCOVERED ONE LEVEL AT A TIME.
+         Nothing here changes what loads — only when the browser learns it needs
+         it. Cold, the browser parsed index.html, fetched app.js, parsed THAT to
+         learn about /tree/main.js, parsed that to learn about three, and only
+         then opened a connection to a second origin for 261 KB of it. Four
+         round trips deep before the largest file on the page starts, and on a
+         phone a round trip is not free.
+         preconnect opens the jsdelivr connection (DNS + TCP + TLS: 125 ms from
+         this laptop, far more on cellular) while index.html is still being read.
+         modulepreload declares the whole graph up front so it is fetched in one
+         parallel wave instead of a staircase. Every file listed is one the page
+         loads on EVERY visit — this is not speculative loading.
+         Measured cause: the build is ~5s of a 15-20s opening frame at 6x
+         throttle; the rest is this. -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js" crossorigin />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/utils/BufferGeometryUtils.js" crossorigin />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/objects/MarchingCubes.js" crossorigin />
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" crossorigin />
+    <link rel="modulepreload" href="/tree/main.js" />
+    <link rel="modulepreload" href="/tree/dna-params.js" />
+    <link rel="modulepreload" href="/tree/dna.js" />
+    <link rel="modulepreload" href="/tree/build.js" />
+    <link rel="modulepreload" href="/tree/viewer.js" />
+    <link rel="modulepreload" href="/tree/foliage.js" />
+    <link rel="modulepreload" href="/tree/grow.js" />
+    <link rel="modulepreload" href="/tree/util.js" />
+    <link rel="modulepreload" href="/tree/tree.js" />
+    <link rel="modulepreload" href="/tree/island.js" />
+    <link rel="modulepreload" href="/tree/branching.js" />
+    <link rel="modulepreload" href="/tree/limbmesh.js" />
+    <link rel="modulepreload" href="/tree/bark.js" />
+    <link rel="modulepreload" href="/tree/woodsdf.js" />
+    <link rel="modulepreload" href="/tree/woodfield.js" />
+    <link rel="modulepreload" href="/tree/leaves.js" />
+    <link rel="modulepreload" href="/tree/flowers.js" />
   </head>
   <body>
     <canvas id="scene"></canvas>
