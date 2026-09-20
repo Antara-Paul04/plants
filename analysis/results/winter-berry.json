@@ -1,0 +1,117 @@
+{
+ "control-raw": {
+  "colourfulness": 0.0157,
+  "colourfulnessExAccent": 0.0005,
+  "largestRegionFrac": 0.0003
+ },
+ "cern-first-web": {
+  "colourfulness": 0.118,
+  "colourfulnessExAccent": 0.1155,
+  "largestRegionFrac": 0.001
+ },
+ "better-mfw": {
+  "colourfulness": 0.0421,
+  "colourfulnessExAccent": 0.033,
+  "largestRegionFrac": 0.0008
+ },
+ "yale-art": {
+  "colourfulness": 0.2625,
+  "colourfulnessExAccent": 0.1173,
+  "largestRegionFrac": 0.0085
+ },
+ "threejs-example": {
+  "colourfulness": 0.2957,
+  "colourfulnessExAccent": 0.2282,
+  "largestRegionFrac": 0.0537
+ },
+ "unsplash": {
+  "colourfulness": 0.0202,
+  "colourfulnessExAccent": 0.0119,
+  "largestRegionFrac": 0.0003
+ },
+ "craigslist": {
+  "colourfulness": 0.2466,
+  "colourfulnessExAccent": 0.2458,
+  "largestRegionFrac": 0.0005
+ },
+ "bruno-simon": {
+  "colourfulness": 0.4056,
+  "colourfulnessExAccent": 0.19,
+  "largestRegionFrac": 0.9934
+ },
+ "mfw": {
+  "colourfulness": 0,
+  "colourfulnessExAccent": 0,
+  "largestRegionFrac": 0
+ },
+ "threejs": {
+  "colourfulness": 0.1067,
+  "colourfulnessExAccent": 0.0997,
+  "largestRegionFrac": 0.0005
+ },
+ "spacejam-1996": {
+  "colourfulness": 0,
+  "colourfulnessExAccent": 0,
+  "largestRegionFrac": 0
+ },
+ "sive-rs": {
+  "colourfulness": 0.1582,
+  "colourfulnessExAccent": 0.1527,
+  "largestRegionFrac": 0.0012
+ },
+ "stripe": {
+  "colourfulness": 0.1375,
+  "colourfulnessExAccent": 0.1034,
+  "largestRegionFrac": 0.0103
+ },
+ "gov-uk": {
+  "colourfulness": 0.5428,
+  "colourfulnessExAccent": 0.1314,
+  "largestRegionFrac": 0.1671
+ },
+ "apple": {
+  "colourfulness": 0.0274,
+  "colourfulnessExAccent": 0.0164,
+  "largestRegionFrac": 0.0001
+ },
+ "awwwards": {
+  "colourfulness": 0.0278,
+  "colourfulnessExAccent": 0.0024,
+  "largestRegionFrac": 0.0003
+ },
+ "nasa": {
+  "colourfulness": 0.0468,
+  "colourfulnessExAccent": 0.0446,
+  "largestRegionFrac": 0.0001
+ },
+ "tailwind": {
+  "colourfulness": 0.057,
+  "colourfulnessExAccent": 0.0566,
+  "largestRegionFrac": 0.0002
+ },
+ "figma": {
+  "colourfulness": 0.1266,
+  "colourfulnessExAccent": 0.0729,
+  "largestRegionFrac": 0.0334
+ },
+ "linear": {
+  "colourfulness": 0.0156,
+  "colourfulnessExAccent": 0.0156,
+  "largestRegionFrac": 0
+ },
+ "wikipedia": {
+  "colourfulness": 0.0994,
+  "colourfulnessExAccent": 0.0968,
+  "largestRegionFrac": 0.0012
+ },
+ "vercel": {
+  "colourfulness": 0,
+  "colourfulnessExAccent": 0,
+  "largestRegionFrac": 0
+ },
+ "cosmos-so": {
+  "colourfulness": 0.0609,
+  "colourfulnessExAccent": 0.0538,
+  "largestRegionFrac": 0.0012
+ }
+}
