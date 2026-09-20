@@ -516,3 +516,80 @@ flowers instead of fixing the value.
   property of the MAPPING, not the tree.* It means the site's richness found no channel to
   arrive through. openai.com being light and species-in-pieces.com being dark and receiving
   the same petal is the same bug as Linear was.
+
+---
+
+# L15 — ACCENTS ARE RANKED BY PIXEL COUNT. One root cause, two visible failures.
+
+**For ANALYSIS. Found 2026-09-20 from two human reports on real product output.**
+
+`analysis/probe/pixels.js:85`:
+
+```js
+const accents = [...hueBins.entries()].sort((a, b) => b[1].n - a[1].n).slice(0, 3)
+...
+primary: accents[0] ? accents[0].hex : null,
+```
+
+**Hue bins are ranked purely by pixel count — coverage and nothing else.** The largest area
+of a hue becomes the site's "primary accent". That is backwards for what an accent IS: a
+brand colour is typically **small and saturated**, and this ranks for **large and any
+saturation**. It selects the biggest wash on the page, which is usually a background tint.
+
+## Failure 1 — stripe.com grows a cream tree with no blue in it
+
+Reported by the human: *"stripe.com has blue accents but the tree has none."* Correct.
+
+```
+palette   primary  #fcdfb0   (pale cream — a large hero wash)
+          secondary #735ffd  (Stripe's actual brand purple-blue)
+designChromaticRatio 0.0301   imageArea 0.427   paletteSource media-masked
+```
+
+The petal takes `primary`, so the whole tree — blossom AND fruit, since fruit colour is the
+petal colour — comes out cream. The real brand colour lands in `secondary`, which only paints
+the flower **centre**, invisible at any normal size. A site whose identity is one of the most
+recognisable colours on the web renders as an ivory tree.
+
+Note `designChromaticRatio` is **0.0301**: the winning "accent" is 3% chromatic, i.e. very
+nearly neutral. A near-neutral won on area against a saturated brand colour.
+
+## Failure 2 — ikea.com scores `warmShareOfChroma: 1.0` and grows an autumn tree
+
+Reported by the human: *"ikea's website isn't warm enough to get an autumn tree."* Also correct.
+
+`warmShare` is computed over **the same coverage-weighted hue bins**. ikea is a white page
+with a single yellow accent (`#feda01`), so 100% of its chromatic coverage is warm — and the
+autumn gate (`warmShare >= 0.55`) is cleared by a mile. But a site with ONE accent colour
+scores trivially 0 or 1 on a share metric regardless of what it looks like. The metric answers
+*"is the chroma warm"* when the gate needs *"is the palette warm"*, and those are the same
+question only on a site with several colours. `designChromaticRatio` is 0.36, so 64% of the
+design is neutral.
+
+## Why these are one bug
+
+Both are **raw pixel count standing in for salience**. Fixing the ranking fixes the accent;
+adding a coverage condition to the warm gate fixes the season. Suggested directions, for
+analysis to weigh rather than adopt:
+
+- Rank accent candidates by something like **chroma × coverage**, or gate candidates on a
+  minimum saturation before ranking, so a 3%-chromatic wash cannot outrank a saturated brand
+  colour. The existing `accentFloor` already accepts that near-neutrals are not accents — this
+  is the same principle applied to *ranking* rather than to *admission*.
+- The warm gate needs a **coverage** condition alongside the share one, so "warm" means the
+  palette is warm rather than that the site's one accent happens to be.
+
+**Do not add a new DNA field for either** (§14). Both are fixes to how existing measurements
+are computed, not new information about the website.
+
+## Consequences worth stating before anyone tunes
+
+- Fixing the ranking will change `flowers.primary` on an unknown number of sites, and fruit
+  colour with it (`fruit.color = flowers.petal`). The 56-site before/after is the way to see
+  it — the test session has the "before" captured and can re-run.
+- Fixing the warm gate may leave **autumn with no corpus site at all**. It is currently 1 of
+  64 and that one is this false positive. That does not make autumn wrong to have built, but
+  it should be known.
+- This is also a candidate cause for part of **L14** (ten trees sharing one cream fallback):
+  if ranking picks near-neutral washes, more sites end up with a "primary" that the accent
+  floor then rejects.

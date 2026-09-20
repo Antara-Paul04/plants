@@ -91,6 +91,11 @@ place by being observed, not assumed.
   judged against its surroundings, not on its own. Standing in vivid summer turf, the
   same skeleton that would look architectural reads as the one dead thing in a healthy
   garden. If the tree goes dormant, the scene goes dormant with it.
+- **The ground must sit clearly darker in value than the trunk standing on it.** When
+  the two converge the tree loses its footing and the base dissolves into the turf —
+  which throws away everything the root buttress buys. This is a value relationship, not
+  a hue one, and it has to hold in every season: check it per-state rather than trusting
+  a palette that was authored in isolation.
 - **A seasonal state has to reach every element of the scene, or the ones it misses
   become the loudest thing in the frame.** Quieting the turf under a bare tree works,
   and it immediately promotes whatever was left at full summer value — stones, sky —
