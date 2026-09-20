@@ -18,7 +18,26 @@ const resultHead = $('resultHead');
 let tree = null;
 let busy = false;
 
+// A LONG WAIT SHOULD SAY SOMETHING TRUE AS IT PASSES.
+// bruno-simon.com takes 51s to reach the right verdict and gwern.net has been
+// measured at 38s; a shared ?site= link spends all of it on an empty island
+// with one unchanging line of copy. Silence that long reads as a hang. These
+// are not fake progress — there is no progress to report, the analyzer does not
+// stream — they are honest statements about where we are in a budget we know.
+let reassureTimers = [];
+function clearReassure() {
+  for (const t of reassureTimers) clearTimeout(t);
+  reassureTimers = [];
+}
+function reassure(steps) {
+  clearReassure();
+  for (const [after, line] of steps) {
+    reassureTimers.push(setTimeout(() => { if (busy) msg.textContent = line; }, after));
+  }
+}
+
 function state(s, text, retryable) {
+  clearReassure();
   retryBtn.hidden = !(s === 'error' && retryable);
   const showOverlay = s !== 'ready';
   overlay.hidden = !showOverlay;
@@ -231,6 +250,13 @@ async function grow(raw) {
   // wait — reporting the analysis time told the user 2.9s while they sat for 13.
   const t0 = performance.now();
   state('analyzing', 'Reading your website…');
+  // The numbers are the real ones: a warm read is 4-8s, a cold function 15-30s,
+  // and 45s is where the budget ends and a TIMEOUT is returned.
+  reassure([
+    [9000,  'Still reading. Richly built sites take longer than plain ones.'],
+    [22000, 'This one is a heavy site. Giving it a little longer.'],
+    [38000, 'Almost at our limit for this one.'],
+  ]);
 
   let data;
   try {
@@ -266,6 +292,10 @@ async function grow(raw) {
   }
 
   state('growing', 'Growing something…');
+  // The wood is marching cubes over a signed distance field, 1.5-2.5s warm and
+  // longer on a phone. It is the half of the wait nobody expects, because by
+  // now the website has already been read.
+  reassure([[4000, 'Building the wood — this is the last part.']]);
   await new Promise((r) => requestAnimationFrame(r));
 
   // WAIT FOR THE MESH. mountTree returns in ~60ms with the island up and the
