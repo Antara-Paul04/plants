@@ -446,7 +446,7 @@ function crownBox(spots) {
  * flowers, and it is the only place a viewer can see it.
  */
 export function pickSites(spots, r, opts = {}) {
-  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null, minCount = 0, minDist = 0, bands = null, tip = 0.18 } = opts;
+  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null, minCount = 0, minDist = 0, bands = null, tip = 0.18, even = false } = opts;
   if (!spots.length || fraction <= 0) return [];
   const { c, e } = crownBox(spots);
   const ox = r() * 50, oy = r() * 50, oz = r() * 50;
@@ -512,11 +512,35 @@ export function pickSites(spots, r, opts = {}) {
     for (const g of groups.values()) { n += g.items.length; wn += g.items.length * (bands[g.band] ?? 1); }
     norm = wn > 0 ? n / wn : 1;
   }
+  // EVEN INSIDE A STRATUM (`even`). Only about 5 of ~146 attachment points face the camera
+  // in the middle third of any view, so at a 40% bloom a face's middle is two twigs give or
+  // take two: a LOTTERY, and a bare-middled face is what a third of all faces looked like.
+  // (That is the "wreath": averaged round the tree there is none — it was one seed judged
+  // from its worst face.) Stratifying finer cannot see a cone that narrow. What removes the
+  // lottery is taking a stratum's share SPREAD OUT: the best-scored twig first — so the
+  // drift field, the outer bias and the tip bonus still say where a stratum's bloom starts —
+  // and then, each time, the twig farthest from everything already taken. Over 8 seeds x 8
+  // faces, faces with NO bloom in the middle went 4 -> 1 of 64 and the worst face's share
+  // doubled. It draws nothing from the RNG, so nothing downstream of the selection moves.
+  // Still WHICH twigs flower; no flower moves (D8.5).
+  const spread = (g) => {
+    if (g.length < 3) return g;
+    const out = [g[0]], left = g.slice(1);
+    const d = left.map((x) => spots[x.i].pos.distanceTo(spots[g[0].i].pos));
+    while (left.length) {
+      let bj = 0;
+      for (let j = 1; j < left.length; j++) if (d[j] > d[bj] + 1e-9 || (Math.abs(d[j] - d[bj]) <= 1e-9 && left[j].score > left[bj].score)) bj = j;
+      const x = left.splice(bj, 1)[0]; d.splice(bj, 1); out.push(x);
+      for (let j = 0; j < left.length; j++) d[j] = Math.min(d[j], spots[left[j].i].pos.distanceTo(spots[x.i].pos));
+    }
+    return out;
+  };
   const picked = [];
   const rest = [];
   for (const grp of groups.values()) {
-    const g = grp.items;
+    let g = grp.items;
     g.sort((a, b) => b.score - a.score);
+    if (even) g = spread(g);
     const q = Math.min(g.length, Math.floor(g.length * fraction * (bands ? (bands[grp.band] ?? 1) * norm : 1)));
     picked.push(...g.slice(0, q));
     rest.push(...g.slice(q).map((x, j) => ({ ...x, rank: j })));
@@ -592,6 +616,11 @@ export const BLOOM_FOLIAGE = {
   //   - `nearTo` 0.55 -> 0.7, `nearRadius` 1.1 -> 0.8: at 40% bloom nearly every twig
   //     is "near" one, so the old values quietly thinned the WHOLE crown. These keep
   //     the crown mass the panel judged healthy (leaf cover 30%, unchanged).
+  //   - `even` (2026-09-21, EXPERIMENT — OFF here until it is measured and ruled on; ask for
+  //     it with `bloomEven=1`): a stratum's share is taken spread out, not as its top scores.
+  //     Medium's drift field makes a bare stretch ~1.2 across and a view's middle third is
+  //     1.9, so the gap the field is DESIGNED to leave is the size of a face's middle. See
+  //     pickSites. The drifts survive between strata; what goes is the empty face.
   medium:   { atBloom: 0.42, nearTo: 0.7,  nearRadius: 0.8,  elsewhere: 0.75, outer: 0,    field: 0.8,  strata: 6, bands: [1, 1.4, 0.8] },
   // Peak bloom: the whole tree is in the phase. The field is nearly flat here —
   // with a strong one the 38% of twigs NOT flowering were one contiguous leafy
@@ -696,7 +725,7 @@ export function chooseBloomSites(spots, r, opts = {}) {
   // ...and a fraction is not enough on a small tree: 10% of a sparse crown's forty
   // twigs is four, and of a simple one's twenty-five, two. "Touches" is a COUNT.
   const minCount = opts.fraction == null && flowering ? BLOOM_MIN_CLUSTERS : 0;
-  return pickSites(spots, r, { fraction: frac, minCount, outer: rel.outer, field: rel.field, strata: rel.strata ?? 0, bands: opts.bands ?? rel.bands ?? null, tip: opts.tip ?? rel.tip ?? 0.18, exclude: opts.exclude ?? null });
+  return pickSites(spots, r, { fraction: frac, minCount, outer: rel.outer, field: opts.field ?? rel.field, ...(opts.freq != null ? { freq: opts.freq } : {}), strata: rel.strata ?? 0, bands: opts.bands ?? rel.bands ?? null, tip: opts.tip ?? rel.tip ?? 0.18, exclude: opts.exclude ?? null, even: opts.even ?? rel.even ?? false });
 }
 
 /**
