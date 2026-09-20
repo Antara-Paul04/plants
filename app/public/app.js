@@ -74,10 +74,29 @@ function isPaleFallback(hex) {
   return chroma < 45;
 }
 
+// The pale-bloom copy says what WE DID, not what the site IS — and the
+// distinction is load-bearing.
+//
+// "No colour of its own" is an assertion about the website, and for stripe.com,
+// ente.com and figma.com it is false: those sites are vividly coloured, and
+// their colour lives inside imagery, which D3 reads as content rather than
+// design. We saw it and declined to credit it. Measured on stripe: masked
+// chroma 0.002, unmasked 0.097 — the brand is right there in the frame.
+//
+// We cannot tell that case apart from a genuinely monochrome site, and analysis
+// established why: the only real discriminator is whether the colour is stable
+// across days (a brand gradient) or changes with the content (a photo grid),
+// and that is not measurable in a single visit. unsplash.com swung 1000x in
+// chroma between two days with a completely different accent.
+//
+// So the copy stops claiming to know. "No colour we could read as part of its
+// design" is true in BOTH cases, and it needs no threshold to decide between
+// them — which matters, because a threshold here would be guessing on exactly
+// the measurements least able to support it.
 const PALE = {
-  few:      ['A few flowers', 'no colour of its own, so the bloom is ivory'],
-  medium:   ['Flowering', 'richly designed, but with no accent colour of its own'],
-  abundant: ['Heavily flowering', 'a lot of visual design, and almost no colour in it'],
+  few:      ['A few flowers', 'no colour we could read as part of its design, so the bloom is ivory'],
+  medium:   ['Flowering', 'richly designed, but with no colour we could read as part of that design'],
+  abundant: ['Heavily flowering', 'a great deal of visual design, and no colour we could credit to it'],
 };
 
 const STATE = {
