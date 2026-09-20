@@ -366,14 +366,69 @@ export function pickSites(spots, r, opts = {}) {
 export const BLOOM_FRACTION = { none: 0, few: 0.1, medium: 0.27, abundant: 0.62 };
 
 /**
+ * L5 — bloom amount controls a FOLIAGE RELATIONSHIP, not just a count.
+ *
+ * The wreath (a green tree in a coloured outline) is OCCLUSION: the bloom is
+ * evenly spread, and full-size leaf balls in front of it hide it everywhere but
+ * the skyline. Moving the flowers was tried three times and is now banned
+ * (DECISIONS D8.5). What changes instead is what the flowering twigs WEAR, and
+ * the three amounts are three different relationships, not one number scaled:
+ *
+ *   few       the tree is in leaf; a few outer twigs carry touches of colour.
+ *   medium    flowering twigs carry clearly reduced foliage, so bloom shows
+ *             through the visible crown and not only on its edge.
+ *   abundant  PEAK BLOOM, a different phase of the year: flowering twigs carry
+ *             only a small tuft of emerging leaf, the rest of the tree is only
+ *             part-way into leaf, and bloom is a major part of the crown's
+ *             volume. Exposed wood between bloom clusters is correct and wanted.
+ *
+ * `atBloom` / `elsewhere` scale the leaf cluster on flowering / other twigs.
+ * TASTE OWNS THESE NUMBERS (L4): the contract is the perceptual target at 140px.
+ */
+export const BLOOM_FOLIAGE = {
+  none:     { atBloom: 1,    nearTo: 1,    nearRadius: 0,    elsewhere: 1,    outer: 0.65, field: 1 },
+  // In leaf. Touches of colour on a few OUTER twigs; nothing else gives way.
+  few:      { atBloom: 0.9,  nearTo: 1,    nearRadius: 0,    elsewhere: 1,    outer: 0.65, field: 1 },
+  // A flowering LIMB, not a flowering twig: the foliage AROUND the bloom gives
+  // way too. Reducing only the twig's own cluster was not enough — debug view C
+  // showed its full-size NEIGHBOURS doing the hiding (they are 0.4 apart and
+  // 0.55 across). Bloom also comes in off the rim, so it is there to be seen.
+  medium:   { atBloom: 0.42, nearTo: 0.6,  nearRadius: 1.0,  elsewhere: 1,    outer: 0.3,  field: 0.8 },
+  // Peak bloom: the whole tree is in the phase. The field is nearly flat here —
+  // with a strong one the 38% of twigs NOT flowering were one contiguous leafy
+  // patch, which read as a second, green plant standing in a pink one.
+  abundant: { atBloom: 0.26, nearTo: 0.5,  nearRadius: 0.8,  elsewhere: 0.72, outer: 0.1,  field: 0.35 },
+};
+
+/**
+ * The leaf-cluster scale for every attachment point, given which of them bloom.
+ * Flowering twig -> `atBloom`; a twig within `nearRadius` of one eases from
+ * `nearTo` back up to `elsewhere`; the rest of the tree -> `elsewhere`.
+ */
+export function foliageScales(spots, bloomSites, rel) {
+  const out = new Float32Array(spots.length).fill(rel.elsewhere);
+  const bloom = bloomSites.map((i) => spots[i].pos);
+  const on = new Set(bloomSites);
+  for (let i = 0; i < spots.length; i++) {
+    if (on.has(i)) { out[i] = rel.atBloom; continue; }
+    if (!(rel.nearRadius > 0) || !bloom.length) continue;
+    let d = Infinity;
+    for (const b of bloom) d = Math.min(d, b.distanceTo(spots[i].pos));
+    out[i] = lerp(Math.min(rel.nearTo, rel.elsewhere), rel.elsewhere, smoothstep(0.25 * rel.nearRadius, rel.nearRadius, d));
+  }
+  return out;
+}
+
+/**
  * Which sites bloom, for a DNA amount. Separate from buildFlowers because the
  * LEAVES need the answer too: a twig that flowers carries a smaller leaf cluster.
  */
 export function chooseBloomSites(spots, r, opts = {}) {
   const frac = opts.fraction ?? BLOOM_FRACTION[opts.amount] ?? 0;
   // A little bloom sits on the outermost twigs; a tree in FULL bloom flowers all
-  // through, so the outer bias relaxes as the amount rises.
-  return pickSites(spots, r, { fraction: frac, outer: lerp(0.65, 0.1, smoothstep(0.1, 0.6, frac)) });
+  // through. WHICH twigs flower is selection — it is not moving a flower.
+  const rel = BLOOM_FOLIAGE[opts.amount] ?? BLOOM_FOLIAGE.medium;
+  return pickSites(spots, r, { fraction: frac, outer: rel.outer, field: rel.field });
 }
 
 /**

@@ -29,7 +29,7 @@ const { buildLimbs } = await import(`./limbmesh.js${bust}`);
 const { makeBarkMaterial } = await import(`./bark.js${bust}`);
 const { buildThickWood } = await import(`./woodsdf.js${bust}`);
 const { buildLeaves, leafAttachments } = await import(`./leaves.js${bust}`);
-const { buildFlowers, buildFruit, chooseBloomSites, chooseGrammar, BLOOM_GRAMMARS, LEGACY_GRAMMAR } = await import(`./flowers.js${bust}`);
+const { buildFlowers, buildFruit, chooseBloomSites, chooseGrammar, BLOOM_GRAMMARS, LEGACY_GRAMMAR, BLOOM_FOLIAGE, foliageScales } = await import(`./flowers.js${bust}`);
 const { buildIsland, buildGrass } = await import(`./island.js${bust}`);
 const { makeRenderer, fitCamera } = await import(`./viewer.js${bust}`);
 
@@ -344,13 +344,23 @@ if (LEAVES !== '0') {
   const flowerRng = rng(P.seed * 7 + 101);
   const bloomSites = FLOWERS === 'none' ? [] : chooseBloomSites(spots, flowerRng, { amount: FLOWERS, fraction: q.has('bloom') ? num('bloom', 0.27) : null });
 
+  // L5: the amount decides what the flowering twigs — and their neighbours —
+  // WEAR. Every number in the table can be overridden from the URL for tuning.
+  const folT = BLOOM_FOLIAGE[bloomSites.length ? FLOWERS : 'none'] ?? BLOOM_FOLIAGE.medium;
+  const FOL = {
+    ...folT,
+    atBloom: num('leafAtBloom', folT.atBloom), nearTo: num('leafNear', folT.nearTo),
+    nearRadius: num('leafNearR', folT.nearRadius), elsewhere: num('leafElsewhere', folT.elsewhere),
+  };
+
   const lv = buildLeaves(skel.limbs, r, {
     spots,
     cluster: {
       leaves: num('perCluster', 17), leafLength: num('leafLen', 0.5), soft: num('soft', 0.62),
       grade: ENV.foliage ? (c) => gradeColor(c, ENV.foliage) : null,
     },
-    shrink: new Set(bloomSites.map((i) => spots[i])), shrinkTo: num('leafAtBloom', 0.55),
+    siteScale: foliageScales(spots, bloomSites, FOL), shrink: new Set(bloomSites.map((i) => spots[i])),
+    debugShrink: q.get('debug') === 'bloomleaves',
   });
   tree.add(lv.group);
   leafStats = lv.stats;
@@ -366,7 +376,7 @@ if (LEAVES !== '0') {
       grammar: GRAMMAR,
       primary: hexq('fc', 0xf7a6b8), secondary: q.has('fc2') ? hexq('fc2', 0xe87b92) : (q.has('fc') ? null : 0xe87b92),
       size: num('flowerSize', 1), pale: num('pale', 0.42), lift: num('lift', 0), grade: bloomGrade,
-      proud: 0.5 * num('leafAtBloom', 0.55) + 0.07,
+      proud: 0.5 * FOL.atBloom + 0.07,   // stands off its OWN leaf tuft; this is not a move, the tuft shrank
     });
     tree.add(fl.group);
     taken = fl.taken;

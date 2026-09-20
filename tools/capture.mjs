@@ -17,6 +17,12 @@
 // dropped. Re-running skips sites already captured, so it doubles as a retry.
 // The default mode above is untouched — before/after boards depend on it.
 //
+// Add --with-site to also shoot each website (_site/) and compose it beside its
+// tree (pairs/), because a tree can only be judged against the site it came from.
+// The site shot is the harness's OWN visit under the analyzer's conditions — the
+// analyzer does not keep its frame — so it is close to, not identical to, what was
+// measured. Works on an already-captured folder: trees are skipped, pairs are added.
+//
 // Requires the V0 server on :5170 and Playwright from analysis/node_modules.
 
 import { chromium } from '../analysis/node_modules/playwright-core/index.mjs';
@@ -46,6 +52,7 @@ if (!outDir) {
 
 const rest = process.argv.slice(3);
 const survey = rest.includes('--survey');
+const withSite = rest.includes('--with-site');
 const fileAt = rest.indexOf('--sites-file');
 const sitesFile = fileAt >= 0 ? rest[fileAt + 1] : null;
 const named = rest.filter((a, i) => !a.startsWith('--') && !(fileAt >= 0 && i === fileAt + 1));
@@ -90,17 +97,77 @@ const attempt = async (site) => {
   return data;
 };
 
+const exists = (p) => access(p).then(() => true, () => false);
+
+// The website itself, shot under the conditions analysis/lib/analyze.js measures in
+// (mirrored, not imported: that module owns its own browser). Same viewport, light
+// mode, user agent and settle sequence, so a preloader it measured is one we see too.
+const siteCtx = withSite ? await browser.newContext({
+  viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1,
+  userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36',
+  colorScheme: 'light', locale: 'en-US', ignoreHTTPSErrors: true,
+}) : null;
+const composer = withSite ? await browser.newPage({ viewport: { width: 2260, height: 1000 }, deviceScaleFactor: 1 }) : null;
+
+const shootSite = async (url, path) => {
+  const p = await siteCtx.newPage();
+  try {
+    await p.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    await p.waitForLoadState('load', { timeout: 4500 }).catch(() => {});
+    await p.waitForLoadState('networkidle', { timeout: 1500 }).catch(() => {});
+    await p.waitForTimeout(600);
+    await p.screenshot({ path, animations: 'disabled', timeout: 10000 });
+    return true;
+  } catch { return false; } finally { await p.close().catch(() => {}); }
+};
+
+// Website on the left, its tree and explanation on the right, one PNG per site.
+const composePair = async (name, r) => {
+  const uri = async (f) => `data:image/png;base64,${(await readFile(f)).toString('base64')}`;
+  const d = r.dna;
+  const summary = [`${d.foliage?.state} / ${d.foliage?.density}`, `flowers ${d.flowers?.amount}`,
+    d.botanicalState, d.fruit?.enabled ? 'fruit' : null].filter(Boolean).join(' · ');
+  await composer.setContent(`<style>
+    body { margin: 30px; background: #f6f2ec; font: 22px/1.3 -apple-system, system-ui, sans-serif; color: #26221d; }
+    header { display: flex; gap: 18px; align-items: baseline; margin-bottom: 18px; }
+    header span { color: #6d665c; }
+    main { display: flex; gap: 0; align-items: flex-start; }
+    img { width: 1100px; display: block; }
+    .site { border: 1px solid rgba(0,0,0,.14); border-radius: 10px; margin-top: 190px; box-sizing: border-box; }
+  </style>
+  <header><b>${r.site}</b><span>${summary}</span><span>${r.url || ''}</span></header>
+  <main><img class="site" src="${await uri(`${outDir}/_site/${name}.png`)}"><img src="${await uri(`${outDir}/${name}.png`)}"></main>`);
+  await composer.screenshot({ path: `${outDir}/pairs/${name}.png`, fullPage: true });
+};
+
 if (survey) {
   const resultsPath = `${outDir}/results.json`;
   await mkdir(`${outDir}/_failed`, { recursive: true });
+  if (withSite) { await mkdir(`${outDir}/_site`, { recursive: true }); await mkdir(`${outDir}/pairs`, { recursive: true }); }
   let results = [];
   try { results = JSON.parse(await readFile(resultsPath, 'utf8')); } catch {}
+
+  // Site shot + pair for one results entry; fills in only what is missing.
+  const addSite = async (name, r, tag) => {
+    if (!(await exists(`${outDir}/_site/${name}.png`))) {
+      const shot = await shootSite(r.url || `https://${r.site}`, `${outDir}/_site/${name}.png`);
+      if (!shot) { console.log(tag, 'no site ', r.site, '- the harness could not load it'); return; }
+    }
+    if (r.ok && !(await exists(`${outDir}/pairs/${name}.png`))) {
+      await composePair(name, r);
+      console.log(tag, 'paired  ', r.site);
+    }
+  };
 
   for (const [i, site] of sites.entries()) {
     const name = fileName(site);
     const tag = `[${i + 1}/${sites.length}]`;
-    const done = await access(`${outDir}/${name}.png`).then(() => true, () => false);
-    if (done) { console.log(tag, 'skip    ', site, '(already captured)'); continue; }
+    const prior = results.find((r) => r.site === site);
+    if (prior && await exists(`${outDir}/${name}.png`)) {
+      console.log(tag, 'skip    ', site, '(already captured)');
+      if (withSite) await addSite(name, prior, tag);
+      continue;
+    }
 
     let data = null, error = null, attempts = 0;
     while (attempts < 2 && !(data && data.ok)) {
@@ -113,20 +180,22 @@ if (survey) {
     await page.screenshot({ path: ok ? `${outDir}/${name}.png` : `${outDir}/_failed/${name}.png`, fullPage: true })
       .catch((err) => { error = error || err.message.split('\n')[0]; });
 
-    results = results.filter((r) => r.site !== site);
-    results.push({
+    const entry = {
       site, category: category.get(site) || '', file: ok ? `${name}.png` : `_failed/${name}.png`,
       ok, attempts, harnessError: error,
       failure: data && !data.ok ? data.failure : null,
       domain: data?.domain ?? null, url: data?.url ?? null, live: data?.live ?? null,
       timingMs: data?.timingMs ?? null, fingerprint: data?.fingerprint ?? null, dna: data?.dna ?? null,
-    });
+    };
+    results = results.filter((r) => r.site !== site);
+    results.push(entry);
     await writeFile(resultsPath, JSON.stringify(results, null, 2));
 
     const d = data?.dna;
     console.log(tag, ok ? 'captured' : 'FAILED  ', site, '-', ok
       ? `${d.foliage?.state}/${d.foliage?.density} flowers:${d.flowers?.amount} ${d.botanicalState} bg:${d.background} ${data.timingMs}ms`
       : (data?.failure?.code || error));
+    if (withSite) await addSite(name, entry, tag);
   }
 } else {
   for (const site of sites) {

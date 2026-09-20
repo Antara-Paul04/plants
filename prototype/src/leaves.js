@@ -200,7 +200,7 @@ export function leafAttachments(limbs, r, opts = {}) {
         axis = side.multiplyScalar(0.7).addScaledVector(up, 0.8).addScaledVector(outward, 0.3).normalize();
         pos.addScaledVector(axis, rad + 0.05);
       }
-      out.push({ pos, axis, tip: k === 0, scale: rr(r, 0.85, 1.2) * (k === 0 ? 1.08 : 1) });
+      out.push({ index: out.length, pos, axis, tip: k === 0, scale: rr(r, 0.85, 1.2) * (k === 0 ? 1.08 : 1) });
     }
   }
   return out;
@@ -237,12 +237,18 @@ export function buildLeaves(limbs, r, opts = {}) {
     // baked light: it is a grade of the material, like the ground's, and the
     // leaves are still lit entirely by the scene. Values above 1 are allowed.
     albedoTint = null,
-    // Sites that are FLOWERING carry a smaller leaf cluster. Botanically true (a
-    // flowering shoot leafs late and small), and the only thing that lets bloom
-    // show on the face of the crown: the crown is a shell, so in projection the
-    // bloom piles up at the rim and full-size leaf balls cover the rest — every
-    // amount read as a green tree in a pink wreath until the leaves gave way.
-    shrink = null, shrinkTo = 0.55,
+    // A per-site scale for the leaf cluster (Float32Array over `spots`). Bloom
+    // amount controls a FOLIAGE RELATIONSHIP (flowers.js, BLOOM_FOLIAGE): the
+    // crown is a shell, so in projection bloom piles up at the rim and full-size
+    // leaf balls cover the rest — every amount read as a green tree in a coloured
+    // wreath until the foliage gave way. `shrink` marks the flowering twigs, for
+    // the debug view only.
+    siteScale = null, shrink = null,
+    // Debug view C: paint flowering-twig foliage hot orange and everything else
+    // grey, ignoring the leaf colours. It answers the question the wreath hid for
+    // three rounds — not "is there bloom through the crown" but "what is in
+    // front of it".
+    debugShrink = false,
   } = opts;
 
   const t0 = performance.now();
@@ -256,6 +262,7 @@ export function buildLeaves(limbs, r, opts = {}) {
     color: 0xffffff, vertexColors: true, roughness: 1, metalness: 0, side: THREE.FrontSide,
   }), 'leaf-matte-v1');
   if (albedoTint) mat.color.copy(albedoTint);
+  if (debugShrink) { mat.vertexColors = false; mat.needsUpdate = true; }
 
   const geos = [];
   for (let v = 0; v < variants; v++) geos.push(clusterSource(r, v));
@@ -276,11 +283,13 @@ export function buildLeaves(limbs, r, opts = {}) {
       q.setFromUnitVectors(Y, sp.axis);
       q2.setFromAxisAngle(sp.axis, r() * Math.PI * 2);
       q.premultiply(q2);
-      sc.setScalar(sp.scale * (shrink && shrink.has(sp) ? shrinkTo : 1));
+      sc.setScalar(sp.scale * (siteScale ? siteScale[sp.index] : 1));
       im.setMatrixAt(i, m.compose(sp.pos, q, sc));
       // Cluster-to-cluster drift in value, so the crown is not one flat green.
       const k = rr(r, 0.9, 1.08);
-      im.setColorAt(i, tint.setRGB(k, k * rr(r, 0.98, 1.03), k * rr(r, 0.94, 1.0)));
+      tint.setRGB(k, k * rr(r, 0.98, 1.03), k * rr(r, 0.94, 1.0));
+      if (debugShrink) tint.set(shrink && shrink.has(sp) ? 0xff6a00 : 0xb9bcc0);
+      im.setColorAt(i, tint);
     });
     im.instanceMatrix.needsUpdate = true;
     if (im.instanceColor) im.instanceColor.needsUpdate = true;
