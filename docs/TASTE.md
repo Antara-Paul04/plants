@@ -111,6 +111,12 @@ place by being observed, not assumed.
   *proportion or topology*. The earlier "high fidelity" direction was about quality of
   craft, not quantity of detail; crude simplification is still rejected, refined
   simplification is the target.
+- **A failure must never be drawn as a deficiency in the subject.** When we cannot read
+  a site, that is our limit and not theirs — so a withered, stunted or unsprouted tree
+  is a lie, and it insults exactly the big, rich, heavy sites most likely to trigger it.
+  The failure state says *we could not read this*; it never says *there was little here*.
+  The same test applies to anything the scene asserts: never render a value we did not
+  measure, because a fabricated terrain is the same lie told quietly.
 - **Restraint is subtraction from abundance; boring is the absence of decision.** The
   test is to remove one more thing: if the image gets worse it was restrained, and if
   nothing changes it was boring. A restrained tree is at a minimum where every element

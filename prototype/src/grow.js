@@ -334,6 +334,96 @@ export const SEASON_LEAVES = {
   autumn:    { greens: [0xc2701f, 0xecb141, 0x7d3a16], amount: 0.88 },   // "a little thinner: some of it is on the ground"
   winter:    { greens: [0x66755c, 0x93a07f, 0x414f3f], amount: 0.5 },
 };
+// --- the ground answers to the trunk ---------------------------------------------
+// RULE (Taste, 2026-09-20): the ground must sit CLEARLY DARKER IN VALUE than the
+// trunk standing on it. A root buttress only reads as gripping the earth if the
+// earth is darker than the wood; at equal value the tree's base dissolves into the
+// lawn and the footing disappears.
+//
+// ROOT CAUSE, and the reason this is a rule and not a palette fix: the trunk went
+// from dark brown to PALE TAN in the clay restyle, and every terrain palette
+// predates that. They were authored against a dark trunk and the trunk moved out
+// from under them. Measured in albedo: autumn turf L* 69.3 against a trunk at 70.1
+// — the same value. Summer survives only because a saturated green separates from
+// tan by HUE; straw, sage and dormant olive sit in the trunk's own hue family and
+// have nothing but value to separate them.
+//
+// So the rule is applied to the RELATIONSHIP, per state, by construction: the
+// closer the turf's chroma is to the trunk's, the more value separation it owes.
+// Value only (one RGB scale across lo/mid/hi, so hue and saturation are untouched
+// and the turf's own internal ramp survives). It deliberately does NOT restore any
+// authored hex: a straw-gold lawn under an amber canopy collapses into one hue
+// family, so this goes down until it is clearly darker and stops.
+const linOf = (c) => [c.r, c.g, c.b];
+function labOf(c) {
+  const [r, g, b] = linOf(c);
+  const X = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047, Y = 0.2126 * r + 0.7152 * g + 0.0722 * b, Z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883;
+  const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
+  return { L: 116 * f(Y) - 16, a: 500 * (f(X) - f(Y)), b: 200 * (f(Y) - f(Z)), Y };
+}
+const sstep = (e0, e1, x) => { const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
+const yOfL = (L) => Math.pow((L + 16) / 116, 3);
+
+/**
+ * @param turf   { lo, mid, hi } THREE.Colors — scaled IN PLACE
+ * @param wood   the trunk's albedo (hex)
+ * @param gap    L* the turf owes the trunk when it shares its hue family
+ * @returns { k, turfL, trunkL, owes } for the HUD / a report
+ */
+export function groundForTrunk(turf, wood, gap = 13) {
+  const trunk = labOf(new THREE.Color(wood));
+  const mean = turf.mid.clone().lerp(turf.hi, 0.5);
+  const t = labOf(mean);
+  const dab = Math.hypot(t.a - trunk.a, t.b - trunk.b);
+  const owes = gap * (1 - sstep(24, 40, dab));      // a hue-distant lawn (summer green) owes nothing
+  let k = 1;
+  // Guarded: an absurd `groundGap` must not drive the target below where L* is a
+  // cube (k went negative at gap 90), and a black lawn must not divide by zero.
+  if (owes > 0 && trunk.L - t.L < owes) k = Math.min(1, yOfL(Math.max(trunk.L - owes, 8)) / Math.max(t.Y, 1e-4));
+  for (const key of ['lo', 'mid', 'hi']) turf[key].multiplyScalar(k);
+  const after = labOf(turf.mid.clone().lerp(turf.hi, 0.5)).L;
+  return { k: +k.toFixed(3), turfLBefore: +t.L.toFixed(1), turfLAfter: +after.toFixed(1), trunkL: +trunk.L.toFixed(1), owes: +owes.toFixed(1), dab: +dab.toFixed(0) };
+}
+
+/**
+ * The island keeps its own value ORDER: grass is lighter than the soil cliff it
+ * grows on. Taking the turf down without the soil inverted it — in winter and bare
+ * the lawn rendered DARKER than the vertical face beneath it, which is backward.
+ * The soil follows only as far as the order needs; it is not regraded.
+ */
+export function soilForTurf(soilHi, soilLo, turfMeanL, margin = 8) {
+  const cur = labOf(soilHi);
+  if (cur.L <= turfMeanL - margin) return 1;
+  const k = Math.min(1, yOfL(Math.max(turfMeanL - margin, 6)) / Math.max(cur.Y, 1e-4));
+  soilHi.multiplyScalar(k); soilLo.multiplyScalar(k);
+  return +k.toFixed(3);
+}
+
+/**
+ * The stones are never the brightest thing in a picture whose subject is the tree.
+ * They were: L* ~92 in every daylight state, +23-27% over the trunk in the render —
+ * "scattered popcorn that yanks the eye off the hero". Their VALUE is capped under
+ * the trunk. Their STATE still arrives, through the host's palette (warm cream in
+ * summer, grey when dormant), which a value scale leaves alone.
+ *
+ * Honest about what this is: in daylight the cap always binds, so this is a cap and
+ * not a "step lighter than the turf" — that term was dead code and is gone. The
+ * stones still READ lighter than the lawn, because their facets face the sky and
+ * grass blades mostly do not (measured: ~21 L* over the turf in the render, at equal
+ * albedo). The cap sits well under the trunk for the same reason: at trunk-5 they
+ * still rendered 12% brighter than it.
+ *
+ * NOT applied at night — see the caller.
+ */
+export function stonesForGround(rockHi, rockLo, turfMeanL, wood) {
+  const trunkL = labOf(new THREE.Color(wood)).L;
+  const hiL = Math.max(trunkL - 13, 10);
+  for (const [c, L] of [[rockHi, hiL], [rockLo, hiL - 14]]) {
+    const cur = labOf(c);
+    c.multiplyScalar(yOfL(Math.max(L, 8)) / Math.max(cur.Y, 1e-4));
+  }
+}
+
 const NORMAL_TERRAIN = { lo: 0x5e9e37, mid: 0x81c246, hi: 0xa8d95c, soilHi: 0xa07b58, soilLo: 0x6a5663 };
 const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8a7d6d, soilLo: 0x5d5859 };
 
@@ -388,6 +478,7 @@ export async function growTree(M, q, env, opts = {}) {
 
   // --- ground: first, because it is instant and a host can show it at once -----
   const ground = new THREE.Group();
+  let groundInfo = null;
   if (P.showGround) {
     const T0 = opts.terrain || {};
     const hexOf = (v, d) => (v == null ? d : (v.isColor ? v.getHex() : v));
@@ -397,8 +488,16 @@ export async function growTree(M, q, env, opts = {}) {
       const base = new THREE.Color(hexOf(T0[k], NORMAL_TERRAIN[k]));
       // A palette handed in by the host already has its own dormancy mixed in.
       if (!opts.terrain) base.lerp(new THREE.Color(DORMANT_TERRAIN[k]), dormancy);
-      terrain[k] = gradeColor(base, ENV.ground);
+      terrain[k] = base;
     }
+    // The ground answers to the trunk, in ALBEDO and before the environment grade —
+    // the relationship is a property of the scene, and night then grades both alike.
+    const wood = M.bark.WOOD_TAN ?? 0xc7a67e;
+    const gv = q.get('groundRule') === '0' ? null : groundForTrunk(terrain, wood, num('groundGap', 13));
+    groundInfo = gv;
+    const turfMeanL = labOf(terrain.mid.clone().lerp(terrain.hi, 0.5)).L;
+    if (gv) gv.soilK = soilForTurf(terrain.soilHi, terrain.soilLo, turfMeanL);
+    for (const k of Object.keys(NORMAL_TERRAIN)) terrain[k] = gradeColor(terrain[k], ENV.ground);
     if (T0.grass) terrain.grass = T0.grass;
     if (T0.height) terrain.height = T0.height;
     // Its OWN stream. On the shared one the lawn came after the foliage branches,
@@ -409,8 +508,14 @@ export async function growTree(M, q, env, opts = {}) {
     ground.add(M.island.buildGrass(groundRng, uniforms, { ...terrain, detail: num('grassDetail', 0.6) }));
     if (opts.rocks) {
       const rk = { rockPush: num('rockPush', 1.32) };
-      if (T0.rockHi) rk.rockHi = gradeColor(new THREE.Color(hexOf(T0.rockHi)), ENV.ground);
-      if (T0.rockLo) rk.rockLo = gradeColor(new THREE.Color(hexOf(T0.rockLo)), ENV.ground);
+      const rHi = new THREE.Color(hexOf(T0.rockHi, 0xf0e0c2)), rLo = new THREE.Color(hexOf(T0.rockLo, 0xb5a07f));
+      // Day only. At night the moonlit trunk is already the brightest object by a
+      // wide margin, so the stones were never the offence there — and capped, under
+      // a weak ambient that their sky-facing facets cannot use, they rendered DARKER
+      // than the lawn and read as holes punched in the grass instead of pebbles.
+      if (q.get('groundRule') !== '0' && env.name !== 'night') stonesForGround(rHi, rLo, turfMeanL, wood);
+      rk.rockHi = gradeColor(rHi, ENV.ground);
+      rk.rockLo = gradeColor(rLo, ENV.ground);
       ground.add(M.island.buildRocks(rng(P.seed * 17 + 707), rk));
     }
   }
@@ -540,8 +645,11 @@ export async function growTree(M, q, env, opts = {}) {
     // `bloomMul` scales the amount's fraction WITHOUT changing its band — autumn's
     // x0.4 (dna.js: "the contract decides how many flowers there are; the renderer
     // only decides how they look"; the band was already stepped down by analysis).
-    const baseFrac = q.has('bloom') ? num('bloom', 0.33) : (F.BLOOM_FRACTION[FLOWERS] ?? 0) * num('bloomMul', 1);
-    const bloomSites = FLOWERS === 'none' ? [] : F.chooseBloomSites(spots, flowerRng, { amount: FLOWERS, fraction: baseFrac, exclude: keepOff });
+    // The multiplier is handed over UN-applied: the `few` floor is clamped inside
+    // chooseBloomSites, after all scaling, so no caller can scale beneath it.
+    const bloomSites = FLOWERS === 'none' ? [] : F.chooseBloomSites(spots, flowerRng, {
+      amount: FLOWERS, mul: num('bloomMul', 1), fraction: q.has('bloom') ? num('bloom', 0.33) : null, exclude: keepOff,
+    });
 
     // L5: the amount decides what the flowering twigs — and their neighbours —
     // WEAR. Every number in the table can be overridden for tuning.
@@ -616,7 +724,7 @@ export async function growTree(M, q, env, opts = {}) {
     tree, ground, skel, geo, thick, P, extents, season: SEASON,
     cloud: P.showCloud ? new THREE.Points(new THREE.BufferGeometry().setFromPoints(skel.cloud), new THREE.PointsMaterial({ size: 0.04, color: 0xd06a6a })) : null,
     spots: dbgSpots, bloomSites: dbgBloom,
-    stats: { ...stats, phases, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },
+    stats: { ...stats, phases, ground: groundInfo, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },
     dispose() {
       M.util.disposeObject(tree);
       M.util.disposeObject(ground);

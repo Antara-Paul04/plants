@@ -65,6 +65,14 @@
         cursor: pointer; font-weight: 400;
       }
       .examples button:hover:not(:disabled) { color: var(--ink); border-color: #c9c2b7; background: #fdfbf7; }
+      /* Retry is offered only where the failure is genuinely transient — a warm
+         browser reads in 3-8s against 14-21s cold, so a second attempt often works. */
+      #retry {
+        margin-top: 14px; padding: 7px 16px; font: inherit; font-size: 14px;
+        color: var(--ink); background: #fdfbf7; border: 1px solid #c9c2b7;
+        border-radius: 999px; cursor: pointer;
+      }
+      #retry:hover { background: #fff; border-color: #a9a094; }
 
       .stage {
         width: 100%; aspect-ratio: 1 / 1; max-height: 62vh;
@@ -145,6 +153,7 @@
         <div class="overlay" id="overlay">
           <div class="spinner" id="spinner" hidden></div>
           <div id="msg">Paste a website address to grow its tree.</div>
+          <button type="button" id="retry" hidden>Try again</button>
         </div>
       </div>
 

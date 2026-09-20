@@ -33,12 +33,17 @@ import * as THREE from 'three';
 /**
  * @param opts.palette  { wood, groove, shoot } as hex or THREE.Color
  */
+// The clay's own tone. EXPORTED because the ground is judged against it: the turf
+// under a tree has to sit clearly darker in value than the trunk standing on it
+// (grow.js, groundForTrunk), and that rule must follow this colour if it moves.
+export const WOOD_TAN = 0xc7a67e;
+
 export function makeBarkMaterial(opts = {}) {
   const { palette = {} } = opts;
   const C = (v, d) => new THREE.Color(v ?? d);
 
   const uniforms = {
-    uWood: { value: C(palette.wood, 0xc7a67e) },     // warm light TAN — a pinker value read as skin
+    uWood: { value: C(palette.wood, WOOD_TAN) },     // warm light TAN — a pinker value read as skin
     uGroove: { value: C(palette.groove, 0x9d7c58) }, // the same clay, deeper and a little warmer
     uShoot: { value: C(palette.shoot, 0x94765a) },   // thin wood: deeper, so twigs hold against sky
   };

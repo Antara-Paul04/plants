@@ -643,3 +643,41 @@ side-by-side on the same DNA). Renders and numbers: `references/experiments/wiri
 **Known, not yet fixed:** pendant florets read as flat squares now that dark petals are solid;
 `abundant` on a real site is nearly leafless by design and wants Taste's eye; the build is
 2–7 s under load, which is what the deferred performance pass is for.
+
+### The ground answers to the trunk, and `few` is a floor (Taste rulings, 2026-09-20)
+
+Renders and measurements: `references/experiments/ground-value-2026-09-20/`.
+
+- **RULE: the ground sits clearly darker in value than the trunk standing on it.** A root
+  buttress only reads as gripping the earth if the earth is darker than the wood. **Root
+  cause (Taste's):** the trunk went from dark brown to pale tan in the clay restyle and every
+  terrain palette predates that — authored against a dark trunk, and the trunk moved out from
+  under them. In albedo, autumn turf was L* 69.3 against a trunk at 70.1: the same value.
+  Summer survives only because saturated green separates from tan by HUE; straw, sage and
+  dormant olive share the trunk's hue family and have nothing but value.
+- **Implemented as the relationship, not as palettes** (`grow.js`, `groundForTrunk`): the
+  closer the turf's Lab chroma is to the trunk's, the more value it owes (up to 13 L*), paid
+  with ONE RGB scale across lo/mid/hi — hue, saturation and the turf's own ramp untouched —
+  in albedo, before the environment grade. It restores no authored hex on purpose: straw-gold
+  under an amber canopy collapses into one hue family, so it goes down until clearly darker
+  and stops. Measured in renders, turf vs trunk luma: autumn −16% → −34%, winter → −31%, bare
+  −20% → −33%, sparse −9% → −25%; summer green is untouched by construction. `WOOD_TAN` is
+  exported from `bark.js` so the rule follows the clay if it moves.
+- **The stones move with the state** (`stonesForGround`): a step lighter than the turf they
+  lie on, capped well under the trunk. They were +23–27% BRIGHTER than the trunk in every day
+  state — the brightest thing in a picture whose subject is the tree — and are now within
+  ±3% of it. The cap is lower in albedo than it looks like it needs to be, because a stone's
+  facets face the sky and the trunk's do not.
+- **Night is NOT fixed by this:** at the sampled point the turf is still ~20% brighter than the
+  trunk's shadow side. That is the moon's direction, and it follows whichever night level is
+  picked.
+- **`few` is a floor, not a point on a scale.** Multipliers may scale `medium` and `abundant`;
+  nothing may take a flowering tree below `few`. A CLAMP applied after all scaling
+  (`chooseBloomSites`), never an exemption inside one season's branch: a clamp covers every
+  future multiplier by construction. Plus a minimum cluster COUNT (6) — "touches" is plural,
+  and 10% of a small crown's twigs is two. The explicit `bloom=` debug fraction is not clamped.
+- **What the clamp does NOT fix, stated plainly:** ikea went 6 → 15 clusters and its accent
+  still barely arrives. Yellow bloom inside an amber crown is a HUE COLLAPSE, not a count
+  problem, and the value-only local contrast (L6) cannot reach it by design. Any accent inside
+  the foliage's own hue family has this problem; autumn just makes it common, because autumn
+  foliage occupies the whole warm half of the wheel.

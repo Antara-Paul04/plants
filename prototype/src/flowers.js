@@ -432,7 +432,7 @@ function crownBox(spots) {
  * flowers, and it is the only place a viewer can see it.
  */
 export function pickSites(spots, r, opts = {}) {
-  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null } = opts;
+  const { fraction = 0.3, freq = 0.42, outer = 0.5, low = 0, old = 0, field: fieldW = 1, strata = 0, exclude = null, minCount = 0 } = opts;
   if (!spots.length || fraction <= 0) return [];
   const { c, e } = crownBox(spots);
   const ox = r() * 50, oy = r() * 50, oz = r() * 50;
@@ -447,7 +447,7 @@ export function pickSites(spots, r, opts = {}) {
     const score = fieldW * field + outer * d.length() + (s.tip ? 0.18 : 0) - low * d.y + old * ((s.rad ?? 0) / radMax) + jitter;
     scored.push({ i, score });
   });
-  const want = Math.max(1, Math.round(spots.length * fraction));
+  const want = Math.min(spots.length, Math.max(1, minCount, Math.round(spots.length * fraction)));
   if (!(strata > 1)) {
     scored.sort((a, b) => b.score - a.score);
     return scored.slice(0, want).map((x) => x.i);
@@ -483,6 +483,8 @@ export function pickSites(spots, r, opts = {}) {
 
 // How much of the crown blooms at each DNA amount. Exaggerated on purpose — the
 // steps have to be different trees at thumbnail size, not degrees of one.
+// The fewest bloom clusters a flowering tree may carry, whatever its size. Taste's number.
+export const BLOOM_MIN_CLUSTERS = 6;
 export const BLOOM_FRACTION = { none: 0, few: 0.1, medium: 0.33, abundant: 0.62 };
 
 /**
@@ -508,7 +510,10 @@ export const BLOOM_FRACTION = { none: 0, few: 0.1, medium: 0.33, abundant: 0.62 
 export const BLOOM_FOLIAGE = {
   none:     { atBloom: 1,    nearTo: 1,    nearRadius: 0,    elsewhere: 1,    outer: 0.65, field: 1 },
   // In leaf. Touches of colour on a few OUTER twigs; nothing else gives way.
-  few:      { atBloom: 0.9,  nearTo: 1,    nearRadius: 0,    elsewhere: 1,    outer: 0.65, field: 1 },
+  // Stratified, lightly: 'touches' is plural AND distributed. Unstratified, more
+  // clusters only extended the one drift that was already chosen — placement luck,
+  // not placement design (one real tree had all its touches on one side).
+  few:      { atBloom: 0.9,  nearTo: 1,    nearRadius: 0,    elsewhere: 1,    outer: 0.65, field: 1,    strata: 4 },
   // A flowering LIMB, not a flowering twig: the foliage AROUND the bloom gives
   // way too. Reducing only the twig's own cluster was not enough — debug view C
   // showed its full-size NEIGHBOURS doing the hiding (they are 0.4 apart and
@@ -595,11 +600,29 @@ export function foliageContrast(spots, bloomSites, opts = {}) {
  * LEAVES need the answer too: a twig that flowers carries a smaller leaf cluster.
  */
 export function chooseBloomSites(spots, r, opts = {}) {
-  const frac = opts.fraction ?? BLOOM_FRACTION[opts.amount] ?? 0;
+  // `few` IS A FLOOR, NOT A POINT ON A SCALE (Taste, 2026-09-20). Seasonal and state
+  // multipliers (`mul`) may scale medium and abundant; NOTHING may take a flowering
+  // tree below few's own perceptual floor — "touches of the website's colour":
+  // plural, distributed, present. ikea arrived as few x autumn's 0.4 = 0.04 and
+  // grew ONE cluster on one limb: a site that HAS a measured accent rendering as
+  // though it had none. It is a CLAMP APPLIED AFTER ALL SCALING, on purpose: a clamp
+  // covers every future multiplier by construction, an exemption only covers the
+  // one somebody remembered. If that makes a scaled `few` identical to plain `few`,
+  // that is correct — few is already the minimum legible ornament.
+  // An explicit `fraction` is the debug override and is NOT clamped.
+  const scaled = (BLOOM_FRACTION[opts.amount] ?? 0) * (opts.mul ?? 1);
+  // Decided from the AMOUNT alone: a multiplier of zero must hit the floor like any
+  // other, or `mul: 0` is a way under it. The only off switches are amount 'none'
+  // and an explicit `fraction: 0`.
+  const flowering = (BLOOM_FRACTION[opts.amount] ?? 0) > 0;
+  const frac = opts.fraction ?? (flowering ? Math.max(scaled, BLOOM_FRACTION.few) : 0);
   // A little bloom sits on the outermost twigs; a tree in FULL bloom flowers all
   // through. WHICH twigs flower is selection — it is not moving a flower.
   const rel = BLOOM_FOLIAGE[opts.amount] ?? BLOOM_FOLIAGE.medium;
-  return pickSites(spots, r, { fraction: frac, outer: rel.outer, field: rel.field, strata: rel.strata ?? 0, exclude: opts.exclude ?? null });
+  // ...and a fraction is not enough on a small tree: 10% of a sparse crown's forty
+  // twigs is four, and of a simple one's twenty-five, two. "Touches" is a COUNT.
+  const minCount = opts.fraction == null && flowering ? BLOOM_MIN_CLUSTERS : 0;
+  return pickSites(spots, r, { fraction: frac, minCount, outer: rel.outer, field: rel.field, strata: rel.strata ?? 0, exclude: opts.exclude ?? null });
 }
 
 /**
