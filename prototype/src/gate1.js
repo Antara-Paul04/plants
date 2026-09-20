@@ -29,7 +29,7 @@ const { buildLimbs } = await import(`./limbmesh.js${bust}`);
 const { makeBarkMaterial } = await import(`./bark.js${bust}`);
 const { buildThickWood } = await import(`./woodsdf.js${bust}`);
 const { buildLeaves, leafAttachments } = await import(`./leaves.js${bust}`);
-const { buildFlowers, buildFruit, chooseBloomSites, FLOWER_FORMS } = await import(`./flowers.js${bust}`);
+const { buildFlowers, buildFruit, chooseBloomSites, chooseGrammar, BLOOM_GRAMMARS, LEGACY_GRAMMAR } = await import(`./flowers.js${bust}`);
 const { buildIsland, buildGrass } = await import(`./island.js${bust}`);
 const { makeRenderer, fitCamera } = await import(`./viewer.js${bust}`);
 
@@ -335,6 +335,12 @@ if (LEAVES !== '0') {
   const attach = { spacing: num('leafSpacing', 0.4), maxRadius: num('leafMaxR', 0.12), outerFraction: num('leafOuter', 0.78) };
   const spots = leafAttachments(skel.limbs, r, attach);
   const FLOWERS = q.get('flowers') ?? 'none';
+  // The bloom GRAMMAR is not in the DNA (ruling L1): it is chosen from the
+  // grammars compatible with the morphology, by the seed, on its own stream.
+  // `?grammar=` overrides for debugging; `?form=` and the first names still resolve.
+  const askedGrammar = q.get('grammar') ?? q.get('form');
+  const GRAMMAR = BLOOM_GRAMMARS.includes(askedGrammar) ? askedGrammar
+    : (LEGACY_GRAMMAR[askedGrammar] ?? chooseGrammar(q.get('morphology') ?? 'broad', P.seed));
   const flowerRng = rng(P.seed * 7 + 101);
   const bloomSites = FLOWERS === 'none' ? [] : chooseBloomSites(spots, flowerRng, { amount: FLOWERS, fraction: q.has('bloom') ? num('bloom', 0.27) : null });
 
@@ -357,7 +363,7 @@ if (LEAVES !== '0') {
   if (bloomSites.length) {
     const fl = buildFlowers(spots, flowerRng, {
       sites: bloomSites,
-      form: FLOWER_FORMS.includes(q.get('form')) ? q.get('form') : 'blossom',
+      grammar: GRAMMAR,
       primary: hexq('fc', 0xf7a6b8), secondary: q.has('fc2') ? hexq('fc2', 0xe87b92) : (q.has('fc') ? null : 0xe87b92),
       size: num('flowerSize', 1), pale: num('pale', 0.42), lift: num('lift', 0), grade: bloomGrade,
       proud: 0.5 * num('leafAtBloom', 0.55) + 0.07,

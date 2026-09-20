@@ -369,3 +369,40 @@ measurements genuinely cannot separate them, which would itself be a finding wor
 2. Winter-with-fruit goes from **0 to non-zero**, per L10.
 
 If either fails it is a more useful result than if it succeeds.
+
+---
+
+# Two integration notes, verified — for whoever holds analysis
+
+## L9 is a clean deletion. Verified, not assumed.
+
+I ordered the fruit coin-flip deleted. Before anyone worries about knock-on effects on other
+sites' DNA: **`rng` is drawn exactly once in the whole of `analysis/lib/mapping.js`.**
+
+- created once — `const rng = rngOf(seed)`, line 176
+- drawn once — `const roll = rng()`, line 282, the fruit roll
+- nothing else in the file advances the stream
+
+So deleting the roll shifts **no** downstream draw, because there is no downstream draw.
+Every other site's DNA is bit-identical afterwards. This is a genuinely isolated change and
+should not be treated as a risky one.
+
+(The renderer is a separate matter and already does the right thing: `gate1.js` derives a
+distinct stream per concern — flowers `rng(seed*7+101)`, fruit `rng(seed*11+303)`. Grammar
+selection under L1 must follow that pattern with its own offset, or adding a grammar re-rolls
+every existing tree.)
+
+## L8 will be validated against effectively ONE real winter site. Known risk.
+
+Of 56 surveyed sites only **two** reach `winter`, and one of them — lusion.co — is a **false
+winter**: the analyzer captured its black preloader rather than the page (ink 0.012). That is
+the open "loading screens measured as pages" bug, and it also affects play.grafana.org.
+
+So the entire winter botanical colour language — persistent fruit/berries, accent buds, the
+requirement that a winter tree read sculptural and intentional rather than punished — will be
+judged against **gwern.net and nothing else** unless more winter sites are found.
+
+This is not a reason to delay L8. It *is* a reason to treat "it looks good on gwern" as weak
+evidence, and a reason for the test session's site hunt to prioritise real winter sites
+alongside case B. Fixing the preloader bug would also likely *remove* lusion.co from winter
+entirely, taking the real sample to one.

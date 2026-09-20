@@ -14,12 +14,19 @@
 //     green and vanishes at any amount. Hue contrast cannot be relied on, so
 //     every petal pales toward its edge: the bloom always carries a light value
 //     the green does not have, whatever the hue;
-//   - up close each flower has to be a flower, with a form that belongs to a
-//     kind of tree. Three FORMS are built, for Taste to choose between or keep:
-//       blossom   open five-petalled flowers in a rounded corymb (cherry, apple)
-//       magnolia  a few large upright goblets                    (magnolia, tulip tree)
-//       wisteria  long hanging racemes, tapering to buds         (wisteria, laburnum)
-//     A form is a property of the tree; one tree carries one form.
+//   - up close each flower has to be a flower. Three bloom GRAMMARS are built
+//     (Lead ruling L3, docs/briefs/BLOOM-SYSTEM-RULINGS.md):
+//       cluster    many small open blossoms grouped over a dome
+//       statement  fewer, larger upright flowers
+//       pendant    hanging, tapering clusters
+//     GRAMMAR, never species: Plants makes a stylised botanical translation and
+//     does not classify trees. The grammars were first named after real trees,
+//     and were renamed because a name like that eventually gets a future agent
+//     trying to make the tree BE one. (LEGACY_GRAMMAR below maps old -> new so
+//     older renders and URLs stay readable.)
+//     A grammar is a property of the tree; one tree carries one. WHICH one is
+//     not in the DNA (L1): it is chosen from the grammars compatible with the
+//     tree's morphology, by the seed, on its own stream — see chooseGrammar.
 //
 // Fruit carries accent colour that is CONCENTRATED (docs/BOTANICAL-DNA.md): few
 // and large. V0's fruit was near-invisible at any size, so this is deliberately
@@ -130,10 +137,10 @@ function flowerParts(r, col, o) {
   return parts;
 }
 
-const FORMS = {
+const GRAMMARS = {
   // Open five-petalled flowers packed over a dome. The dome is the mass; the
   // flowers overlap, so the cluster is one pale mound and not nine separate discs.
-  blossom(r, col, s) {
+  cluster(r, col, s) {
     const parts = [];
     const n = 8;
     for (let i = 0; i < n; i++) {
@@ -149,9 +156,9 @@ const FORMS = {
     return { parts, centre: new THREE.Vector3(0, 0.02 * s, 0), hang: false };
   },
 
-  // A few LARGE upright goblets: two whorls, barely open. The boldest form at
+  // A few LARGE upright goblets: two whorls, barely open. The boldest grammar at
   // thumbnail size — one flower is nearly the size of a leaf.
-  magnolia(r, col, s) {
+  statement(r, col, s) {
     const parts = [];
     const n = r() < 0.45 ? 3 : 2;
     for (let i = 0; i < n; i++) {
@@ -169,10 +176,10 @@ const FORMS = {
 
   // A hanging raceme. Built along +Y; the builder points +Y at the GROUND.
   // Open florets at the top, tapering to tight, deeper-coloured buds at the tip
-  // — the taper is what makes it read as wisteria and not as a bottle-brush.
-  wisteria(r, col, s) {
+  // — the taper is what makes it read as a raceme and not as a bottle-brush.
+  pendant(r, col, s) {
     // First attempt was ONE thin raceme per site and read as a string of beads.
-    // Wisteria hangs in bunches, and the raceme is a full column of overlapping
+    // Pendant bloom hangs in bunches, and each raceme is a full column of overlapping
     // florets — so: three racemes of unequal length from one point, more and
     // larger florets, and buds that are a deeper tone of the SAME colour (the
     // throat colour made them maroon, which read as dead flowers).
@@ -208,7 +215,45 @@ const FORMS = {
   },
 };
 
-export const FLOWER_FORMS = Object.keys(FORMS);
+export const BLOOM_GRAMMARS = Object.keys(GRAMMARS);
+
+// The first names, kept ONLY so older render filenames and URLs stay readable.
+export const LEGACY_GRAMMAR = { blossom: 'cluster', magnolia: 'statement', wisteria: 'pendant' };
+
+/**
+ * Which grammars can grow convincingly on which morphology. TASTE OWNS THIS
+ * TABLE (ruling L2) and rules on it after looking at real geometry. `morphology`
+ * has exactly one value today — 'broad', hardcoded in analysis — so the table
+ * has one row; it is a real table anyway because it is the extension point.
+ * `pendant` x `broad` is awaiting Taste's explicit ruling: if it is ruled out,
+ * delete it from this row and pendant is dead code until a pendulous morphology.
+ */
+export const GRAMMAR_COMPAT = {
+  broad: ['cluster', 'statement', 'pendant'],
+};
+
+export function compatibleGrammars(morphology) {
+  return GRAMMAR_COMPAT[morphology] ?? GRAMMAR_COMPAT.broad;
+}
+
+/**
+ * A stable index from the seed ALONE — its own stream. It must not advance any
+ * shared RNG: if it did, adding or removing a grammar would re-roll every
+ * downstream draw and every existing tree would change. Same seed (FNV-1a over
+ * the domain) -> same grammar, always.
+ */
+export function stableIndex(seed, n, salt = 0x9e3779b9) {
+  let h = ((seed >>> 0) ^ salt) >>> 0;
+  h = Math.imul(h ^ (h >>> 16), 0x85ebca6b);
+  h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
+  h = (h ^ (h >>> 16)) >>> 0;
+  return n > 0 ? h % n : 0;
+}
+
+export function chooseGrammar(morphology, seed) {
+  const list = compatibleGrammars(morphology);
+  return list[stableIndex(seed, list.length)];
+}
 
 /** Petal palette from the site's two colours. `grade` is the environment's. */
 function flowerPalette(r, primary, secondary, opts) {
@@ -232,10 +277,10 @@ function flowerPalette(r, primary, secondary, opts) {
 }
 
 /** One cluster variant: merged, soft-normalled, double-faced. */
-function flowerClusterGeometry(r, form, primary, secondary, opts) {
+function flowerClusterGeometry(r, grammar, primary, secondary, opts) {
   const { size = 1, soft = 0.5 } = opts;
   const col = flowerPalette(r, primary, secondary, opts);
-  const built = (FORMS[form] || FORMS.blossom)(r, col, size);
+  const built = (GRAMMARS[grammar] || GRAMMARS.cluster)(r, col, size);
   if (built.spine) {
     const st = new THREE.CylinderGeometry(0.008 * size, 0.014 * size, built.spine, 4, 1, true);
     st.translate(0, built.spine / 2, 0);
@@ -337,7 +382,7 @@ export function chooseBloomSites(spots, r, opts = {}) {
  */
 export function buildFlowers(spots, r, opts = {}) {
   const {
-    form = 'blossom', amount = 'medium', fraction = null,
+    grammar = 'cluster', amount = 'medium', fraction = null,
     primary = 0xf7a6b8, secondary = 0xe87b92,
     variants = 3, size = 1, grade = null, pale = 0.42, lift = 0, soft = 0.5,
     proud = 0.5,            // how far a bloom stands off its twig: the radius of the leaf ball under it
@@ -349,7 +394,7 @@ export function buildFlowers(spots, r, opts = {}) {
   if (!chosen.length || primary == null) return { group, taken: new Set(), stats: { clusters: 0, triangles: 0, ms: 0 } };
 
   const geos = [];
-  for (let v = 0; v < variants; v++) geos.push(flowerClusterGeometry(r, form, primary, secondary, { size, grade, pale, lift, soft }));
+  for (let v = 0; v < variants; v++) geos.push(flowerClusterGeometry(r, grammar, primary, secondary, { size, grade, pale, lift, soft }));
   const hang = !!geos[0].userData.hang;
   const mat = matte('flower-matte-v1');
 
@@ -397,7 +442,7 @@ export function buildFlowers(spots, r, opts = {}) {
   });
   return {
     group, taken,
-    stats: { form, clusters: chosen.length, triangles: Math.round(triangles), drawCalls: group.children.length, ms: Math.round(performance.now() - t0) },
+    stats: { grammar, clusters: chosen.length, triangles: Math.round(triangles), drawCalls: group.children.length, ms: Math.round(performance.now() - t0) },
   };
 }
 
