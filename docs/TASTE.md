@@ -125,6 +125,19 @@ place by being observed, not assumed.
   reads as savanna or parasol at any width, while a domed one stays deciduous even when
   very broad — tested at `rx 3.1 / ry 2.05`, which is generous and still ours. So buy
   air with width, never by flattening.
+- **Blossom must be LIGHTER in value than the foliage it sits in.** Contrast against
+  the leaves is what makes flower colour legible — but bought in the dark direction it
+  fails: a flower darker than its foliage reads as a hole punched in the canopy, and no
+  amount of chroma rescues it. Real blossom is nearly always the lighter thing — white,
+  pink, pale lilac. Tested across eleven hues on one tree: pale pink at `abundant` was
+  the most beautiful in the set, navy at the same amount the ugliest. A dark brand
+  colour should arrive as a tint of itself, not as itself.
+- **A flower reads as a flower because of its internal value range, not its hue** —
+  pale outer petal, deeper throat, warm eye. Flatten it to one saturated tone with a
+  cold centre and it becomes a paper shape, however correct the colour.
+- **Ornament must never outweigh the thing it ornaments.** At `abundant`, green stays
+  the dominant hue of the tree; the moment flowers bury the foliage it stops being a
+  flowering tree and becomes a coloured one, which breaks the family.
 - **A mass in the canopy has to exist in the branches first.** Painting lobes of
   foliage over a structure makes the two disagree — leaves where no twig is — and that
   is what reads as plastic scatter. But growing twigs into an *even* volume is the

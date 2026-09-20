@@ -388,7 +388,10 @@ if (WINTER) {
   // L6: the local stage. `?contrast=0` turns it off, for the A/B.
   const contrast = foliageContrast(spots, bloomSites, {
     primary: FC, secondary: FC2, pale: q.has('pale') ? num('pale', 0) : null, lift: num('lift', 0), grade: bloomGrade,
-    strength: num('contrast', 1), radius: num('contrastR', 1.35),
+    foliageGrade: leafGrade,
+    // No fallback here ON PURPOSE: the radius is ruled in flowers.js (0.85). This
+    // caller used to pass 1.35 — the rejected value — so the ruled one never ran.
+    strength: num('contrast', 1), radius: q.has('contrastR') ? num('contrastR', 0.85) : undefined,
   });
   contrastStats = { target: +contrast.target.toFixed(2), flowerL: contrast.flowerL, foliageL: contrast.foliageL };
 
@@ -449,8 +452,12 @@ if (P.showGround) {
     lo: gradeGround(T.lo), mid: gradeGround(T.mid), hi: gradeGround(T.hi),
     soilHi: gradeGround(T.soilHi), soilLo: gradeGround(T.soilLo),
   };
-  scene.add(buildIsland(r, terrain));
-  scene.add(buildGrass(r, uniforms, { ...terrain, detail: 0.6 }));
+  // Its OWN stream. On the shared one the lawn came after the foliage branches,
+  // which draw different amounts — so the grass changed with leaves, flowers or
+  // winter, which is how a debug toggle ends up 'moving' something it never touched.
+  const groundRng = rng(P.seed * 13 + 505);
+  scene.add(buildIsland(groundRng, terrain));
+  scene.add(buildGrass(groundRng, uniforms, { ...terrain, detail: 0.6 }));
 }
 if (P.showCloud) {
   const g = new THREE.BufferGeometry().setFromPoints(skel.cloud);

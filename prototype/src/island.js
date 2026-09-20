@@ -192,6 +192,14 @@ export function buildIsland(r, params = {}) {
   sideCol.push(soilLo.r, soilLo.g, soilLo.b);
   const last = (LV.length - 1) * SSEG;
   for (let i = 0; i < SSEG; i++) sideIdx.push(last + i, tipI, last + ((i + 1) % SSEG));
+  // A CAP under the turf. The turf's rim (0.995) and this body's top ring (1.01)
+  // do not share triangles, so between them there is a thin open slot all the way
+  // round; with the body open at the top, anything seen through it was sky. Now
+  // it is soil. Wound like everything else here and flipped with it: faces UP.
+  const capI = sidePos.length / 3;
+  sidePos.push(0, -0.02, 0);
+  sideCol.push(soilHi.r, soilHi.g, soilHi.b);
+  for (let i = 0; i < SSEG; i++) sideIdx.push(i, (i + 1) % SSEG, capI);
 
   const sideGeo = new THREE.BufferGeometry();
   sideGeo.setAttribute('position', new THREE.Float32BufferAttribute(sidePos, 3));

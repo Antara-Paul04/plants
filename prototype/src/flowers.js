@@ -118,19 +118,22 @@ function paintFlat(g, color) {
  * which is a flower's centre and cannot be a pupil. `round` is kept for the A/B.
  */
 function eyeGeometry(r, radius, shape = 'star') {
+  const a0 = r() * Math.PI * 2;   // drawn for BOTH shapes, so ?eye=round|star is a clean A/B
   if (shape === 'round') {
     const e = new THREE.SphereGeometry(radius, 7, 4);
     e.scale(1, 0.7, 1);
     e.translate(0, radius * 0.35, 0);
     return e;
   }
-  const pts = 5, R = radius * 1.55, ri = radius * 0.62, hgt = radius * 0.7;
-  const pos = [0, hgt, 0], idx = [];
-  const a0 = r() * Math.PI * 2;
+  const pts = 5, R = radius * 1.95, ri = radius * 0.78, hgt = radius * 0.8;
+  // Lifted clear of the petal claws, which converge on the flower's origin: seated
+  // AT the origin the star intersected them and showed as cut-up star outlines.
+  const y0 = radius * 0.85;
+  const pos = [0, y0 + hgt, 0], idx = [];
   for (let i = 0; i < pts * 2; i++) {
     const a = a0 + (i / (pts * 2)) * Math.PI * 2;
     const rad = i % 2 === 0 ? R : ri;
-    pos.push(Math.cos(a) * rad, i % 2 === 0 ? hgt * 0.15 : hgt * 0.45, Math.sin(a) * rad);
+    pos.push(Math.cos(a) * rad, y0 + (i % 2 === 0 ? hgt * 0.15 : hgt * 0.45), Math.sin(a) * rad);
   }
   // Wound to face +Y (up the flower's axis): (centre, next, this).
   for (let i = 0; i < pts * 2; i++) idx.push(0, 1 + ((i + 1) % (pts * 2)), 1 + i);
@@ -195,7 +198,9 @@ const GRAMMARS = {
       const m = frame(dir, UP).multiply(new THREE.Matrix4().makeRotationY(r() * 6.28));
       m.setPosition(dir.clone().multiplyScalar((i === 0 ? 0.1 : 0.2) * s));
       const len = 0.44 * s * (i === 0 ? 1.08 : rr(r, 0.78, 0.95));
-      const ps = flowerParts(r, col, { petals: 6, inner: 3, open: 0.62, length: len, width: 0.6, cup: 0.36, eye: 0.05 * s, rows: 6, wide: true });
+      // No eye: the inner whorl closes over the axis, so a centre is never seen — and
+      // the star's arms pierced the goblet wall from inside.
+      const ps = flowerParts(r, col, { petals: 6, inner: 3, open: 0.62, length: len, width: 0.6, cup: 0.36, eye: 0, rows: 6, wide: true });
       for (const p of ps) { p.applyMatrix4(m); parts.push(p); }
     }
     return { parts, centre: new THREE.Vector3(0, 0.2 * s, 0), hang: false };
@@ -315,7 +320,12 @@ function flowerPalette(r, primary, secondary, opts) {
   const body = new THREE.Color(primary);
   // Lightness is read BEFORE the per-variant jitter, so every variant of one
   // tree's bloom agrees about how solid it is.
-  const petalL = body.getHSL({}).l;
+  // Read in sRGB, EXPLICITLY. three's colours are linear working-space values and
+  // getHSL() defaults to that space, where a mid-tone's lightness is far lower
+  // (#8a9bd0 reads 0.44 linear, 0.68 sRGB). PETAL_FLOOR is sRGB HSL, so a linear
+  // read put a dead zone under the ramp and rendered most real mid-light petals
+  // SOLID. It hid because every colour judged by eye sat at one end of the ramp.
+  const petalL = body.getHSL({}, THREE.SRGBColorSpace).l;
   const pale = opts.pale ?? paleFor(petalL);
   body.offsetHSL(rr(r, -0.012, 0.012), 0, rr(r, -0.025, 0.025));
   if (lift > 0) {
@@ -334,15 +344,20 @@ function flowerPalette(r, primary, secondary, opts) {
   let centre;
   if (secondary != null) centre = new THREE.Color(secondary);
   else {
-    const h = body.getHSL({});
-    centre = new THREE.Color().setHSL(h.h, h.s * 0.7, h.l < 0.55 ? Math.min(h.l + 0.35, 0.9) : Math.max(h.l - 0.35, 0.18));
+    const h = body.getHSL({}, THREE.SRGBColorSpace);
+    centre = new THREE.Color().setHSL(h.h, h.s * 0.7, h.l < 0.55 ? Math.min(h.l + 0.35, 0.9) : Math.max(h.l - 0.35, 0.18), THREE.SRGBColorSpace);
   }
   // A small warm bias, so a centre reads as pollen rather than as paint. Taste's dial.
   const eye = centre.clone().lerp(new THREE.Color(0xf3cf5b), opts.eyeWarm ?? 0.14);
   // The claw: a deeper tone of the petal itself, with a hint of the centre only
   // where the petal is light enough to take a gradient. A dark petal stays solid.
-  const throat = body.clone().offsetHSL(0, 0.03, -0.07).lerp(centre, 0.22 * (pale / PALE_MAX));
-  const edge = body.clone().lerp(new THREE.Color(0xffffff), pale);
+  // SOLID IS NOT FLAT. With no gradient at all a dark bloom lost its petals and
+  // the cluster became one blob. So a solid petal is still MODELLED — a deeper
+  // claw, an edge a shade lighter — but strictly inside its own hue: lightness
+  // moves, nothing blends toward white, and the colour stays the site's.
+  const solid = 1 - pale / PALE_MAX;
+  const throat = body.clone().offsetHSL(0, 0.03, -0.07 - 0.05 * solid).lerp(centre, 0.22 * (1 - solid));
+  const edge = body.clone().offsetHSL(0, 0, 0.055 * solid).lerp(new THREE.Color(0xffffff), pale);
   for (const c of [body, throat, edge, eye]) if (grade) grade(c);
   return { body, throat, edge, eye, pale, petalL, eyeShape: opts.eyeShape ?? 'star' };
 }
@@ -425,10 +440,11 @@ export function pickSites(spots, r, opts = {}) {
   for (const s of spots) radMax = Math.max(radMax, s.rad ?? 0);
   const scored = [];
   spots.forEach((s, i) => {
+    const jitter = rr(r, -0.08, 0.08);   // drawn for EVERY site: an exclusion must never shift the stream
     if (exclude && exclude.has(i)) return;
     const d = new THREE.Vector3((s.pos.x - c.x) / (e.x || 1), (s.pos.y - c.y) / (e.y || 1), (s.pos.z - c.z) / (e.z || 1));
     const field = noise3(s.pos.x * freq + ox, s.pos.y * freq + oy, s.pos.z * freq + oz);
-    const score = fieldW * field + outer * d.length() + (s.tip ? 0.18 : 0) - low * d.y + old * ((s.rad ?? 0) / radMax) + rr(r, -0.08, 0.08);
+    const score = fieldW * field + outer * d.length() + (s.tip ? 0.18 : 0) - low * d.y + old * ((s.rad ?? 0) / radMax) + jitter;
     scored.push({ i, score });
   });
   const want = Math.max(1, Math.round(spots.length * fraction));
@@ -546,7 +562,7 @@ const lstar = (c) => 116 * Math.cbrt(Math.max(0.2126 * c.r + 0.7152 * c.g + 0.07
  */
 export function foliageContrast(spots, bloomSites, opts = {}) {
   const {
-    primary, secondary = null, pale = null, lift = 0, grade = null,
+    primary, secondary = null, pale = null, lift = 0, grade = null, foliageGrade = grade,
     greens = [0x86c440, 0xa6d84f, 0x63ad3a],
     radius = 0.85, lighten = 1.34, deepen = 0.72, strength = 1,   // 1.35 reached most of a medium crown: a grade, not a stage
   } = opts;
@@ -555,7 +571,7 @@ export function foliageContrast(spots, bloomSites, opts = {}) {
   const col = flowerPalette(() => 0.5, primary, secondary, { pale, lift, grade });
   const flowerL = lstar(col.body.clone().lerp(col.edge, 0.35));
   let foliageL = 0;
-  for (const h of greens) { const c = new THREE.Color(h); if (grade) grade(c); foliageL += lstar(c) / greens.length; }
+  for (const h of greens) { const c = new THREE.Color(h); if (foliageGrade) foliageGrade(c); foliageL += lstar(c) / greens.length; }
   const sep = flowerL - foliageL;
   // How hard to push: a flower far darker than the leaf gets the full lighten;
   // one only a little lighter gets a partial deepen. Nothing is ever pushed the
@@ -675,8 +691,7 @@ function fruitGeometry(r, color, opts) {
     pts.push(new THREE.Vector2(Math.max(x, 0.0001) * radius, y * radius));
   }
   const body = new THREE.LatheGeometry(pts, 10);
-  body.deleteAttribute('uv');
-  body.computeVertexNormals();
+  body.deleteAttribute('uv');   // keep Lathe's own normals: analytic and continuous across the seam
   const base = new THREE.Color(color);
   const blush = base.clone().offsetHSL(0.035, -0.04, 0.13);
   const deep = base.clone().offsetHSL(-0.01, 0.04, -0.1);
@@ -688,7 +703,8 @@ function fruitGeometry(r, color, opts) {
   for (let i = 0; i < P.count; i++) {
     const y = P.getY(i) / radius;
     // A blush on one cheek and a deeper tone underneath: not one flat swatch.
-    const cheek = 0.5 + 0.5 * (Nn.getX(i) * Math.cos(bd) + Nn.getZ(i) * Math.sin(bd));
+    const nl = Math.hypot(Nn.getX(i), Nn.getY(i), Nn.getZ(i)) || 1;
+    const cheek = 0.5 + 0.5 * ((Nn.getX(i) * Math.cos(bd) + Nn.getZ(i) * Math.sin(bd)) / nl);
     c.copy(deep).lerp(base, smoothstep(-0.9, 0.1, y)).lerp(blush, cheek * 0.55 * smoothstep(-0.3, 0.7, y));
     col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b;
   }
@@ -799,8 +815,7 @@ function budGeometry(r, col, scaleCol, opts = {}) {
     pts.push(new THREE.Vector2(Math.max(rad, 0.0002), t * length));
   }
   const g = new THREE.LatheGeometry(pts, 7);
-  g.deleteAttribute('uv');
-  g.computeVertexNormals();
+  g.deleteAttribute('uv');   // keep Lathe's own normals (see fruitGeometry)
   const P = g.attributes.position, out = new Float32Array(P.count * 3), c = new THREE.Color();
   for (let i = 0; i < P.count; i++) {
     const t = P.getY(i) / length;

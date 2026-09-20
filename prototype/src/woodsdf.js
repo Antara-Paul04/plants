@@ -63,10 +63,21 @@ function frames(pts) {
 }
 
 /**
+ * The build, as a GENERATOR that yields at cheap, frequent checkpoints (after
+ * every capsule segment of the field fill, after every z-slab of the marching
+ * cubes). It is the single implementation; the two drivers below only differ in
+ * what they do at a yield.
+ *
+ * Why: this build is 1.5-2.5 s and, once the tree is in the product, it is on the
+ * critical path of a page with a "growing" state. Run in one go it freezes the
+ * tab for that long. A worker would be the other answer, but module workers do
+ * not see the page's import map, and this file leans on three and its
+ * marching-cubes tables — time-slicing costs nothing and changes no output.
+ *
  * @returns { geometry, cuts } — cuts maps each limb to the number of its chain
  *   nodes covered by the field, so the tube mesher can pick up where it stops.
  */
-export function buildThickWood(limbs, r, opts = {}) {
+function* thickWoodSteps(limbs, r, opts = {}) {
   const { voxel = 0.026 } = opts;
   const h = voxel;
   const t0 = performance.now();
@@ -208,6 +219,7 @@ export function buildThickWood(limbs, r, opts = {}) {
         }
       }
       z0 += len;
+      yield 'field';
     }
     for (const idx of touched) {
       const d = tmp[idx];
@@ -241,7 +253,9 @@ export function buildThickWood(limbs, r, opts = {}) {
   };
   const ga = [0, 0, 0], gb = [0, 0, 0];
 
-  for (let iz = 0; iz < nz - 1; iz++) for (let iy = 0; iy < ny - 1; iy++) {
+  for (let iz = 0; iz < nz - 1; iz++) {
+   if (iz) yield 'mesh';
+   for (let iy = 0; iy < ny - 1; iy++) {
     let q = iy * sy + iz * sz;
     for (let ix = 0; ix < nx - 1; ix++, q++) {
       if (field[q] > BIG / 2) continue;
@@ -294,6 +308,7 @@ export function buildThickWood(limbs, r, opts = {}) {
         }
       }
     }
+   }
   }
 
   const geometry = new THREE.BufferGeometry();
@@ -307,4 +322,40 @@ export function buildThickWood(limbs, r, opts = {}) {
     fieldMs: Math.round(tField), totalMs: Math.round(performance.now() - t0),
   };
   return { geometry, cuts };
+}
+
+/** Synchronous driver: runs the build straight through. Same output as ever. */
+export function buildThickWood(limbs, r, opts = {}) {
+  const it = thickWoodSteps(limbs, r, opts);
+  for (;;) { const s = it.next(); if (s.done) return s.value; }
+}
+
+// A macrotask that is NOT a timer: timers are clamped to 4 ms when nested and to
+// a second or more in a background tab, which would turn a 2 s build into minutes.
+function nextTask() {
+  return new Promise((resolve) => {
+    const ch = new MessageChannel();
+    ch.port1.onmessage = () => { ch.port1.close(); resolve(); };
+    ch.port2.postMessage(0);
+  });
+}
+
+/**
+ * Time-sliced driver: works for `budgetMs` at a stretch, then hands the thread
+ * back so the page can paint and respond. `signal` abandons the build (a newer
+ * tree was asked for); it rejects with an AbortError.
+ */
+export async function buildThickWoodAsync(limbs, r, opts = {}) {
+  const { budgetMs = 10, signal = null } = opts;
+  const it = thickWoodSteps(limbs, r, opts);
+  let t = performance.now();
+  for (;;) {
+    const s = it.next();
+    if (s.done) return s.value;
+    if (performance.now() - t >= budgetMs) {
+      await nextTask();
+      if (signal && signal.aborted) throw new DOMException('tree build superseded', 'AbortError');
+      t = performance.now();
+    }
+  }
 }

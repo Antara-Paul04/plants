@@ -574,3 +574,35 @@ checked before/after, crown and turf unchanged. Renders:
 **Rule, now earned twice:** any hand-indexed mesh gets its facing MEASURED (share of
 triangles whose geometric normal points away from the form), not eyeballed from the hero
 angle.
+
+### A canopy of eyes — the flower centre and the pale edge, corrected (2026-09-20)
+
+The human, on a dark-accent tree: it read as dozens of eyes staring out of the canopy. Two
+renderer decisions of mine caused it, and both are reversed. Renders:
+`references/experiments/bloom-eye-and-pale-2026-09-20/` (`CLOSEUP-eye-old-vs-new.png` is the
+whole argument in one image).
+
+- **The centre is the site's, not the renderer's.** Analysis computes a centre colour on
+  purpose (driven away from the petal's lightness so the flower reads small) and delivers it as
+  `flowers.secondary`. The renderer painted every eye 82% fixed yellow regardless — a blue site
+  issued a yellow eye it never earned. The eye now follows the delivered centre, with a small
+  warm bias (`eyeWarm`, 0.14). A centre is only derived here when none arrives (the `?fc=`
+  debug path).
+- **Colour alone does not cure an eye.** A round bright dot concentric in a round dark disc is
+  how an eye is drawn, whatever its hue. The centre is now a small five-point STAMEN STAR,
+  which is a flower's centre and cannot be a pupil. It must sit clear of the petal claws: at
+  the flower's origin it intersected them and showed as cut-up outlines.
+- **`pale` is a function of the petal's own lightness, not a constant** (human: "solid for only
+  dark colours and the gradient thingy for the lighter colours"). 0 at l ≤ 0.40, 0.42 at
+  l ≥ 0.70, smoothstep between. The constant had been justified as buying value contrast for
+  cool accents; it bought it by destroying saturation, and turned a deep blue into a lavender
+  smudge. On a pale petal the same edge is right — solid pink is a poster. Physically: the pale
+  edge is a highlight, and a highlight belongs on a light, thin surface. **The dark end is
+  `PETAL_FLOOR` in `analysis/lib/mapping.js`; the two numbers move together.**
+- **Solid is not flat.** With no gradient at all a dark bloom lost its petals and became a
+  blob. A solid petal is still modelled — deeper claw, an edge a shade lighter — strictly
+  inside its own hue. Lightness moves; nothing blends toward white.
+- **`?fc=` / `?fc2=` bypass the analysis conditioner**, so a URL-driven render is not
+  representative of a real site unless already-conditioned colours are passed. Conditioned
+  corpus pairs used for judging: github `#1b20a0`/`#8a8de4`, irs `#1671b6`/`#98c5e7`, gov.uk
+  `#2d7abc`/`#b0d0ec`, tamu `#ac2020`/`#e79898`, raycast `#c7273a`/`#edb3ba`.

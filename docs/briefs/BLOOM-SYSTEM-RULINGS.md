@@ -406,3 +406,113 @@ This is not a reason to delay L8. It *is* a reason to treat "it looks good on gw
 evidence, and a reason for the test session's site hunt to prioritise real winter sites
 alongside case B. Fixing the preloader bug would also likely *remove* lusion.co from winter
 entirely, taking the real sample to one.
+
+---
+
+# TASTE RULINGS — 2026-09-20. Judged against real geometry, not descriptions.
+
+Recorded here because they are decisions, not opinions, and three of them move authority
+off me and onto the person who should hold it.
+
+## T1 — `pendant` x `broad`: COMPATIBLE. All three grammars stay.
+
+**GRAMMAR_COMPAT.broad is now a Taste ruling, not Lead authority.** The comment in
+`flowers.js` must be updated to say so — it currently says the opposite.
+
+The reasoning is specific rather than permissive, and belongs in the file: **a broad crown
+has a wide horizontal underside, which is exactly what hanging clusters need somewhere to
+hang from.** A columnar or conical morphology would be the incompatible one. Broad is
+arguably pendant's *best* host, not its marginal one. The racemes attach under the limbs and
+at the rim, taper correctly, and read as one plant with the foliage. It is also the most
+distinctive of the three at a glance, which matters for the middle collapse.
+
+**Guard:** it reads strongly of wisteria. Fine as FORM — laburnum and Indian bean tree do the
+same thing — but the L3 naming discipline matters more here than anywhere else. Nobody should
+ever tune this toward *being* a wisteria.
+
+## T2 — The ladder: `few` PASSES, `abundant` PASSES, `medium` FAILS.
+
+At 140 px `medium` reads as a green tree with a pink rim. That is not "unmistakably a
+flowering tree" and it sits far too close to `few`.
+
+**I confirm this independently, and I had wrongly signed it off.** I verified the wreath was
+gone at *abundant* and let that stand for the whole ladder. It does not. A fresh cache-busted
+render of `medium` shows a solid green centre third.
+
+**The mechanism, which Taste could not see from outside the code:**
+
+```
+medium: { atBloom: 0.42, nearTo: 0.55, nearRadius: 1.1, elsewhere: 0.88 }
+```
+
+`atBloom` and `nearTo` only bite where there *is* bloom. At a 0.27 fraction most of the
+crown's centre is neither — it is `elsewhere`, and **`elsewhere: 0.88` is a 12% reduction,
+which is nothing.** Cross that with visual-3d's measurement that only **7 of 146** attachment
+points face the camera at the centre of the crown, and the middle of a medium tree is almost
+entirely full-size non-flowering foliage. The wreath at medium is arithmetic, not bad luck.
+
+**Ordered fix, Taste's, endorsed — re-judge between each step:**
+1. Make the reduction bite in the crown's middle third. `elsewhere` is the lever, not the
+   fraction. "Clearly reduced" must mean visibly see-through to bloom in the centre.
+2. *Then* set medium's fraction to **0.40**, not 0.33 — 0.27→0.33 is a 22% move across a gap
+   currently reading as near-zero.
+3. Re-judge at 140 px before touching anything else. **If step 1 lands, 0.40 may prove too
+   HIGH — and that is the good outcome**, because the ladder should be spaced by foliage
+   relationship rather than by count.
+
+`few` 0.10 and `abundant` 0.62 are not in question.
+
+## T3 — Accents: PASS. Blue is not weaker than red.
+
+Judged at 140 px across the conditioned set. Conditioned blues hold their own; red is
+marginally punchier because red-green is a stronger opposition, but the gap is small. For 18
+of 56 sites, a pass.
+
+**The dependency belongs in the file: blue passes BECAUSE OF THE CONDITIONER.** Raw `#1b20a0`
+navy fails badly — a dark flower reads as a hole punched in the canopy and no amount of chroma
+rescues it. Blossom must be lighter in value than the foliage it sits in. So `conditionFlower`
+is not a nicety, **it is what makes a third of the corpus work**, and anything that bypasses
+it (`?fc=`, `?fc2=`) is not merely "unrepresentative" — it is the failing case.
+
+Taste explicitly prefers L6 to its own earlier proposal, because L6 preserves the brand colour
+instead of tinting it.
+
+## T4a — Winter: PASS, with one fix.
+
+Reads sculptural, intentional and specific; not empty, not failed. **Berries on bare tan wood
+is the strongest winter image in the set** and outperform buds — denser, more obviously
+ornament. The ornament also flatters the bare limbs, giving the crown something to read that
+the naked structure does not yet have on its own.
+
+**THE FIX — `K4-buds-cream` fails at 140 px.** Pale buds vanish against both sky and tan wood;
+it is very nearly a bare tree, which is exactly the "as though analysis failed" outcome the
+requirement forbids — **and it fires on precisely the achromatic sites that already have the
+weakest identity** (see L14). `K3-buds-navy` has the mirror problem: dark buds read as blight
+rather than growth. Pale ornament needs more of it, a shift to the berry form, or both.
+
+## T4b — Flower size: NO CHANGE. The unattributed note is withdrawn.
+
+"Way too big" was Taste's own remark, from the blue github sheet, and **Taste has revised it
+having looked again.** Individual blooms are comparable to individual leaves, which is right;
+clusters are 2–3x a leaf, which is also right — a lilac or hydrangea truss is bigger than its
+leaf. What it was reacting to was dark saturated blue making each bloom read as a heavy blob:
+**a value problem, which L6 is the correct fix for.** `statement` is explicitly "fewer,
+larger", so if anything reads oversized it will be that grammar, and it is supposed to.
+
+Worth recording as process: this note reached visual-3d second-hand and unattributed, neither
+of us could corroborate it, and **nobody acted on it**. That was the right call — it turned
+out to be a correct observation with a wrong diagnosis, and acting on it would have shrunk the
+flowers instead of fixing the value.
+
+## Still open after this round
+
+- **Gate 1 remains REVISE on crown ramification.** Criterion with numbers is in
+  `references/tree-style/README.md`. This is the same ceiling as L6: the tree runs out of twig.
+- **Winter's berry path should be reachable** — Taste's view, and I agree: winter's whole
+  colour language is the berries, and buds alone are the weakest variants. A state that can
+  only ever express itself through its two weakest ornament forms is built on its worst case.
+  Whether `MIN_FRAC` or the winter colourfulness ceiling moves is **analysis's call**.
+- **The achromatic collapse (L14) is analysis's**, and Taste frames it usefully: *boring is a
+  property of the MAPPING, not the tree.* It means the site's richness found no channel to
+  arrive through. openai.com being light and species-in-pieces.com being dark and receiving
+  the same petal is the same bug as Linear was.
