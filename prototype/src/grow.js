@@ -508,8 +508,13 @@ const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8
  *                   best and worst from. Reported, never applied — see where it is computed
  *          update — null, or update(t) for a tree with per-frame work (autumn's leaf fall)
  */
-// 0 until the identity proof and a look on a slow device are both in; `true` is the ship.
-const WOOD_WORKERS_DEFAULT = 0;
+// The wood field is built in WORKERS wherever the host slices the build (the product).
+// Lead's ruling, 2026-09-21, on the identity proof (48 of 48 paths bit-identical, every
+// worker failure ending in the same tree with nothing waiting) and WITHOUT a run on a real
+// slow device, which nobody had: the downside is bounded at the main-thread build, because
+// the main thread builds slabs whenever no worker is ready to. `?woodWorkers=0` is that
+// build, always.
+const WOOD_WORKERS_DEFAULT = true;
 
 export async function growTree(M, q, env, opts = {}) {
   const { uniforms = { time: { value: 0 } }, budgetMs = Infinity, signal = null, onGround = null, leavesDefault = '0' } = opts;
@@ -803,7 +808,7 @@ export async function growTree(M, q, env, opts = {}) {
     const bloomSites = FLOWERS === 'none' ? [] : F.chooseBloomSites(spots, flowerRng, {
       amount: FLOWERS, mul: num('bloomMul', 1), fraction: q.has('bloom') ? num('bloom', 0.33) : null, exclude: keepOff,
       bands: q.has('bands') ? q.get('bands').split(',').map(Number) : undefined, tip: q.has('tipBonus') ? num('tipBonus', 0.18) : undefined,
-      even: q.has('bloomEven') ? q.get('bloomEven') !== '0' : undefined,   // EXPERIMENT, off by default: a stratum's share taken spread out (flowers.js pickSites)
+      even: q.has('bloomEven') ? q.get('bloomEven') !== '0' : undefined,   // `bloomEven=0`: the selection as it was (flowers.js pickSites, `even`)
       field: q.has('bloomField') ? num('bloomField', 0.8) : undefined, freq: q.has('bloomFreq') ? num('bloomFreq', 0.42) : undefined,   // debug: the drift field's weight and scale
     });
 
@@ -911,16 +916,19 @@ export async function growTree(M, q, env, opts = {}) {
     });
   }
 
-  // THE CROWN'S FACES DIFFER, and nothing about WHICH twigs flower can stop them: only
-  // about 5 of ~146 attachment points face the camera in the middle third of any view, so
-  // at a 40% bloom that is two twigs, give or take two — a bare-middled face is what a
-  // third of all faces look like under ANY selection (measured: today's, a flatter drift,
-  // a finer drift and a perfectly even pick all leave 2-4 of 48 faces with no bloom there).
-  // So the tree says which way it looks best. `faces.best` is the compass direction (radians,
-  // atan2(z, x) round the trunk) from which the most bloom sits face-on at mid-height;
-  // `faces.worst` the least. EXPOSED, NOT USED: where an orbit starts is the host's framing
-  // decision (Lead's ruling) — a photographer choosing a side of a sculpture — and the
-  // renderer only reports. null when the tree carries no bloom.
+  // THE CROWN'S FACES DIFFER. Only about 5 of ~146 attachment points face the camera in the
+  // middle third of any view, so at a 40% bloom a face's middle is two twigs, give or take
+  // two — and under today's selection 6 of 40 rendered faces (5 seeds x 8 views, medium)
+  // show under 10% bloom there, the debug page's default camera on seed 7 among them.
+  // Choosing the twigs more evenly (flowers.js `even`) halves that; it cannot end it.
+  // So the tree also says which way it looks best. `faces.best` is the compass direction
+  // (radians, atan2(z, x) round the trunk) from which the most bloom sits face-on at
+  // mid-height; `faces.worst` the least. It costs no render, and against the rendered probe
+  // it tracks a view's middle-third bloom at r = 0.70 (20 runs): opening on `best` rather
+  // than the default camera lifted the OPENING face's floor from 6.8% to 21.8%.
+  // EXPOSED, NOT USED: where an orbit starts is the host's framing decision (Lead's ruling)
+  // — a photographer choosing a side of a sculpture — and the renderer only reports.
+  // null when the tree carries no bloom.
   const faces = (() => {
     if (!dbgSpots || !dbgBloom || !dbgBloom.length) return null;
     const bx = new THREE.Box3(); for (const sp of dbgSpots) bx.expandByPoint(sp.pos);

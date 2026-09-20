@@ -1,0 +1,16 @@
+// After the two defaults were flipped: (1) the default product build uses workers and woodWorkers=0 does not, with the SAME wood;
+// (2) the default medium/abundant selection IS bloomEven=1, and bloomEven=0 IS what HEAD picked before the flip; few is untouched.
+import { chromium } from '/Users/antarapaul/Desktop/plants/analysis/node_modules/playwright-core/index.mjs';
+const browser = await chromium.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless: true });
+const run = async (base, path, fn, arg) => { const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } }); const page = await ctx.newPage(); const errs = []; page.on('pageerror', (e) => errs.push(String(e))); await page.goto(`${base}/${path}${path.includes('?') ? '&' : '?'}nocache=${Date.now()}`); const r = await page.evaluate(fn, arg); await ctx.close(); return { ...r, errs }; };
+const wood = async () => { while (!window.__wired) await new Promise((r) => setTimeout(r, 10)); const b = await window.__wired.tree.ready; const g = b.thick.geometry; let h = 2166136261 >>> 0; for (const k of ['position', 'normal', 'barkR']) { const u = new Uint8Array(g.attributes[k].array.buffer); for (let i = 0; i < u.length; i++) { h ^= u[i]; h = Math.imul(h, 16777619) >>> 0; } } return { hash: h.toString(16), how: g.userData.stats.how, workers: g.userData.stats.workers ?? null, bloom: (b.bloomSites || []).join(',') }; };
+const NEW = 'http://localhost:5188', OLD = 'http://127.0.0.1:5187';
+const d = await run(NEW, 'wired.html?site=gov.uk&hud=0', wood), m = await run(NEW, 'wired.html?site=gov.uk&hud=0&woodWorkers=0', wood), o = await run(OLD, 'wired.html?site=gov.uk&hud=0', wood);
+console.log(`product default: how=${d.how} workers=${d.workers} | woodWorkers=0: how=${m.how} | wood identical to each other: ${d.hash === m.hash} | and to the pre-flip snapshot: ${d.hash === o.hash}`, d.errs.concat(m.errs).filter((e) => !/AbortError/.test(e)));
+const sites = async () => { while (!window.__gate1) await new Promise((r) => setTimeout(r, 20)); return { bloom: window.__gate1.bloomSites.join(',') }; };
+for (const grade of ['few', 'medium', 'abundant']) { const q = `gate2.html?preset=bare&seed=7&flowers=${grade}&wind=0`;
+  const def = await run(NEW, q, sites), on = await run(NEW, q + '&bloomEven=1', sites), off = await run(NEW, q + '&bloomEven=0', sites), old = await run(OLD, q, sites);
+  console.log(`${grade.padEnd(8)} default==bloomEven=1: ${def.bloom === on.bloom} | bloomEven=0 == pre-flip default: ${off.bloom === old.bloom} | default changed vs pre-flip: ${def.bloom !== old.bloom}`); }
+{ const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } }); const page = await ctx.newPage(); const errs = []; page.on('pageerror', (e) => errs.push(String(e))); page.on('console', (mm) => { if (mm.type() === 'error' || /\[wood\]/.test(mm.text())) errs.push(mm.text().slice(0, 160)); });
+  await page.goto(`${NEW}/compare.html?nocache=${Date.now()}`); await page.waitForTimeout(15000); const n = await page.evaluate(() => document.querySelectorAll('canvas').length); console.log(`compare.html: ${n} canvases after 15 s, errors/wood warnings: ${errs.length ? errs.join(' | ') : 'none'}`); await ctx.close(); }
+await browser.close();

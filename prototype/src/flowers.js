@@ -512,17 +512,23 @@ export function pickSites(spots, r, opts = {}) {
     for (const g of groups.values()) { n += g.items.length; wn += g.items.length * (bands[g.band] ?? 1); }
     norm = wn > 0 ? n / wn : 1;
   }
-  // EVEN INSIDE A STRATUM (`even`). Only about 5 of ~146 attachment points face the camera
-  // in the middle third of any view, so at a 40% bloom a face's middle is two twigs give or
-  // take two: a LOTTERY, and a bare-middled face is what a third of all faces looked like.
-  // (That is the "wreath": averaged round the tree there is none — it was one seed judged
-  // from its worst face.) Stratifying finer cannot see a cone that narrow. What removes the
-  // lottery is taking a stratum's share SPREAD OUT: the best-scored twig first — so the
-  // drift field, the outer bias and the tip bonus still say where a stratum's bloom starts —
-  // and then, each time, the twig farthest from everything already taken. Over 8 seeds x 8
-  // faces, faces with NO bloom in the middle went 4 -> 1 of 64 and the worst face's share
-  // doubled. It draws nothing from the RNG, so nothing downstream of the selection moves.
-  // Still WHICH twigs flower; no flower moves (D8.5).
+  // EVEN INSIDE A STRATUM (`even`) — on for medium and abundant (BLOOM_FOLIAGE); `bloomEven=0`
+  // is the selection as it was.
+  // Only about 5 of ~146 attachment points face the camera in the middle third of any
+  // view, so at a 40% bloom a face's middle is two twigs give or take two: a LOTTERY. (That
+  // is the "wreath": averaged round the tree there is none — it was one seed judged from
+  // its worst face.) The strata already spread the bloom by sector and by height; inside a
+  // stratum the top SCORES win, and the drift field makes the top scores neighbours. So a
+  // stratum's share is taken SPREAD OUT instead: its best-scored twig first — the field, the
+  // outer bias and the tip bonus still say where a stratum's bloom starts — and then, each
+  // time, the twig farthest from everything already taken.
+  // RENDERED, 5 seeds x 8 views, bloom in the crown's middle third at 140px: the worst face
+  // of a tree rose in 9 of 10 seed x amount runs (medium 4.7 -> 8.0 over all seeds, mean of
+  // worsts 8.4 -> 13.8; abundant 7.7 -> 13.0) with the orbit's mean flat; faces under 10%
+  // went 6 -> 3 of 40. One tree's worst face got worse (seed 19, 12.9 -> 9.9). A flatter or
+  // a finer drift field, measured the same way, made two seeds worse each.
+  // It draws nothing from the RNG, so nothing downstream of the selection moves. Still
+  // WHICH twigs flower; no flower moves (D8.5).
   const spread = (g) => {
     if (g.length < 3) return g;
     const out = [g[0]], left = g.slice(1);
@@ -616,16 +622,17 @@ export const BLOOM_FOLIAGE = {
   //   - `nearTo` 0.55 -> 0.7, `nearRadius` 1.1 -> 0.8: at 40% bloom nearly every twig
   //     is "near" one, so the old values quietly thinned the WHOLE crown. These keep
   //     the crown mass the panel judged healthy (leaf cover 30%, unchanged).
-  //   - `even` (2026-09-21, EXPERIMENT — OFF here until it is measured and ruled on; ask for
-  //     it with `bloomEven=1`): a stratum's share is taken spread out, not as its top scores.
+  //   - `even` (2026-09-21; ON for medium and abundant by Lead's ruling, on the rendered
+  //     worst-face numbers AND a rendered pair — `bloomEven=0` is the selection as it was):
+  //     a stratum's share is taken spread out, not as its top scores.
   //     Medium's drift field makes a bare stretch ~1.2 across and a view's middle third is
   //     1.9, so the gap the field is DESIGNED to leave is the size of a face's middle. See
   //     pickSites. The drifts survive between strata; what goes is the empty face.
-  medium:   { atBloom: 0.42, nearTo: 0.7,  nearRadius: 0.8,  elsewhere: 0.75, outer: 0,    field: 0.8,  strata: 6, bands: [1, 1.4, 0.8] },
+  medium:   { atBloom: 0.42, nearTo: 0.7,  nearRadius: 0.8,  elsewhere: 0.75, outer: 0,    field: 0.8,  strata: 6, bands: [1, 1.4, 0.8], even: true },
   // Peak bloom: the whole tree is in the phase. The field is nearly flat here —
   // with a strong one the 38% of twigs NOT flowering were one contiguous leafy
   // patch, which read as a second, green plant standing in a pink one.
-  abundant: { atBloom: 0.26, nearTo: 0.5,  nearRadius: 0.8,  elsewhere: 0.72, outer: 0.1,  field: 0.35, strata: 6 },
+  abundant: { atBloom: 0.26, nearTo: 0.5,  nearRadius: 0.8,  elsewhere: 0.72, outer: 0.1,  field: 0.35, strata: 6, even: true },
 };
 
 /**

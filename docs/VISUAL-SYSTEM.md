@@ -958,12 +958,36 @@ Evidence, the probe and every number: `references/experiments/leafy-ramify-2026-
   leaf: properly, 5.2 -> 6.3. The `ramify=leafy` path and the foliage ladder's compensation exist,
   inert, and are not recommended on this evidence.
 - **What is wrong is that the crown's faces differ**, and for some sites the product's first frame
-  is the bad one. Bloom selection is stratified by compass sector and, separately, by height band —
-  not by both together, so a sector can flower high and low and leave its mid-height face, the
-  part that is face-on in the middle of a view, bare. That is the next hypothesis. OPEN.
+  is the bad one. ~~Bloom selection is stratified by compass sector and, separately, by height
+  band — not by both together.~~ **That sentence was false, and was mine:** `pickSites` already
+  stratifies by both together (6 sectors x 3 bands). What it did INSIDE a stratum was take the top
+  scores, and the drift field makes the top scores neighbours. Corrected before anything was built
+  on it; what followed is the next section.
 
+### Which twigs flower: even inside each stratum — DECIDED by Lead, the human to re-judge (2026-09-21)
 
-### The wood is built in slabs, and can be built in workers — EXPERIMENT, output-neutral (2026-09-21)
+Evidence, tables, the pairs and the instrument: `references/experiments/bloom-faces-2026-09-21/`.
+
+- **Why a face goes bare:** only ~5 of ~146 attachment points face the camera in the middle third
+  of any view — at a 40% bloom, two twigs give or take two — and `medium`'s drift field leaves bare
+  stretches ~1.2 across by design where a view's middle third is ~1.9. The gap the field exists to
+  make is the size of a face's middle.
+- **`even` (ON for medium and abundant; `bloomEven=0` is the selection as it was):** a stratum's
+  share is its best-scored twig, then each time the twig farthest from those already taken. Which
+  twigs, never where a flower sits (D8.5); no RNG draw; `few` untouched.
+- **Rendered, 5 seeds x 8 views, middle-third bloom at 140px:** the worst face rose in 9 of 10
+  seed x amount runs with the orbit's mean flat (medium: worst over all seeds 4.7 -> 8.0; faces
+  under 10%, 6 of 40 -> 3). One regression, stated: seed 19 medium 12.9 -> 9.9. A flatter or a finer
+  drift field, measured the same way, each made two seeds WORSE than today — the field was never
+  the lever.
+- **A cheap no-render proxy was retired:** two definitions of it disagreed about today's own count
+  and it tied a losing variant with the winner. Only the render counts (R12).
+- **The camera, measured and NOT wired:** `growTree` reports `faces.best` / `faces.worst`. It tracks
+  the rendered middle bloom at r = 0.70, and opening on `best` lifted the opening face's floor from
+  6.8% to 21.8% under the old selection — but only the opening; the orbit still passes the bare
+  face. Lead: wire it after `even` has been looked at, with its own look.
+
+### The wood is built in slabs, and in workers — output-neutral (2026-09-21)
 
 Evidence, instruments and every number: `references/experiments/wood-workers-2026-09-21/`.
 
@@ -971,8 +995,9 @@ Evidence, instruments and every number: `references/experiments/wood-workers-202
   The "non-yielding skeleton" diagnosis was visual-3d's own and was wrong; the worst single long
   task is `mountTree`'s synchronous part, which barely scales with CPU throttle (GPU-process wait).
 - **The field is a kernel with no `three` in it** (`woodfield.js`) run over z-SLABS — by the main
-  thread in slices, or by workers (`?woodWorkers=1`; OFF by default until it has run on a real slow
-  device). One implementation, the same mesh to the bit on every path: 48 of 48 against HEAD, and
+  thread in slices, or by workers — ON wherever the host slices the build, by Lead's ruling on the
+  identity proof and without a run on a real slow device, because the downside is bounded at the
+  main-thread build (`?woodWorkers=0`, always). One implementation, the same mesh to the bit on every path: 48 of 48 against HEAD, and
   every way a worker can fail still ends in the identical tree without waiting for anything.
 - **Nothing allocates the whole grid any more:** 329 MB of typed arrays for an ordinary tree became
   ~31 MB (main thread) or <= ~24 MB a worker. No instrument we have can see a tab killed for memory.

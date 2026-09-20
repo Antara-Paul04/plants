@@ -1,9 +1,11 @@
 # The wood field: slabs, workers, and what was actually slow — 2026-09-21
 
-**Status: EXPERIMENT, output-neutral.** Every path below builds the SAME tree to the last bit
-(proved, not assumed — see "Identity"). Workers are **off by default**
-(`WOOD_WORKERS_DEFAULT` in `prototype/src/grow.js`); `?woodWorkers=1` turns them on, in the
-product too. Code: `prototype/src/woodfield.js` (the kernel), `woodfield-worker.js`,
+**Status: output-neutral; workers ON by default since Lead's ruling (2026-09-21).** Every path
+below builds the SAME tree to the last bit (proved, not assumed — see "Identity"). The ruling was
+made on that proof and WITHOUT a run on a real slow device, which nobody had, because the downside
+is bounded at the main-thread build: the main thread builds slabs whenever no worker is ready to.
+`WOOD_WORKERS_DEFAULT` in `prototype/src/grow.js`; `?woodWorkers=0` is the main-thread build,
+always; the debug pages (straight-through builds) stay on the main thread unless asked. Code: `prototype/src/woodfield.js` (the kernel), `woodfield-worker.js`,
 `woodsdf.js` (setup, pool, drivers), and the sliced skeleton in `branching.js`.
 
 ## What was asked, and what was true
@@ -113,7 +115,7 @@ In-page, `Object.is` on every float, against git snapshots served on loopback:
   main thread — but that is four busy threads for several seconds on a shared laptop, and the
   spread says so. The honest claim: on a phone whose cores are all slow but are several, the wood
   phase should land near the 1x ratio; on a phone with one usable core it is the main thread's
-  time, plus nothing. **It wants one run on a real device before the default is flipped.**
+  time, plus nothing. **It still wants one run on a real device** — the default was flipped without one.
 - The 15–20 s seen on the product page is more than the build: this instrument reads ~5 s at 6x
   for the same trees. The rest is the page (shell, CDN, fonts, a cold cache), and is not here.
 
