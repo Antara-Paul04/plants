@@ -1,0 +1,6 @@
+A = step1/m27-else0.88-NOW
+B = step2/m40-else0.88
+C = step2/m40-else0.75
+D = step2/m40-else0.62
+E = step2/m33-else0.62
+F = step1/m27-else0.62

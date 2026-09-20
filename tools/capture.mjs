@@ -25,6 +25,12 @@
 // That visit also WEIGHS the page (time to domcontentloaded, DOM nodes, scripts,
 // transfer size) into results.json, so failures have numbers too.
 //
+// Add --quiet for any run whose TIMINGS or FAILURES matter: it waits for the whole
+// machine's CPU to fall under 50% before each attempt and records CPU before and
+// during it. Without that, a timeout says more about this machine than about the site.
+// For the same reason run a sweep WITHOUT --with-site first, and add the sites and
+// pairs in a second pass, so nothing of ours competes with the analysis.
+//
 // Add --keep-failures when resuming an interrupted sweep: recorded failures are kept
 // instead of being re-attempted. Each result carries e2eMs — the whole wait a person
 // sits through, tree build included — beside the API's analysis-only timingMs.
@@ -33,7 +39,7 @@
 
 import { chromium } from '../analysis/node_modules/playwright-core/index.mjs';
 import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
-import { loadavg } from 'node:os';
+import { loadavg, cpus } from 'node:os';
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const BASE = process.env.PLANTS_BASE || 'http://localhost:5170';
@@ -61,6 +67,7 @@ const rest = process.argv.slice(3);
 const survey = rest.includes('--survey');
 const withSite = rest.includes('--with-site');
 const keepFailures = rest.includes('--keep-failures');
+const quiet = rest.includes('--quiet');
 const fileAt = rest.indexOf('--sites-file');
 const sitesFile = fileAt >= 0 ? rest[fileAt + 1] : null;
 const named = rest.filter((a, i) => !a.startsWith('--') && !(fileAt >= 0 && i === fileAt + 1));
@@ -99,6 +106,23 @@ const shoot = async (name, url, { wait = 24000, fullPage = false } = {}) => {
   }
 };
 
+// WHOLE-MACHINE CPU, not ours. The analyzer's 8s navigation limit is a reading of how
+// busy this machine is (8 simultaneous requests fail 3 of the 4 lightest sites on the
+// web), so a timeout is only evidence about a SITE if the machine was quiet when it
+// happened. --quiet waits for that before every attempt, and every attempt records it.
+const cpuSnap = () => cpus().reduce((a, c) => {
+  const total = Object.values(c.times).reduce((x, y) => x + y, 0);
+  return { idle: a.idle + c.times.idle, total: a.total + total };
+}, { idle: 0, total: 0 });
+const busyBetween = (a, b) => +(1 - (b.idle - a.idle) / Math.max(1, b.total - a.total)).toFixed(2);
+const waitQuiet = async (limit = 0.5, maxMs = 45000) => {
+  const t0 = Date.now();
+  let busy;
+  do { const a = cpuSnap(); await new Promise((r) => setTimeout(r, 1500)); busy = busyBetween(a, cpuSnap()); }
+  while (busy > limit && Date.now() - t0 < maxMs);
+  return { busy, waitedMs: Date.now() - t0 };
+};
+
 // One survey attempt: load the product page, take the API's own answer off the
 // wire, and wait for the state the human would see before shooting it.
 const attempt = async (site) => {
@@ -132,13 +156,23 @@ const composer = withSite ? await browser.newPage({ viewport: { width: 2260, hei
 // Also weighs the page, independently of the analyzer, so a site the analyzer gave up
 // on still has numbers: how long a plain visit takes to reach domcontentloaded (the
 // event the analyzer's 8s navigation limit waits for) and how heavy the document is.
+//
+// It records the four STAGES of a page load separately — first byte, HTML complete,
+// domInteractive (parsed), DOM-ready — because they are not equally stable: on
+// github.com the first three landed within 2.5s on every visit while DOM-ready ran
+// 5s, 12s, >30s. Navigation waits only for 'commit', so a site that never reaches
+// DOM-ready still reports the stages it did reach, which are the ones that matter most.
 const shootSite = async (url, path) => {
   const p = await siteCtx.newPage();
-  const m = { url, dclMs: null, error: null };
+  const calm = quiet ? await waitQuiet() : { busy: null };
+  const m = { url, dclMs: null, error: null, cpuBefore: calm.busy, load1: +loadavg()[0].toFixed(1) };
   try {
-    const t0 = Date.now();
-    await p.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    m.dclMs = Date.now() - t0;
+    const t0 = Date.now(), cpu0 = cpuSnap();
+    await p.goto(url, { waitUntil: 'commit', timeout: 30000 });
+    m.commitMs = Date.now() - t0;
+    await p.waitForLoadState('domcontentloaded', { timeout: 30000 })
+      .then(() => { m.dclMs = Date.now() - t0; }, () => { m.dclTimedOut = true; });
+    m.cpuDuring = busyBetween(cpu0, cpuSnap());
     m.nodesAtDcl = await p.evaluate(() => document.getElementsByTagName('*').length).catch(() => null);
     await p.waitForLoadState('load', { timeout: 4500 }).then(() => { m.loadMs = Date.now() - t0; }, () => { m.loadMs = null; });
     await p.waitForLoadState('networkidle', { timeout: 1500 }).catch(() => {});
@@ -146,9 +180,18 @@ const shootSite = async (url, path) => {
     Object.assign(m, await p.evaluate(() => {
       const nav = performance.getEntriesByType('navigation')[0] || {};
       const res = performance.getEntriesByType('resource');
+      const paint = Object.fromEntries(performance.getEntriesByType('paint').map((e) => [e.name, Math.round(e.startTime)]));
       const q = (s) => document.querySelectorAll(s).length;
+      const at = (v) => (v ? Math.round(v) : null);   // 0 means "has not happened"
+      const dcl = nav.domContentLoadedEventStart || Infinity;
+      const tail = res.filter((r) => r.responseEnd <= dcl + 5 && (r.initiatorType === 'script' || /\.m?js(\?|$)/.test(r.name)));
       return {
+        stages: { ttfb: at(nav.responseStart), htmlDone: at(nav.responseEnd), domInteractive: at(nav.domInteractive),
+          domReady: at(nav.domContentLoadedEventStart), load: at(nav.loadEventStart),
+          firstPaint: paint['first-paint'] ?? null, firstContentfulPaint: paint['first-contentful-paint'] ?? null },
+        scriptsBeforeDomReady: tail.length, scriptKBBeforeDomReady: Math.round(tail.reduce((a, r) => a + (r.transferSize || 0), 0) / 1024),
         finalUrl: location.href, nodes: q('*'), scripts: q('script'), blockingScripts: q('head script[src]:not([async]):not([defer]):not([type=module])'),
+        deferredScripts: q('script[defer][src], script[type=module]'),
         stylesheets: q('link[rel=stylesheet]'), images: q('img'), iframes: q('iframe'), canvases: q('canvas'),
         htmlKB: Math.round((nav.decodedBodySize || 0) / 1024), ttfbMs: Math.round(nav.responseStart || 0),
         requests: res.length, transferKB: Math.round(res.reduce((a, r) => a + (r.transferSize || 0), 0) / 1024),
@@ -217,14 +260,17 @@ if (survey) {
     const attemptLog = [];
     while (attempts < 2 && !(data && data.ok)) {
       attempts++;
-      const t0 = Date.now();
+      const calm = quiet ? await waitQuiet() : { busy: null, waitedMs: 0 };
+      const t0 = Date.now(), cpu0 = cpuSnap();
       try { data = await attempt(site); error = null; }
       catch (err) { error = err.message.split('\n')[0]; }
+      const cpuDuring = busyBetween(cpu0, cpuSnap());
       // load1: this machine's 1-minute load average. The analyzer's 8s navigation limit is
       // CPU-sensitive on OUR side, so a timeout means little without knowing how busy we were.
       attemptLog.push({ ok: Boolean(data?.ok), code: data?.ok ? null : (data?.failure?.code || 'HARNESS'),
         detail: data?.ok ? null : (data?.failure?.detail || error), ms: Date.now() - t0,
-        analysisMs: data?.timingMs ?? null, load1: +loadavg()[0].toFixed(1) });
+        analysisMs: data?.timingMs ?? null, load1: +loadavg()[0].toFixed(1),
+        cpuBefore: calm.busy, cpuDuring, waitedForQuietMs: calm.waitedMs });
     }
 
     const ok = Boolean(data && data.ok);
@@ -245,8 +291,8 @@ if (survey) {
 
     const d = data?.dna;
     console.log(tag, ok ? 'captured' : 'FAILED  ', site, '-', ok
-      ? `${d.foliage?.state}/${d.foliage?.density} flowers:${d.flowers?.amount} ${d.botanicalState} bg:${d.background} analysis ${data.timingMs}ms · on screen ${data.e2eMs}ms · try ${attempts}`
-      : `${data?.failure?.code || error} (${attemptLog.map((a) => `${a.code} ${a.ms}ms`).join(', ')})`);
+      ? `${d.foliage?.state}/${d.foliage?.density} flowers:${d.flowers?.amount} ${d.botanicalState} bg:${d.background} analysis ${data.timingMs}ms · on screen ${data.e2eMs}ms · try ${attempts} · cpu ${attemptLog.at(-1).cpuBefore}→${attemptLog.at(-1).cpuDuring}`
+      : `${data?.failure?.code || error} (${attemptLog.map((a) => `${a.code} ${a.ms}ms cpu ${a.cpuBefore}→${a.cpuDuring}`).join(', ')})`);
     // The tree keeps auto-rotating in software GL; leave it up and it starves the visit below.
     await page.goto('about:blank').catch(() => {});
     if (withSite) await addSite(name, entry, tag);

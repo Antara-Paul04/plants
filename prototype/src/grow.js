@@ -666,7 +666,6 @@ export async function growTree(M, q, env, opts = {}) {
       ...folT,
       atBloom: num('leafAtBloom', folT.atBloom), nearTo: num('leafNear', folT.nearTo),
       nearRadius: num('leafNearR', folT.nearRadius), elsewhere: num('leafElsewhere', folT.elsewhere),
-      inner: q.has('leafInner') ? num('leafInner', 1) : (folT.inner ?? null),
     };
 
     // WARNING FOR ANYONE JUDGING COLOUR FROM A URL: `fc` and `fc2` given by hand go
@@ -676,6 +675,12 @@ export async function growTree(M, q, env, opts = {}) {
     // real tree unless the colours passed are already-conditioned ones (github
     // arrives as petal #1b20a0 + centre #8a8de4). Lead reached a false conclusion
     // this way once. Through dnaToParams the colours are the conditioned ones.
+    //
+    // AND IT IS NOT MERELY "UNREPRESENTATIVE" (Taste): the conditioner is what makes a
+    // THIRD OF THE CORPUS work. Blue passes the accent test BECAUSE of conditionFlower.
+    // A raw dark navy fails badly — a dark flower reads as a hole punched in the
+    // canopy, and no amount of chroma rescues it. So bypassing the conditioner does not
+    // give you a neutral preview of a site's colour; it gives you the FAILING case.
     const FC = hexq('fc', 0xf7a6b8);
     const FC2 = q.has('fc2') ? hexq('fc2', 0xe87b92) : (q.has('fc') ? null : 0xe87b92);
     const pale = q.has('pale') ? num('pale', 0) : null;

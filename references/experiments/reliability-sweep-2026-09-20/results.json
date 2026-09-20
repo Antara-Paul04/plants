@@ -10,9 +10,12 @@
         "ok": true,
         "code": null,
         "detail": null,
-        "ms": 19027,
-        "analysisMs": 3579,
-        "load1": 18.3
+        "ms": 14908,
+        "analysisMs": 3471,
+        "load1": 19.7,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 1504
       }
     ],
     "harnessError": null,
@@ -21,9 +24,9 @@
     "domain": "info.cern.ch",
     "url": "https://info.cern.ch/",
     "live": true,
-    "timingMs": 3579,
-    "e2eMs": 15823,
-    "stamp": "grown in 10.4s",
+    "timingMs": 3471,
+    "e2eMs": 11665,
+    "stamp": "grown in 9.9s",
     "fingerprint": {
       "authored": 0.1,
       "stylingRichness": 0.069,
@@ -67,26 +70,6 @@
       "background": "#e5e5eb",
       "seed": 446285954,
       "rareCat": false
-    },
-    "siteMetrics": {
-      "url": "https://info.cern.ch/",
-      "dclMs": 2890,
-      "error": null,
-      "nodesAtDcl": 16,
-      "loadMs": 2939,
-      "finalUrl": "https://info.cern.ch/",
-      "nodes": 16,
-      "scripts": 0,
-      "blockingScripts": 0,
-      "stylesheets": 0,
-      "images": 0,
-      "iframes": 0,
-      "canvases": 0,
-      "htmlKB": 1,
-      "ttfbMs": 2519,
-      "requests": 1,
-      "transferKB": 2,
-      "shot": true
     }
   },
   {
@@ -94,23 +77,18 @@
     "category": "chip",
     "file": "news.ycombinator.com.png",
     "ok": true,
-    "attempts": 2,
+    "attempts": 1,
     "attemptLog": [
-      {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 12573,
-        "analysisMs": null,
-        "load1": 16.5
-      },
       {
         "ok": true,
         "code": null,
         "detail": null,
-        "ms": 14628,
-        "analysisMs": 6487,
-        "load1": 17
+        "ms": 15935,
+        "analysisMs": 6397,
+        "load1": 33.6,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.6,
+        "waitedForQuietMs": 6030
       }
     ],
     "harnessError": null,
@@ -119,20 +97,20 @@
     "domain": "news.ycombinator.com",
     "url": "https://news.ycombinator.com/",
     "live": true,
-    "timingMs": 6487,
-    "e2eMs": 11569,
-    "stamp": "grown in 10.9s",
+    "timingMs": 6397,
+    "e2eMs": 12640,
+    "stamp": "grown in 11.5s",
     "fingerprint": {
       "authored": 0.5,
       "stylingRichness": 0.259,
-      "inkCoverage": 0.112,
+      "inkCoverage": 0.114,
       "colorfulness": 0.277,
       "designColorfulness": 0.277,
       "designChromaticRatio": 0.0214,
       "warmShareOfChroma": 1,
       "imageArea": 0,
       "canvasArea": 0,
-      "textDensity": 0.803,
+      "textDensity": 0.814,
       "accentConcentration": 0.889,
       "hasVisibleMotion": false,
       "palette": {
@@ -165,86 +143,90 @@
       "background": "#ebebe2",
       "seed": 2307374702,
       "rareCat": false
-    },
-    "siteMetrics": {
-      "url": "https://news.ycombinator.com/",
-      "dclMs": 11207,
-      "error": null,
-      "nodesAtDcl": 817,
-      "loadMs": 13233,
-      "finalUrl": "https://news.ycombinator.com/",
-      "nodes": 817,
-      "scripts": 1,
-      "blockingScripts": 0,
-      "stylesheets": 1,
-      "images": 2,
-      "iframes": 0,
-      "canvases": 0,
-      "htmlKB": 33,
-      "ttfbMs": 6780,
-      "requests": 6,
-      "transferKB": 6,
-      "shot": true
     }
   },
   {
     "site": "arxiv.org",
     "category": "chip",
-    "file": "_failed/arxiv.org.png",
-    "ok": false,
+    "file": "arxiv.org.png",
+    "ok": true,
     "attempts": 2,
     "attemptLog": [
       {
         "ok": false,
         "code": "TIMEOUT",
         "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 10673,
+        "ms": 10228,
         "analysisMs": null,
-        "load1": 12.7
+        "load1": 31.6,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.59,
+        "waitedForQuietMs": 22772
       },
       {
-        "ok": false,
-        "code": "TIMEOUT",
-        "detail": "page.goto: Timeout 8000ms exceeded.",
-        "ms": 9354,
-        "analysisMs": null,
-        "load1": 11.1
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 13914,
+        "analysisMs": 5561,
+        "load1": 29.8,
+        "cpuBefore": 0.44,
+        "cpuDuring": 0.51,
+        "waitedForQuietMs": 4517
       }
     ],
     "harnessError": null,
-    "failure": {
-      "code": "TIMEOUT",
-      "message": "That website took too long to load.",
-      "detail": "page.goto: Timeout 8000ms exceeded."
-    },
-    "shown": "We could not finish reading arxiv.org. Big, richly built sites often outrun us.",
+    "failure": null,
+    "shown": null,
     "domain": "arxiv.org",
-    "url": null,
+    "url": "https://arxiv.org/",
     "live": true,
-    "timingMs": null,
-    "e2eMs": 9334,
-    "stamp": null,
-    "fingerprint": null,
-    "dna": null,
-    "siteMetrics": {
-      "url": "https://arxiv.org",
-      "dclMs": 3326,
-      "error": null,
-      "nodesAtDcl": 414,
-      "loadMs": 3616,
-      "finalUrl": "https://arxiv.org/",
-      "nodes": 414,
-      "scripts": 5,
-      "blockingScripts": 2,
-      "stylesheets": 4,
-      "images": 4,
-      "iframes": 0,
-      "canvases": 0,
-      "htmlKB": 37,
-      "ttfbMs": 1425,
-      "requests": 16,
-      "transferKB": 353,
-      "shot": true
+    "timingMs": 5561,
+    "e2eMs": 10804,
+    "stamp": "grown in 9.8s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.322,
+      "inkCoverage": 0.191,
+      "colorfulness": 0.292,
+      "designColorfulness": 0.292,
+      "designChromaticRatio": 0.1054,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.011,
+      "canvasArea": 0,
+      "textDensity": 0.931,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a1a1f8",
+        "secondary": "#9db7d5"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#a1a1f8",
+        "secondary": "#4570a1"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e5eb",
+      "seed": 1356002849,
+      "rareCat": false
     }
   },
   {
@@ -258,9 +240,12 @@
         "ok": true,
         "code": null,
         "detail": null,
-        "ms": 14848,
-        "analysisMs": 6605,
-        "load1": 15.8
+        "ms": 16956,
+        "analysisMs": 8405,
+        "load1": 28.7,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.55,
+        "waitedForQuietMs": 1502
       }
     ],
     "harnessError": null,
@@ -269,12 +254,12 @@
     "domain": "gwern.net",
     "url": "https://gwern.net/",
     "live": true,
-    "timingMs": 6605,
-    "e2eMs": 11735,
-    "stamp": "grown in 11.3s",
+    "timingMs": 8405,
+    "e2eMs": 13837,
+    "stamp": "grown in 13.1s",
     "fingerprint": {
-      "authored": 0.7,
-      "stylingRichness": 0.437,
+      "authored": 0.8,
+      "stylingRichness": 0.443,
       "inkCoverage": 0.138,
       "colorfulness": 0,
       "designColorfulness": 0,
@@ -282,7 +267,7 @@
       "warmShareOfChroma": 0,
       "imageArea": 0,
       "canvasArea": 0,
-      "textDensity": 0.362,
+      "textDensity": 0.369,
       "accentConcentration": 0,
       "hasVisibleMotion": false,
       "palette": {
@@ -315,116 +300,6 @@
       "background": "#e6e6e6",
       "seed": 2830561623,
       "rareCat": false
-    },
-    "siteMetrics": {
-      "url": "https://gwern.net/",
-      "dclMs": 16627,
-      "error": null,
-      "nodesAtDcl": 2012,
-      "loadMs": 16793,
-      "finalUrl": "https://gwern.net/",
-      "nodes": 2012,
-      "scripts": 7,
-      "blockingScripts": 2,
-      "stylesheets": 2,
-      "images": 0,
-      "iframes": 0,
-      "canvases": 0,
-      "htmlKB": 139,
-      "ttfbMs": 1334,
-      "requests": 19,
-      "transferKB": 736,
-      "shot": true
-    }
-  },
-  {
-    "site": "google.com",
-    "category": "popular · search",
-    "file": "google.com.png",
-    "ok": true,
-    "attempts": 1,
-    "attemptLog": [
-      {
-        "ok": true,
-        "code": null,
-        "detail": null,
-        "ms": 18578,
-        "analysisMs": 9036,
-        "load1": 23.3
-      }
-    ],
-    "harnessError": null,
-    "failure": null,
-    "shown": null,
-    "domain": "google.com",
-    "url": "https://www.google.com/",
-    "live": true,
-    "timingMs": 9036,
-    "e2eMs": 15258,
-    "stamp": "grown in 14.1s",
-    "fingerprint": {
-      "authored": 0.8,
-      "stylingRichness": 0.393,
-      "inkCoverage": 0.146,
-      "colorfulness": 0.049,
-      "designColorfulness": 0.049,
-      "designChromaticRatio": 0.0042,
-      "warmShareOfChroma": 0,
-      "imageArea": 0,
-      "canvasArea": 0,
-      "textDensity": 0.051,
-      "accentConcentration": 0,
-      "hasVisibleMotion": false,
-      "palette": {
-        "ground": "#22242a",
-        "primary": "#b6daf2",
-        "secondary": "#596e8d"
-      },
-      "paletteSource": "whole-frame"
-    },
-    "dna": {
-      "morphology": "broad",
-      "skeleton": {
-        "complexity": "simple"
-      },
-      "foliage": {
-        "state": "normal",
-        "density": "airy"
-      },
-      "botanicalState": "winter",
-      "flowers": {
-        "amount": "none",
-        "primary": null,
-        "secondary": null
-      },
-      "fruit": {
-        "enabled": false,
-        "color": null
-      },
-      "terrain": "winter",
-      "background": "#232427",
-      "seed": 2006368837,
-      "rareCat": false
-    },
-    "siteMetrics": {
-      "url": "https://www.google.com/",
-      "dclMs": 1777,
-      "error": null,
-      "nodesAtDcl": 478,
-      "loadMs": 2976,
-      "finalUrl": "https://www.google.com/",
-      "nodes": 485,
-      "scripts": 21,
-      "blockingScripts": 0,
-      "stylesheets": 2,
-      "images": 6,
-      "iframes": 0,
-      "canvases": 0,
-      "htmlKB": 219,
-      "ttfbMs": 477,
-      "requests": 33,
-      "transferKB": 796,
-      "shot": true
     }
   }
 ]

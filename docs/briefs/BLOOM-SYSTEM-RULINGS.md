@@ -663,3 +663,38 @@ analysis work, not a constant swap.
 else is running is a measurement of the machine.** The sweep now records load average beside
 every attempt so each failure can be read as "site" or "us". Nothing measured without it
 should be quoted.
+
+## L16b — What this means for TASTE, who is currently unstaffed
+
+Taste's sharpened hypothesis — that the bias is **heavy DOM versus light DOM** rather than
+rich versus simple — is **dead**, killed by news.ycombinator.com: 817 nodes, one script,
+6 KB, and it failed. Taste's instinct that it "cuts across design quality rather than along
+it" was right; the reason is different, and the difference changes the fix.
+
+**The chip ruling survives, but its foundation moved.** Chips must be fast, reliable, then
+different, and all four must be sites we know succeed — still correct. But "reliable" is now
+partly a property of **our own load** rather than of the site. Two consequences:
+
+1. **No chip can be certified by passing once.** It has to pass on a busy machine.
+2. **A popular launch would make the chips fail at exactly the moment most people are
+   looking.** The failure rate rises with concurrent users.
+
+`gwern.net` is the marginal chip — it waits on its own script plus a tag manager and failed
+first under concurrency. Not changed on one night's data; flagged for the clean sweep.
+
+### The epistemic point, which is the serious one
+
+Taste observed that this was the fourth time a "the trees look the same" symptom turned out
+to be a site's richness failing to arrive — Linear was wiring, bruno-simon was measurement,
+the achromatic palette is a constant. **This is the fifth, and it is the first where the
+failure is invisible in the output.**
+
+A site that times out produces **no tree at all**, so it never appears in any sheet anyone
+judges. **The corpus Taste has been forming its eye on is silently filtered by our own CPU** —
+and filtered hardest against script-heavy sites, which correlates with, without being the
+same as, ambitious design.
+
+Every aesthetic judgement made on that corpus — the bloom ladder, the environment set, the
+restrained-versus-boring band — was formed on a sample we now know to be biased by an
+accident of measurement. Nothing is necessarily wrong. But the standing check Taste asked
+for is now overdue, and it should run against a corpus captured on a quiet machine.

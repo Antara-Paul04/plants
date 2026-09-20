@@ -158,7 +158,7 @@ function flowerParts(r, col, o) {
       const dir = new THREE.Vector3(Math.sin(pol) * Math.cos(az), Math.cos(pol), Math.sin(pol) * Math.sin(az));
       const g = petalGeometry({ length: len * rr(r, 0.9, 1.08), width, cup, rows: o.rows, wide: o.wide });
       g.applyMatrix4(frame(dir, axis));
-      parts.push(paintPetal(g, col, shade * rr(r, 0.95, 1.04)));
+      parts.push(paintPetal(g, col, shade * rr(r, o.shadeLo ?? 0.95, o.shadeHi ?? 1.04)));
     }
   };
   whorl(o.petals, o.open, o.length, o.width, o.cup, r() * 6.28, 1);
@@ -238,7 +238,11 @@ const GRAMMARS = {
         m.setPosition(new THREE.Vector3(ox + Math.cos(a0) * sway + Math.cos(az) * rad, y, oz + Math.sin(a0) * sway + Math.sin(az) * rad));
         const size = lerp(0.25, 0.09, Math.pow(f, 0.85)) * s;
         const isBud = f > 0.7;
-        const ps = flowerParts(r, isBud ? bud : col, { petals: 3, open: lerp(0.95, 0.4, f), length: size, width: 1.15, cup: 0.42, eye: 0, rows: 2 });
+        // A floret is a small folded BELL. Three wide two-row petals were flat diamonds:
+        // harmless while every petal paled to its edge, but once dark petals went solid a
+        // raceme read as a column of flat squares. Narrower, more cupped, one more row,
+        // and a wider value range from floret to floret so the column has depth.
+        const ps = flowerParts(r, isBud ? bud : col, { petals: 4, open: lerp(0.9, 0.38, f), length: size, width: 0.78, cup: 0.62, eye: 0, rows: 3, shadeLo: 0.8, shadeHi: 1.1 });
         for (const p of ps) { p.applyMatrix4(m); parts.push(p); }
       }
       spines.push({ len, ox, oz });
@@ -253,12 +257,22 @@ export const BLOOM_GRAMMARS = Object.keys(GRAMMARS);
 export const LEGACY_GRAMMAR = { blossom: 'cluster', magnolia: 'statement', wisteria: 'pendant' };
 
 /**
- * Which grammars can grow convincingly on which morphology. TASTE OWNS THIS
- * TABLE (ruling L2) and rules on it after looking at real geometry. `morphology`
- * has exactly one value today — 'broad', hardcoded in analysis — so the table
- * has one row; it is a real table anyway because it is the extension point.
- * `pendant` x `broad` is awaiting Taste's explicit ruling: if it is ruled out,
- * delete it from this row and pendant is dead code until a pendulous morphology.
+ * Which grammars can grow convincingly on which morphology. TASTE OWNS THIS TABLE
+ * and has RULED on its one row (2026-09-20), after looking at the real geometry:
+ * all three grammars are compatible with `broad`.
+ *
+ * `pendant` x `broad` was the open one, and Taste's reasoning is worth keeping: a
+ * broad crown has a wide horizontal UNDERSIDE, which is exactly what hanging
+ * clusters need to hang from. Broad is arguably pendant's BEST host, not its marginal
+ * one; a columnar or conical morphology would be the incompatible one, and that is
+ * the row to be careful with when other morphologies arrive.
+ *
+ * One guard from Taste: pendant reads strongly of wisteria. That is fine as FORM, but
+ * the naming discipline (grammar, never species) matters more here than anywhere —
+ * nobody should ever tune this toward BEING a wisteria.
+ *
+ * `morphology` has exactly one value today — 'broad', hardcoded in analysis — so the
+ * table has one row. It is a real table anyway: it is the extension point.
  */
 export const GRAMMAR_COMPAT = {
   broad: ['cluster', 'statement', 'pendant'],
@@ -563,20 +577,6 @@ export const BLOOM_FOLIAGE = {
  */
 export function foliageScales(spots, bloomSites, rel) {
   const out = new Float32Array(spots.length).fill(rel.elsewhere);
-  // `inner` (optional): the scale for non-flowering foliage DEEP in the crown, easing
-  // out to `elsewhere` at the shell. The middle of any view of a crown is mostly its
-  // inside and its far side seen through it (only 7 of 146 twigs face the camera at
-  // the centre), so it is the INNER foliage that decides whether bloom shows through
-  // the middle — while the shell, seen edge-on at the rim, is what keeps the tree
-  // reading as a tree in leaf.
-  if (rel.inner != null && rel.inner < rel.elsewhere && spots.length) {
-    const { c, e } = crownBox(spots);
-    for (let i = 0; i < spots.length; i++) {
-      const s = spots[i].pos;
-      const d = Math.hypot((s.x - c.x) / (e.x || 1), (s.y - c.y) / (e.y || 1), (s.z - c.z) / (e.z || 1));
-      out[i] = lerp(rel.inner, rel.elsewhere, smoothstep(0.35, 0.95, d));
-    }
-  }
   const bloom = bloomSites.map((i) => spots[i].pos);
   const on = new Set(bloomSites);
   for (let i = 0; i < spots.length; i++) {
@@ -584,8 +584,7 @@ export function foliageScales(spots, bloomSites, rel) {
     if (!(rel.nearRadius > 0) || !bloom.length) continue;
     let d = Infinity;
     for (const b of bloom) d = Math.min(d, b.distanceTo(spots[i].pos));
-    const base = out[i];
-    out[i] = Math.min(base, lerp(Math.min(rel.nearTo, rel.elsewhere), rel.elsewhere, smoothstep(0.25 * rel.nearRadius, rel.nearRadius, d)));
+    out[i] = lerp(Math.min(rel.nearTo, rel.elsewhere), rel.elsewhere, smoothstep(0.25 * rel.nearRadius, rel.nearRadius, d));
   }
   return out;
 }
@@ -878,7 +877,7 @@ export function buildFruit(spots, r, opts = {}) {
 
 /** One bud: a pointed ovoid, brown bud-scales at the base, the site's colour swelling out of them. */
 function budGeometry(r, col, scaleCol, opts = {}) {
-  const { length = 0.26, width = 0.07 } = opts;
+  const { length = 0.26, width = 0.07, cup = 0.42 } = opts;
   const pts = [];
   const N = 7;
   for (let i = 0; i <= N; i++) {
@@ -891,7 +890,7 @@ function budGeometry(r, col, scaleCol, opts = {}) {
   const P = g.attributes.position, out = new Float32Array(P.count * 3), c = new THREE.Color();
   for (let i = 0; i < P.count; i++) {
     const t = P.getY(i) / length;
-    c.copy(scaleCol).lerp(col.body, smoothstep(0.16, 0.42, t)).lerp(col.edge, smoothstep(0.62, 1, t) * 0.55);
+    c.copy(scaleCol).lerp(col.body, smoothstep(cup * 0.4, cup, t)).lerp(col.edge, smoothstep(0.62, 1, t) * 0.55);
     out[i * 3] = c.r; out[i * 3 + 1] = c.g; out[i * 3 + 2] = c.b;
   }
   g.setAttribute('color', new THREE.BufferAttribute(out, 3));
@@ -899,16 +898,17 @@ function budGeometry(r, col, scaleCol, opts = {}) {
 }
 
 /** A bud SPRAY: one leading bud and a few smaller ones splayed round it. `terminal` sprays are fuller. */
-function budSprayGeometry(r, col, scaleCol, terminal, size) {
+function budSprayGeometry(r, col, scaleCol, terminal, size, look = {}) {
   const parts = [];
-  const lead = budGeometry(r, col, scaleCol, { length: (terminal ? 0.34 : 0.24) * size, width: (terminal ? 0.088 : 0.07) * size });
+  const { cup = 0.42, extra = 0 } = look;
+  const lead = budGeometry(r, col, scaleCol, { cup, length: (terminal ? 0.34 : 0.24) * size, width: (terminal ? 0.088 : 0.07) * size });
   parts.push(lead);
-  const n = terminal ? 3 + Math.floor(r() * 2) : 1 + Math.floor(r() * 2);
+  const n = (terminal ? 3 + Math.floor(r() * 2) : 1 + Math.floor(r() * 2)) + extra;
   for (let k = 0; k < n; k++) {
     const az = (k / n) * Math.PI * 2 + r() * 0.8;
     const pol = rr(r, 0.55, 0.95);
     const dir = new THREE.Vector3(Math.sin(pol) * Math.cos(az), Math.cos(pol), Math.sin(pol) * Math.sin(az));
-    const g = budGeometry(r, col, scaleCol, { length: rr(r, 0.17, 0.24) * size, width: rr(r, 0.055, 0.07) * size });
+    const g = budGeometry(r, col, scaleCol, { cup, length: rr(r, 0.17, 0.24) * size, width: rr(r, 0.055, 0.07) * size });
     const m = new THREE.Matrix4().makeRotationFromQuaternion(new THREE.Quaternion().setFromUnitVectors(UP, dir));
     m.setPosition(0, -rr(r, 0.0, 0.05) * size, 0);
     g.applyMatrix4(m);
@@ -924,7 +924,23 @@ export function buildBuds(spots, r, opts = {}) {
   const group = new THREE.Group();
   if (!spots.length || primary == null) return { group, stats: { buds: 0, triangles: 0, ms: 0 } };
   const col = flowerPalette(r, primary, secondary, { pale, grade });
-  const scaleCol = new THREE.Color(0x7b5b40);
+  // A bud is small, and it is read against BOTH the sky and pale tan wood, so its
+  // own lightness decides how it has to be built (Taste, on the first winter sheet):
+  //   PALE buds VANISHED — cream on tan wood against a pale sky is very nearly a bare
+  //     tree, "as though analysis failed", and it fires on exactly the achromatic
+  //     sites with the weakest identity. Pale ornament needs MORE of it, and an edge:
+  //     bigger, more numerous, seated in a DEEP dark cup of bud scales so each bud is
+  //     a two-tone object that reads on any ground.
+  //   DARK buds read as BLIGHT — dark blobs on pale wood. Growth catches light, so a
+  //     dark bud swells toward a LIGHTER TIP, inside its own hue (never toward white:
+  //     the darkness is the identity), and sits in a pale scale cup instead of a dark
+  //     one, so it reads as something opening rather than something rotting.
+  const L = col.petalL;
+  const paleness = smoothstep(0.62, 0.82, L), darkness = 1 - smoothstep(0.3, 0.5, L);
+  const look = { cup: lerp(0.42, 0.56, paleness), extra: paleness > 0.5 ? 1 : 0 };
+  const sizeK = size * lerp(1, 1.28, paleness) * lerp(1, 1.1, darkness);
+  const scaleCol = new THREE.Color(0x7b5b40).lerp(new THREE.Color(0x4f3624), paleness).lerp(new THREE.Color(0xb39a78), darkness);
+  if (darkness > 0) col.edge = col.body.clone().offsetHSL(0, 0.04 * darkness, 0.2 * darkness);
   if (grade) grade(scaleCol);
   const mat = matte('bud-matte-v1');
   const sets = [
@@ -935,7 +951,7 @@ export function buildBuds(spots, r, opts = {}) {
   const m = new THREE.Matrix4(), q = new THREE.Quaternion(), q2 = new THREE.Quaternion(), sc = new THREE.Vector3(), p = new THREE.Vector3(), ax = new THREE.Vector3();
   for (const set of sets) {
     const variants = 3;
-    const geos = Array.from({ length: variants }, () => budSprayGeometry(r, col, scaleCol, set.terminal, size));
+    const geos = Array.from({ length: variants }, () => budSprayGeometry(r, col, scaleCol, set.terminal, sizeK, look));
     const buckets = geos.map(() => []);
     set.items.forEach((s, i) => buckets[i % variants].push(s));
     geos.forEach((geo, v) => {
