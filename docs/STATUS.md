@@ -10,71 +10,96 @@
 
 ## Phase
 
-**Working V0.** The whole chain runs end to end. Paste a URL, get your tree.
+**The product grows the real tree.** Paste a URL into `:5170` and you get the
+Gate 1/2 tree — chunky SDF limbs, clay bark, bloom grammars, the foliage ladder,
+autumn, winter, night — grown from that site's Botanical DNA.
 
 ```bash
 node app/server.js     # → http://localhost:5170
 ```
 
+`?engine=v0` still serves the old tree, whole, on identical DNA.
+
 ---
 
 ## Working
 
-- **The pipeline.** URL → live headless-Chrome analysis → fingerprint → Botanical
-  DNA → 3D tree, in the browser. Verified against real sites, not fixtures.
+- **The pipeline, end to end.** URL → live headless-Chrome analysis → fingerprint
+  → Botanical DNA → the new renderer, in the browser.
 - **The crux, live.** `info.cern.ch` grows a bare sculptural tree;
-  `bettermotherfuckingwebsite.com` grows a sparse leafy one. Unstyled HTML and
-  deliberate minimalism produce visibly different trees — the claim the whole
-  project rests on.
-- **Validity gate.** Invalid URLs, unreachable hosts, HTTP ≥400, error pages and
-  interstitials are rejected with readable messages. No tree is ever grown from a
-  Cloudflare challenge.
-- **Comparison grid** at `/compare.html` — 12 corpus trees, thumbnail toggle.
-- Browser reuse: ~3–8s warm, ~14–21s cold.
+  `news.ycombinator.com` grows a sparse leafy one with an orange accent. Unstyled
+  HTML and deliberate minimalism produce visibly different trees.
+- **Bloom grammars** — `cluster` / `statement` / `pendant`, chosen from the
+  grammars compatible with the morphology, by the domain seed, on its own stream.
+  **No DNA field**: meaning lives in the contract, artistic variation in the
+  renderer (D7).
+- **Seasons.** autumn (fruit is its carrier, no flowers), winter (buds and
+  persistent berries), night. The ground now sits clearly darker in value than the
+  trunk standing on it, by construction rather than by palette.
+- **Failure is a real state.** Bare-earth island, copy that blames us rather than
+  the site, and a retry where the failure is genuinely ours.
+- Browser reuse: ~3–8 s warm, ~14–21 s cold — **on a quiet machine**; see below.
 
 ---
 
 ## Not started
 
-- Forest, sharing, accounts, deployment, mobile
-- Additional tree species — one broad family only
+- Forest, sharing, accounts, **deployment**, mobile
+- Additional tree species — one broad family, and `morphology` still has one value
 - Cat
 
 ---
 
 ## Known limitations
 
-- **The middle collapses.** Sites in the NORMAL band render near-identically at
-  thumbnail size, and NORMAL holds 12 of 23 corpus sites. The single biggest
-  threat to "your tree is yours".
-- `linear.app` times out on the live path (it measured fine in the corpus).
-- Analysis runs in **light mode only**. For sites respecting
-  `prefers-color-scheme` that decides what the site *is* — vercel.com measures
-  white in light mode and black in dark. Same URL, more than one true appearance.
-- `motion` is excluded: never repeatable (0.291/0.015/0.028/0.016 on one URL).
-- `imageArea` earns no role; `roundness`, `regularity`, `embedArea` were cut.
-- Autumn is reachable but **no real site triggers it** — warm dominance in the
-  corpus was always photographs, never design. One synthetic record exists.
-- No `dispose` audit under repeated growth; leaks unproven either way.
+- **The 8-second navigation timeout measures OUR machine, not the website.**
+  The four chips requested at once: 1 passes in 3.8 s, 4 pass with analysis
+  *doubled* to the cliff, 8 gives 5/8. `domcontentloaded` waits for every deferred
+  script to download *and execute*, so the limit gates on the site's JS payload
+  over our CPU at that instant. **A product whose failure rate rises with its own
+  popularity.** The fix (measure an earlier, stable event) is blocked on visual
+  stability detection, because we already measure loading screens as pages.
+  See L16 in `docs/briefs/BLOOM-SYSTEM-RULINGS.md`.
+- **Any reliability number measured while anything else runs on this machine is a
+  measurement of the machine.** Several findings were discarded for this.
+- **The middle still collapses.** 41 of 56 surveyed sites land in the middle two
+  of four states. Still the biggest threat to "your tree is yours".
+- **`medium` fails the bloom ladder** — reads as a green tree with a coloured rim
+  at 140 px. Fix is in flight: `elsewhere` before fraction.
+- **Accents are ranked by pixel count** (`probe/pixels.js`), so the biggest wash
+  beats the actual brand colour — stripe.com grows a cream tree and its real blue
+  reaches only the flower centre. Same root cause as ikea's false autumn. See L15.
+- **Gate 1 is still REVISE** on crown ramification — the crown reads as antlers,
+  and it now ships.
+- The skeleton is a 90–200 ms block, the longest remaining stall. End-to-end
+  growth is 15–21 s, most of it the tree build, not analysis.
+- Analysis runs in **light mode only**; `motion` is excluded as unrepeatable.
+- An **autumn site without the fruit trait carries no accent at all** — ikea is
+  one. Open contract question.
+
+---
+
+## Roles
+
+`visual-3d` and `test` are staffed. **`taste` is not** — its rulings are recorded
+in `docs/briefs/BLOOM-SYSTEM-RULINGS.md` and `docs/TASTE.md`, but nobody is
+holding visual judgement, and `medium` needs re-judging when it lands.
+`analysis` is unstaffed; L15 and the timeout work both need it.
 
 ---
 
 ## Current questions
 
-1. **Does the tree look right?** Still the open art-direction question, now
-   answerable against many real sites rather than one.
-2. Is the V0 fingerprint accepted? `authored`, `stylingRichness`, `inkCoverage`,
-   `colorfulness`, `palette{ground,primary,secondary}`, weak `imageArea` /
-   `textDensity`.
-3. `textDensity` measured as one of our *strongest* signals but is deliberately
-   weighted weak on instruction. Give it more room?
-4. Which measurement conditions are canonical — light mode? desktop width?
-5. Should the lighting rig follow a dark background? Currently a day-lit tree
-   against a night sky.
+1. **Does the tree look right?** Still the open art-direction question.
+2. Should the analyzer wait for an earlier event than `domcontentloaded`, and what
+   detects "the page has settled" without waiting on the script tail?
+3. Which measurement conditions are canonical — light mode? desktop width?
+4. May a season express no website colour at all (autumn without fruit)?
 
 ---
 
 ## Next
 
-**Human review**, then the middle-collapse problem — making NORMAL sites
-distinguishable is worth more than any new feature.
+**The timeout**, because it silently filters the corpus every aesthetic judgement
+is formed on: a site that times out produces no tree, so it never reaches a sheet
+anyone judges. Then `medium`, then the middle collapse.

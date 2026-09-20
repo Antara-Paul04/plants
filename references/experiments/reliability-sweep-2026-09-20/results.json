@@ -301,5 +301,243 @@
       "seed": 2830561623,
       "rareCat": false
     }
+  },
+  {
+    "site": "google.com",
+    "category": "popular · search",
+    "file": "google.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 19086,
+        "analysisMs": 10967,
+        "load1": 32.3,
+        "cpuBefore": 0.37,
+        "cpuDuring": 0.62,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "google.com",
+    "url": "https://www.google.com/",
+    "live": true,
+    "timingMs": 10967,
+    "e2eMs": 15874,
+    "stamp": "grown in 15.2s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.393,
+      "inkCoverage": 0.146,
+      "colorfulness": 0.049,
+      "designColorfulness": 0.049,
+      "designChromaticRatio": 0.0042,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.051,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#22242a",
+        "primary": "#b6daf2",
+        "secondary": "#596e8d"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#232427",
+      "seed": 2006368837,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "youtube.com",
+    "category": "popular · video",
+    "file": "_failed/youtube.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 11336,
+        "analysisMs": null,
+        "load1": 32,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.45,
+        "waitedForQuietMs": 3006
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 10488,
+        "analysisMs": null,
+        "load1": 29.9,
+        "cpuBefore": 0.47,
+        "cpuDuring": 0.6,
+        "waitedForQuietMs": 9028
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading youtube.com. Big, richly built sites often outrun us.",
+    "domain": "youtube.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 10429,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "apple.com",
+    "category": "popular · brand",
+    "file": "apple.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 14969,
+        "analysisMs": 6574,
+        "load1": 34.7,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.6,
+        "waitedForQuietMs": 12074
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "apple.com",
+    "url": "https://www.apple.com/",
+    "live": true,
+    "timingMs": 6574,
+    "e2eMs": 11786,
+    "stamp": "grown in 10.9s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.561,
+      "inkCoverage": 0.417,
+      "colorfulness": 0.208,
+      "designColorfulness": 0.027,
+      "designChromaticRatio": 0.0012,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.801,
+      "canvasArea": 0,
+      "textDensity": 0.065,
+      "accentConcentration": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#f5f5f7",
+        "primary": "#a0c6eb",
+        "secondary": "#b4d2ef"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#d1d1e5",
+        "secondary": "#66669d"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "lush",
+      "background": "#e5e5ea",
+      "seed": 3197224656,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "netflix.com",
+    "category": "popular · video",
+    "file": "_failed/netflix.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9214,
+        "analysisMs": null,
+        "load1": 30,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.45,
+        "waitedForQuietMs": 1509
+      },
+      {
+        "ok": false,
+        "code": "TIMEOUT",
+        "detail": "page.goto: Timeout 8000ms exceeded.",
+        "ms": 9201,
+        "analysisMs": null,
+        "load1": 25.8,
+        "cpuBefore": 0.41,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 4586
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "TIMEOUT",
+      "message": "That website took too long to load.",
+      "detail": "page.goto: Timeout 8000ms exceeded."
+    },
+    "shown": "We could not finish reading netflix.com. Big, richly built sites often outrun us.",
+    "domain": "netflix.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 9181,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
   }
 ]

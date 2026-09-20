@@ -432,6 +432,14 @@ export function stonesForGround(rockHi, rockLo, turfMeanL, wood) {
 }
 
 const NORMAL_TERRAIN = { lo: 0x5e9e37, mid: 0x81c246, hi: 0xa8d95c, soilHi: 0xa07b58, soilLo: 0x6a5663 };
+// The debug pages' ground follows the season too. The PRODUCT hands in the shipped
+// resolver's palette (opts.terrain); a debug page has no DNA, so without these a
+// `season=winter` tree stood on a summer lawn and could not be judged. Same numbers
+// as dna.js (TERRAIN.autumn / TERRAIN.winter) — one family.
+const SEASON_TERRAIN = {
+  autumn: { lo: 0x8a8a3c, mid: 0xb09a44, hi: 0xd0b45e, soilHi: 0x9c7148, soilLo: 0x64514f },
+  winter: { lo: 0x6b7a5c, mid: 0x869070, hi: 0xa3ab8c, soilHi: 0x8e8076, soilLo: 0x615a60 },
+};
 const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8a7d6d, soilLo: 0x5d5859 };
 
 /**
@@ -492,7 +500,7 @@ export async function growTree(M, q, env, opts = {}) {
     const dormancy = num('dormancy', dormancyDefault);
     const terrain = {};
     for (const k of Object.keys(NORMAL_TERRAIN)) {
-      const base = new THREE.Color(hexOf(T0[k], NORMAL_TERRAIN[k]));
+      const base = new THREE.Color(hexOf(T0[k], (SEASON_TERRAIN[SEASON] ?? NORMAL_TERRAIN)[k]));
       // A palette handed in by the host already has its own dormancy mixed in.
       if (!opts.terrain) base.lerp(new THREE.Color(DORMANT_TERRAIN[k]), dormancy);
       terrain[k] = base;
