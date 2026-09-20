@@ -89,14 +89,48 @@ export function makeScene(bg, { shadowMap = 4096 } = {}) {
  * lens makes a diorama look like a real place you are standing in. The FOV is
  * solved from the scene's own measured extents so a tall tree is not cropped
  * and a squat one does not float in the middle of an empty frame.
+ *
+ * Without `controls` this is a CONTAIN fit made entirely with the lens, as it
+ * always was. That is only safe in a frame about as wide as it is tall — which
+ * every frame on this project was until the scene became the page. In a TALL
+ * frame the tree is bound by its width, and fitting it with the lens widens the
+ * lens: 40 degrees on the square stage becomes 67 on a 9:19 phone, which is the
+ * one thing TASTE #1 names as the way to lose the miniature.
+ *
+ * With `controls`, the lens is CAPPED at what the square stage gives this tree —
+ * the frame every framing decision here was judged in — and a frame too narrow
+ * for that lens is answered by STEPPING BACK instead. Square and wider frames
+ * never reach the cap, so they are untouched, to the pixel, by construction.
+ *
+ * @returns the step-back factor (1 = the camera was not moved)
  */
-export function fitCamera(camera, extents, aspect, distance, pad = 1.06) {
+export function fitCamera(camera, extents, aspect, distance, pad = 1.06, controls = null) {
   const h = extents.height * pad;
   const w = extents.width * pad;
-  const half = Math.max(h / 2, w / (2 * Math.max(aspect, 0.001)));
+  const a = Math.max(aspect, 0.001);
+  const half = Math.max(h / 2, w / (2 * a));          // what this frame needs to show
+  const lens = controls ? Math.max(h, w) / 2 : half;  // the most the lens may be asked for
   camera.aspect = aspect;
-  camera.fov = 2 * Math.atan(half / distance) * (180 / Math.PI);
+  camera.fov = 2 * Math.atan(Math.min(half, lens) / distance) * (180 / Math.PI);
   camera.updateProjectionMatrix();
+  const k = Math.max(1, half / lens);
+  if (controls) stepBack(camera, controls, k);
+  return k;
+}
+
+// How far back each rig is standing, and the orbit limits it started with — so a
+// resize RE-scales rather than compounding, and the viewer's own zoom survives it.
+const _stood = new WeakMap();
+function stepBack(camera, controls, k) {
+  let s = _stood.get(controls);
+  if (!s) _stood.set(controls, (s = { k: 1, min: controls.minDistance, max: controls.maxDistance }));
+  // Nothing to do is the common case, and it must do NOTHING: (p - t) + t is not
+  // bit-exact, and a frame that never needed the cap may not move by a pixel.
+  if (k === s.k) return;
+  camera.position.sub(controls.target).multiplyScalar(k / s.k).add(controls.target);
+  controls.minDistance = s.min * k;
+  controls.maxDistance = s.max * k;
+  s.k = k;
 }
 
 /** Drifting litter: fall, rotate, and loop back up to the canopy. */

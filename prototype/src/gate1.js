@@ -92,7 +92,9 @@ function resize() {
   if (canvas.width !== Math.round(w * renderer.getPixelRatio()) ||
       canvas.height !== Math.round(h * renderer.getPixelRatio())) {
     renderer.setSize(w, h, false);
-    if (SH.fit) fitCamera(camera, extents, w / h, DIST0);
+    // `fit=lens` is the fit as it was before the lens was capped (no controls handed
+    // over: fitCamera is then the old function, bit for bit) — the BEFORE of an A/B.
+    if (SH.fit) fitCamera(camera, extents, w / h, DIST0, undefined, q.get('fit') === 'lens' ? null : controls);
     else { camera.aspect = w / h; camera.updateProjectionMatrix(); }
   }
 }

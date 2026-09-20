@@ -824,8 +824,24 @@ export async function growTree(M, q, env, opts = {}) {
  * trunk; this has none of the three. That separation is the acceptance test.
  *
  * Always the day state and the default soil: no background was measured either.
+ *
+ * IDLE (`opts.idle`) is the SAME island, framed the OPPOSITE way — and only the
+ * framing tells the two apart. For FAILURE a tree-shaped void is a lie: it draws the
+ * very thing we are saying we could not produce, so failure frames on the island.
+ * For IDLE, before anyone has named a website, the same void is the INVITATION — an
+ * empty planter — so idle is framed as the TREE SCENE a normal tree will ask for.
+ * The island sits low with sky above it where the tree will be, and when the tree
+ * arrives NOTHING MOVES: the scene was framed before it was grown, which is this
+ * renderer's own rule. (Framed on the island instead, a wide page fills itself with
+ * soil through a 16-degree lens, and the first thing the product ever does in front
+ * of a person is a hard zoom-out to 40.)
+ *
+ * It is bare soil for the failure state's own reason: terrain is measured too, and a
+ * lawn at idle is ground nobody measured. Bare soil, then the site's ground and its
+ * tree arriving together.
  */
-export function growEarth(M, q, env) {
+export function growEarth(M, q, env, opts = {}) {
+  const idle = !!opts.idle;
   const { P } = resolveParams(q);
   const ground = new THREE.Group();
   const terrain = {};
@@ -840,10 +856,11 @@ export function growEarth(M, q, env) {
   ground.add(M.island.buildIsland(M.util.rng(P.seed * 13 + 505), { ...terrain, bareEarth: true }));
   const tree = new THREE.Group();   // empty on purpose: hosts treat every result alike
   return {
-    tree, ground, earth: true, skel: null, stats: { earth: true }, season: null,
-    // Framed on the ISLAND. Framed like a tree scene it is a small island under a
-    // tree-shaped void — which draws the missing tree, the very thing this is not.
-    extents: { height: 3.3, width: 5.6, targetY: -0.55 },
+    tree, ground, earth: true, idle, skel: null, stats: { earth: true, idle }, season: null,
+    // FAILURE: framed on the ISLAND. Framed like a tree scene it is a small island
+    // under a tree-shaped void — which draws the missing tree, the very thing this
+    // is not. IDLE: framed as the tree scene, because there the void is the point.
+    extents: idle ? nominalExtents(q) : { height: 3.3, width: 5.6, targetY: -0.55 },
     dispose() { M.util.disposeObject(tree); M.util.disposeObject(ground); },
   };
 }

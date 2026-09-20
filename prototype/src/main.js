@@ -39,8 +39,18 @@ const pageParams = () => (typeof location !== 'undefined' ? new URLSearchParams(
  */
 export function mountTree(canvas, dna = DEFAULT_DNA, opts = {}) {
   const engine = opts.engine ?? pageParams().get('engine') ?? 'new';
-  // Bare earth exists only in the new engine, so asking for it selects it.
-  return engine === 'v0' && !opts.earth ? mountTreeV0(canvas, dna, opts) : mountTreeNew(canvas, dna, opts);
+  // Bare earth and idle exist only in the new engine, so asking for either selects it.
+  return engine === 'v0' && !opts.earth && !opts.idle ? mountTreeV0(canvas, dna, opts) : mountTreeNew(canvas, dna, opts);
+}
+
+/**
+ * Mount the IDLE state: sky and an empty island, before anyone has named a website.
+ * The same bare-earth island as the failure state, framed as the tree scene a tree
+ * will need — so when `handle.setDNA(dna)` grows one, the camera does not move. See
+ * growEarth for why idle and failure share an island and differ only in framing.
+ */
+export function mountIdle(canvas, opts = {}) {
+  return mountTreeNew(canvas, null, { ...opts, idle: true });
 }
 
 /**
@@ -62,6 +72,11 @@ function mountTreeNew(canvas, dna, opts = {}) {
 
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 200);
   camera.position.set(7.4, 4.6, 9.2);
+  // KNOWN, AND LEFT ALONE ON PURPOSE: this is the distance from the ORIGIN (12.67), but
+  // the camera orbits the target at (0, targetY, 0), which is ~11.87 away. So every fit
+  // comes out ~6% tighter than fitCamera's `pad = 1.06` says — the pad is effectively
+  // nil, and the margin on screen is nominalExtents' own 1.08. Nothing is clipped.
+  // "Fixing" it moves every frame ever judged, for no visible gain. Do not.
   const DIST0 = camera.position.length();
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
@@ -80,6 +95,17 @@ function mountTreeNew(canvas, dna, opts = {}) {
   let extents = { height: 8, width: 8, targetY: 3.4 };
   let lastFit = '';
   let reveal = null;    // { t0, group }
+
+  // Everything that goes on screen goes through here, so a host hears about the SKY
+  // changing at the moment it changes. The shell sets its own text against that sky
+  // (pale by day, near-black at night) and must not reach into the scene to ask. It
+  // follows what is SHOWN, not what was asked for: on a swap the old scene stays up
+  // until the new tree is whole, and its sky stays with it.
+  function show(next) {
+    const was = shown ? shown.env.name : null;
+    shown = next;
+    if (next.env.name !== was && opts.onEnv) opts.onEnv(next.env.name);
+  }
 
   function frame(ex) {
     extents = ex;
@@ -117,7 +143,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
           if (shown || abort.signal.aborted) return;
           env.scene.add(ground);
           env.apply();
-          shown = { env, built: null, ground };
+          show({ env, built: null, ground });
           groundShown = true;
           frame(ex);
         },
@@ -128,7 +154,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
       env.scene.add(built.tree);
       if (!groundShown) env.scene.add(built.ground);
       env.apply();
-      shown = { env, built };
+      show({ env, built });
       frame(ex);
       reveal = opts.reveal === false ? null : { t0: performance.now(), group: built.tree };
       // Free what was on screen. `scene.remove()` frees no GPU memory on its own, so
@@ -157,23 +183,27 @@ function mountTreeNew(canvas, dna, opts = {}) {
    * discipline as setDNA: a build in flight is abandoned, the old scene stays up
    * until this one is ready, and whatever it replaces is freed.
    */
-  function setEarth() {
+  function setEarth(idle = false) {
     if (pending) pending.abort.abort();
     const abort = new AbortController();
     const mine = (pending = { abort });
     // No DNA, so nothing measured: always the day state, never the page's own
     // `envstate` — but the rest of the debug surface still applies.
-    const q = paramSource(url, { envstate: 'day' });
+    // IDLE is framed as the tree scene of the NORMAL structure (`mid`). The three
+    // structures ask for nearly one frame — lens 39.5 to 40.9 degrees, target 2.48 to
+    // 2.63 — so whichever tree arrives, the camera has at most a fraction of a degree
+    // to give. Under the URL, so the debug surface can still ask for another.
+    const q = paramSource(idle ? { preset: 'mid' } : null, url, { envstate: 'day' });
     const { P } = resolveParams(q);
     const env = createEnvironment(renderer, q, P);
     const promise = (async () => {
       const M = await modules;
       if (abort.signal.aborted) throw new DOMException('superseded', 'AbortError');
-      const built = growEarth(M, q, env);
+      const built = growEarth(M, q, env, { idle });
       const old = shown;
       env.scene.add(built.ground);
       env.apply();
-      shown = { env, built };
+      show({ env, built });
       reveal = null;
       frame(built.extents);
       if (old) {
@@ -198,7 +228,9 @@ function mountTreeNew(canvas, dna, opts = {}) {
     if (canvas.width !== Math.round(w * renderer.getPixelRatio()) ||
         canvas.height !== Math.round(h * renderer.getPixelRatio()) || lastFit !== key) {
       renderer.setSize(w, h, false);
-      fitCamera(camera, extents, w / Math.max(h, 1), DIST0);
+      // A TALL frame is answered by stepping back, never by a wider lens (viewer.js).
+      // `?fit=lens` is the fit as it was before that, for an A/B on a real site's tree.
+      fitCamera(camera, extents, w / Math.max(h, 1), DIST0, undefined, url.get('fit') === 'lens' ? null : controls);
       lastFit = key;
     }
   }
@@ -234,9 +266,12 @@ function mountTreeNew(canvas, dna, opts = {}) {
   const handle = {
     engine: 'new',
     setDNA,
-    setEarth,
+    setEarth: () => setEarth(false),
+    setIdle: () => setEarth(true),
     ready: null,
     get current() { return shown ? shown.built : null; },
+    /** 'day' | 'night' — the environment ON SCREEN; null before the first frame. See `show`. */
+    get envName() { return shown ? shown.env.name : null; },
     scene: () => (shown ? shown.env.scene : null),
     camera,
     controls,
@@ -258,7 +293,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
     },
   };
 
-  if (opts.earth) setEarth(); else setDNA(dna);
+  if (opts.idle) setEarth(true); else if (opts.earth) setEarth(false); else setDNA(dna);
   tick();
   return handle;
 }
@@ -312,7 +347,7 @@ function mountTreeV0(canvas, dna = DEFAULT_DNA, opts = {}) {
       canvas.height !== Math.round(h * renderer.getPixelRatio())
     ) {
       renderer.setSize(w, h, false);
-      fitCamera(camera, built.extents, w / h, DIST0);
+      fitCamera(camera, built.extents, w / h, DIST0, undefined, controls);
     }
   }
 
@@ -339,8 +374,8 @@ function mountTreeV0(canvas, dna = DEFAULT_DNA, opts = {}) {
     resumeTimer = setTimeout(() => (controls.autoRotate = autoRotate), 2500);
   });
 
-  // ONE CONTRACT for every handle: setDNA() and setEarth() both return promises and
-  // may be called in any order. The shipped engine has no bare-earth state, so a
+  // ONE CONTRACT for every handle: setDNA(), setEarth() and setIdle() all return
+  // promises and may be called in any order. The shipped engine has no bare-earth state, so a
   // failure hands the canvas over to the new engine, which does; after that the
   // handle is the new engine's (a later setDNA grows the new tree — the way back to
   // v0 is a fresh mount). Without this a `?engine=v0` page threw on its first failure.
@@ -359,6 +394,13 @@ function mountTreeV0(canvas, dna = DEFAULT_DNA, opts = {}) {
       if (!takeover) { v0Dispose(); takeover = mountTreeNew(canvas, null, { ...opts, earth: true }); return takeover.ready; }
       return takeover.setEarth();
     },
+    setIdle() {
+      if (!takeover) { v0Dispose(); takeover = mountTreeNew(canvas, null, { ...opts, idle: true }); return takeover.ready; }
+      return takeover.setIdle();
+    },
+    // The shipped engine has no environment states — its background is the site's own
+    // colour — so it reports nothing, and a host treats nothing as day.
+    get envName() { return takeover ? takeover.envName : null; },
     setDNA: (next) => (takeover ? takeover.setDNA(next) : Promise.resolve(setDNA(next))),
     get current() { return built; },
     scene: () => scene,

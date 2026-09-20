@@ -56,16 +56,21 @@
       //   ?earth=1                the FAILURE state: the bare-earth island, no DNA
       //   ?earth=1&then=<site>    ...and then a successful retry on the same handle
       //   ?site=<a>&thenEarth=1   a tree, and then a failure
-      const { mountEarth } = await import(`./src/main.js${v}`);
-      const mountOpts = { autoRotate: url.get('spin') !== '0' };
-      const tree = url.get('earth') === '1' ? mountEarth(document.getElementById('scene'), mountOpts) : mountTree(document.getElementById('scene'), dna, mountOpts);
+      //   ?idle=1                 the IDLE state: the same island, framed as a tree scene
+      //   ?idle=1&then=<site>     ...and then the first tree — the camera must NOT move
+      const { mountEarth, mountIdle } = await import(`./src/main.js${v}`);
+      // Every change of sky the host is told about, in order — what a shell themes against.
+      const envLog = [];
+      const mountOpts = { autoRotate: url.get('spin') !== '0', onEnv: (name) => envLog.push(name) };
+      const canvas = document.getElementById('scene');
+      const tree = url.get('idle') === '1' ? mountIdle(canvas, mountOpts) : url.get('earth') === '1' ? mountEarth(canvas, mountOpts) : mountTree(canvas, dna, mountOpts);
       const syncMs = performance.now() - t0;
       const hud = document.getElementById('hud');
       if (url.get('hud') === '0') hud.style.display = 'none';
-      window.__wired = { tree, dna, syncMs, params: dnaToParams(dna).params };
+      window.__wired = { tree, dna, syncMs, params: dnaToParams(dna).params, envLog };
 
       const report = (label, built, ms) => {
-        if (built && built.earth) { hud.textContent = `${label}\nBARE EARTH — the failure state. No DNA, so nothing to describe.\nready in ${ms.toFixed(0)} ms`; return; }
+        if (built && built.earth) { hud.textContent = `${label}\n${built.idle ? 'IDLE — the empty island, framed for the tree that is not there yet.' : 'BARE EARTH — the failure state.'} No DNA, so nothing to describe.\nready in ${ms.toFixed(0)} ms · envName ${tree.envName}`; return; }
         hud.textContent = `${label}\n${describeDNA(window.__wired.dna)}\nmountTree returned in ${syncMs.toFixed(1)} ms · tree ready in ${ms.toFixed(0)} ms · worst frame gap ${worst.toFixed(0)} ms\n` +
           `params ${JSON.stringify(window.__wired.params)}` + (built && built.stats ? `\n${(built.stats.tris / 1000).toFixed(0)}k wood tri · leaves ${JSON.stringify(built.stats.leaves)} · flowers ${JSON.stringify(built.stats.flowers)} · fruit ${JSON.stringify(built.stats.fruit)} · winter ${JSON.stringify(built.stats.winter)}` : '');
       };
@@ -73,7 +78,7 @@
       watching = false;
       window.__wired.readyMs = performance.now() - t0;
       window.__wired.worstGapMs = worst;
-      report(url.get('earth') === '1' ? 'earth' : (url.get('site') || 'DEFAULT_DNA'), built, window.__wired.readyMs);
+      report(url.get('idle') === '1' ? 'idle' : url.get('earth') === '1' ? 'earth' : (url.get('site') || 'DEFAULT_DNA'), built, window.__wired.readyMs);
 
       if (url.get('thenEarth') === '1') { await tree.setEarth(); hud.textContent += '\n-> setEarth()'; }
       if (url.get('then')) {

@@ -384,7 +384,15 @@ whether lighting is fixed or responds to the analysed website.
 Framing, lens character, perspective vs orthographic, default angle, whether the camera
 moves, whether the user can move it.
 
-- _unresolved_
+- **A frame too narrow for the tree is answered by stepping BACK, never by a wider lens —
+  EXPERIMENT (2026-09-21).** `fitCamera` used to fit with the lens alone, which is only safe in
+  a roughly square frame; on a phone it opened to 72°, the one thing TASTE #1 names as the way to
+  lose the miniature. The lens is now capped at what the SQUARE stage gives the tree, and the
+  camera dollies instead. Square and wider frames are pixel-identical to before, by construction
+  and by measurement (every pixel hashed at 1:1 and 16:9). A wide frame was never the problem:
+  it is height-bound, so it carries the square stage's lens and the tree is exactly as tall in it.
+  Evidence: `references/experiments/framing-2026-09-21/`.
+- _otherwise unresolved_
 
 ---
 
@@ -721,6 +729,13 @@ Renders and measurements: `references/experiments/ground-value-2026-09-20/`.
 - **Nothing in it draws a missing tree.** No contact shading where a trunk would stand, and it
   is framed on the ISLAND — framed like a tree scene it is a small island under a tree-shaped
   void, which is the very thing it must not say.
+- **IDLE is the same island, framed the opposite way (2026-09-21) — EXPERIMENT.** Before anyone
+  has named a website the page shows sky and this island (`mountIdle` / `handle.setIdle()`).
+  For failure the tree-shaped void is a lie, so failure frames on the island; for idle the same
+  void is the INVITATION, so idle is framed as the tree scene a normal tree will ask for — and
+  when the tree arrives the camera does not move (measured: 0). Only the framing, and the page's
+  copy, tell the two apart. Bare soil for the same reason failure is: a lawn at idle is terrain
+  nobody measured. Evidence: `references/experiments/framing-2026-09-21/`.
 - The handle is the same one a tree gets, so a retry that succeeds is `handle.setDNA(dna)`, and
   a tree followed by a failure is `handle.setEarth()`. Both verified, with the same swap
   discipline as `setDNA`: a build in flight is abandoned, the old scene stays up until the new
