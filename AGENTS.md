@@ -102,6 +102,28 @@ Every non-trivial statement in the docs must be identifiable as one of:
 Do not let a `TENTATIVE` idea quietly become a `DECIDED` one by being implemented.
 Promotion to `DECIDED` is a human call and gets an entry in `DECISIONS.md`.
 
+**R12 — A number carries the instrument that produced it.**
+Every measurement in this repository is of *something measured in some way*, and when
+the way is forgotten the number gets used as if it were the subject. This has happened
+four times, each time producing real work aimed at a problem that was not there:
+
+- A **font list** that encoded macOS, so every site on a server had a non-default font.
+- A **framing constant** tuned in a square viewport, which would have shipped a 67°
+  lens to every phone.
+- A **legibility score** whose ≥20.8 L\* threshold was an artefact of bounding-box
+  segmentation, adopted as an acceptance number and later withdrawn.
+- A **bloom distribution** read from one camera angle of one seed — the default view of
+  `gate2.html?preset=bare&seed=7` — which is that tree's *worst* face. "The wreath" was
+  built on it, and averaged round the tree there is no wreath.
+
+So: **anything measured about a tree that is meant to be orbited must be measured round
+the tree, on more than one seed** — and report the worst view, not the mean, whenever
+the defect being judged is one a viewer can land on. More generally, write down what
+produced a number beside the number, and when you quote someone else's, ask how it was
+taken before you build on it. A measurement with no instrument recorded is an anecdote.
+
+This rule is descriptive of mistakes already made, not a hypothetical. Four for four.
+
 ---
 
 ## 3. Operating model
