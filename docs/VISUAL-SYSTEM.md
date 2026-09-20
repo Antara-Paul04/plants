@@ -606,3 +606,40 @@ whole argument in one image).
   representative of a real site unless already-conditioned colours are passed. Conditioned
   corpus pairs used for judging: github `#1b20a0`/`#8a8de4`, irs `#1671b6`/`#98c5e7`, gov.uk
   `#2d7abc`/`#b0d0ec`, tamu `#ac2020`/`#e79898`, raycast `#c7273a`/`#edb3ba`.
+
+### Wired to the product (2026-09-20) — the new tree responds to a URL
+
+The product's whole contract with 3D is `mountTree(canvas, dna, opts)` → `{ setDNA, dispose … }`
+(`prototype/src/main.js`, served at `/tree/`). That interface is unchanged, so **`app/` was
+not touched**. Behind it there are now two engines: `new` (default — `grow.js`) and `v0` (the
+shipped tree, whole, selectable with `opts.engine` or `?engine=v0`: a way back, and a
+side-by-side on the same DNA). Renders and numbers: `references/experiments/wiring-2026-09-20/`.
+
+- **One builder, two hosts.** The scene used to be the top-level body of `gate1.js`, so the
+  tree could only exist on that page. It is now `grow.js`; the gate pages and the product both
+  grow from it, from the same parameter bag. Verified by pixel diff: the refactor changed
+  **0 pixels** of the tree on seven debug renders.
+- **Asynchronous inside, synchronous outside.** The wood is a 1.5–2.5 s build. Blocking on it
+  would freeze the page, so `mountTree`/`setDNA` return at once (~60 ms), the island shows
+  immediately, the wood is built in ~10 ms slices between frames, and the tree is added when
+  whole. `handle.ready` resolves then. The wood builder is a generator with a synchronous and
+  a time-sliced driver — one implementation, identical output. A worker was the other answer;
+  module workers do not see the page's import map.
+- **Measured:** longest frozen frame ~2000 ms → ~100 ms (gov.uk). Two stalls had to be found
+  by timing, not guessed: seven 15-million-float grid arrays allocated in one go (300 ms,
+  now stepped), and the skeleton, which is still one ~90–200 ms block on the rich structure —
+  **the longest remaining stall**. Time-slicing roughly doubles wall time under load (each
+  slice yields to a rendered frame).
+- **Framed before it is grown.** The camera fits the crown the tree is ASKED to fill, known
+  from its parameters, so there is no jump when the tree arrives; and the island is in frame
+  whole — cropped at the turf, a diorama becomes a tree in a field.
+- **On a swap the old tree stays up until the new one is whole**, a superseded build is
+  aborted, and everything replaced is disposed.
+- **A leafless tree takes the ground dormant on the debug pages too** now (it always did in the
+  product): the one visible change to `gate1.html`, and not to the tree.
+- `prototype/wired.html` is the product's renderer path without the product: any DNA record
+  through `mountTree`, with the frozen-frame measurement on screen.
+
+**Known, not yet fixed:** pendant florets read as flat squares now that dark petals are solid;
+`abundant` on a real site is nearly leafless by design and wants Taste's eye; the build is
+2–7 s under load, which is what the deferred performance pass is for.

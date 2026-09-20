@@ -367,3 +367,42 @@ degrees of the same thing.
    variation, not literal content quantity" — but it is now actually visible, which is
    what the contract always said it was for. **EXPERIMENT**; deliberately exaggerated
    under Lead's authorisation, and Taste has not seen it.
+
+### 3D / renderer — DNA → the NEW tree (2026-09-20, wired to the product)
+
+`prototype/src/dna-params.js`. The new tree (`grow.js`) runs on a flat parameter bag;
+`dnaToParams(dna)` is now one source of that bag and the hosting page's query string is the
+other, layered OVER it, so every debug parameter still works on a real site's tree. **It
+invents nothing** — each line maps one contract field onto a parameter that already existed.
+The shipped resolver (`dna.js`, `resolveDNA`) is REUSED for what the two trees must agree on:
+terrain and stone palettes, scene dormancy, the gates that decide whether a tree may flower
+or fruit. **The contract is unchanged.**
+
+| DNA | drives |
+|---|---|
+| `seed` | the tree, and — on its own hash stream — the bloom grammar |
+| `morphology` | `chooseGrammar(morphology, seed)` |
+| `skeleton.complexity` | structure preset: `simple`→`sparse` (few limbs held WIDE), `normal`→`mid`, `rich`→`bare` (the full judged structure). A `bare` tree always gets the rich one — its skeleton is the whole show |
+| `foliage.state` | `bare` → leafless and unornamented; else cluster spacing, leaves per cluster, how far down the limb is in leaf. Exaggerated: subtler steps were one tree at 140px |
+| `foliage.density` | within-state variation of spacing (airy ×1.2, dense ×0.85) |
+| `botanicalState` | FOUR values. `flowering` = fresher greens; `autumn` = V0's ported palette, leaf amount 0.88, flowers ×0.4; `winter` = thin sage crown + buds (berries if fruiting), dormant ground |
+| `flowers.amount` | the bloom ladder AND its foliage relationship |
+| `flowers.primary` / `.secondary` | petal / centre, passed through UNTOUCHED — they arrive conditioned |
+| `fruit` | V0's gate reused in leaf; in winter the contract's flag is honoured directly (berries) |
+| `terrain` | V0's palette and grass, via `resolveDNA`, then graded by the environment state |
+| `background` | **day or night, nothing else** (linear luminance < 0.06). Never a scene colour — that mapping is a standing ban. 11 of 56 surveyed sites are night; the split is cleanly bimodal |
+
+**Findings for Lead — surfaced, not resolved:**
+
+1. **A winter site delivers NO colour.** `flowers: none` ⇒ `primary: null`, and every winter
+   site in the corpus (vercel, gwern, lusion) is one. L8's "accent-coloured buds" therefore
+   have no accent to carry: the renderer falls back to a natural bud tone rather than invent
+   one. If winter is to express the site, **analysis has to emit a colour for it** — that is a
+   contract question, not a renderer one.
+2. **V0's `flowering ×1.25` cluster boost is NOT ported.** The ladder is a perceptual contract
+   now (L4) and Taste owns its fractions; a hidden multiplier would fight that. Autumn's ×0.4
+   IS ported, deliberately, as Lead ruled.
+3. **`mid` is a new, unjudged structure preset.** The debug pages only ever had two
+   architectures; the contract has three complexities.
+4. **Night + a dark accent is dim.** github (navy bloom, night) and lusion (winter, night) are
+   the weakest trees in the acceptance set. It follows whichever night level is picked.

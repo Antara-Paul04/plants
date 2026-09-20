@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wired — the product's renderer path, without the product</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #eee8de; }
+      #scene { display: block; width: 100%; height: 100%; }
+      #hud {
+        position: fixed; left: 10px; top: 10px; z-index: 2; white-space: pre-wrap; max-width: 46ch;
+        font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+        color: #33302c; background: #ffffffcc; padding: 6px 9px; border: 1px solid #0002;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+    <div id="hud"></div>
+    <script type="module">
+      // Exactly what app/public/app.js does — mountTree(canvas, dna, { autoRotate }) —
+      // but fed a DNA record directly, so the wiring can be checked on any site's
+      // real DNA without running an analysis.
+      //
+      //   ?site=gov.uk            a record from src/dna-data.js
+      //   ?dna={...json...}       any DNA record, URL-encoded
+      //   ?then=<site>            after the first tree is up, setDNA() to a second one
+      //   ?engine=v0              the shipped renderer, for a side-by-side
+      //   ?spin=0  ?hud=0         capture conveniences
+      // Every grow.js debug parameter also works here (it does in the product too).
+      const url = new URLSearchParams(location.search);
+      const v = url.get('v') ? `?v=${encodeURIComponent(url.get('v'))}` : '';
+      const { mountTree } = await import(`./src/main.js${v}`);
+      const { DEFAULT_DNA, describeDNA } = await import(`./src/dna.js${v}`);
+      const { DNA_SITES } = await import(`./src/dna-data.js${v}`);
+      const { dnaToParams } = await import(`./src/dna-params.js${v}`);
+
+      const pick = (name) => (name ? (DNA_SITES.find((s) => s.domain === name) || {}).dna : null);
+      const dna = url.get('dna') ? JSON.parse(url.get('dna')) : (pick(url.get('site')) || DEFAULT_DNA);
+
+      // Longest gap between animation frames while the tree is being grown: the
+      // number that says whether the page FROZE. One slow frame is a stall; the old
+      // synchronous build was a single ~2000 ms one.
+      let worst = 0, last = performance.now(), watching = true;
+      (function watch() { const n = performance.now(); if (watching) worst = Math.max(worst, n - last); last = n; requestAnimationFrame(watch); })();
+
+      const t0 = performance.now();
+      const tree = mountTree(document.getElementById('scene'), dna, { autoRotate: url.get('spin') !== '0' });
+      const syncMs = performance.now() - t0;
+      const hud = document.getElementById('hud');
+      if (url.get('hud') === '0') hud.style.display = 'none';
+      window.__wired = { tree, dna, syncMs, params: dnaToParams(dna).params };
+
+      const report = (label, built, ms) => {
+        hud.textContent = `${label}\n${describeDNA(window.__wired.dna)}\nmountTree returned in ${syncMs.toFixed(1)} ms · tree ready in ${ms.toFixed(0)} ms · worst frame gap ${worst.toFixed(0)} ms\n` +
+          `params ${JSON.stringify(window.__wired.params)}` + (built && built.stats ? `\n${(built.stats.tris / 1000).toFixed(0)}k wood tri · leaves ${JSON.stringify(built.stats.leaves)} · flowers ${JSON.stringify(built.stats.flowers)} · fruit ${JSON.stringify(built.stats.fruit)} · winter ${JSON.stringify(built.stats.winter)}` : '');
+      };
+      const built = await tree.ready;
+      watching = false;
+      window.__wired.readyMs = performance.now() - t0;
+      window.__wired.worstGapMs = worst;
+      report(url.get('site') || 'DEFAULT_DNA', built, window.__wired.readyMs);
+
+      if (url.get('then')) {
+        const next = pick(url.get('then'));
+        const t1 = performance.now();
+        window.__wired.dna = next;
+        window.__wired.params = dnaToParams(next).params;
+        const b2 = await tree.setDNA(next);
+        report(`${url.get('site')} -> ${url.get('then')}`, b2, performance.now() - t1);
+      }
+      document.body.classList.add('ready');
+    </script>
+  </body>
+</html>

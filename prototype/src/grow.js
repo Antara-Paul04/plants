@@ -361,6 +361,17 @@ export async function growTree(M, q, env, opts = {}) {
   const { rng } = M.util;
   const ENV = env.ENV;
   const throwIfAborted = () => { if (signal && signal.aborted) throw new DOMException('tree build superseded', 'AbortError'); };
+  // Phase timings (ms of main-thread work per phase). When the build is time-sliced
+  // each phase also ends with a breath, so the longest STALL a page can see is the
+  // longest single phase — which makes this table the thing to read when a host
+  // reports a frozen frame.
+  const phases = {};
+  let tPhase = performance.now();
+  const endPhase = async (name) => {
+    phases[name] = Math.round(performance.now() - tPhase);
+    if (budgetMs !== Infinity) { await new Promise((res) => { const ch = new MessageChannel(); ch.port1.onmessage = () => { ch.port1.close(); res(); }; ch.port2.postMessage(0); }); throwIfAborted(); }
+    tPhase = performance.now();
+  };
 
   // `season` is the four-value botanicalState. Winter is the one that changes the
   // TREE (leafless or near it, buds or berries); the others change its colours.
@@ -397,13 +408,14 @@ export async function growTree(M, q, env, opts = {}) {
     ground.add(M.island.buildIsland(groundRng, terrain));
     ground.add(M.island.buildGrass(groundRng, uniforms, { ...terrain, detail: num('grassDetail', 0.6) }));
     if (opts.rocks) {
-      const rk = {};
+      const rk = { rockPush: num('rockPush', 1.32) };
       if (T0.rockHi) rk.rockHi = gradeColor(new THREE.Color(hexOf(T0.rockHi)), ENV.ground);
       if (T0.rockLo) rk.rockLo = gradeColor(new THREE.Color(hexOf(T0.rockLo)), ENV.ground);
       ground.add(M.island.buildRocks(rng(P.seed * 17 + 707), rk));
     }
   }
   if (onGround) onGround(ground);
+  await endPhase('ground');
 
   // --- structure ---------------------------------------------------------------
   const t0 = performance.now();
@@ -421,7 +433,7 @@ export async function growTree(M, q, env, opts = {}) {
     tipCount: P.tipCount, tipKill: P.tipKill, tipInfluence: P.tipInfluence, tipShell: P.tipShell, tipD: P.tipD, tipWobble: P.tipWobble,
   });
   const tGrow = performance.now() - t0;
-  throwIfAborted();
+  await endPhase('skeleton');
 
   // --- wood ----------------------------------------------------------------------
   const t1 = performance.now();
@@ -434,6 +446,7 @@ export async function growTree(M, q, env, opts = {}) {
   const thick = !useField ? { geometry: null, cuts: new Map() }
     : budgetMs === Infinity ? M.woodsdf.buildThickWood(skel.limbs, r, woodOpts)
     : await M.woodsdf.buildThickWoodAsync(skel.limbs, r, woodOpts);
+  phases.wood = Math.round(performance.now() - tPhase); tPhase = performance.now();
   throwIfAborted();
   const geo = M.limbmesh.buildLimbs(skel.limbs, r, { debugColors: DEBUG_LIMBS, cuts: thick.cuts });
   const tMesh = performance.now() - t1;
@@ -451,6 +464,8 @@ export async function growTree(M, q, env, opts = {}) {
     m.receiveShadow = true;
     tree.add(m);
   }
+
+  await endPhase('limbs');
 
   // --- foliage, bloom, fruit -------------------------------------------------------
   const F = M.flowers;
@@ -590,6 +605,8 @@ export async function growTree(M, q, env, opts = {}) {
     }
   }
 
+  await endPhase('foliage');
+
   const box = new THREE.Box3().setFromObject(tree);
   const size = box.getSize(new THREE.Vector3());
   const extents = { height: size.y * 1.12, width: Math.max(size.x, size.z) * 1.12, targetY: box.min.y + size.y * 0.55 };
@@ -599,7 +616,7 @@ export async function growTree(M, q, env, opts = {}) {
     tree, ground, skel, geo, thick, P, extents, season: SEASON,
     cloud: P.showCloud ? new THREE.Points(new THREE.BufferGeometry().setFromPoints(skel.cloud), new THREE.PointsMaterial({ size: 0.04, color: 0xd06a6a })) : null,
     spots: dbgSpots, bloomSites: dbgBloom,
-    stats: { ...stats, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },
+    stats: { ...stats, phases, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },
     dispose() {
       M.util.disposeObject(tree);
       M.util.disposeObject(ground);
@@ -616,6 +633,12 @@ export async function growTree(M, q, env, opts = {}) {
  */
 export function nominalExtents(q) {
   const { P } = resolveParams(q);
-  const top = P.cy + P.ry + 0.45;
-  return { height: (top + 0.35) * 1.12, width: (P.rx * 2 + 1.2) * 1.12, targetY: -0.35 + (top + 0.35) * 0.55 };
+  const top = P.cy + P.ry + 0.45;          // crown top, with a leaf cluster on it
+  // The ISLAND is in the frame, whole. It is part of the object — a miniature on
+  // its own ground — and the first wired frame cropped it at the turf, which turns
+  // a diorama into a tree standing in a field. 1.5 of its 1.95 depth: the point
+  // below is soil-coloured and may fall out of frame.
+  const bottom = P.showGround ? -1.5 : -0.35;
+  const width = Math.max(P.rx * 2 + 1.2, P.showGround ? 5.2 : 0);
+  return { height: (top - bottom) * 1.08, width: width * 1.08, targetY: (top + bottom) / 2 };
 }

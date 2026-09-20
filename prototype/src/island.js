@@ -347,7 +347,9 @@ export function buildRocks(r, params = {}) {
     // Seeded personality only: the stones shuffle a little around the trunk
     // from tree to tree, but the arrangement stays the one that was composed.
     pl.a += rr(r, -0.22, 0.22);
-    pl.rad *= rr(r, 0.94, 1.08);
+    // `rockPush` moves the composed ring outward as a whole: the new tree's root
+    // flare is far wider than the trunk these stones were composed around.
+    pl.rad *= rr(r, 0.94, 1.08) * (params.rockPush ?? 1);
     const g = new THREE.IcosahedronGeometry(1, 1);
     const pos = g.attributes.position;
     const col = [];

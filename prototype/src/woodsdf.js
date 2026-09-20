@@ -158,12 +158,20 @@ function* thickWoodSteps(limbs, r, opts = {}) {
   }
   const nx = Math.ceil((hi.x - lo.x) / h) + 1, ny = Math.ceil((hi.y - lo.y) / h) + 1, nz = Math.ceil((hi.z - lo.z) / h) + 1;
   const N = nx * ny * nz;
+  // Seven arrays of ~15 million floats. Allocating and filling them in one go was a
+  // 300 ms stall BEFORE the first checkpoint — the longest frozen frame in the whole
+  // build — so each is its own step.
   const field = new Float32Array(N).fill(BIG);   // smooth-blended distance
+  yield 'alloc';
   const best = new Float32Array(N).fill(BIG);    // hard minimum: who OWNS this point
+  yield 'alloc';
   const rField = new Float32Array(N);            // owner's local radius
   const gField = new Float32Array(N);            // owner's groove value
+  yield 'alloc';
   const tmp = new Float32Array(N).fill(BIG);
+  yield 'alloc';
   const tmpR = new Float32Array(N), tmpG = new Float32Array(N);
+  yield 'alloc';
   const sx = 1, sy = nx, sz = nx * ny;
 
   // --- 3. evaluate, limb by limb ----------------------------------------------
