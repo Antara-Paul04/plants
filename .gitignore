@@ -63,3 +63,10 @@ references/experiments/reliability-sweep-*/*.png
 references/experiments/site-survey-AFTER-*/pairs/
 references/experiments/site-survey-AFTER-*/_site/
 references/experiments/site-survey-AFTER-*/*.png
+
+# Re-check captures — the report and results.json are committed, images stay local.
+references/experiments/retest-*/pairs/
+references/experiments/retest-*/_site/
+references/experiments/retest-*/_failed/
+references/experiments/retest-*/**/*.png
+references/experiments/retest-*/*.png

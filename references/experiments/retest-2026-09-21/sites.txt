@@ -1,0 +1,26 @@
+# Re-check of the build serving after 00:36 on 2026-09-21 — acceptance set, every regression
+# and false rejection from the AFTER, and the four example chips. bbc.com is run 5x separately.
+info.cern.ch                     crux · must stay BARE
+bettermotherfuckingwebsite.com   crux · must grow SPARSE (failed in the AFTER)
+danluu.com                       must stay BARE
+news.ycombinator.com             chip
+arxiv.org                        chip
+gwern.net                        chip
+tesla.com                        bot wall · must be rejected
+adidas.com                       bot wall · must be rejected (grew bare from a blank frame in the AFTER)
+dribbble.com                     bot wall · must be rejected
+tiktok.com                       bot wall / blank · must be rejected
+imdb.com                         bot wall · must be rejected
+craigslist.org                   false rejection in the AFTER (NOT_RENDERED at 1.5% ink)
+pinterest.com                    false rejection in the AFTER (BLOCKED, app shell)
+booking.com                      false rejection in the AFTER (BLOCKED)
+isitchristmas.com                rejected in the AFTER (one-word site) — product question
+play.grafana.org                 should be an honest rejection, ideally not worded as BLOCKED
+lusion.co                        should be an honest rejection
+raycast.com                      measured too early in the AFTER (vivid site -> winter)
+stripe.com                       measured too early in the AFTER (lost fruit)
+microsoft.com                    measured too early in the AFTER (ink 0.022 -> sparse)
+youtube.com                      measured too early in the AFTER (ink 0.046)
+magnumphotos.com                 measured with no photographs in the AFTER
+walmart.com                      analyzer crash in the AFTER (reading 'width')
+europa.eu                        analyzer crash in the AFTER (screenshot timeout)

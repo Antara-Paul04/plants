@@ -1,0 +1,111 @@
+info.cern.ch                     crux · must stay BARE
+    after: GREW bare/none/normal · ink 0.018 col 0.09 · 3.0s/5.9s
+    now  : GREW bare/none/normal · ink 0.018 col 0.09 · 4.4s/8.7s
+    cpu 0.42→0.47
+bettermotherfuckingwebsite.com   crux · must grow SPARSE (failed in the AFTER)
+    after: TIMEOUT "exceeded 20000ms"
+    now  : GREW sparse/none/normal · ink 0.071 col 0.042 · 15.9s/17.6s
+    cpu 0.49→0.44
+danluu.com                       must stay BARE
+    after: GREW bare/none/normal · ink 0.073 col 0.217 · 1.8s/3.4s
+    now  : GREW bare/none/normal · ink 0.073 col 0.217 · 5.4s/7.1s
+    cpu 0.32→0.44
+news.ycombinator.com             chip
+    after: GREW sparse/few/normal+fruit · ink 0.119 col 0.277 · 3.1s/4.8s
+    now  : GREW sparse/few/normal+fruit · ink 0.118 col 0.277 · 6.5s/8.1s
+    cpu 0.4→0.45
+arxiv.org                        chip
+    after: GREW normal/few/normal · ink 0.191 col 0.292 · 3.6s/5.4s
+    now  : GREW normal/few/normal · ink 0.191 col 0.292 · 8.4s/10.0s
+    cpu 0.36→0.42
+gwern.net                        chip
+    after: GREW normal/none/winter · ink 0.139 col 0 · 6.4s/8.3s
+    now  : GREW normal/none/winter · ink 0.134 col 0 · 10.2s/11.9s
+    cpu 0.33→0.46
+tesla.com                        bot wall · must be rejected
+    after: BLOCKED "interstitial after load: Access Denied"
+    now  : BLOCKED "interstitial after load: Access Denied"
+    user sees: "tesla.com does not allow us to look at it."
+    cpu 0.42→0.45, 0.32→0.43
+adidas.com                       bot wall · must be rejected (grew bare from a blank frame in the AFTER)
+    after: GREW bare/none/normal · ink 0 col 0 · 15.1s/16.7s
+    now  : NOT_RENDERED "nothing painted (838 chars, 19 boxes) — the page did not render, it is"
+    user sees: "We could not read that website."
+    cpu 0.31→0.45, 0.48→0.41
+dribbble.com                     bot wall · must be rejected
+    after: BLOCKED "no links, 0 chars, 0 boxes — a notice page, not a website"
+    now  : EMPTY_PAGE "after settling: 3 elements, 0 chars, 0 boxes"
+    user sees: "There was nothing on dribbble.com to read."
+    cpu 0.45→0.44, 0.4→0.48
+tiktok.com                       bot wall / blank · must be rejected
+    after: NOT_RENDERED "DOM has 399 boxes and 19213 chars but the frame is 0.0% inked — the pa"
+    now  : GREW normal/medium/flowering · ink 0.063 col 0.132 · 15.5s/17.3s
+    cpu 0.42→0.49
+imdb.com                         bot wall · must be rejected
+    after: BLOCKED "no links, 0 chars, 0 boxes — a notice page, not a website"
+    now  : BLOCKED "interstitial after load: Human Verification"
+    user sees: "imdb.com does not allow us to look at it."
+    cpu 0.31→0.39, 0.47→0.48
+craigslist.org                   false rejection in the AFTER (NOT_RENDERED at 1.5% ink)
+    after: NOT_RENDERED "DOM has 270 boxes and 3715 chars but the frame is 1.5% inked — the pag"
+    now  : GREW normal/none/winter · ink 0.061 col 0.03 · 13.5s/17.3s
+    cpu 0.28→0.49
+pinterest.com                    false rejection in the AFTER (BLOCKED, app shell)
+    after: BLOCKED "no links, 0 chars, 1 boxes — a notice page, not a website"
+    now  : GREW normal/medium/flowering · ink 0.28 col 0.391 · 11.2s/15.1s
+    cpu 0.43→0.57
+booking.com                      false rejection in the AFTER (BLOCKED)
+    after: BLOCKED "no links, 0 chars, 0 boxes — a notice page, not a website"
+    now  : EMPTY_PAGE "after settling: 3 elements, 0 chars, 0 boxes"
+    user sees: "There was nothing on booking.com to read."
+    cpu 0.5→0.53, 0.42→0.58
+isitchristmas.com                rejected in the AFTER (one-word site) — product question
+    after: EMPTY_PAGE "after settling: 15 elements, 36 chars, 1 boxes"
+    now  : EMPTY_PAGE "after settling: 15 elements, 36 chars, 1 boxes"
+    user sees: "There was nothing on isitchristmas.com to read."
+    cpu 0.5→0.43, 0.5→0.45
+play.grafana.org                 should be an honest rejection, ideally not worded as BLOCKED
+    after: BLOCKED "no links, 25 chars, 2 boxes — a notice page, not a website"
+    now  : GREW lush/abundant/flowering+fruit · ink 0.439 col 0.528 · 14.8s/17.0s · try 2
+    cpu 0.4→0.46, 0.47→0.49
+lusion.co                        should be an honest rejection
+    after: NOT_RENDERED "DOM has 222 boxes and 2209 chars but the frame is 1.3% inked — the pag"
+    now  : GREW normal/none/winter · ink 0.013 col 0 · 7.2s/8.4s
+    cpu 0.35→0.47
+raycast.com                      measured too early in the AFTER (vivid site -> winter)
+    after: GREW lush/none/winter · ink 0.045 col 0.065 · 6.5s/7.6s
+    now  : GREW lush/abundant/flowering+fruit · ink 0.165 col 0.393 · 17.0s/19.5s
+    cpu 0.39→0.44
+stripe.com                       measured too early in the AFTER (lost fruit)
+    after: GREW lush/medium/flowering · ink 0.122 col 0.397 · 4.8s/9.2s
+    now  : GREW lush/abundant/flowering+fruit · ink 0.169 col 0.422 · 15.9s/17.5s
+    cpu 0.4→0.42
+microsoft.com                    measured too early in the AFTER (ink 0.022 -> sparse)
+    after: GREW sparse/none/normal · ink 0.022 col 0.109 · 19.8s/21.5s · try 2
+    now  : GREW lush/abundant/flowering+fruit · ink 0.332 col 0.356 · 15.1s/16.2s
+    cpu 0.39→0.42
+youtube.com                      measured too early in the AFTER (ink 0.046)
+    after: GREW normal/medium/flowering · ink 0.046 col 0.077 · 9.2s/10.4s
+    now  : GREW normal/medium/flowering · ink 0.046 col 0.077 · 7.8s/8.9s
+    cpu 0.35→0.42
+magnumphotos.com                 measured with no photographs in the AFTER
+    after: GREW normal/none/winter · ink 0.124 col 0 · 15.2s/16.3s
+    now  : GREW normal/medium/flowering · ink 0.527 col 0.132 · 12.2s/13.6s · try 2
+    cpu 0.33→0.41, 0.39→0.42
+walmart.com                      analyzer crash in the AFTER (reading 'width')
+    after: INTERNAL "page.evaluate: TypeError: Cannot read properties of undefined (reading"
+    now  : GREW normal/medium/flowering+fruit · ink 0.347 col 0.277 · 9.8s/11.4s
+    cpu 0.4→0.49
+europa.eu                        analyzer crash in the AFTER (screenshot timeout)
+    after: TIMEOUT "page.screenshot: Timeout 2500ms exceeded."
+    now  : GREW normal/medium/flowering · ink 0.381 col 0.327 · 11.8s/12.9s
+    cpu 0.31→0.4
+
+BBC.COM x5 — must be the same tree five times
+  run 1: GREW lush/medium/flowering · ink 0.44 col 0.297 · 14.7s/17.6s · cpu 0.39→0.46
+  run 2: GREW lush/medium/flowering · ink 0.44 col 0.297 · 13.1s/15.8s · cpu 0.43→0.45
+  run 3: GREW lush/medium/flowering · ink 0.44 col 0.297 · 9.6s/12.1s · cpu 0.42→0.55
+  run 4: GREW normal/medium/flowering · ink 0.344 col 0.255 · 11.7s/13.5s · cpu 0.34→0.43
+  run 5: GREW lush/medium/flowering · ink 0.44 col 0.297 · 14.8s/17.2s · cpu 0.38→0.39
+  distinct outcomes: 2 → lush/medium/flowering/false  |  normal/medium/flowering/false
+  ink range 0.344 – 0.44

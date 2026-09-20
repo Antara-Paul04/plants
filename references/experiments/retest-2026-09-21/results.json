@@ -1,0 +1,1740 @@
+[
+  {
+    "site": "info.cern.ch",
+    "category": "crux · must stay BARE",
+    "file": "info.cern.ch.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 11758,
+        "analysisMs": 4374,
+        "load1": 4.8,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.47,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "info.cern.ch",
+    "url": "https://info.cern.ch/",
+    "live": true,
+    "timingMs": 4374,
+    "e2eMs": 8742,
+    "stamp": "grown in 5.7s",
+    "fingerprint": {
+      "authored": 0.1,
+      "stylingRichness": 0.069,
+      "inkCoverage": 0.018,
+      "colorfulness": 0.09,
+      "designColorfulness": 0.09,
+      "designChromaticRatio": 0.0096,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.076,
+      "accentConcentration": 0,
+      "chromaticBins": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#9b9bf8",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "bare",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e5eb",
+      "seed": 446285954,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "bettermotherfuckingwebsite.com",
+    "category": "crux · must grow SPARSE (failed in the AFTER)",
+    "file": "bettermotherfuckingwebsite.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20641,
+        "analysisMs": 15853,
+        "load1": 4.4,
+        "cpuBefore": 0.49,
+        "cpuDuring": 0.44,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "bettermotherfuckingwebsite.com",
+    "url": "http://bettermotherfuckingwebsite.com/",
+    "live": true,
+    "timingMs": 15853,
+    "e2eMs": 17600,
+    "stamp": "grown in 16.9s",
+    "fingerprint": {
+      "authored": 0.2,
+      "stylingRichness": 0.158,
+      "inkCoverage": 0.071,
+      "colorfulness": 0.042,
+      "designColorfulness": 0.042,
+      "designChromaticRatio": 0.0024,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.36,
+      "accentConcentration": 0,
+      "chromaticBins": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a1a1f8",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e5eb",
+      "seed": 3600337157,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "danluu.com",
+    "category": "must stay BARE",
+    "file": "danluu.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 10082,
+        "analysisMs": 5387,
+        "load1": 4.1,
+        "cpuBefore": 0.32,
+        "cpuDuring": 0.44,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "danluu.com",
+    "url": "https://danluu.com/",
+    "live": true,
+    "timingMs": 5387,
+    "e2eMs": 7061,
+    "stamp": "grown in 6.7s",
+    "fingerprint": {
+      "authored": 0.1,
+      "stylingRichness": 0.056,
+      "inkCoverage": 0.073,
+      "colorfulness": 0.217,
+      "designColorfulness": 0.217,
+      "designChromaticRatio": 0.059,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.368,
+      "accentConcentration": 0,
+      "chromaticBins": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a1a1f8",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "bare",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "sparse",
+      "background": "#e5e5eb",
+      "seed": 3566231361,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "news.ycombinator.com",
+    "category": "chip",
+    "file": "news.ycombinator.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 11083,
+        "analysisMs": 6501,
+        "load1": 4.3,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.45,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "news.ycombinator.com",
+    "url": "https://news.ycombinator.com/",
+    "live": true,
+    "timingMs": 6501,
+    "e2eMs": 8064,
+    "stamp": "grown in 7.6s",
+    "fingerprint": {
+      "authored": 0.5,
+      "stylingRichness": 0.258,
+      "inkCoverage": 0.118,
+      "colorfulness": 0.277,
+      "designColorfulness": 0.277,
+      "designChromaticRatio": 0.0214,
+      "warmShareOfChroma": 1,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.836,
+      "accentConcentration": 0.889,
+      "chromaticBins": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#f6f6ef",
+        "primary": "#f37b2b",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "sparse",
+        "density": "airy"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#f37b2b",
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#f37b2b"
+      },
+      "terrain": "sparse",
+      "background": "#ebebe2",
+      "seed": 2307374702,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "arxiv.org",
+    "category": "chip",
+    "file": "arxiv.org.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 13044,
+        "analysisMs": 8364,
+        "load1": 4.3,
+        "cpuBefore": 0.36,
+        "cpuDuring": 0.42,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "arxiv.org",
+    "url": "https://arxiv.org/",
+    "live": true,
+    "timingMs": 8364,
+    "e2eMs": 10025,
+    "stamp": "grown in 9.5s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.322,
+      "inkCoverage": 0.191,
+      "colorfulness": 0.292,
+      "designColorfulness": 0.292,
+      "designChromaticRatio": 0.1054,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.011,
+      "canvasArea": 0,
+      "textDensity": 0.931,
+      "accentConcentration": 0,
+      "chromaticBins": 3,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a1a1f8",
+        "secondary": "#9db7d5"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "normal",
+      "flowers": {
+        "amount": "few",
+        "primary": "#a1a1f8",
+        "secondary": "#4570a1"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e5eb",
+      "seed": 1356002849,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "gwern.net",
+    "category": "chip",
+    "file": "gwern.net.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 14914,
+        "analysisMs": 10213,
+        "load1": 4.2,
+        "cpuBefore": 0.33,
+        "cpuDuring": 0.46,
+        "waitedForQuietMs": 1501
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "gwern.net",
+    "url": "https://gwern.net/",
+    "live": true,
+    "timingMs": 10213,
+    "e2eMs": 11878,
+    "stamp": "grown in 11.6s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.442,
+      "inkCoverage": 0.134,
+      "colorfulness": 0,
+      "designColorfulness": 0,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.367,
+      "accentConcentration": 0,
+      "chromaticBins": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e6e6e6",
+      "seed": 2830561623,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "tesla.com",
+    "category": "bot wall · must be rejected",
+    "file": "_failed/tesla.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "interstitial after load: Access Denied",
+        "ms": 11204,
+        "analysisMs": null,
+        "load1": 5.1,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.45,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "interstitial after load: Access Denied",
+        "ms": 6253,
+        "analysisMs": null,
+        "load1": 5,
+        "cpuBefore": 0.32,
+        "cpuDuring": 0.43,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "BLOCKED",
+      "message": "That website blocked us from looking at it.",
+      "detail": "interstitial after load: Access Denied"
+    },
+    "shown": "tesla.com does not allow us to look at it.",
+    "domain": "tesla.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 6224,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "adidas.com",
+    "category": "bot wall · must be rejected (grew bare from a blank frame in the AFTER)",
+    "file": "_failed/adidas.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "NOT_RENDERED",
+        "detail": "nothing painted (838 chars, 19 boxes) — the page did not render, it is not refusing us",
+        "ms": 4781,
+        "analysisMs": null,
+        "load1": 5.1,
+        "cpuBefore": 0.31,
+        "cpuDuring": 0.45,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": false,
+        "code": "NOT_RENDERED",
+        "detail": "nothing painted (838 chars, 19 boxes) — the page did not render, it is not refusing us",
+        "ms": 5826,
+        "analysisMs": null,
+        "load1": 5.1,
+        "cpuBefore": 0.48,
+        "cpuDuring": 0.41,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "NOT_RENDERED",
+      "message": "That website did not finish drawing for us.",
+      "detail": "nothing painted (838 chars, 19 boxes) — the page did not render, it is not refusing us"
+    },
+    "shown": "We could not read that website.",
+    "domain": "adidas.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 5818,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "dribbble.com",
+    "category": "bot wall · must be rejected",
+    "file": "_failed/dribbble.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "EMPTY_PAGE",
+        "detail": "after settling: 3 elements, 0 chars, 0 boxes",
+        "ms": 13387,
+        "analysisMs": null,
+        "load1": 6.1,
+        "cpuBefore": 0.45,
+        "cpuDuring": 0.44,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "EMPTY_PAGE",
+        "detail": "after settling: 3 elements, 0 chars, 0 boxes",
+        "ms": 12391,
+        "analysisMs": null,
+        "load1": 5.6,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "EMPTY_PAGE",
+      "message": "There was nothing on that page to look at.",
+      "detail": "after settling: 3 elements, 0 chars, 0 boxes"
+    },
+    "shown": "There was nothing on dribbble.com to read.",
+    "domain": "dribbble.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 12381,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "tiktok.com",
+    "category": "bot wall / blank · must be rejected",
+    "file": "tiktok.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20307,
+        "analysisMs": 15527,
+        "load1": 5.4,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1507
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "tiktok.com",
+    "url": "https://www.tiktok.com/about?lang=en",
+    "live": true,
+    "timingMs": 15527,
+    "e2eMs": 17256,
+    "stamp": "grown in 16.8s",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.409,
+      "inkCoverage": 0.063,
+      "colorfulness": 0.132,
+      "designColorfulness": 0.01,
+      "designChromaticRatio": 0.0001,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.001,
+      "canvasArea": 0,
+      "textDensity": 0.03,
+      "accentConcentration": 0,
+      "chromaticBins": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#f69fb0",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#e5e5d1",
+        "secondary": "#89897b"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e6",
+      "seed": 1187096476,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://www.tiktok.com/about?lang=en",
+      "dclMs": 1411,
+      "error": null,
+      "cpuBefore": 0.44,
+      "load1": 5.5,
+      "commitMs": 793,
+      "cpuDuring": 0.47,
+      "nodesAtDcl": 636,
+      "loadMs": 2412,
+      "stages": {
+        "ttfb": 739,
+        "htmlDone": 772,
+        "domInteractive": 1371,
+        "domReady": 1371,
+        "load": 2376,
+        "firstPaint": 1360,
+        "firstContentfulPaint": 1360
+      },
+      "scriptsBeforeDomReady": 12,
+      "scriptKBBeforeDomReady": 357,
+      "finalUrl": "https://www.tiktok.com/about?lang=en",
+      "nodes": 626,
+      "scripts": 21,
+      "blockingScripts": 8,
+      "deferredScripts": 2,
+      "stylesheets": 10,
+      "images": 10,
+      "iframes": 0,
+      "canvases": 0,
+      "htmlKB": 185,
+      "ttfbMs": 739,
+      "requests": 41,
+      "transferKB": 3209,
+      "shot": true
+    }
+  },
+  {
+    "site": "imdb.com",
+    "category": "bot wall · must be rejected",
+    "file": "_failed/imdb.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "interstitial after load: Human Verification",
+        "ms": 9700,
+        "analysisMs": null,
+        "load1": 5.4,
+        "cpuBefore": 0.31,
+        "cpuDuring": 0.39,
+        "waitedForQuietMs": 1504
+      },
+      {
+        "ok": false,
+        "code": "BLOCKED",
+        "detail": "interstitial after load: Human Verification",
+        "ms": 7368,
+        "analysisMs": null,
+        "load1": 5.2,
+        "cpuBefore": 0.47,
+        "cpuDuring": 0.48,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "BLOCKED",
+      "message": "That website blocked us from looking at it.",
+      "detail": "interstitial after load: Human Verification"
+    },
+    "shown": "imdb.com does not allow us to look at it.",
+    "domain": "imdb.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 7356,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "craigslist.org",
+    "category": "false rejection in the AFTER (NOT_RENDERED at 1.5% ink)",
+    "file": "craigslist.org.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20338,
+        "analysisMs": 13451,
+        "load1": 5.3,
+        "cpuBefore": 0.28,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "craigslist.org",
+    "url": "https://www.craigslist.org/area/bangalore",
+    "live": true,
+    "timingMs": 13451,
+    "e2eMs": 17279,
+    "stamp": "grown in 16.1s",
+    "fingerprint": {
+      "authored": 0.6,
+      "stylingRichness": 0.373,
+      "inkCoverage": 0.061,
+      "colorfulness": 0.03,
+      "designColorfulness": 0.03,
+      "designChromaticRatio": 0.0016,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.63,
+      "accentConcentration": 0,
+      "chromaticBins": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#a2a2ee",
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#e4e4e7",
+      "seed": 403037984,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "pinterest.com",
+    "category": "false rejection in the AFTER (BLOCKED, app shell)",
+    "file": "pinterest.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 18169,
+        "analysisMs": 11156,
+        "load1": 9.1,
+        "cpuBefore": 0.43,
+        "cpuDuring": 0.57,
+        "waitedForQuietMs": 3007
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "pinterest.com",
+    "url": "https://www.pinterest.com/",
+    "live": true,
+    "timingMs": 11156,
+    "e2eMs": 15067,
+    "stamp": "grown in 14.3s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.459,
+      "inkCoverage": 0.28,
+      "colorfulness": 0.391,
+      "designColorfulness": 0.228,
+      "designChromaticRatio": 0.0122,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.283,
+      "canvasArea": 0,
+      "textDensity": 0.066,
+      "accentConcentration": 0,
+      "chromaticBins": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#e91e3d",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#e91e3d",
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e6",
+      "seed": 563747382,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "booking.com",
+    "category": "false rejection in the AFTER (BLOCKED)",
+    "file": "_failed/booking.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "EMPTY_PAGE",
+        "detail": "after settling: 3 elements, 0 chars, 0 boxes",
+        "ms": 9330,
+        "analysisMs": null,
+        "load1": 8.2,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.53,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": false,
+        "code": "EMPTY_PAGE",
+        "detail": "after settling: 3 elements, 0 chars, 0 boxes",
+        "ms": 5203,
+        "analysisMs": null,
+        "load1": 8.5,
+        "cpuBefore": 0.42,
+        "cpuDuring": 0.58,
+        "waitedForQuietMs": 4512
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "EMPTY_PAGE",
+      "message": "There was nothing on that page to look at.",
+      "detail": "after settling: 3 elements, 0 chars, 0 boxes"
+    },
+    "shown": "There was nothing on booking.com to read.",
+    "domain": "booking.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 5177,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "isitchristmas.com",
+    "category": "rejected in the AFTER (one-word site) — product question",
+    "file": "_failed/isitchristmas.com.png",
+    "ok": false,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "EMPTY_PAGE",
+        "detail": "after settling: 15 elements, 36 chars, 1 boxes",
+        "ms": 13183,
+        "analysisMs": null,
+        "load1": 7.8,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.43,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": false,
+        "code": "EMPTY_PAGE",
+        "detail": "after settling: 15 elements, 36 chars, 1 boxes",
+        "ms": 15672,
+        "analysisMs": null,
+        "load1": 7.1,
+        "cpuBefore": 0.5,
+        "cpuDuring": 0.45,
+        "waitedForQuietMs": 3012
+      }
+    ],
+    "harnessError": null,
+    "failure": {
+      "code": "EMPTY_PAGE",
+      "message": "There was nothing on that page to look at.",
+      "detail": "after settling: 15 elements, 36 chars, 1 boxes"
+    },
+    "shown": "There was nothing on isitchristmas.com to read.",
+    "domain": "isitchristmas.com",
+    "url": null,
+    "live": true,
+    "timingMs": null,
+    "e2eMs": 15637,
+    "stamp": null,
+    "fingerprint": null,
+    "dna": null
+  },
+  {
+    "site": "play.grafana.org",
+    "category": "should be an honest rejection, ideally not worded as BLOCKED",
+    "file": "play.grafana.org.png",
+    "ok": true,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "NOT_RENDERED",
+        "detail": "nothing painted (0 chars, 12 boxes) — the page did not render, it is not refusing us",
+        "ms": 15278,
+        "analysisMs": null,
+        "load1": 6.7,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.46,
+        "waitedForQuietMs": 1502
+      },
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20034,
+        "analysisMs": 14794,
+        "load1": 6,
+        "cpuBefore": 0.47,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1505
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "play.grafana.org",
+    "url": "https://play.grafana.org/",
+    "live": true,
+    "timingMs": 14794,
+    "e2eMs": 17009,
+    "stamp": "grown in 16.3s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.61,
+      "inkCoverage": 0.439,
+      "colorfulness": 0.528,
+      "designColorfulness": 0.485,
+      "designChromaticRatio": 0.2199,
+      "warmShareOfChroma": 0.299,
+      "imageArea": 0.072,
+      "canvasArea": 0,
+      "textDensity": 0.549,
+      "accentConcentration": 0.651,
+      "chromaticBins": 19,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#181b1f",
+        "primary": "#b1345f",
+        "secondary": "#cb902f"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "rich"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#b1345f",
+        "secondary": "#ecd3ac"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#b1345f"
+      },
+      "terrain": "lush",
+      "background": "#1d2126",
+      "seed": 3747977561,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://play.grafana.org/",
+      "dclMs": 3250,
+      "error": null,
+      "cpuBefore": 0.41,
+      "load1": 6.2,
+      "commitMs": 1701,
+      "cpuDuring": 0.42,
+      "nodesAtDcl": 39,
+      "loadMs": 3517,
+      "stages": {
+        "ttfb": 1672,
+        "htmlDone": 1675,
+        "domInteractive": 2226,
+        "domReady": 3236,
+        "load": 3492,
+        "firstPaint": 2228,
+        "firstContentfulPaint": 2228
+      },
+      "scriptsBeforeDomReady": 5,
+      "scriptKBBeforeDomReady": 0,
+      "finalUrl": "https://play.grafana.org/",
+      "nodes": 71,
+      "scripts": 31,
+      "blockingScripts": 6,
+      "deferredScripts": 4,
+      "stylesheets": 2,
+      "images": 2,
+      "iframes": 1,
+      "canvases": 0,
+      "htmlKB": 16,
+      "ttfbMs": 1672,
+      "requests": 52,
+      "transferKB": 80,
+      "shot": true
+    }
+  },
+  {
+    "site": "lusion.co",
+    "category": "should be an honest rejection",
+    "file": "lusion.co.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 11405,
+        "analysisMs": 7231,
+        "load1": 6.6,
+        "cpuBefore": 0.35,
+        "cpuDuring": 0.47,
+        "waitedForQuietMs": 1505
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "lusion.co",
+    "url": "https://lusion.co/",
+    "live": true,
+    "timingMs": 7231,
+    "e2eMs": 8355,
+    "stamp": "grown in 8.1s",
+    "fingerprint": {
+      "authored": 0.8,
+      "stylingRichness": 0.362,
+      "inkCoverage": 0.013,
+      "colorfulness": 0,
+      "designColorfulness": 0,
+      "designChromaticRatio": 0,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 1,
+      "textDensity": 0.039,
+      "accentConcentration": 0,
+      "chromaticBins": 0,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#000000",
+        "primary": null,
+        "secondary": null
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "winter",
+      "flowers": {
+        "amount": "none",
+        "primary": null,
+        "secondary": null
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "winter",
+      "background": "#1a1a1a",
+      "seed": 3013358173,
+      "rareCat": false
+    },
+    "siteMetrics": {
+      "url": "https://lusion.co/",
+      "dclMs": 1130,
+      "error": null,
+      "cpuBefore": 0.37,
+      "load1": 4.8,
+      "commitMs": 617,
+      "cpuDuring": 0.55,
+      "nodesAtDcl": 476,
+      "loadMs": null,
+      "stages": {
+        "ttfb": 582,
+        "htmlDone": 716,
+        "domInteractive": 719,
+        "domReady": 1104,
+        "load": 7081,
+        "firstPaint": 772,
+        "firstContentfulPaint": 772
+      },
+      "scriptsBeforeDomReady": 2,
+      "scriptKBBeforeDomReady": 299,
+      "finalUrl": "https://lusion.co/",
+      "nodes": 1314,
+      "scripts": 3,
+      "blockingScripts": 0,
+      "deferredScripts": 1,
+      "stylesheets": 1,
+      "images": 0,
+      "iframes": 1,
+      "canvases": 3,
+      "htmlKB": 58,
+      "ttfbMs": 582,
+      "requests": 76,
+      "transferKB": 501,
+      "shot": true
+    }
+  },
+  {
+    "site": "raycast.com",
+    "category": "measured too early in the AFTER (vivid site -> winter)",
+    "file": "raycast.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 22524,
+        "analysisMs": 17032,
+        "load1": 6.3,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.44,
+        "waitedForQuietMs": 4508
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "raycast.com",
+    "url": "https://www.raycast.com/",
+    "live": true,
+    "timingMs": 17032,
+    "e2eMs": 19497,
+    "stamp": "grown in 19.0s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.598,
+      "inkCoverage": 0.165,
+      "colorfulness": 0.393,
+      "designColorfulness": 0.42,
+      "designChromaticRatio": 0.095,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.245,
+      "canvasArea": 0.299,
+      "textDensity": 0.2,
+      "accentConcentration": 0.919,
+      "chromaticBins": 6,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#07080a",
+        "primary": "#c63a4d",
+        "secondary": "#743449"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#c63a4d",
+        "secondary": "#632c3e"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#c63a4d"
+      },
+      "terrain": "lush",
+      "background": "#171a21",
+      "seed": 609888531,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "stripe.com",
+    "category": "measured too early in the AFTER (lost fruit)",
+    "file": "stripe.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 20547,
+        "analysisMs": 15855,
+        "load1": 5.7,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.42,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "stripe.com",
+    "url": "https://stripe.com/in",
+    "live": true,
+    "timingMs": 15855,
+    "e2eMs": 17519,
+    "stamp": "grown in 17.2s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.587,
+      "inkCoverage": 0.169,
+      "colorfulness": 0.422,
+      "designColorfulness": 0.137,
+      "designChromaticRatio": 0.0301,
+      "warmShareOfChroma": 0.694,
+      "imageArea": 0.427,
+      "canvasArea": 0.273,
+      "textDensity": 0.225,
+      "accentConcentration": 0.757,
+      "chromaticBins": 5,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#735ffd",
+        "secondary": "#fcdfb0"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#7663f9",
+        "secondary": "#896120"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#7663f9"
+      },
+      "terrain": "lush",
+      "background": "#e6e5eb",
+      "seed": 3876993847,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "microsoft.com",
+    "category": "measured too early in the AFTER (ink 0.022 -> sparse)",
+    "file": "microsoft.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 19190,
+        "analysisMs": 15073,
+        "load1": 5.5,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.42,
+        "waitedForQuietMs": 1502
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "microsoft.com",
+    "url": "https://www.microsoft.com/en-in",
+    "live": true,
+    "timingMs": 15073,
+    "e2eMs": 16174,
+    "stamp": "grown in 15.9s",
+    "fingerprint": {
+      "authored": 1,
+      "stylingRichness": 0.566,
+      "inkCoverage": 0.332,
+      "colorfulness": 0.356,
+      "designColorfulness": 0.32,
+      "designChromaticRatio": 0.1588,
+      "warmShareOfChroma": 0.006,
+      "imageArea": 1,
+      "canvasArea": 0,
+      "textDensity": 0.171,
+      "accentConcentration": 0.779,
+      "chromaticBins": 3,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#b4d9f1",
+        "secondary": "#f0b418"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "lush",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "abundant",
+        "primary": "#b4d9f1",
+        "secondary": "#c49b2e"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#b4d9f1"
+      },
+      "terrain": "lush",
+      "background": "#e5e9eb",
+      "seed": 2837551880,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "youtube.com",
+    "category": "measured too early in the AFTER (ink 0.046)",
+    "file": "youtube.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 11874,
+        "analysisMs": 7798,
+        "load1": 5.6,
+        "cpuBefore": 0.35,
+        "cpuDuring": 0.42,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "youtube.com",
+    "url": "https://www.youtube.com/",
+    "live": true,
+    "timingMs": 7798,
+    "e2eMs": 8859,
+    "stamp": "grown in 8.4s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.45,
+      "inkCoverage": 0.046,
+      "colorfulness": 0.077,
+      "designColorfulness": 0.077,
+      "designChromaticRatio": 0.0027,
+      "warmShareOfChroma": 0,
+      "imageArea": 0,
+      "canvasArea": 0,
+      "textDensity": 0.099,
+      "accentConcentration": 0,
+      "chromaticBins": 2,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#f83c61",
+        "secondary": "#96bbec"
+      },
+      "paletteSource": "whole-frame"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "simple"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "airy"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#f73d62",
+        "secondary": "#1b4174"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e6",
+      "seed": 1180843885,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "magnumphotos.com",
+    "category": "measured with no photographs in the AFTER",
+    "file": "magnumphotos.com.png",
+    "ok": true,
+    "attempts": 2,
+    "attemptLog": [
+      {
+        "ok": false,
+        "code": "NOT_RENDERED",
+        "detail": "343 boxes, frame 0.9% inked and still changing at the deadline",
+        "ms": 16064,
+        "analysisMs": null,
+        "load1": 5.3,
+        "cpuBefore": 0.33,
+        "cpuDuring": 0.41,
+        "waitedForQuietMs": 1503
+      },
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 16573,
+        "analysisMs": 12220,
+        "load1": 5.2,
+        "cpuBefore": 0.39,
+        "cpuDuring": 0.42,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "magnumphotos.com",
+    "url": "https://www.magnumphotos.com/",
+    "live": true,
+    "timingMs": 12220,
+    "e2eMs": 13555,
+    "stamp": "grown in 13.3s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.487,
+      "inkCoverage": 0.527,
+      "colorfulness": 0.132,
+      "designColorfulness": 0.098,
+      "designChromaticRatio": 0.031,
+      "warmShareOfChroma": 0.509,
+      "imageArea": 0.001,
+      "canvasArea": 0,
+      "textDensity": 0.04,
+      "accentConcentration": 0,
+      "chromaticBins": 8,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#430e17",
+        "secondary": "#beab8e"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "dense"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#a02137",
+        "secondary": "#cfbea5"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#ebe5e6",
+      "seed": 984689238,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "walmart.com",
+    "category": "analyzer crash in the AFTER (reading 'width')",
+    "file": "walmart.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 14443,
+        "analysisMs": 9770,
+        "load1": 4.8,
+        "cpuBefore": 0.4,
+        "cpuDuring": 0.49,
+        "waitedForQuietMs": 1508
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "walmart.com",
+    "url": "https://www.walmart.com/",
+    "live": true,
+    "timingMs": 9770,
+    "e2eMs": 11414,
+    "stamp": "grown in 11.0s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.445,
+      "inkCoverage": 0.347,
+      "colorfulness": 0.277,
+      "designColorfulness": 0.124,
+      "designChromaticRatio": 0.0318,
+      "warmShareOfChroma": 0,
+      "imageArea": 0.47,
+      "canvasArea": 0,
+      "textDensity": 0.077,
+      "accentConcentration": 0.987,
+      "chromaticBins": 1,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fafafa",
+        "primary": "#042156",
+        "secondary": null
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#094ac1",
+        "secondary": "#96b3e6"
+      },
+      "fruit": {
+        "enabled": true,
+        "color": "#094ac1"
+      },
+      "terrain": "normal",
+      "background": "#e4e7eb",
+      "seed": 1262787120,
+      "rareCat": false
+    }
+  },
+  {
+    "site": "europa.eu",
+    "category": "analyzer crash in the AFTER (screenshot timeout)",
+    "file": "europa.eu.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 15923,
+        "analysisMs": 11800,
+        "load1": 4.5,
+        "cpuBefore": 0.31,
+        "cpuDuring": 0.4,
+        "waitedForQuietMs": 1503
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "europa.eu",
+    "url": "https://european-union.europa.eu/select-language?destination=/node/1",
+    "live": true,
+    "timingMs": 11800,
+    "e2eMs": 12903,
+    "stamp": "grown in 12.8s",
+    "fingerprint": {
+      "authored": 0.9,
+      "stylingRichness": 0.472,
+      "inkCoverage": 0.381,
+      "colorfulness": 0.327,
+      "designColorfulness": 0.267,
+      "designChromaticRatio": 0.0502,
+      "warmShareOfChroma": 0.012,
+      "imageArea": 0.571,
+      "canvasArea": 0,
+      "textDensity": 0.287,
+      "accentConcentration": 0.571,
+      "chromaticBins": 2,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#ffffff",
+        "primary": "#4e75ce",
+        "secondary": "#fddd5f"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#4e75ce",
+        "secondary": "#74621b"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e7eb",
+      "seed": 2082101233,
+      "rareCat": false
+    }
+  }
+]
