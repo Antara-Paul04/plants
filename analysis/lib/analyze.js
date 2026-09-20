@@ -187,7 +187,63 @@ function normalizeUrl(input) {
     if (labels.some((l) => !/[a-z0-9]/i.test(l))) return null;
     if (!/^[a-z]{2,}$/i.test(labels[labels.length - 1])) return null;
   }
+  // NOT OUR OWN NETWORK. A website is a thing on the public internet; every
+  // private, loopback and link-local address is either a machine we are running
+  // on or a machine next to it, and neither is a website someone can ask for.
+  //
+  // Nothing leaked when this was probed — 127.0.0.1 and 169.254.169.254 both
+  // came back CONNECTION_REFUSED because nothing is listening in the sandbox —
+  // but that is the runtime's accident, not our rule, and it would stop being
+  // true on any host that does listen. 169.254.169.254 in particular is the
+  // cloud metadata endpoint. The cost was already real and visible: 10.0.0.1 and
+  // 192.168.1.1 each held a serverless function for 15.8 s waiting on a route
+  // that cannot answer, which is a way to spend our budget from outside.
+  if (isPrivateHost(u.hostname)) return null;
+  // CREDENTIALS ARE NOT PART OF AN ADDRESS SOMEONE WANTS A TREE FROM.
+  // http://user:pass@example.com grew perfectly well and handed the site a
+  // username and password on the way. Whatever they are, they are not ours to
+  // forward, and the tree is identical without them.
+  u.username = '';
+  u.password = '';
   return u;
+}
+
+// Private, loopback, link-local, and the names that resolve to them. IPv6 is
+// handled by its prefix: ::1 loopback, fc00::/7 unique-local, fe80::/10
+// link-local, plus ::ffff: IPv4-mapped forms.
+function isPrivateHost(hostname) {
+  const h = String(hostname || '').toLowerCase().replace(/^\[|\]$/g, '');
+  if (h === 'localhost' || h.endsWith('.localhost')) return true;
+  if (h.endsWith('.local') || h.endsWith('.internal') || h.endsWith('.home.arpa')) return true;
+  if (h.includes(':')) {
+    if (h === '::1' || h === '::') return true;
+    if (/^f[cd][0-9a-f]{2}:/.test(h)) return true;          // fc00::/7
+    if (/^fe[89ab][0-9a-f]:/.test(h)) return true;          // fe80::/10
+    const mapped = h.match(/^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/);
+    return mapped ? isPrivateIPv4(mapped[1]) : false;
+  }
+  // An integer or hex literal is still an IP address, just spelled to avoid a
+  // filter: 2130706433 and 0x7f000001 are both 127.0.0.1.
+  if (/^\d+$/.test(h) && h.length > 4) {
+    const n = Number(h);
+    if (Number.isSafeInteger(n) && n <= 0xffffffff) {
+      return isPrivateIPv4([n >>> 24, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.'));
+    }
+  }
+  if (/^0x[0-9a-f]+$/.test(h)) return true;
+  return /^\d{1,3}(\.\d{1,3}){3}$/.test(h) ? isPrivateIPv4(h) : false;
+}
+
+function isPrivateIPv4(ip) {
+  const p = ip.split('.').map(Number);
+  if (p.length !== 4 || p.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return true;
+  const [a, b] = p;
+  return a === 0 || a === 10 || a === 127
+      || (a === 169 && b === 254)                  // link-local, incl. cloud metadata
+      || (a === 172 && b >= 16 && b <= 31)
+      || (a === 192 && b === 168)
+      || (a === 100 && b >= 64 && b <= 127)        // carrier-grade NAT
+      || a >= 224;                                 // multicast and reserved
 }
 const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./,''); } catch { return null; } };
 // A brand redirecting to its own country site is the same brand. From this network every
