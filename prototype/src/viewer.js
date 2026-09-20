@@ -105,8 +105,15 @@ export function makeScene(bg, { shadowMap = 4096 } = {}) {
  * @returns the step-back factor (1 = the camera was not moved)
  */
 export function fitCamera(camera, extents, aspect, distance, pad = 1.06, controls = null) {
+  // A canvas with no size yet (a hidden pane, a `display: none` container, 0 / 0) has
+  // no aspect. Leave the camera ALONE. The lens-only fit could afford to be careless —
+  // a NaN field of view lasted one frame and the next resize replaced it. Stepping back
+  // MOVES the camera, by a factor relative to where it stands, so a NaN or an absurd
+  // factor is permanent: every later fit multiplies the poisoned position again.
+  if (!Number.isFinite(aspect) || aspect <= 0) return 1;
   const h = extents.height * pad;
   const w = extents.width * pad;
+  if (!(h > 0) || !(w > 0) || !Number.isFinite(h + w)) return 1;   // the same, for a scene that measured itself as NaN
   const a = Math.max(aspect, 0.001);
   const half = Math.max(h / 2, w / (2 * a));          // what this frame needs to show
   const lens = controls ? Math.max(h, w) / 2 : half;  // the most the lens may be asked for
@@ -126,7 +133,7 @@ function stepBack(camera, controls, k) {
   if (!s) _stood.set(controls, (s = { k: 1, min: controls.minDistance, max: controls.maxDistance }));
   // Nothing to do is the common case, and it must do NOTHING: (p - t) + t is not
   // bit-exact, and a frame that never needed the cap may not move by a pixel.
-  if (k === s.k) return;
+  if (k === s.k || !Number.isFinite(k)) return;
   camera.position.sub(controls.target).multiplyScalar(k / s.k).add(controls.target);
   controls.minDistance = s.min * k;
   controls.maxDistance = s.max * k;

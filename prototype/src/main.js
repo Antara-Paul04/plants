@@ -64,11 +64,17 @@ export function mountEarth(canvas, opts = {}) {
 
 function mountTreeNew(canvas, dna, opts = {}) {
   const { autoRotate = true } = opts;
-  const uniforms = { time: { value: 0 } };
   const renderer = makeRenderer(canvas);
   const url = pageParams();
+  // `gust` makes the wind WEATHER — it comes and goes (util.js, gustAt) — and every
+  // swaying thing in the scene answers to the one number, the grass included. `?gust=0`
+  // is the constant sway; `?wind=0` drops it too, so the lawn, like the tree, is then
+  // exactly what it was before there was any wind.
+  const uniforms = { time: { value: 0 }, ...(url.get('gust') !== '0' && url.get('wind') !== '0' ? { gust: { value: 1 } } : {}) };
   const bust = url.get('v') ? `?v=${encodeURIComponent(url.get('v'))}` : '';
   const modules = loadModules(bust);
+  let gustAt = null;
+  modules.then((M) => { gustAt = M.util.gustAt; });
 
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 200);
   camera.position.set(7.4, 4.6, 9.2);
@@ -238,7 +244,12 @@ function mountTreeNew(canvas, dna, opts = {}) {
   const clock = new THREE.Clock();
   let raf = 0;
   function tick() {
-    uniforms.time.value = clock.getElapsedTime();
+    const t = clock.getElapsedTime();
+    uniforms.time.value = t;
+    if (uniforms.gust && gustAt) uniforms.gust.value = gustAt(t);
+    // A tree with per-frame work of its own (autumn's falling leaves). A pure function
+    // of t, so a frame that is late or skipped costs nothing but that frame.
+    if (shown && shown.built && shown.built.update) shown.built.update(t);
     if (reveal) {
       // The tree SETTLES in rather than popping: 0.4 s, a few percent of scale.
       // Not a growth animation — there is none this round — just not a jump cut.

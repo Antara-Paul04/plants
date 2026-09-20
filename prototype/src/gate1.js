@@ -27,7 +27,10 @@ const { P } = resolveParams(q);
 
 const canvas = document.getElementById('scene');
 const renderer = makeRenderer(canvas);
-const uniforms = { time: { value: 0 } };
+// `gust` makes the wind weather (util.js gustAt). `gust=0` is the constant sway; `wind=0`
+// drops it too, so that the grass, like the tree, is then exactly what it was before wind.
+const GUSTS = q.get('gust') !== '0' && q.get('wind') !== '0';
+const uniforms = { time: { value: 0 }, ...(GUSTS ? { gust: { value: 1 } } : {}) };
 
 const env = createEnvironment(renderer, q, P);
 env.apply();
@@ -106,7 +109,10 @@ function resize() {
 const T_FIXED = q.has('t') ? parseFloat(q.get('t')) : null;
 const clock = new THREE.Clock();
 function tick() {
-  uniforms.time.value = T_FIXED ?? clock.getElapsedTime();
+  const t = T_FIXED ?? clock.getElapsedTime();
+  uniforms.time.value = t;
+  if (uniforms.gust) uniforms.gust.value = M.util.gustAt(t);
+  if (built.update) built.update(t);
   resize();
   controls.update();
   renderer.render(scene, camera);
@@ -114,7 +120,7 @@ function tick() {
 }
 tick();
 document.body.classList.add('ready');
-window.__gate1 = { skel, geo, thick, tris, wind: built.wind, uniforms, leafStats: stats.leaves, flowerStats: stats.flowers, fruitStats: stats.fruit,
+window.__gate1 = { skel, geo, thick, tris, wind: built.wind, uniforms, update: built.update, leafFall: stats.leafFall, leafStats: stats.leaves, flowerStats: stats.flowers, fruitStats: stats.fruit,
   spots: built.spots, bloomSites: built.bloomSites, contrastStats: stats.contrast, winterStats: stats.winter, P, camera, controls, scene, renderer,
   orders: Math.max(...skel.limbs.map((l) => l.depth)) + 1,
   primaries: skel.limbs.filter((l) => l.depth === 1).length };

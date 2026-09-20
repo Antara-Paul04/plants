@@ -190,6 +190,19 @@ function envTable(q) {
         // in the frame; still a little lighter toward the horizon, because that
         // band is what the shadow side is read against.
         skyTop: 0x03050b, skyHorizon: 0x111a31, skyGround: 0x05070d,
+        // THE ISLAND'S UNDERSIDE IS READ AGAINST THE SKY BELOW IT (L17). The night was
+        // judged on a frame cropped at the turf, so nobody had seen the soil body at
+        // night: it faces away from the moon, sits at the dim edge of the pool by
+        // design, and measured L* 0.3 on a sky of 2.5 — 99% of its silhouette within
+        // 5 L* of the background. It cannot be LIT into view: painted pure white it
+        // still rendered 0.3, and an under-light strong enough to reach it blows out
+        // the trunk and the stones first. So it is given something to be dark AGAINST —
+        // a deep-blue glow that begins well below the horizon (-0.3 = 17 degrees down),
+        // i.e. under the island. The sky behind the LAWN stays dark, which is what the
+        // lawn's own edge needs. Colour and contrast, not exposure; and only the VISIBLE
+        // dome takes it (the image-based light has its own), so the lit tree is
+        // untouched by construction. `nightGlow=0` is the night without it.
+        skyBelow: q.get('nightGlow') === '0' ? null : { color: 0x27396a, from: 0.3, to: 0.6 },
         glow: { color: 0xcdd9ff, power: 9, size: 6, dir: [-5.2, 7.4, 6.2] },
         // Near-white, from the front quarter: a saturated blue key is absorbed by
         // warm wood (black wood, wet blue sheen), and a pure backlight leaves a
@@ -231,6 +244,9 @@ export function gradeColor(c, G) {
 
 function skyDome(ENV, radius, withGround) {
   const top = new THREE.Color(ENV.skyTop), hor = new THREE.Color(ENV.skyHorizon), gnd = new THREE.Color(ENV.skyGround);
+  // Below the horizon the VISIBLE dome is the horizon's colour, unless the state asks
+  // for something to read the island's underside against (night's `skyBelow`).
+  const below = !withGround && ENV.skyBelow ? new THREE.Color(ENV.skyBelow.color) : null;
   const g = new THREE.SphereGeometry(radius, 48, 24);
   const pos = g.attributes.position;
   const col = [];
@@ -238,7 +254,10 @@ function skyDome(ENV, radius, withGround) {
   for (let i = 0; i < pos.count; i++) {
     const y = pos.getY(i) / radius;
     if (y >= 0) c.copy(hor).lerp(top, Math.pow(y, 0.42));
-    else c.copy(hor).lerp(withGround ? gnd : hor, Math.min(1, -y * 3.2));
+    else {
+      c.copy(hor).lerp(withGround ? gnd : hor, Math.min(1, -y * 3.2));
+      if (below) c.lerp(below, sstep(ENV.skyBelow.from, ENV.skyBelow.to, -y));
+    }
     col.push(c.r, c.g, c.b);
   }
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
@@ -448,7 +467,9 @@ const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8
  * @param M     the module bag from loadModules()
  * @param q     a paramSource
  * @param env   the createEnvironment() result the tree will stand in (for grades)
- * @param opts  uniforms        — shared { time } uniform: the grass, and the wind
+ * @param opts  uniforms        — shared { time, gust? } uniforms: the grass, and the wind.
+ *                                `gust` is the host's to tick (util.js gustAt); a bag
+ *                                without it gets the constant sway, as before
  *              budgetMs        — slice length for the wood build; Infinity (the
  *                                debug pages) runs it straight through
  *              signal          — AbortSignal: a newer tree was asked for
@@ -458,8 +479,9 @@ const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8
  *              terrain         — optional palette {lo,mid,hi,soilHi,soilLo,grass,height,
  *                                rockHi,rockLo} as hex/THREE.Color, overriding the default
  *              rocks           — add V0's composed stones
- * @returns {{ tree, ground, skel, geo, thick, stats, extents, wind, dispose }}
- *          wind — null, or the tree's shared sway uniforms { amp, speed, yLo, yHi, pin }
+ * @returns {{ tree, ground, skel, geo, thick, stats, extents, wind, update, dispose }}
+ *          wind   — null, or the tree's shared sway uniforms { amp, speed, yLo, yHi, pin }
+ *          update — null, or update(t) for a tree with per-frame work (autumn's leaf fall)
  */
 export async function growTree(M, q, env, opts = {}) {
   const { uniforms = { time: { value: 0 } }, budgetMs = Infinity, signal = null, onGround = null, leavesDefault = '0' } = opts;
@@ -480,7 +502,11 @@ export async function growTree(M, q, env, opts = {}) {
   // then exactly what they were before wind existed, which is what an A/B needs.
   // The uniforms are SHARED by every material of this tree and handed back, so a host
   // can change the wind on a finished tree instead of paying for another build.
-  const WIND = num('wind', 0.045);
+  // 0.09 is visual-3d's default and NOT an art-direction decision. V0's 0.045 was never
+  // art-directed either, and the human could not see it at all on the new tree — whose
+  // clusters now pivot about their seats instead of drifting whole, so less of each one
+  // moves. With gusts this is ~0.03 in the calm and ~0.135 at the height of a strong one.
+  const WIND = num('wind', 0.09);
   // W3, DECIDED by the human (2026-09-20): "leaves swaying is enough." The WOOD IS
   // RIGID — as V0's was — so the bark material is deliberately never given the hook,
   // and the trunk, the buttress and their cast shadow stay exactly where they are.
@@ -618,6 +644,7 @@ export async function growTree(M, q, env, opts = {}) {
   // --- foliage, bloom, fruit -------------------------------------------------------
   const F = M.flowers;
   const stats = { leaves: null, flowers: null, fruit: null, winter: null, contrast: null };
+  let leafFall = null;
   let dbgSpots = null, dbgBloom = null;
   const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
   const leafGrade = ENV.foliage ? (c) => gradeColor(c, ENV.foliage) : null;
@@ -730,14 +757,32 @@ export async function growTree(M, q, env, opts = {}) {
     });
     stats.contrast = { target: +contrast.target.toFixed(2), flowerL: contrast.flowerL, foliageL: contrast.foliageL };
 
+    // AUTUMN sheds when the wind blows (leaves.js, buildLeafFall). Only autumn builds
+    // any of it: every other tree pays nothing, not a draw call and not a uniform.
+    const LEAF_FALL = SEASON === 'autumn' && wind !== null && q.get('leafFall') !== '0';
     const lv = M.leaves.buildLeaves(skel.limbs, r, {
       spots, cluster,
       siteValue: contrast.scale,
       siteScale: F.foliageScales(spots, bloomSites, FOL), shrink: new Set(bloomSites.map((i) => spots[i])),
       debugShrink: q.get('debug') === 'bloomleaves',
+      keepInstances: LEAF_FALL,
     });
     tree.add(lv.group);
     stats.leaves = lv.stats;
+    if (LEAF_FALL) {
+      const isl = M.island;
+      leafFall = M.leaves.buildLeafFall(lv.instances, lv.seats, {
+        count: num('fallPool', 32), rate: num('fallRate', 0.16), fallSpeed: num('fallSpeed', 0.78),
+        drift: num('fallDrift', 1.15), swing: num('fallSwing', 0.24),
+        // It rests ON the grass, a blade's height up; past the island's edge there is no
+        // ground, and a leaf shed from the overhanging rim falls out of the picture.
+        ground: P.showGround
+          ? (x, z) => { const rad = Math.hypot(x, z); return rad < isl.radiusAt(Math.atan2(z, x)) * 0.96 ? isl.topY(rad) + 0.07 : null; }
+          : () => null,
+      });
+      tree.add(leafFall.group);
+      stats.leafFall = leafFall.stats;
+    }
     dbgSpots = spots; dbgBloom = bloomSites;
     if (q.get('leafHide') === '1') lv.group.visible = false;   // debug: see where the bloom actually is
 
@@ -769,7 +814,10 @@ export async function growTree(M, q, env, opts = {}) {
   // new foliage shipped without wind precisely because each builder had to remember
   // to ask for it and none did. This way a builder added later cannot forget.
   if (wind) {
+    // Not the wood (W3) — and not a leaf that has left the tree: that one is moved by
+    // its own fall, and a leaf lying on the lawn does not sway with the crown.
     const done = new Set([bark]);
+    if (leafFall && leafFall.material) done.add(leafFall.material);
     tree.traverse((o) => {
       for (const m of [o.material].flat()) {
         if (!m || done.has(m)) continue;
@@ -797,6 +845,9 @@ export async function growTree(M, q, env, opts = {}) {
 
   return {
     tree, ground, skel, geo, thick, P, extents, season: SEASON, wind,
+    // Per-frame work, if this tree has any (autumn's falling leaves): update(t). A pure
+    // function of t, so a host may call it as often or as rarely as it likes.
+    update: leafFall ? (t) => leafFall.update(t) : null,
     cloud: P.showCloud ? new THREE.Points(new THREE.BufferGeometry().setFromPoints(skel.cloud), new THREE.PointsMaterial({ size: 0.04, color: 0xd06a6a })) : null,
     spots: dbgSpots, bloomSites: dbgBloom,
     stats: { ...stats, phases, ground: groundInfo, wind: wind && { amp: WIND, yLo: +wind.yLo.value.toFixed(2), yHi: +wind.yHi.value.toFixed(2), pin: WIND_PIN > 0 ? WIND_PIN : 0 }, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },

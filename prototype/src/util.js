@@ -87,6 +87,12 @@ const fade = (t) => t * t * (3 - 2 * t);
  * the shader is what it always was, to the byte: V0 and the grass never see it.
  */
 export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo = 1.4, yHi = 4.4, local = false, pin = null } = {}) {
+  // GUSTS. If the host's uniform bag carries `gust` (see gustAt, below), the sway is
+  // multiplied by it — every swaying thing in the scene answers to the one number, the
+  // grass included, because it is the same weather. A bag without it (V0's) compiles
+  // the shader it always did, to the byte.
+  const gust = uniforms.gust ?? null;
+  const AMP = gust ? '( uSwayAmp * uSwayGust )' : 'uSwayAmp';
   const prior = Object.hasOwn(material, 'onBeforeCompile') ? material.onBeforeCompile : null;
   const priorKey = Object.hasOwn(material, 'customProgramCacheKey') ? material.customProgramCacheKey
     // A hook with no key of its own is keyed by three on its SOURCE. Ours would
@@ -102,9 +108,11 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
     shader.uniforms.uSwayLo = U(yLo);
     shader.uniforms.uSwayHi = U(yHi);
     if (pinned) shader.uniforms.uSwayPin = U(pin);
+    if (gust) shader.uniforms.uSwayGust = gust;
     shader.vertexShader =
       'uniform float uTime;\nuniform float uSwayAmp;\nuniform float uSwaySpeed;\n' +
-      'uniform float uSwayLo;\nuniform float uSwayHi;\n' + (pinned ? 'uniform float uSwayPin;\n' : '') + shader.vertexShader;
+      'uniform float uSwayLo;\nuniform float uSwayHi;\n' + (pinned ? 'uniform float uSwayPin;\n' : '') +
+      (gust ? 'uniform float uSwayGust;\n' : '') + shader.vertexShader;
     const mask = local
       // grass: bend from the blade's own root, scaled by local height
       ? `float m = clamp(position.y, 0.0, 1.0); m = m * m;`
@@ -125,15 +133,70 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
       float s = sin( uTime * uSwaySpeed + ph ) * 0.6
               + sin( uTime * uSwaySpeed * 1.57 + ph * 1.7 ) * 0.4;
       float c = cos( uTime * uSwaySpeed * 0.77 + ph * 0.8 );
-      wp.x += s * uSwayAmp * m;
-      wp.z += c * uSwayAmp * 0.7 * m;
+      wp.x += s * ${AMP} * m;
+      wp.z += c * ${AMP} * 0.7 * m;
       vec4 mvPosition = modelViewMatrix * wp;
       gl_Position = projectionMatrix * mvPosition;
       `
     );
   };
-  const swayKey = local ? 'sway-local' : pinned ? 'sway-world-pin' : 'sway-world';
+  const swayKey = (local ? 'sway-local' : pinned ? 'sway-world-pin' : 'sway-world') + (gust ? '-gust' : '');
   material.customProgramCacheKey = priorKey ? () => `${priorKey.call(material)}+${swayKey}` : () => swayKey;
+}
+
+/**
+ * An exact integer hash of two integers -> [0, 1). Deliberately NOT a sin-hash:
+ * Math.sin is not bit-identical across engines, and `fract(sin(x) * 43758)` turns
+ * the last bit into a different answer. The weather has to be the same weather on
+ * every machine, or a capture pinned at `t=` is not reproducible.
+ */
+export function hash01(a, b = 0) {
+  let h = Math.imul((a | 0) ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul(((b | 0) + 0x7f4a7c15) | 0, 0xc2b2ae35);
+  h ^= h >>> 16; h = Math.imul(h, 0x27d4eb2f); h ^= h >>> 15; h = Math.imul(h, 0x165667b1); h ^= h >>> 16;
+  return (h >>> 0) / 4294967296;
+}
+
+/**
+ * GUSTS — the wind is weather, so it comes and goes. Constant sway reads as a
+ * mechanism; a tree that is sometimes nearly still and then moves reads as air.
+ *
+ * AMBIENT (ruling W1): every number here is a constant or a hash of a SLOT NUMBER.
+ * Nothing measured, and not the site's seed either — the weather is the world's and
+ * is the same for every tree.
+ *
+ * Gusts are ENUMERABLE, and that is the design. Time is cut into slots; slot n holds
+ * one gust (sometimes none) whose moment and strength are a hash of n. So anything
+ * that wants to be CAUSED by a gust — autumn's falling leaves (leaves.js) — can ask
+ * "which gusts have there been, and how hard", as a pure function of time. No state,
+ * no integration, nothing that depends on how often a frame was drawn; a clock pinned
+ * at `t=` pins the weather exactly.
+ *
+ * These numbers are visual-3d's defaults, NOT an art-direction decision: `calm` and
+ * `peak` multiply the sway's amplitude, `slot` is how often a gust comes, `attack` and
+ * `decay` shape it (it arrives faster than it leaves), `skip` is how often a slot is
+ * simply still.
+ */
+export const GUST = { slot: 8, attack: 1.2, decay: 4.4, calm: 0.35, peak: 1.5, skip: 0.12 };
+
+/** Gust number n: when it peaks and how hard (0 = this slot is still). */
+export function gustSlot(n, G = GUST) {
+  const strength = hash01(n, 3) < G.skip ? 0 : 0.35 + 0.65 * hash01(n, 2);
+  return { n, at: (n + 0.2 + 0.6 * hash01(n, 1)) * G.slot, strength };
+}
+
+/** How much of gust `g` is blowing at time t: 0..1, fast up, slower down. */
+export function gustShape(t, g, G = GUST) {
+  const x = t - g.at;
+  const u = x < 0 ? 1 + x / G.attack : 1 - x / G.decay;
+  return u <= 0 ? 0 : g.strength * u * u * (3 - 2 * u);
+}
+
+/** The wind at time t, as a multiplier on the sway's amplitude: calm..peak. */
+export function gustAt(t, G = GUST) {
+  const N = Math.floor(t / G.slot);
+  let k = 0;
+  for (let n = N - 1; n <= N + 1; n++) k = Math.max(k, gustShape(t, gustSlot(n, G), G));
+  return G.calm + (G.peak - G.calm) * k;
 }
 
 /**

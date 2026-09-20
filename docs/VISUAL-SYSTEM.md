@@ -882,3 +882,54 @@ Rulings: `docs/briefs/WIND-AND-MOTION.md`. Code: `applySway` (`util.js`), the wi
   cost, measured on the same tree, is 3.3 ms (today's stage) against 5.0 ms (1440x900 @2x).
   Measured on a quiet machine: taken under load, "wind on" once came out FASTER than "wind off".
 
+### Night: the island's underside was never seen, and it cannot be lit — EXPERIMENT (2026-09-21)
+
+L17, "night has gone near-black". Evidence, the probe and every number:
+`references/experiments/night-2026-09-21/`. **The look changes, on the page where the scene is
+the background: this wants the human's eye.**
+
+- **It was not a regression, and it was not the crown.** Measured with an occlusion-correct mask
+  at a true 140px, the shipping crown is as legible as the approved one (median separation from
+  the sky 10.8 L* against 9.4). What vanishes is the **soil body** — L* 0.3 on a sky of 2.5, 99%
+  of its silhouette lost — and the cause is that **the night levels were judged on a frame
+  cropped at the turf.** Nobody had seen the soil at night; the product frames the whole island.
+- **A surface that receives no light cannot be fixed with albedo.** Painted pure white the soil
+  still rendered 0.3. And it cannot be lit without ending the night: soil reflects a tenth of
+  what a leaf does, so any light strong enough to reach it hits the crown's underside, the pale
+  trunk and the stones first.
+- **So it is given something to be dark AGAINST:** a deep-blue glow in the VISIBLE sky that
+  begins 17 degrees below the horizon — under the island, where only the soil is. The sky behind
+  the LAWN stays dark, because raising the whole horizon trades the soil for the lawn's edge.
+  Silhouette lost 98.8% -> 9.9% (full-bleed 88.9% -> 4.4%); the top 45% of the frame is
+  pixel-identical. Colour and contrast, not exposure. `?nightGlow=0` is the night without it.
+- **Two wrong diagnoses came first, one of them mine,** from a bounding-box segmentation of
+  screenshots that said the crown had lost 3 L*. A number from a crude instrument is worse than
+  no number: it sent the fix toward the foliage.
+
+### The wind is weather, and autumn sheds when it blows — EXPERIMENT (2026-09-21)
+
+The human: *"for autumn trees I want leaves falling when wind blows."* Evidence, numbers and every
+default: `references/experiments/wind-2026-09-21/`. **All constants are visual-3d's defaults and
+are waiting on the human's weather review — sway, gust and shedding judged together.**
+
+- **One gust, two effects.** A slow envelope over the sway (the tree is sometimes nearly still,
+  then moves — constant motion reads as a mechanism), and autumn's leaves come off on its peaks. The
+  shedding is CAUSED by something visible instead of running on its own timer.
+- **Gusts are enumerable: slot n holds a gust whose moment and strength are a hash of n.** That is
+  what lets anything be caused by one, and it makes the whole weather a pure function of time —
+  nothing integrated, nothing that depends on the frame rate, `t=` pins it. It paid at once: an hour
+  of weather was checked arithmetically on a machine nothing was allowed to render on.
+- **AMBIENT (W1) all the way down:** constants and hashes of slot numbers. Not the DNA, and not the
+  site's seed either — the weather is the world's, the same for every tree.
+- **A falling leaf is the tree's own leaf, born where a real one is.** The crown is instanced
+  CLUSTERS, so honest removal would cost every tree a shader branch to serve one season; the twin
+  stays behind and with seventeen in a ball nobody can tell. What they must never become is
+  particles with a life of their own (TASTE #8, #9): in autumn, shedding is what the tree DOES.
+- **The lawn is bounded by construction** (a fixed pool; a resting leaf gives up its slot just
+  before it sheds again, while the eye is on the gust) and it is **autumn only** — one draw call,
+  one extra program, nothing for any other tree.
+- **Look before you count.** The shedding statistics were right while a third of the leaves had a
+  NaN scale, an invisible leaf counts as a leaf, and the same NaN had blacked out the frame through
+  the camera. `fitCamera` now refuses a fit it cannot trust, because a camera that is moved by a
+  RELATIVE factor never recovers from one bad number.
+

@@ -1,0 +1,45 @@
+BEFORE /Users/antarapaul/Desktop/plants/references/experiments/reliability-sweep-2026-09-20
+AFTER  /Users/antarapaul/Desktop/plants/references/experiments/reliability-sweep-AFTER-2026-09-20
+shared sites 79 · grew in both 40
+
+PASS RATE (shared sites)
+  before 47/79 · after 59/79
+  now grows : youtube.com (was TIMEOUT), netflix.com (was TIMEOUT), spotify.com (was TIMEOUT), x.com (was TIMEOUT), reddit.com (was UNREACHABLE), twitch.tv (was TIMEOUT), ebay.com (was TIMEOUT), zara.com (was TIMEOUT), bbc.com (was TIMEOUT), cnn.com (was TIMEOUT), weather.com (was TIMEOUT), yahoo.com (was TIMEOUT), duckduckgo.com (was TIMEOUT), microsoft.com (was TIMEOUT), github.com (was TIMEOUT), theverge.com (was TIMEOUT), awwwards.com (was TIMEOUT), nasa.gov (was TIMEOUT), who.int (was TIMEOUT)
+  now fails : tiktok.com (NOT_RENDERED), booking.com (BLOCKED), imdb.com (BLOCKED), tesla.com (BLOCKED), disney.com (REDIRECTED), dribbble.com (BLOCKED), craigslist.org (NOT_RENDERED)
+  code moved: amazon.com TIMEOUT→EMPTY_PAGE, walmart.com TIMEOUT→INTERNAL, etsy.com TIMEOUT→BLOCKED, nike.com TIMEOUT→REDIRECTED, airbnb.com TIMEOUT→REDIRECTED, espn.com TIMEOUT→REDIRECTED, zoom.us TIMEOUT→REDIRECTED
+
+FRUIT
+  prevalence: before 7/47 · after 15/59 · among sites that grew in both: 5 → 13 of 40
+  gained: news.ycombinator.com (sparse, normal), instagram.com (lush, flowering), facebook.com (normal, flowering), ikea.com (normal, autumn), nintendo.com (normal, flowering), jvns.ca (normal, normal), developer.mozilla.org (lush, flowering), react.dev (lush, flowering), gov.uk (normal, flowering)
+  lost  : stripe.com
+  concentrated, not bare, not canvas — yet NO fruit after: —
+  winter WITH fruit after: —
+  fruit WITHOUT flowers after: —
+  winter sites after, with their accent concentration: gwern.net 0, google.com 0, x.com 0, chatgpt.com 0, vercel.com 0
+
+DNA DISTRIBUTION (sites that grew in both)
+  foliage before: normal 23 · lush 14 · bare 2 · sparse 1
+  foliage after : normal 23 · lush 14 · bare 2 · sparse 1
+  flowers before: medium 17 · few 11 · none 6 · abundant 6
+  flowers after : medium 18 · few 11 · none 6 · abundant 5
+  season  before: flowering 23 · normal 10 · winter 4 · autumn 3
+  season  after : flowering 23 · normal 11 · winter 4 · autumn 2
+  DNA changed: bing.com [normal/few/autumn → normal/few/normal], stripe.com [lush/abundant/flowering → lush/medium/flowering]
+
+IDENTICAL FINGERPRINTS among AFTER successes (a bot wall measured as the site)
+  none
+
+ACCEPTANCE — bot walls must now FAIL honestly …
+  tesla.com: FAILED BLOCKED — "tesla.com does not allow us to look at it."  (before: bare, ink 0.012)
+  adidas.com: GREW bare/normal, ink 0, richness 0.056  (before: bare, ink 0.007)
+  dribbble.com: FAILED BLOCKED — "dribbble.com does not allow us to look at it."  (before: bare, ink 0.262)
+  imdb.com: FAILED BLOCKED — "imdb.com does not allow us to look at it."  (before: normal, ink 0.016)
+  tiktok.com: FAILED NOT_RENDERED — "We could not read that website."  (before: normal, ink 0)
+… while genuinely unstyled sites must still GROW BARE
+  info.cern.ch: GREW bare/normal, ink 0.018, richness 0.069  (before: bare, ink 0.018)
+  danluu.com: not in AFTER
+ACCEPTANCE — must no longer be measured as a loading screen (ink near 0 = still a preloader)
+  lusion.co: not in AFTER
+  play.grafana.org: not in AFTER
+
+contact sheet → /Users/antarapaul/Desktop/plants/references/experiments/reliability-sweep-AFTER-2026-09-20/_before-after.png

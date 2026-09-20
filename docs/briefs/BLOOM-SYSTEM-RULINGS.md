@@ -701,7 +701,36 @@ for is now overdue, and it should run against a corpus captured on a quiet machi
 
 ---
 
-# L17 — NIGHT HAS GONE NEAR-BLACK. Open, unowned, and a regression.
+# L17 — RESOLVED, AND BOTH DIAGNOSES IN THIS ENTRY WERE WRONG
+
+> **CORRECTION, 2026-09-21.** Everything below this box was written before the
+> problem was measured with a proper instrument, and it is kept only because the
+> reasoning is instructive. Two things in it are false:
+>
+> 1. **It was not the crown, and not a regression.** Measured with an ID pass of
+>    the live scene (every mesh flat-coloured by kind, so occlusion is correct)
+>    box-averaged to a true 140 px, the SHIPPING crown is as legible as the
+>    APPROVED one — median separation from sky 10.8 L* against 9.4, silhouette
+>    step 20.6 against 21.2. My "regression from the ground-darker-than-trunk
+>    rule" is dead, and so is visual-3d's "judged on a denser crown".
+> 2. **The ≥ 20.8 acceptance number is withdrawn.** It came from a
+>    bounding-box-minus-sky segmentation of screenshots and was an artefact of
+>    that method. Do not adopt it.
+>
+> **What actually vanishes is the SOIL BODY** — L* 0.3 against a sky of 2.5, with
+> 98.8% of its silhouette within 5 L* of the background. And it was never a
+> regression either: **the night levels were judged on a gate frame cropped at the
+> turf.** Nobody had ever seen the soil at night. The product frames the whole
+> island, so the product was the first thing to show it.
+>
+> It cannot be lit. Painted pure white the flank still renders 0.3 — it faces away
+> from the moon and sits at the dim edge of the pool by design, so there is no
+> light on it to reflect. The fix gives it something to be dark *against*: a deep
+> blue glow in the visible sky beginning 17 degrees BELOW the horizon, under the
+> island where only the soil is. Soil silhouette lost 98.8% → 9.9%. The lit tree
+> cannot change — the top 45% of the frame hashes identically with and without.
+
+# The original entry, superseded — NIGHT HAS GONE NEAR-BLACK.
 
 Visible in `references/experiments/reliability-sweep-2026-09-20/_same-dna-old-vs-new-renderer.png`
 — the same ten sites, **identical DNA**, afternoon renderer beside tonight's.

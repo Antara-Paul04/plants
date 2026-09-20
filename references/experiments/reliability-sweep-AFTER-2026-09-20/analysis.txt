@@ -1,0 +1,101 @@
+SITES 79 · grew 59 · failed 20 · failure rate 25%
+first-try success 56 · needed a 2nd try 3: zara.com (TIMEOUT), microsoft.com (TIMEOUT), chatgpt.com (TIMEOUT)
+
+FAILURES BY CODE
+  BLOCKED      8  etsy.com, booking.com, imdb.com, tesla.com, dribbble.com, stackoverflow.com, lingscars.com, nytimes.com
+  REDIRECTED   5  nike.com, airbnb.com, espn.com, zoom.us, disney.com
+  NOT_RENDERED 2  tiktok.com, craigslist.org
+  EMPTY_PAGE   2  amazon.com, archive.org
+  TIMEOUT      2  europa.eu, spacejam.com/1996
+  INTERNAL     1  walmart.com
+
+FAILURE DETAIL STRINGS
+    8 × BLOCKED: HTTP 403
+    6 × BLOCKED: no links, 0 chars, 0 boxes — a notice page, not a website
+    2 × NOT_RENDERED: DOM has 399 boxes and 19213 chars but the frame is 0.0% inked — the page did not paint
+    2 × EMPTY_PAGE: after settling: 3 elements, 0 chars, 0 boxes
+    2 × INTERNAL: page.evaluate: TypeError: Cannot read properties of undefined (reading 'width')
+    2 × REDIRECTED: landed on nike.in
+    2 × REDIRECTED: landed on airbnb.co.in
+    2 × REDIRECTED: landed on espn.in
+    2 × BLOCKED: interstitial after load: Access Denied
+    2 × REDIRECTED: landed on zoom.com
+    2 × REDIRECTED: navigated to disney.in
+    2 × NOT_RENDERED: DOM has 270 boxes and 3715 chars but the frame is 1.5% inked — the page did not paint
+    2 × EMPTY_PAGE: 
+    2 × TIMEOUT: exceeded 20000ms
+    1 × REFUSED: page navigated away while being read
+    1 × TIMEOUT: page.screenshot: Timeout 2500ms exceeded.
+
+TIMING (successes)
+  analysis only : median   7.4s · p90  13.9s · max  19.8s
+  on screen     : median  10.3s · p90  16.7s · max  21.5s
+  tree build    : median   2.7s (on screen minus analysis)
+  on screen > 15s: 13 of 59 · > 20s: 2
+  product stamp vs harness: stamp under-reports by median   0.5s (page load + harness overhead)
+  time to FAIL  : median   5.2s for the first attempt · max  20.3s
+
+HYPOTHESIS — does analysis time follow DOM WEIGHT or DESIGN RICHNESS? (Spearman, successes)
+  DOM nodes            rho  0.21  (n=59)
+  scripts              rho  0.33  (n=59)
+  transfer KB          rho  0.36  (n=59)
+  requests             rho  0.36  (n=59)
+  HTML KB              rho  0.20  (n=59)
+  plain-visit DCL ms   rho  0.40  (n=58)
+  plain-visit load ms  rho  0.34  (n=44)
+  stylingRichness      rho  0.24  (n=59)
+  inkCoverage          rho  0.28  (n=59)
+  authored             rho  0.12  (n=59)
+  richness vs DOM nodes: rho 0.45 (n=59) — how separable the two explanations are
+
+PASS vs FAIL — weight of the page (plain visit, same conditions as the analyzer)
+  DCL ms       pass median   2398 · TIMEOUT median   4057
+  load ms      pass median   3550 · TIMEOUT median   6378
+  DOM nodes    pass median   1177 · TIMEOUT median    854
+  scripts      pass median     27 · TIMEOUT median     27
+  transfer KB  pass median   1133 · TIMEOUT median    891
+  HTML KB      pass median    226 · TIMEOUT median     97
+  TTFB ms      pass median    396 · TIMEOUT median    318
+
+  richness of sites that TIMEOUT now (from earlier runs where they passed): none known
+  median richness of passes: 0.477
+
+TIMEOUTS — is the SITE slow, or are WE? (plain-visit DCL against the 8000ms limit)
+  europa.eu              plain DCL   4.1s ← WE timed out; a plain visit did not · 854 nodes · 27 scripts · ttfb 318ms · 
+  spacejam.com/1996      plain DCL   –  s ← plain visit failed too: page.goto: Timeout 30000ms exceeded. · ? nodes · ? scripts · ttfb ?ms · 
+
+HEAVIEST PASSES / LIGHTEST FAILURES (DOM nodes)
+  heaviest passes : framer.com 5248n/8.4s, linear.app 5117n/9.7s, theverge.com 4991n/3.9s, theguardian.com 4856n/5.7s, cnn.com 3902n/9.7s, samsung.com 3804n/7.4s
+  lightest failures: dribbble.com 3n [BLOCKED], tesla.com 7n [BLOCKED], etsy.com 9n [BLOCKED], nytimes.com 9n [BLOCKED], amazon.com 39n [EMPTY_PAGE], lingscars.com 48n [BLOCKED]
+
+SLOWEST ON SCREEN
+  microsoft.com            on screen  21.5s · analysis  19.8s · 811 nodes
+  duckduckgo.com           on screen  20.8s · analysis  17.4s · 1721 nodes
+  kottke.org               on screen  18.9s · analysis  14.5s · 2749 nodes
+  github.com               on screen  18.6s · analysis  11.9s · 1806 nodes
+  mit.edu                  on screen  16.8s · analysis  14.5s · 379 nodes
+  discord.com              on screen  16.7s · analysis  12.0s · 1196 nodes
+  adidas.com               on screen  16.7s · analysis  15.1s · 40 nodes
+  usa.gov                  on screen  15.9s · analysis  12.6s · 488 nodes
+
+LOADING STAGES — plain visit under the analyzer's conditions (n=78 sites with stage data)
+  stage (ms)            grew a tree n=59                  TIMEOUT n=1                       
+  ttfb                  median    396 · p90   1660 · missing 0median    318 · p90    318 · missing 0
+  htmlDone              median    821 · p90   3325 · missing 0median    319 · p90    319 · missing 0
+  firstContentfulPaint  median   1344 · p90   5460 · missing 0median   1592 · p90   1592 · missing 0
+  domInteractive        median   1786 · p90   8606 · missing 0median   2020 · p90   2020 · missing 0
+  domReady              median   2365 · p90  17788 · missing 0median   2024 · p90   2024 · missing 0
+
+  Of 1 TIMEOUT sites, in a plain visit: HTML complete < 8s: 1 · first contentful paint < 8s: 1 · domInteractive < 8s: 1 · DOM-ready < 8s: 1 · never DOM-ready in 30s: 0
+
+  per TIMEOUT site:  ttfb / html / FCP / interactive / DOM-ready   · scripts before DOM-ready
+   europa.eu               318 /   319 /  1592 /  2020 /  2024   · 8 scripts, 96 KB · cpu 0.38→0.53
+
+  DOM-ready minus domInteractive (the script tail): median 3ms · p90 4940ms · max 24999ms
+  DOM-ready time vs script KB before it: rho 0.54 (n=75) · vs DOM nodes: rho 0.33 (n=75)
+
+CPU AT THE MOMENT OF EACH ATTEMPT
+  attempts 102 · cpu before: median 0.43 max 0.5 · failed attempts' cpu before: median 0.44 · ok attempts': 0.41
+  attempts that started above 0.55 busy: none
+
+SUSPICIOUS TREES (grew, but look wrong)

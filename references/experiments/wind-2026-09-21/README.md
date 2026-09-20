@@ -109,7 +109,64 @@ ratio float between 1.5 and 2) is the answer if that is ever seen. Not built: no
 table benched buffers four times the size it labelled them. Set the pixel ratio to 1 before sizing
 a buffer by hand.
 
+## The wind is WEATHER, and autumn sheds when it blows (same day)
+
+The human, on autumn: *"I want leaves falling when wind blows."* That one phrase joins two things
+that had been separate — gusts instead of constant sway, and falling leaves — and makes the second
+CAUSED by the first. Code: `hash01` / `gustSlot` / `gustAt` and the `gust` multiplier in
+`applySway` (`util.js`); `buildLeafFall` (`leaves.js`); `built.update(t)` (`grow.js`); the hosts
+tick both. **Every number is visual-3d's default, exposed as a debug parameter, and none of it is
+an art-direction decision** — the human is to judge the whole weather at once.
+
+- **Gusts are ENUMERABLE.** Time is cut into 8 s slots; slot n holds one gust (12% hold none) whose
+  moment and strength are a hash of n. So "which gusts have there been, and how hard" is a pure
+  function of time. Calm 54% of the time; a gust about every 10 s, arriving faster than it leaves;
+  the longest calm in an hour is 21 s. (The first constants were calm 68% of the time — a
+  20-second visitor might have seen one weak gust.)
+- **The hash is an exact INTEGER hash, not a sin-hash.** `Math.sin` is not bit-identical across
+  engines; a sin-hash would make `t=` pin different weather on different machines.
+- **The grass gusts too** — it is the same weather — but only where the host's uniform bag carries
+  `gust`. V0's bag does not, and compiles the shader it always did, to the byte (32/32 headless).
+- **Every falling leaf starts as a real one.** The crown is 146 instances of a seventeen-leaf
+  CLUSTER, so there is no leaf instance to remove; taking one out would mean a per-vertex leaf
+  index and a per-instance mask in the material every tree uses, for one season. Instead each
+  cluster remembers where its leaves sit (no RNG draw added, no vertex changed), and a shed leaf
+  is born coincident with a real one — same place, angle, size, colour, the same `leafGeometry`.
+- **Caused by the gust:** leaf i sheds in gust n if `hash(i, n) < rate x strength(n)`. Measured
+  over a simulated hour: weak gusts take 2.3, middling 3.2, strong 4.7; nothing sheds in the calm.
+- **STATELESS.** A leaf's whole life is a function of (t, i). The same instant, re-asked after
+  jumping around in time, is identical to the last digit. `t=` pins the leaves as it pins the wind.
+- **The lawn is bounded by construction:** a pool of 32. Mean 20 lying on the lawn, never more than
+  30; 21 already down at t = 0, from gusts "before" the page opened. A resting leaf stays a median
+  of 58 s, then shrinks away just before its pool slot sheds again.
+- **Autumn only.** One InstancedMesh, one draw call, and one extra program (the leaf's plain matte
+  shader, no sway: a leaf that has left the tree is moved by its fall). Nothing else pays anything.
+
+**Two bugs of mine, both found by LOOKING rather than counting.** (1) With no shed in sight —
+the common case — `smoothstep(Infinity, Infinity, t)` is NaN, so those leaves had a NaN scale:
+invisible leaves, a NaN bounding box, and through the extents a NaN CAMERA and a black frame. My
+statistics had counted them as present. Fixed at the source, and an hour of weather now holds no
+NaN in any matrix. (2) It exposed a fragility in the capped-lens fit, already committed: because
+stepping back MOVES the camera by a relative factor, one NaN (or a canvas with no size) is
+permanent, where the old lens-only fit recovered on the next resize. `fitCamera` now leaves the
+camera alone when the aspect or the extents are not finite and positive; four regression checks.
+
+Defaults: `wind` 0.09 (V0's 0.045 could not be seen at all on the new tree, whose clusters pivot
+rather than drift; with gusts that is ~0.03 calm, ~0.135 at the top of a strong one) · gust calm
+x0.35 / peak x1.5 / slot 8 s / attack 1.2 s / decay 4.4 s / 12% still · `fallPool` 32 ·
+`fallRate` 0.16 · `fallSpeed` 0.78 · `fallDrift` 1.15 · `fallSwing` 0.24 · `gust=0` constant sway ·
+`leafFall=0` no shedding · `wind=0` none of it, and the lawn exactly as before wind existed.
+
+Look at it: `gate2.html?preset=mid&season=autumn&fruit=1` (add `&t=152` to pin a strong gust).
+
 ## Files
+
+- `autumn-leaf-fall-one-instant.png` — one frame at the height of a gust: three leaves in the air,
+  in the tree's own colours and the tree's own leaf shape; a scatter in the grass.
+- `autumn-leaf-fall-multiple-exposure-4_8s.png` — twelve exposures 0.4 s apart with the crown's sway
+  held still, so each falling leaf draws its own path: off the crown, tumbling, swinging, drifting
+  downwind, onto the lawn or past the island's edge. (A first version kept the LIGHTEST channel per
+  pixel, which against a day sky turns an orange leaf pink. A changed pixel now wins.)
 
 - `winter-buds-DRIFT-vs-PIVOT.png` — the finding and the fix in one image (x2, nearest-neighbour).
 - `leafy-crown-top-DRIFT-vs-PIVOT.png` — the worst camera-facing spot of a leafy crown. The limb is

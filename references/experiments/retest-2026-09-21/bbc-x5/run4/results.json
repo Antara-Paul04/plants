@@ -1,0 +1,76 @@
+[
+  {
+    "site": "bbc.com",
+    "category": "",
+    "file": "bbc.com.png",
+    "ok": true,
+    "attempts": 1,
+    "attemptLog": [
+      {
+        "ok": true,
+        "code": null,
+        "detail": null,
+        "ms": 16506,
+        "analysisMs": 11714,
+        "load1": 5.8,
+        "cpuBefore": 0.34,
+        "cpuDuring": 0.43,
+        "waitedForQuietMs": 1504
+      }
+    ],
+    "harnessError": null,
+    "failure": null,
+    "shown": null,
+    "domain": "bbc.com",
+    "url": "https://www.bbc.com/",
+    "live": true,
+    "timingMs": 11714,
+    "e2eMs": 13484,
+    "stamp": "grown in 12.9s",
+    "fingerprint": {
+      "authored": 0.7,
+      "stylingRichness": 0.499,
+      "inkCoverage": 0.344,
+      "colorfulness": 0.255,
+      "designColorfulness": 0.056,
+      "designChromaticRatio": 0.0025,
+      "warmShareOfChroma": 0.012,
+      "imageArea": 0.412,
+      "canvasArea": 0,
+      "textDensity": 0.305,
+      "accentConcentration": 0,
+      "chromaticBins": 2,
+      "hasVisibleMotion": false,
+      "palette": {
+        "ground": "#fefefe",
+        "primary": "#2177b6",
+        "secondary": "#566379"
+      },
+      "paletteSource": "media-masked"
+    },
+    "dna": {
+      "morphology": "broad",
+      "skeleton": {
+        "complexity": "normal"
+      },
+      "foliage": {
+        "state": "normal",
+        "density": "normal"
+      },
+      "botanicalState": "flowering",
+      "flowers": {
+        "amount": "medium",
+        "primary": "#2177b6",
+        "secondary": "#b3c0d6"
+      },
+      "fruit": {
+        "enabled": false,
+        "color": null
+      },
+      "terrain": "normal",
+      "background": "#e5e8eb",
+      "seed": 583647993,
+      "rareCat": false
+    }
+  }
+]
