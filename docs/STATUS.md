@@ -18,6 +18,11 @@ autumn, winter, night — grown from that site's Botanical DNA.
 node app/server.js     # → http://localhost:5170
 ```
 
+**It is also live**, at <https://plants-three-eta.vercel.app>, growing trees from
+a browser it does not own. The page opens on a real tree from `app/public/
+gallery.json` — DNA measured by the ordinary analyzer — labelled as an example
+until the visitor grows their own.
+
 `?engine=v0` still serves the old tree, whole, on identical DNA.
 
 ---
@@ -56,10 +61,12 @@ node app/server.js     # → http://localhost:5170
 
 ## Not started
 
-- Forest, sharing, accounts, mobile
-- **Deployment** — gated, not started. The instruction is to deploy once the
-  product works independently of this laptop; `docs/DEPLOYMENT.md` makes that
-  testable. The gate is the timeout, not the browser.
+- Forest, sharing, accounts
+- **Mobile — never built, and holding anyway.** Measured on the deployment at
+  390x844 (plants-36, 2026-09-21): canvas fills the viewport, no horizontal
+  overflow, no scroll, input and chips legible, island centred. Nothing has been
+  designed for a phone; the full-bleed shell simply survives one. Treat it as
+  untested rather than done — and note that a launch on X is mostly phones.
 - Additional tree species — one broad family, and `morphology` still has one value
 - Cat
 
