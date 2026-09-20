@@ -44,8 +44,8 @@ export function measurePage(opts) {
     if (SKIP.has(el.tagName)) continue;
     let cs; try { cs = getComputedStyle(el); } catch (e) { continue; }
     if (cs.display === 'none') continue;
-    const r = el.getBoundingClientRect();
-    if (r.width <= 0 || r.height <= 0) continue;
+    let r; try { r = el.getBoundingClientRect(); } catch (e) { continue; }
+    if (!r || !(r.width > 0) || !(r.height > 0)) continue;
     if (!visibleNow(el, cs)) continue;
     const top = r.top + window.scrollY, left = r.left + window.scrollX;
     if (top >= scopes.full || top + r.height <= 0) continue;
@@ -104,8 +104,8 @@ export function measurePage(opts) {
     if (n.childEls !== 1) continue;
     const c = n.el.firstElementChild;
     if (!c) continue;
-    const cr = c.getBoundingClientRect();
-    if (Math.abs(cr.width - n.w) <= 2 && Math.abs(cr.height - n.h) <= 2) n.isWrapper = true;
+    let cr; try { cr = c.getBoundingClientRect(); } catch (e) { continue; }
+    if (cr && Math.abs(cr.width - n.w) <= 2 && Math.abs(cr.height - n.h) <= 2) n.isWrapper = true;
   }
 
   function areaIn(n, limit) {
@@ -328,8 +328,8 @@ export function measurePage(opts) {
   const mediaRects = [];
   for (const sel of ['img','picture','video']) {   // NOT canvas/svg: those are authored design, not photography
     for (const el of document.querySelectorAll(sel)) {
-      const r = el.getBoundingClientRect();
-      if (r.width > 24 && r.height > 24) {
+      let r; try { r = el.getBoundingClientRect(); } catch (e) { continue; }
+      if (r && r.width > 24 && r.height > 24) {
         mediaRects.push({ x: r.left + window.scrollX, y: r.top + window.scrollY, w: r.width, h: r.height });
       }
     }

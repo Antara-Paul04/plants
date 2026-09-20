@@ -593,6 +593,47 @@ above, using a different instrument: **headless Chrome 152 driven by Playwright*
 Where the two probes overlap they **agree**. This section records what the second probe
 adds, and the two places it corrects the first.
 
+### Defined events are repeatable; sampled conditions are not
+
+**ASSUMPTION, and the most load-bearing one in this document.** It has now decided four
+separate questions, so it is written down rather than rediscovered a fifth time.
+
+**No amount of sampling harder converts a sampled condition into a defined one.**
+
+A *defined event* is one the page itself declares: `commit`, `domcontentloaded`, `load`.
+It either fires or it does not, and asking twice gives the same answer. A *sampled
+condition* is one we invent and then look for — "has the frame stopped changing", "is
+anything moving", "has painted area stopped climbing". Whether we see it depends on when
+we looked, so asking twice can give two answers. That is not a tuning deficiency; it is
+what sampling is.
+
+The evidence, in the order it arrived:
+
+| case | sampled | outcome |
+| --- | --- | --- |
+| **motion** | "did the frame change between two shots" | **17% flip rate** on repeat runs of one URL. Cut. |
+| **settle** | "has the page stopped changing" | raycast.com flipped between `flowering` and `winter` across identical runs |
+| **the build that worked** | `domcontentloaded` — defined | **identical DNA on 10 of 10 sites measured hours apart** |
+
+The corroboration is the most useful part: putting a bounded `load` wait back *in front*
+of the sampler improved raycast from 2-of-3 to 3-of-4, because it restored a page-defined
+event ahead of the guesswork. It did not fully close the gap, because raycast's imagery
+arrives after `load` — so there is no defined event for the thing we actually care about.
+
+**Where the real fix lives, therefore, is not in the sampler.** It is in finding more
+page-defined events near "painted" — image decode, last stylesheet applied, the
+paint-timing entries the browser already records. A defined event that fires slightly
+early beats a sampled condition that is usually right. **OPEN**, and not attempted.
+
+**Why this keeps deciding things.** Repeatability is not a quality attribute of this
+project, it is the product: *the same site must give the same tree*. That rule has now
+been paid for four times — it cut the motion signal, it refused the media-mask fallback
+when unsplash swung 1000× between days, it refused a per-domain accent cache, and it
+refuses to trade correctness for throughput here. A property defended by declining four
+features cannot then be spent on latency.
+
+---
+
 ### The corpus is a snapshot, and websites drift under it
 
 **ASSUMPTION, observed 2026-09-20.** Every committed fingerprint is a measurement of a

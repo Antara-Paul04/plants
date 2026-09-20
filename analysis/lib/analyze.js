@@ -122,6 +122,16 @@ function normalizeUrl(input) {
   return u;
 }
 const hostOf = u => { try { return new URL(u).hostname.replace(/^www\./,''); } catch { return null; } };
+// A brand redirecting to its own country site is the same brand. From this network every
+// global brand sends us to .in, so without this no global brand can grow a tree at all.
+// Compare the first label only; a parked page or squatter will not match it.
+const sameBrand = (a, b) => {
+  if (!a || !b) return false;
+  if (a === b || a.endsWith('.' + b) || b.endsWith('.' + a)) return true;
+  const la = a.split('.')[0], lb = b.split('.')[0];
+  if (!la || !lb || la.length < 3 || lb.length < 3) return false;
+  return la === lb || la.includes(lb) || lb.includes(la);
+};
 
 const INTERSTITIAL = /attention required|just a moment|access denied|you have been blocked|security check|enable javascript and cookies|verifying you are human|are you a robot|site can.t be reached|err_connection/i;
 
@@ -261,7 +271,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
       return fail(domain, 'BLOCKED', 'interstitial: ' + probe.title.slice(0, 80));
     }
     const finalHost = hostOf(finalUrl);
-    if (finalHost && finalHost !== domain && !finalHost.endsWith('.' + domain) && !domain.endsWith('.' + finalHost)) {
+    if (finalHost && !sameBrand(finalHost, domain)) {
       return fail(domain, 'REDIRECTED', 'landed on ' + finalHost);
     }
     if (probe.els < 3 && probe.bodyLen < 2) return fail(domain, 'EMPTY_PAGE');
@@ -294,7 +304,8 @@ async function runAnalysis(u, domain, budget, T0, left) {
         let geo = 0, n = 0, painted = 0, scanned = 0;
         const VW = innerWidth, LIM = innerHeight * 3;
         for (const el of all) {
-          const r = el.getBoundingClientRect();
+          let r; try { r = el.getBoundingClientRect(); } catch (e) { continue; }
+          if (!r) continue;   // walmart.com: getBoundingClientRect returned undefined
           if (r.width > 40 && r.height > 20) {
             geo += (Math.round(r.x) + Math.round(r.y) * 3 + Math.round(r.width) * 7 + Math.round(r.height) * 11) % 1000003;
             n++;
@@ -350,16 +361,33 @@ async function runAnalysis(u, domain, budget, T0, left) {
     // bytes means an identical frame — exact, free, and crucially it touches no shared
     // resource. Routing this through the one scratch page deadlocked 8 concurrent
     // requests contending on a single page.
-    if (settled) {
-      let lastFrame = null;
-      for (let i = 0; i < 4 && left() > 7000; i++) {
+    // PIXEL-LEVEL arrival check, because the DOM proxy above cannot see it.
+    // bbc.com's layout boxes exist early and its imagery fills in afterwards without
+    // moving a single rect, so painted-area plateaus while the page is still arriving —
+    // the same DOM-versus-pixels trap that measured stripe at ink 0.042 against 0.122.
+    // PNG byte size is a free proxy for how much has actually been drawn: a page still
+    // painting compresses larger. Grow => not finished, whatever the DOM says.
+    // Runs WHETHER OR NOT the DOM loop settled. Gating it on `settled` was a hole: the
+    // runs that produced bbc's winter tree were the FAST ones, where the DOM loop hit its
+    // deadline, skipped this check entirely and photographed a half-painted page. The
+    // pixel check is the authoritative one, so it must not be conditional on the proxy.
+    {
+      let lastFrame = null, lastSize = 0, quiet = 0;
+      for (let i = 0; i < 10 && left() > 5500; i++) {
         let f;
         try { f = await page.screenshot({ type: 'png', timeout: 4000 }); }
         catch (e) { break; }
-        if (lastFrame && Buffer.compare(lastFrame, f) === 0) break;   // visually settled
+        const grew = lastSize && f.length > lastSize * 1.03;
+        const identical = lastFrame && Buffer.compare(lastFrame, f) === 0;
+        if (grew) quiet = 0;                       // still arriving
+        else if (identical) quiet++;               // nothing moved at all
+        else quiet = Math.max(quiet, 0);
+        lastSize = Math.max(lastSize, f.length);
         lastFrame = f;
+        if (quiet >= 2) break;                     // two consecutive identical frames
         await page.waitForTimeout(450);
       }
+      if (quiet < 2) t.settleReason = 'deadline';  // never went quiet; say so
     }
     t.settle = now() - tSettle;
 
@@ -371,7 +399,8 @@ async function runAnalysis(u, domain, budget, T0, left) {
       const txt = (document.body ? document.body.innerText || '' : '').trim();
       let boxes = 0;
       for (const el of document.querySelectorAll('body *')) {
-        const r = el.getBoundingClientRect(); if (r.width > 40 && r.height > 20) boxes++;
+        let r; try { r = el.getBoundingClientRect(); } catch (e) { continue; }
+        if (r && r.width > 40 && r.height > 20) boxes++;
       }
       return { title: document.title || '', text: txt.slice(0, 600), chars: txt.length,
                links: document.querySelectorAll('a[href]').length,
@@ -383,7 +412,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
         return fail(domain, 'BLOCKED', 'interstitial after load: ' + post.title.slice(0, 60));
       }
       const h2 = hostOf(post.url);
-      if (h2 && h2 !== domain && !h2.endsWith('.' + domain) && !domain.endsWith('.' + h2)) {
+      if (h2 && !sameBrand(h2, domain)) {
         return fail(domain, 'REDIRECTED', 'navigated to ' + h2);
       }
       // A page with NO LINKS AT ALL is not a website. This is the discriminator that
@@ -451,6 +480,22 @@ async function runAnalysis(u, domain, budget, T0, left) {
     // ---- one screenshot for colour
     const tShot = now();
     let clipH = Math.min(m.docHeight, VH * 3);
+    // WALK THE REGION BEFORE CAPTURING IT.
+    // bbc.com serves an identical page every time — 15k characters, ~71 of 136 images
+    // loaded — yet measured ink 0.055 or 0.313 with nothing in between. The page was
+    // never the variable: its lazy images render into a full-page capture on some runs
+    // and not others. Scrolling the analysed region first makes them load and decode, so
+    // the capture stops being a coin flip. Same cause as magnumphotos' blank frames.
+    try {
+      const steps = Math.min(3, Math.ceil(Math.min(m.docHeight, VH * 3) / VH));
+      for (let i = 1; i <= steps && left() > 6000; i++) {
+        await page.evaluate(y => window.scrollTo(0, y), i * VH);
+        await page.waitForTimeout(350);
+      }
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(500);
+    } catch (e) { /* scrolling is best-effort */ }
+
     // The analysis region is three viewports. If we can only capture one, we are
     // measuring a different thing and must say so: magnumphotos.com's full capture timed
     // out, silently fell back to the viewport, and reported colourfulness 0.000 — because
@@ -460,8 +505,8 @@ async function runAnalysis(u, domain, budget, T0, left) {
     const clipAt = h => ({ x: 0, y: 0, width: VW, height: Math.max(VH, Math.min(m.docHeight, h)) });
     const attempts = [
       ['v3', () => page.screenshot({ type: 'png', fullPage: true, clip: clipAt(VH * 3), animations: 'disabled', timeout: Math.max(3000, Math.min(SHOT_MS, left() - 1500)) })],
-      ['v2', () => page.screenshot({ type: 'png', fullPage: true, clip: clipAt(VH * 2), animations: 'disabled', timeout: Math.max(2500, Math.min(6000, left() - 1200)) })],
-      ['v1', () => page.screenshot({ type: 'png', animations: 'disabled', timeout: Math.max(2000, left() - 800) })]
+      ['v2', () => page.screenshot({ type: 'png', fullPage: true, clip: clipAt(VH * 2), animations: 'disabled', timeout: Math.max(4000, Math.min(7000, left() - 1000)) })],
+      ['v1', () => page.screenshot({ type: 'png', animations: 'disabled', timeout: Math.max(3500, left() - 600) })]
     ];
     for (const [scope, take] of attempts) {
       try { shot = await take(); captureScope = scope; break; } catch (e) { /* try a smaller region */ }
@@ -487,9 +532,20 @@ async function runAnalysis(u, domain, budget, T0, left) {
     t.pixels = now() - tPix;
 
     const inkNow = 1 - (pixels.all ? pixels.all.whitespaceRatio : 1);
-    if (!after.unknown && inkNow < 0.02 && after.boxes >= 50) {
+    // Two questions, not one.
+    //  (a) Did we see ANYTHING? A frame under 0.5% ink is blank — there is nothing to
+    //      measure whatever the DOM claims. cern sits at 1.8% and craigslist at 1.5%,
+    //      three times this floor, so a deliberately sparse text page is safe.
+    //  (b) Otherwise, sparse is only suspicious while the page is STILL MUTATING. A page
+    //      that painted a little and then stopped has finished; an app shell that painted
+    //      a little and is still changing has not. `settled` already records which.
+    if (!after.unknown && inkNow < 0.005) {
       return fail(domain, 'NOT_RENDERED',
-        `DOM has ${after.boxes} boxes and ${after.text} chars but the frame is ${(inkNow * 100).toFixed(1)}% inked — the page did not paint`);
+        `the frame is ${(inkNow * 100).toFixed(1)}% inked — blank, nothing was captured`);
+    }
+    if (!after.unknown && inkNow < 0.02 && after.boxes >= 50 && !settled) {
+      return fail(domain, 'NOT_RENDERED',
+        `${after.boxes} boxes, frame ${(inkNow * 100).toFixed(1)}% inked and still changing at the deadline`);
     }
 
     t.total = now() - T0;

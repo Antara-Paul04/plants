@@ -1,0 +1,182 @@
+[
+ {
+  "site": "stripe.com",
+  "t95": 15210,
+  "finalPaint": 6299409.933105469,
+  "climbing": false
+ },
+ {
+  "site": "github.com",
+  "t95": 2648,
+  "finalPaint": 25338767.043945312,
+  "climbing": false
+ },
+ {
+  "site": "en.wikipedia.org",
+  "t95": 1075,
+  "finalPaint": 4173599.7294921875,
+  "climbing": false
+ },
+ {
+  "site": "gov.uk",
+  "t95": 11893,
+  "finalPaint": 2009477.765625,
+  "climbing": false
+ },
+ {
+  "site": "linear.app",
+  "t95": 2403,
+  "finalPaint": 10275168.956298828,
+  "climbing": false
+ },
+ {
+  "site": "figma.com",
+  "t95": 15877,
+  "finalPaint": 923343.908203125,
+  "climbing": true
+ },
+ {
+  "site": "tailwindcss.com",
+  "t95": 1091,
+  "finalPaint": 2287615.203125,
+  "climbing": false
+ },
+ {
+  "site": "vercel.com",
+  "t95": 1719,
+  "finalPaint": 5445285.796875,
+  "climbing": false
+ },
+ {
+  "site": "raycast.com",
+  "t95": 11648,
+  "finalPaint": 6636006.83909595,
+  "climbing": true
+ },
+ {
+  "site": "bbc.com",
+  "t95": 435,
+  "finalPaint": 2844491.125,
+  "climbing": false
+ },
+ {
+  "site": "pinterest.com",
+  "t95": 6617,
+  "finalPaint": 4113518.249267578,
+  "climbing": false
+ },
+ {
+  "site": "nasa.gov",
+  "t95": 1738,
+  "finalPaint": 8654744.899902344,
+  "climbing": false
+ },
+ {
+  "site": "apple.com",
+  "t95": 1273,
+  "finalPaint": 5504237.390625,
+  "climbing": false
+ },
+ {
+  "site": "unsplash.com",
+  "t95": 1126,
+  "finalPaint": 52951.875,
+  "climbing": false
+ },
+ {
+  "site": "craigslist.org",
+  "t95": 14362,
+  "finalPaint": 785872.3671875,
+  "climbing": false
+ },
+ {
+  "site": "news.ycombinator.com",
+  "t95": 1057,
+  "finalPaint": 2353161.703125,
+  "climbing": false
+ },
+ {
+  "site": "info.cern.ch",
+  "t95": 1383,
+  "finalPaint": 99883.15625,
+  "climbing": false
+ },
+ {
+  "site": "motherfuckingwebsite.com",
+  "t95": 960,
+  "finalPaint": 1003265.875,
+  "climbing": false
+ },
+ {
+  "site": "sive.rs",
+  "t95": 1951,
+  "finalPaint": 603374.1147460938,
+  "climbing": false
+ },
+ {
+  "site": "danluu.com",
+  "t95": 684,
+  "finalPaint": 4318198.03125,
+  "climbing": false
+ },
+ {
+  "site": "paulgraham.com",
+  "t95": 1135,
+  "finalPaint": 40871.9375,
+  "climbing": false
+ },
+ {
+  "site": "sqlite.org",
+  "t95": 2179,
+  "finalPaint": 370192.232421875,
+  "climbing": false
+ },
+ {
+  "site": "w3.org",
+  "t95": 1664,
+  "finalPaint": 2935519.171875,
+  "climbing": false
+ },
+ {
+  "site": "xkcd.com",
+  "t95": 1696,
+  "finalPaint": 909896.9375,
+  "climbing": false
+ },
+ {
+  "site": "developer.mozilla.org",
+  "t95": 1279,
+  "finalPaint": 5176894.702314801,
+  "climbing": false
+ },
+ {
+  "site": "docs.python.org",
+  "t95": 621,
+  "finalPaint": 1014759.9672851562,
+  "climbing": false
+ },
+ {
+  "site": "archive.org",
+  "t95": 1640,
+  "finalPaint": 0,
+  "climbing": false
+ },
+ {
+  "site": "lobste.rs",
+  "t95": 1495,
+  "finalPaint": 832344.078125,
+  "climbing": false
+ },
+ {
+  "site": "threejs.org",
+  "t95": 491,
+  "finalPaint": 92412.15625,
+  "climbing": false
+ },
+ {
+  "site": "cosmos.so",
+  "t95": 12273,
+  "finalPaint": 4362267.340686649,
+  "climbing": false
+ }
+]
