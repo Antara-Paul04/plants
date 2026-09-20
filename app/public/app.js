@@ -463,15 +463,28 @@ catch (err) {
 const EXAMPLE_POOL = ['gov.uk', 'art.yale.edu', 'en.wikipedia.org', 'threejs.org'];
 
 async function showExample() {
+  // NO CARD IN THE CENTRE WHILE IT BUILDS, and this is the half of the slow-phone
+  // problem that can be fixed from here. On a 6x-throttled device the example
+  // tree does not land for 15-20s, so a visitor arriving from a link still meets
+  // the old frame — and what made that frame read as a BROKEN page rather than a
+  // loading one was the invitation sitting in dead centre, the same place the
+  // status card sits, over bare earth. A settled card on an empty scene asserts
+  // that this IS the page. Without it the same seconds read as a page still
+  // arriving: sky, island, the wordmark and its tagline, and an input.
+  // The other half — the 15-20s itself — is the skeleton build not yielding
+  // against its 10ms slice, and it belongs to the renderer.
+  const restoreInvite = () => { if (!busy && !lastUrl) overlay.hidden = false; };
+  overlay.hidden = true;
   let gallery;
   // Cached DNA, shipped with the page: no analyzer, no network beyond this file,
   // so the opening tree costs the wood build alone and cannot fail the way a
   // live read can. An opening frame that depends on a site being up is not an
   // opening frame.
   try { gallery = await (await fetch('/gallery.json')).json(); }
-  catch { return; }                       // no gallery: the island stands, as before
+  catch { return restoreInvite(); }       // no gallery: the island stands, as before
   const pool = EXAMPLE_POOL.filter((s) => gallery?.sites?.[s]);
-  if (!pool.length || busy || lastUrl) return;
+  if (!pool.length) return restoreInvite();
+  if (busy || lastUrl) return;
   const site = pool[Math.floor(Math.random() * pool.length)];
 
   try {
@@ -479,7 +492,7 @@ async function showExample() {
                 : (tree = mountTree(sceneEl, gallery.sites[site], { autoRotate: true })).ready);
   } catch (err) {
     // AbortError is the expected outcome when the visitor beat us to it.
-    if (err?.name !== 'AbortError') console.error(err);
+    if (err?.name !== 'AbortError') { console.error(err); restoreInvite(); }
     return;
   }
   if (busy || lastUrl) return;            // they got there first — leave their state alone
