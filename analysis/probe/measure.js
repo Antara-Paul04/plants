@@ -158,8 +158,36 @@ export function measurePage(opts) {
     const visibleChars = textNodes.reduce((s, n) => s + n.ownText.length, 0);
     const tfrac = pred => clamp01(textNodes.filter(pred).reduce((s, n) => s + wA(n), 0) / textArea);
 
-    const serifDefault = /^(Times|Times New Roman|serif|-webkit-standard)/i;
-    const nonDefaultFontArea = tfrac(n => !serifDefault.test(n.fontFamily));
+    // "DID THE PAGE CHOOSE A FONT?" — asked of this browser, not of a list.
+    //
+    // This used to be a regex for Times / Times New Roman / serif, which is the
+    // UA default ON MACOS. On Linux the same unstyled page computes something
+    // else (Tinos, Liberation Serif, DejaVu Serif, whatever fontconfig resolves),
+    // so every unstyled page there looked deliberately typeset. Measured on the
+    // deployment against this laptop, info.cern.ch: stylingRichness 0.069 -> 0.125
+    // and authored 0.1 -> 0.2, enough to move the crux site off BARE. One regex,
+    // and the project's central claim changed with the operating system.
+    //
+    // The UA default is now READ OUT OF THE BROWSER: an element with `all:
+    // initial` carries the initial font-family, whatever platform this is. A
+    // generic keyword still counts as unstyled — asking for "serif" is not
+    // choosing a typeface.
+    let uaFontFamily = '';
+    try {
+      const probe = document.createElement('span');
+      probe.style.all = 'initial';
+      probe.style.position = 'absolute';
+      probe.style.visibility = 'hidden';
+      document.documentElement.appendChild(probe);
+      uaFontFamily = getComputedStyle(probe).fontFamily || '';
+      probe.remove();
+    } catch (e) { /* fall back to the generics below */ }
+    const norm = (f) => String(f || '').split(',')[0].trim().replace(/^["']|["']$/g, '').toLowerCase();
+    const uaFirst = norm(uaFontFamily);
+    const GENERIC = new Set(['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy',
+                             'system-ui', '-webkit-standard', '-webkit-body']);
+    const isDefaultFont = (f) => { const v = norm(f); return !v || v === uaFirst || GENERIC.has(v); };
+    const nonDefaultFontArea = tfrac(n => !isDefaultFont(n.fontFamily));
     const webfonts = document.fonts ? document.fonts.size : 0;
     let loadedWebfonts = 0;
     try { document.fonts.forEach(f => { if (f.status === 'loaded') loadedWebfonts++; }); } catch (e) {}
