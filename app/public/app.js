@@ -461,12 +461,7 @@ async function grow(raw) {
 
 // Example chips. The first two are the pair the whole concept rests on —
 // unstyled HTML against deliberate minimalism — so they sit first on purpose.
-$('examples').addEventListener('click', (e) => {
-  const b = e.target.closest('button[data-site]');
-  if (!b) return;
-  input.value = b.dataset.site;
-  grow(b.dataset.site);
-});
+
 
 form.addEventListener('submit', (e) => {
   e.preventDefault();

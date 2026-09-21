@@ -205,7 +205,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
     const promise = (async () => {
       const M = await modules;
       if (abort.signal.aborted) throw new DOMException('superseded', 'AbortError');
-      const built = growEarth(M, q, env, { idle });
+      const built = growEarth(M, q, env, { idle, uniforms });
       const old = shown;
       env.scene.add(built.ground);
       env.apply();

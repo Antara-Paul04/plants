@@ -148,17 +148,6 @@
       button:hover:not(:disabled) { filter: brightness(1.08); }
       button:disabled { opacity: .55; cursor: default; }
 
-      .examples {
-        display: flex; flex-wrap: wrap; gap: 5px; align-items: baseline;
-        font-size: 12px; color: var(--muted);
-      }
-      .examples button {
-        padding: 3px 9px; font: inherit; font-weight: 400;
-        color: var(--muted); background: var(--surface);
-        border: 1px solid var(--edge); border-radius: 20px;
-        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      }
-      .examples button:hover:not(:disabled) { color: var(--ink); }
 
       /* --- the reading panel: bottom-right ---------------------------------
          "Why this tree?" is the intellectual payoff and must not be buried, but
@@ -498,27 +487,6 @@
           <input id="url" type="text" placeholder="news.ycombinator.com" autocomplete="off" spellcheck="false" autofocus />
           <button id="go" type="submit">Grow</button>
         </form>
-        <div class="examples" id="examples">
-          <!-- CHIPS MUST BE FAST, RELIABLE, THEN DIFFERENT — in that order (Taste).
-               A suggestion WE chose failing is the worst outcome in the product,
-               worse than having no chips at all, and retry does not rescue it
-               because the user meets the failure before they meet the retry.
-               stripe.com and github.com were both chips and both timed out; the
-               old placeholder was stripe.com too. Latency counts as reliability:
-               daringfireball.net grows a lovely night tree but has been measured
-               between 10s and 25s, so it is not a chip.
-               Measured on the live path 2026-09-20 — state, then seconds:
-                 info.cern.ch          bare,   no flowers          3.8s
-                 news.ycombinator.com  sparse, orange #f37b2b      3.6s
-                 arxiv.org             normal, periwinkle #a1a1f8  4.1s
-                 gwern.net             normal, WINTER              9.1s
-               Four states, warm and cool accents, one seasonal. Re-measure before
-               changing any of them. -->
-          <button type="button" data-site="info.cern.ch" title="essentially unstyled HTML">info.cern.ch</button>
-          <button type="button" data-site="news.ycombinator.com" title="plain, with one strong accent">news.ycombinator.com</button>
-          <button type="button" data-site="arxiv.org" title="dense and academic">arxiv.org</button>
-          <button type="button" data-site="gwern.net" title="designed, and almost colourless">gwern.net</button>
-        </div>
       </div>
     </div>
 

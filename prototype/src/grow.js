@@ -1013,6 +1013,78 @@ export async function growTree(M, q, env, opts = {}) {
  * lawn at idle is ground nobody measured. Bare soil, then the site's ground and its
  * tree arriving together.
  */
+/**
+ * A SMALL FLOWERING SHRUB, for the idle island only.
+ *
+ * The page used to open on bare soil — "empty land", and the human is right that
+ * it is bad: a brown disc is what our FAILURE state looks like, so the invitation
+ * and the apology wore the same face.
+ *
+ * It is not a tiny tree. It has no trunk: every stem leaves the ground at the
+ * base and fans outward, which is what separates a shrub from a sapling at a
+ * glance. And it costs nothing like a tree, because it skips the expensive half
+ * entirely — no space colonization, no signed distance field, no marching cubes.
+ * Six synthetic limbs are handed to the ORDINARY foliage pipeline
+ * (leafAttachments -> buildLeaves -> buildFlowers), so it is in the same art
+ * family as everything else by construction rather than by matching it by eye.
+ *
+ * Built at tree scale and then scaled down, deliberately: every cluster size,
+ * petal proportion and seat offset in those builders is tuned for a tree, and
+ * shrinking the finished group keeps all of it in proportion instead of
+ * re-tuning a second set of numbers that would then drift from the first.
+ *
+ * NOTHING HERE IS MEASURED, and that is allowed only because nothing is being
+ * claimed: no site has been asked for yet. The moment one is, this is replaced.
+ * The failure island keeps its bare earth — there a lawn would fabricate a
+ * terrain reading we never obtained.
+ */
+export function growSprig(M, r, env, uniforms) {
+  const group = new THREE.Group();
+  const limbs = [];
+  const N = 6;
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2 + M.util.rr(r, -0.35, 0.35);
+    const lean = M.util.rr(r, 0.62, 1.05);
+    const h = M.util.rr(r, 1.5, 2.25);
+    const chain = [];
+    const STEPS = 3;
+    for (let s = 0; s <= STEPS; s++) {
+      const t = s / STEPS;
+      chain.push({
+        // Stems bow outward as they rise, so the silhouette is a dome rather
+        // than a star. Radius stays under leafAttachments' 0.12 ceiling all the
+        // way to the base, or it would refuse to seat leaves on the lower half.
+        pos: new THREE.Vector3(Math.cos(a) * lean * t * 1.15, h * t * (1 - 0.16 * t), Math.sin(a) * lean * t * 1.15),
+        r: 0.095 * (1 - t) + 0.02,
+      });
+    }
+    limbs.push({ chain });
+  }
+  const spots = M.leaves.leafAttachments(limbs, r, { spacing: 0.34 });
+  const lv = M.leaves.buildLeaves(limbs, r, { spots });
+  group.add(lv.group);
+  const fl = M.flowers.buildFlowers(spots, r, {
+    grammar: 'cluster', amount: 'medium',
+    primary: 0xf2b8c6, secondary: 0xd98aa0,
+  });
+  group.add(fl.group);
+  // applySway takes a MATERIAL, not a group — the same traversal the tree does.
+  // yLo/yHi are in the shrub's own pre-scale space, so they span its full height.
+  if (uniforms) {
+    const done = new Set();
+    group.traverse((o) => {
+      for (const m of [o.material].flat()) {
+        if (!m || done.has(m)) continue;
+        done.add(m);
+        M.util.applySway(m, uniforms, { amp: 0.05, yLo: 0, yHi: 2.4, pin: 0.5 });
+      }
+    });
+  }
+  group.scale.setScalar(0.4);
+  group.position.y = M.island.topY(0) + 0.05;
+  return { group, stats: { leaves: lv.stats, flowers: fl.stats } };
+}
+
 export function growEarth(M, q, env, opts = {}) {
   const idle = !!opts.idle;
   const { P } = resolveParams(q);
@@ -1026,8 +1098,28 @@ export function growEarth(M, q, env, opts = {}) {
   for (const k of Object.keys(NORMAL_TERRAIN)) {
     terrain[k] = gradeColor(new THREE.Color(NORMAL_TERRAIN[k]).lerp(new THREE.Color(DORMANT_TERRAIN[k]), 0.55).multiplyScalar(0.86), env.ENV.ground);
   }
-  ground.add(M.island.buildIsland(M.util.rng(P.seed * 13 + 505), { ...terrain, bareEarth: true }));
   const tree = new THREE.Group();   // empty on purpose: hosts treat every result alike
+  if (idle) {
+    // IDLE IS ALIVE; FAILURE IS NOT. They shared an island and differed only in
+    // framing, which is why a testing session found them hard to tell apart with
+    // the copy removed. Idle now has turf, stones and something growing on it —
+    // an invitation — while failure keeps the bare soil it has to keep.
+    const gr = M.util.rng(919);
+    const live = {};
+    for (const k of Object.keys(NORMAL_TERRAIN)) live[k] = gradeColor(new THREE.Color(NORMAL_TERRAIN[k]), env.ENV.ground);
+    ground.add(M.island.buildIsland(gr, live));
+    ground.add(M.island.buildGrass(gr, opts.uniforms, { ...live, detail: 0.6 }));
+    ground.add(M.island.buildRocks(M.util.rng(1717), {
+      rockHi: gradeColor(new THREE.Color(0xf0e0c2), env.ENV.ground),
+      rockLo: gradeColor(new THREE.Color(0xb5a07f), env.ENV.ground),
+    }));
+    // ON `ground`, NOT `tree`. The earth result's `tree` group is empty by
+    // design and the host never adds it to the scene — "hosts treat every result
+    // alike" — so a shrub parented there is built, lit, swayed and never drawn.
+    ground.add(growSprig(M, M.util.rng(4242), env, opts.uniforms).group);
+  } else {
+    ground.add(M.island.buildIsland(M.util.rng(P.seed * 13 + 505), { ...terrain, bareEarth: true }));
+  }
   return {
     tree, ground, earth: true, idle, skel: null, stats: { earth: true, idle }, season: null,
     // FAILURE is framed on the island's PLOT, not on a tree's. Framed like a tree
