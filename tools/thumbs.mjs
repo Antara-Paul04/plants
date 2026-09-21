@@ -8,6 +8,8 @@
 // not do — so they come out of the same page a visitor sees, via ?example=,
 // with the interface hidden. Square viewport so the capped-lens fit centres the
 // tree instead of leaving it in a wide letterbox.
+// `grow=0` because the tree now GROWS when it arrives: without it a capture
+// is a photograph of a half-grown tree and nothing in the file says so.
 // Re-run when the tree's look changes, or the strip quietly shows an old one.
 import { chromium } from '../analysis/node_modules/playwright-core/index.mjs';
 import { readFileSync, mkdirSync, rmSync } from 'node:fs';
@@ -23,7 +25,7 @@ const browser = await chromium.launch({
 });
 for (const site of sites) {
   const page = await browser.newPage({ viewport: { width: 460, height: 460 }, deviceScaleFactor: 2 });
-  await page.goto(`http://localhost:5170/?example=${encodeURIComponent(site)}`, { waitUntil: 'commit' });
+  await page.goto(`http://localhost:5170/?example=${encodeURIComponent(site)}&grow=0`, { waitUntil: 'commit' });
   // Wait for the TREE, never for a panel — the caption exists long before the wood does.
   await page.waitForFunction(() => {
     const r = document.getElementById('result');
