@@ -10,11 +10,11 @@ import { dnaToParams } from '/tree/dna-params.js';
 
 const $ = (id) => document.getElementById(id);
 const form = $('form'), input = $('url'), go = $('go');
-const overlay = $('overlay'), spinner = $('spinner'), msg = $('msg');
+const overlay = $('overlay'), msg = $('msg');
 const result = $('result'), domainEl = $('domain'), stampEl = $('stamp');
 const whyList = $('whyList'), cacheNote = $('cacheNote'), retryBtn = $('retry'), sceneEl = $('scene');
 const resultHead = $('resultHead');
-const waiting = $('waiting'), barFill = $('barFill'), elapsedEl = $('elapsed'), mwStrip = $('mwStrip');
+const waiting = $('waiting'), barFill = $('barFill'), elapsedEl = $('elapsed');
 const shareBtn = $('shareBtn'), shareSheet = $('shareSheet');
 
 let tree = null;
@@ -50,7 +50,6 @@ function state(s, text, retryable) {
   overlay.hidden = !showOverlay;
   overlay.classList.toggle('failed', s === 'error');
   overlay.classList.toggle('busy', s === 'analyzing' || s === 'growing');
-  spinner.hidden = !(s === 'analyzing' || s === 'growing');
   msg.textContent = text || '';
   msg.className = s === 'error' ? 'err' : '';
   busy = (s === 'analyzing' || s === 'growing');
@@ -327,56 +326,14 @@ document.addEventListener('click', (e) => { if (!shareSheet.hidden && !shareShee
 // seconds elapsed. A progress bar that lies is worse than a spinner, because a
 // spinner at least never claimed to know.
 //
-// THE STRIP IS THE PROMISE. "Every website grows differently" is the whole
-// pitch and it is unprovable from a single tree, so the one moment a visitor
-// has nothing to do is the moment to show them four more — every one a real
-// tree from a real measurement, rendered by the same renderer (tools/thumbs.mjs),
-// never decoration. It also does a second job: plants-36 found that an in-flight
-// grow is visually indistinguishable from a finished one, and this is
-// unmistakably a waiting state.
+// The bar is the budget and the seconds are the seconds; the sapling beside
+// them is the only moving part, and it is CSS, so it survives the main thread
+// being blocked by the very build it is waiting for.
 const WAIT_BUDGET_MS = 50000;      // must track api/grow.js budgetMs
-let waitTimer = null, galleryCache = null;
+let waitTimer = null;
 
-async function fillStrip(exclude) {
-  if (!galleryCache) {
-    try { galleryCache = await (await fetch('/gallery.json')).json(); }
-    catch { return; }                       // no gallery: the strip stays empty, the bar still runs
-  }
-  const pool = Object.keys(galleryCache.sites || {}).filter((s) => s !== exclude);
-  for (let i = pool.length - 1; i > 0; i--) {  // shuffle, so a second grow shows different trees
-    const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  // ONE FROM EACH FOLIAGE STATE, because the strip's whole job is to show that
-  // websites grow differently and a random four gave two bare trees side by
-  // side — which reads as repetition, the opposite of the claim. Taking bare,
-  // sparse, normal and lush in order puts the actual range on screen: a naked
-  // armature next to a lush flowering crown. Falls back to the shuffle if the
-  // gallery ever lacks a state.
-  const byState = (want) => pool.find((s) => galleryCache.sites[s]?.foliage?.state === want);
-  const picked = [];
-  for (const state of ['bare', 'sparse', 'normal', 'lush']) {
-    const hit = byState(state);
-    if (hit && !picked.includes(hit)) picked.push(hit);
-  }
-  for (const s of pool) { if (picked.length >= 4) break; if (!picked.includes(s)) picked.push(s); }
-
-  mwStrip.replaceChildren();
-  for (const site of picked.slice(0, 4)) {
-    const fig = document.createElement('figure');
-    const img = document.createElement('img');
-    img.src = `/thumbs/${encodeURIComponent(site)}.jpg`;
-    img.alt = `the tree grown from ${site}`;
-    img.loading = 'lazy'; img.decoding = 'async';
-    const cap = document.createElement('figcaption');
-    cap.textContent = site;               // textContent, not innerHTML — these are names from a file
-    fig.append(img, cap);
-    mwStrip.append(fig);
-  }
-}
-
-function startWaiting(forDomain) {
+function startWaiting() {
   stopWaiting();
-  fillStrip(forDomain);
   waiting.hidden = false;
   const t0 = performance.now();
   const tick = () => {
@@ -413,7 +370,7 @@ async function grow(raw) {
   // wait — reporting the analysis time told the user 2.9s while they sat for 13.
   const t0 = performance.now();
   state('analyzing', 'Reading your website…');
-  startWaiting(String(raw).replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0]);
+  startWaiting();
   // The numbers are the real ones: a warm read is 4-8s, a cold function 15-30s,
   // and 45s is where the budget ends and a TIMEOUT is returned.
   reassure([

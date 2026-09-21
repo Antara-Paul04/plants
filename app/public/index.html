@@ -19,12 +19,13 @@
          entirely a picture. Without these a shared link is a bare URL with no
          card at all, which reads as broken — and the most likely way anyone
          arrives here is a link someone posted.
-         og.png is built BY THE PRODUCT (tools/og-card.mjs composes real trees
-         rendered by tools/thumbs.mjs), so the card cannot drift into advertising
-         trees we no longer make. Re-run both when the tree's look changes.
-         It shows THREE trees, not one: the claim is that every website grows
-         differently, and one specimen cannot evidence that. Absolute URL because
-         several platforms will not resolve a relative one. -->
+         og.png is built BY THE PRODUCT (tools/og-card.mjs renders the hero live
+         and composes it with thumbnails from tools/thumbs.mjs), so the card
+         cannot drift into advertising trees we no longer make. Re-run both when
+         the tree's look changes. A hero and a footnote rather than three equal
+         thumbnails: one large tree is what stops a scroll, and the three small
+         ones carry the claim that websites differ without competing with it.
+         Absolute URL because several platforms will not resolve a relative one. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Plants" />
     <meta property="og:title" content="Plants — every website grows differently" />
@@ -33,7 +34,7 @@
     <meta property="og:image" content="https://plants-three-eta.vercel.app/og.png" />
     <meta property="og:image:width" content="2400" />
     <meta property="og:image:height" content="1260" />
-    <meta property="og:image:alt" content="Three very different 3D trees side by side — a bare one grown from info.cern.ch, a blue-flowering one from gov.uk, and a white-blossomed night tree from linear.app." />
+    <meta property="og:image:alt" content="A large 3D tree covered in red blossom on a floating grass island, beside the words Plants — every website grows differently, with three much smaller and very different trees below." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Plants — every website grows differently" />
     <meta name="twitter:description" content="Paste a website address and watch a tree grow from its visual design. Unstyled HTML grows bare; a richly designed page grows lush and flowering." />
@@ -222,40 +223,81 @@
 
       /* --- the wait ---------------------------------------------------------- */
       .waiting {
-        pointer-events: auto;
+        pointer-events: none;
+        display: flex; align-items: center; gap: 12px;
         background: var(--surface-solid); border: 1px solid var(--edge);
-        border-radius: 12px; padding: 10px 12px 11px;
+        border-radius: 14px; padding: 10px 16px 10px 10px;
         backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-        width: min(340px, calc(100vw - 48px));
-        text-align: left;
       }
       .waiting[hidden] { display: none; }
-      .bar {
-        position: relative; height: 16px; border-radius: 8px;
-        background: color-mix(in oklab, var(--ink) 9%, transparent);
-        overflow: hidden; margin-bottom: 9px;
+
+      .sprout { width: 54px; height: 45px; overflow: visible; flex: 0 0 auto; }
+      .sprout .soil {
+        fill: color-mix(in oklab, var(--ink) 16%, transparent);
       }
-      .bar i {
+      /* animation-fill-mode: backwards is not a detail here. Without it, an
+         element waiting out its delay renders at its NATURAL size — so every
+         leaf was fully open before its animation began and the plant appeared
+         complete from the first frame. Nothing read as growth at all. */
+      .sprout .stem {
+        fill: none; stroke: var(--accent); stroke-width: 3.2; stroke-linecap: round;
+        transform-box: fill-box; transform-origin: 50% 100%;
+        animation: stem 3.6s cubic-bezier(.3,.7,.35,1) infinite backwards;
+      }
+      .sprout .leaf { fill: var(--accent); transform-box: fill-box; }
+      .sprout .l1 { transform-origin: 100% 100%; animation: leaf 3.6s cubic-bezier(.3,.7,.35,1) infinite .78s backwards; }
+      .sprout .l2 { transform-origin: 0% 100%;   animation: leaf 3.6s cubic-bezier(.3,.7,.35,1) infinite 1.12s backwards; }
+      .sprout .l3 { transform-origin: 100% 100%; animation: leaf 3.6s cubic-bezier(.3,.7,.35,1) infinite 1.46s backwards; }
+      .sprout .bud {
+        fill: color-mix(in oklab, var(--accent) 55%, #fff);
+        transform-box: fill-box; transform-origin: 50% 50%;
+        animation: bud 3.6s cubic-bezier(.34,1.5,.5,1) infinite 1.82s backwards;
+      }
+      /* Each part grows, holds while the rest catches up, then the whole plant
+         fades and the next one starts. One loop, four delays. */
+      @keyframes stem {
+        0%   { transform: scaleY(0.04); opacity: 0; }
+        8%   { opacity: 1; }
+        46%  { transform: scaleY(1); }
+        84%  { transform: scaleY(1);    opacity: 1; }
+        96%, 100% { transform: scaleY(1); opacity: 0; }
+      }
+      @keyframes leaf {
+        0%   { transform: scale(0) rotate(-26deg); opacity: 0; }
+        5%   { opacity: 1; }
+        26%  { transform: scale(1) rotate(0deg); }
+        74%  { transform: scale(1) rotate(0deg); opacity: 1; }
+        88%, 100% { transform: scale(1) rotate(0deg); opacity: 0; }
+      }
+      @keyframes bud {
+        0%   { transform: scale(0); opacity: 0; }
+        6%   { opacity: 1; }
+        22%  { transform: scale(1); }
+        70%  { transform: scale(1); opacity: 1; }
+        84%, 100% { transform: scale(1); opacity: 0; }
+      }
+      /* Someone who has asked for less motion gets a still sapling, not a
+         stutter — the wait still has its seconds and its bar. */
+      @media (prefers-reduced-motion: reduce) {
+        .sprout .stem, .sprout .leaf, .sprout .bud { animation: none; opacity: 1; }
+        .sprout .stem { transform: scaleY(1); }
+      }
+
+      .wait-meta { display: flex; align-items: center; gap: 9px; min-width: 128px; }
+      .track {
+        position: relative; flex: 1; height: 3px; border-radius: 2px;
+        background: color-mix(in oklab, var(--ink) 12%, transparent); overflow: hidden;
+      }
+      .track i {
         position: absolute; inset: 0 auto 0 0; width: 0%;
-        background: color-mix(in oklab, var(--accent, #3d6b35) 55%, transparent);
-        border-radius: 8px; transition: width 260ms linear;
+        background: var(--accent); border-radius: 2px;
+        transition: width 260ms linear;
       }
-      .bar b {
-        position: absolute; inset: 0; display: grid; place-items: center;
-        font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
-        color: var(--ink); opacity: 0.66; font-variant-numeric: tabular-nums;
+      .wait-meta b {
+        font-size: 11px; font-weight: 600; color: var(--muted);
+        font-variant-numeric: tabular-nums; min-width: 26px; text-align: right;
       }
-      .mw-label {
-        font-size: 10.5px; letter-spacing: 0.03em; text-transform: lowercase;
-        color: var(--muted); opacity: 0.85; margin-bottom: 7px;
-      }
-      .mw-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
-      .mw-strip figure { margin: 0; text-align: center; }
-      .mw-strip img {
-        width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
-        border-radius: 8px; border: 1px solid var(--edge);
-        background: color-mix(in oklab, var(--ink) 5%, transparent);
-      }
+
       /* --- share ------------------------------------------------------------- */
       .result-top { display: flex; align-items: stretch; }
       .result-top .result-head { flex: 1 1 auto; }
@@ -283,10 +325,6 @@
       .share-sheet button:hover { background: color-mix(in oklab, var(--ink) 7%, transparent); }
       .share-sheet button[hidden] { display: none; }
 
-      .mw-strip figcaption {
-        font-size: 9px; color: var(--muted); margin-top: 3px;
-        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-      }
       /* The message sits over the scene — over a bare-earth island on a failure,
          over open sky otherwise. It carries its own ground either way. A judge
          put the rule: an image can refuse to pass judgment on a site, but it
@@ -304,12 +342,6 @@
         color: var(--ink); background: var(--surface-solid);
         border: 1px solid var(--edge); border-radius: 999px;
       }
-      .spinner {
-        width: 19px; height: 19px; border-radius: 50%;
-        border: 2px solid var(--edge); border-top-color: var(--accent);
-        animation: spin .8s linear infinite;
-      }
-      @keyframes spin { to { transform: rotate(360deg); } }
 
       .note {
         margin-top: 9px; padding: 7px 10px; font-size: 12px;
@@ -404,7 +436,6 @@
 
       <div class="overlay" id="overlay">
         <div class="status">
-          <div class="spinner" id="spinner" hidden></div>
           <div id="msg">Paste a website address to grow its tree.</div>
         </div>
         <!-- THE WAIT IS 10-40 SECONDS AND IT USED TO BE A SPINNER.
@@ -415,9 +446,26 @@
              the visitor has nothing to do — every one of those is a real tree
              from a real measurement, not decoration. -->
         <div class="waiting" id="waiting" hidden>
-          <div class="bar"><i id="barFill"></i><b id="elapsed">0s</b></div>
-          <div class="mw-label">meanwhile — these grew from other websites</div>
-          <div class="mw-strip" id="mwStrip"></div>
+          <!-- A SAPLING, GROWING, ON LOOP. Pure CSS on transform and opacity and
+               nothing else, because the thing we are waiting FOR — the wood
+               build — blocks the main thread for seconds at a time. A
+               JavaScript animation would stutter at precisely the moment it is
+               on screen; transform and opacity keep running on the compositor
+               while the main thread is busy, so this stays smooth through the
+               jank. It is also the only honest metaphor available: something is
+               being grown. -->
+          <svg class="sprout" viewBox="0 0 72 60" aria-hidden="true">
+            <ellipse class="soil" cx="36" cy="52" rx="19" ry="4.6"/>
+            <path class="stem" d="M36 52 C 35.2 44, 36.6 38, 36 27"/>
+            <path class="leaf l1" d="M36 41 C 28 40, 23 35, 22.5 30 C 29 30, 34.5 34, 36 41 Z"/>
+            <path class="leaf l2" d="M36 36 C 44 35, 49 30, 49.5 25 C 43 25, 37.5 29, 36 36 Z"/>
+            <path class="leaf l3" d="M36 30 C 30 28.5, 26.5 24, 26.5 19.5 C 32 20, 35.2 24, 36 30 Z"/>
+            <circle class="bud" cx="36" cy="25" r="4.2"/>
+          </svg>
+          <div class="wait-meta">
+            <div class="track"><i id="barFill"></i></div>
+            <b id="elapsed">0s</b>
+          </div>
         </div>
         <button type="button" id="retry" hidden>Try again</button>
       </div>
