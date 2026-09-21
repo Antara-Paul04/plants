@@ -100,13 +100,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
   let pending = null;   // { abort }
   let extents = { height: 8, width: 8, targetY: 3.4 };
   let lastFit = '';
-  let reveal = null;    // { t0, group, ms }
-  // 1.8s. It is ADDED to the read rather than hidden inside it — the tree is
-  // already whole when this starts — but after a wait of ten to forty seconds
-  // another second and a half is nothing, and this is the payoff the whole
-  // product is named after.
-  const GROW_MS = Math.max(0, Number(url.get('grow') ?? 1800) || 0);
-  const REVEAL_FROM = 0.06;
+  let reveal = null;    // { t0, group }
 
   // Everything that goes on screen goes through here, so a host hears about the SKY
   // changing at the moment it changes. The shell sets its own text against that sky
@@ -168,11 +162,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
       env.apply();
       show({ env, built });
       frame(ex);
-      // `?grow=0` turns it off — the settled tree, instantly. Every capture tool
-      // in tools/ passes it, because a screenshot taken mid-growth is a picture
-      // of a smaller tree and nothing says so.
-      reveal = (opts.reveal === false || GROW_MS <= 0)
-        ? null : { t0: performance.now(), group: built.tree, ms: GROW_MS };
+      reveal = opts.reveal === false ? null : { t0: performance.now(), group: built.tree };
       // Free what was on screen. `scene.remove()` frees no GPU memory on its own, so
       // a swap without this leaks a whole tree every time. An island that was shown
       // early for a build that was then superseded has no `built` — only a ground.
@@ -262,32 +252,12 @@ function mountTreeNew(canvas, dna, opts = {}) {
     // of t, so a frame that is late or skipped costs nothing but that frame.
     if (shown && shown.built && shown.built.update) shown.built.update(t);
     if (reveal) {
-      // IT GROWS. This used to be a 0.4 s settle of a few percent — "not a growth
-      // animation, just not a jump cut" — and a product called Plants that
-      // promises to GROW a tree was putting one on screen fully formed.
-      //
-      // The whole tree scales from its base, which is where its origin already
-      // is, so wood, leaves and blossom keep their proportions to each other the
-      // entire way up. Animating them separately was the obvious idea and it is
-      // wrong: the leaf and flower groups share the tree's origin, so scaling
-      // them on their own timing drags every cluster back toward the trunk and
-      // they arrive in the wrong places.
-      //
-      // Cost is one scale assignment a frame. Nothing is rebuilt, nothing is
-      // re-uploaded, and it therefore costs the same on a phone as on a laptop —
-      // which matters, because it runs at exactly the moment the wood build has
-      // finished hammering the main thread.
-      const k = Math.min(1, (performance.now() - reveal.t0) / reveal.ms);
-      // SMOOTHSTEP, not ease-out. Ease-out cubic was the first thing tried and
-      // it is wrong for growth: measured frame by frame it reached a third of
-      // full size in 180 ms and 88% by the halfway point, so the tree lunged out
-      // of the ground and then crept, and every sampled frame after 180 ms
-      // looked finished. Growth wants the middle of its duration, not the front
-      // of it — accelerate out of the ground, hold, settle.
-      const e = k * k * (3 - 2 * k);
-      const s = REVEAL_FROM + (1 - REVEAL_FROM) * e;
-      reveal.group.scale.set(s, s * (1 + 0.055 * Math.sin(Math.PI * k) * (1 - k)), s);
-      if (k >= 1) { reveal.group.scale.setScalar(1); reveal = null; }
+      // The tree SETTLES in rather than popping: 0.4 s, a few percent of scale.
+      // Not a growth animation — there is none this round — just not a jump cut.
+      const k = Math.min(1, (performance.now() - reveal.t0) / 420);
+      const e = 1 - Math.pow(1 - k, 3);
+      reveal.group.scale.setScalar(0.94 + 0.06 * e);
+      if (k >= 1) reveal = null;
     }
     resize();
     controls.update();

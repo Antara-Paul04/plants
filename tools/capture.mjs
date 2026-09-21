@@ -128,7 +128,7 @@ const waitQuiet = async (limit = 0.5, maxMs = 45000) => {
 const attempt = async (site) => {
   const t0 = Date.now();
   const reply = page.waitForResponse((r) => r.url().endsWith('/api/grow'), { timeout: 90000 });
-  await page.goto(`${BASE}/?site=${encodeURIComponent(site)}&grow=0`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await page.goto(`${BASE}/?site=${encodeURIComponent(site)}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
   const data = await (await reply).json();
   await page.waitForSelector(data.ok ? '#result:not([hidden])' : '#msg.err', { timeout: 60000 });
   // END TO END: the wait a person sits through, tree build included — not timingMs,
@@ -307,7 +307,7 @@ if (survey) {
   }
 } else {
   for (const site of sites) {
-    await shoot(fileName(site), `${BASE}/?site=${encodeURIComponent(site)}&grow=0`);
+    await shoot(fileName(site), `${BASE}/?site=${encodeURIComponent(site)}`);
   }
   await shoot('grid', `${BASE}/compare.html`, { wait: 28000, fullPage: true });
 }

@@ -30,7 +30,7 @@ const browser = await chromium.launch({
 });
 
 const scene = await browser.newPage({ viewport: { width: 760, height: 630 }, deviceScaleFactor: 2 });
-await scene.goto(`http://localhost:5170/?example=${encodeURIComponent(HERO)}&grow=0`, { waitUntil: 'commit' });
+await scene.goto(`http://localhost:5170/?example=${encodeURIComponent(HERO)}`, { waitUntil: 'commit' });
 await scene.waitForFunction(() => {
   const r = document.getElementById('result');
   return r && !r.hidden && document.getElementById('domain').textContent.length > 0;
