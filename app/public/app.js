@@ -14,6 +14,8 @@ const overlay = $('overlay'), spinner = $('spinner'), msg = $('msg');
 const result = $('result'), domainEl = $('domain'), stampEl = $('stamp');
 const whyList = $('whyList'), cacheNote = $('cacheNote'), retryBtn = $('retry'), sceneEl = $('scene');
 const resultHead = $('resultHead');
+const waiting = $('waiting'), barFill = $('barFill'), elapsedEl = $('elapsed'), mwStrip = $('mwStrip');
+const shareBtn = $('shareBtn'), shareSheet = $('shareSheet');
 
 let tree = null;
 let busy = false;
@@ -52,6 +54,7 @@ function state(s, text, retryable) {
   msg.textContent = text || '';
   msg.className = s === 'error' ? 'err' : '';
   busy = (s === 'analyzing' || s === 'growing');
+  if (!busy) stopWaiting();
   // NOT DISABLED WHILE BUSY. Locking the controls meant a second address typed
   // during a 15s read was dropped in silence, and the input went on showing it
   // while somebody else's tree arrived underneath — the interface asserting a
@@ -67,6 +70,7 @@ function state(s, text, retryable) {
   // clears on ERROR, where the scene really does become bare earth, and on IDLE,
   // where there is nothing to describe.
   if (s === 'error' || s === 'idle') { result.hidden = true; result.classList.remove('example'); }
+  if (s !== 'ready') closeSheet();
 }
 
 // --- "Why this tree?" -----------------------------------------------------
@@ -237,6 +241,159 @@ function failureText(failure, domain) {
   return [entry[0](d), entry[1]];
 }
 
+// --- share ----------------------------------------------------------------
+// THE IMAGE IS THE POINT. A link to this page previews a generic card, because
+// an og:image would have to be rendered per site by a crawler that will not wait
+// twenty seconds for one. But the visitor's own browser has already drawn their
+// tree, so the share sheet hands them THAT — captured from the live canvas on
+// the next frame (renderer handle `capture()`), which is why it is their tree at
+// their angle and not a stock picture of someone else's.
+//
+// navigator.share with a file is the only route that actually attaches an image
+// to a post, and it exists on phones — which is where this will be shared. The
+// other three are the desktop fallbacks, in descending order of how well the
+// result travels.
+let lastShot = null;
+
+async function treeImage() {
+  if (lastShot) return lastShot;
+  try {
+    const url = await tree?.capture?.();
+    if (!url) return null;
+    const blob = await (await fetch(url)).blob();
+    lastShot = new File([blob], `plants-${(domainEl.textContent || 'tree').replace(/[^a-z0-9.-]/gi, '-')}.png`, { type: 'image/png' });
+    return lastShot;
+  } catch { return null; }
+}
+
+const shareText = () => `${domainEl.textContent} grew this tree. Every website grows differently.`;
+const shareUrl  = () => location.href;
+
+async function doShare(act) {
+  const file = act === 'native' || act === 'save' ? await treeImage() : null;
+  if (act === 'native') {
+    if (!file) return;
+    try { await navigator.share({ files: [file], text: shareText(), url: shareUrl() }); }
+    catch { /* the person cancelled the sheet; not an error */ }
+  } else if (act === 'save') {
+    if (!file) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(file); a.download = file.name;
+    a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  } else if (act === 'x') {
+    // An intent cannot carry an image, so this posts the words and the link and
+    // lets the card do the rest. Anyone who wants their own tree in the post
+    // saves it first — which is why "Save image" sits above this one.
+    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(shareText())}&url=${encodeURIComponent(shareUrl())}`,
+      '_blank', 'noopener,noreferrer');
+  } else if (act === 'copy') {
+    try { await navigator.clipboard.writeText(shareUrl()); shareBtn.textContent = 'Copied'; setTimeout(() => (shareBtn.textContent = 'Share'), 1400); }
+    catch { /* clipboard refused; the address bar still has it */ }
+  }
+  closeSheet();
+}
+
+function openSheet() {
+  // Only offered where it works: Safari and Chrome on a phone can attach a file,
+  // desktop Chrome cannot, and a "Share…" that silently does nothing is worse
+  // than no button.
+  let canFiles = false;
+  try {
+    // Testing for navigator.share alone is not enough: desktop Chrome has it and
+    // refuses files, so the option would appear and silently do nothing. The
+    // only honest test is asking canShare about an actual file.
+    const probe = new File([new Blob(['x'])], 'probe.png', { type: 'image/png' });
+    canFiles = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [probe] }));
+  } catch { canFiles = false; }
+  shareSheet.querySelector('[data-act="native"]').hidden = !canFiles;
+  shareSheet.hidden = false;
+  shareBtn.setAttribute('aria-expanded', 'true');
+}
+function closeSheet() { shareSheet.hidden = true; shareBtn.setAttribute('aria-expanded', 'false'); }
+
+shareBtn.addEventListener('click', (e) => { e.stopPropagation(); shareSheet.hidden ? openSheet() : closeSheet(); });
+shareSheet.addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-act]'); if (b) doShare(b.dataset.act);
+});
+document.addEventListener('click', (e) => { if (!shareSheet.hidden && !shareSheet.contains(e.target)) closeSheet(); });
+
+// --- the wait -------------------------------------------------------------
+// A spinner and one line of text, for ten to forty seconds. This replaces it
+// with two things that are true rather than two things that are moving.
+//
+// THE BAR IS THE BUDGET. Not an estimate, not an easing curve tuned to feel
+// right — it is the same 50s the analyzer is actually working against, so when
+// it reaches the end the request really does end, and the seconds shown are the
+// seconds elapsed. A progress bar that lies is worse than a spinner, because a
+// spinner at least never claimed to know.
+//
+// THE STRIP IS THE PROMISE. "Every website grows differently" is the whole
+// pitch and it is unprovable from a single tree, so the one moment a visitor
+// has nothing to do is the moment to show them four more — every one a real
+// tree from a real measurement, rendered by the same renderer (tools/thumbs.mjs),
+// never decoration. It also does a second job: plants-36 found that an in-flight
+// grow is visually indistinguishable from a finished one, and this is
+// unmistakably a waiting state.
+const WAIT_BUDGET_MS = 50000;      // must track api/grow.js budgetMs
+let waitTimer = null, galleryCache = null;
+
+async function fillStrip(exclude) {
+  if (!galleryCache) {
+    try { galleryCache = await (await fetch('/gallery.json')).json(); }
+    catch { return; }                       // no gallery: the strip stays empty, the bar still runs
+  }
+  const pool = Object.keys(galleryCache.sites || {}).filter((s) => s !== exclude);
+  for (let i = pool.length - 1; i > 0; i--) {  // shuffle, so a second grow shows different trees
+    const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  // ONE FROM EACH FOLIAGE STATE, because the strip's whole job is to show that
+  // websites grow differently and a random four gave two bare trees side by
+  // side — which reads as repetition, the opposite of the claim. Taking bare,
+  // sparse, normal and lush in order puts the actual range on screen: a naked
+  // armature next to a lush flowering crown. Falls back to the shuffle if the
+  // gallery ever lacks a state.
+  const byState = (want) => pool.find((s) => galleryCache.sites[s]?.foliage?.state === want);
+  const picked = [];
+  for (const state of ['bare', 'sparse', 'normal', 'lush']) {
+    const hit = byState(state);
+    if (hit && !picked.includes(hit)) picked.push(hit);
+  }
+  for (const s of pool) { if (picked.length >= 4) break; if (!picked.includes(s)) picked.push(s); }
+
+  mwStrip.replaceChildren();
+  for (const site of picked.slice(0, 4)) {
+    const fig = document.createElement('figure');
+    const img = document.createElement('img');
+    img.src = `/thumbs/${encodeURIComponent(site)}.jpg`;
+    img.alt = `the tree grown from ${site}`;
+    img.loading = 'lazy'; img.decoding = 'async';
+    const cap = document.createElement('figcaption');
+    cap.textContent = site;               // textContent, not innerHTML — these are names from a file
+    fig.append(img, cap);
+    mwStrip.append(fig);
+  }
+}
+
+function startWaiting(forDomain) {
+  stopWaiting();
+  fillStrip(forDomain);
+  waiting.hidden = false;
+  const t0 = performance.now();
+  const tick = () => {
+    const ms = performance.now() - t0;
+    barFill.style.width = Math.min(100, (ms / WAIT_BUDGET_MS) * 100).toFixed(1) + '%';
+    elapsedEl.textContent = Math.round(ms / 1000) + 's';
+  };
+  tick();
+  waitTimer = setInterval(tick, 250);
+}
+
+function stopWaiting() {
+  if (waitTimer) { clearInterval(waitTimer); waitTimer = null; }
+  waiting.hidden = true;
+  barFill.style.width = '0%';
+}
+
 // --- grow -----------------------------------------------------------------
 let lastUrl = null;
 // Which grow is the live one. A superseded grow must not write the UI when it
@@ -256,6 +413,7 @@ async function grow(raw) {
   // wait — reporting the analysis time told the user 2.9s while they sat for 13.
   const t0 = performance.now();
   state('analyzing', 'Reading your website…');
+  startWaiting(String(raw).replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0]);
   // The numbers are the real ones: a warm read is 4-8s, a cold function 15-30s,
   // and 45s is where the budget ends and a TIMEOUT is returned.
   reassure([
@@ -329,6 +487,7 @@ async function grow(raw) {
   if (mine !== growToken) return;
 
   state('ready');
+  lastShot = null;                      // the captured image belongs to the old tree
   result.classList.remove('example');   // from here it is theirs, not ours
   setSky(tree?.envName ?? null);
   domainEl.textContent = data.domain;

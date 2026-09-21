@@ -19,11 +19,12 @@
          entirely a picture. Without these a shared link is a bare URL with no
          card at all, which reads as broken — and the most likely way anyone
          arrives here is a link someone posted.
-         og.png is rendered BY THE PRODUCT (tools/og-image.mjs shoots the real
-         renderer at 1200x630 with the interface hidden), so the card cannot
-         drift into advertising a tree we no longer make. Re-run it when the
-         tree's look changes. Absolute URL because several platforms will not
-         resolve a relative one. -->
+         og.png is built BY THE PRODUCT (tools/og-card.mjs composes real trees
+         rendered by tools/thumbs.mjs), so the card cannot drift into advertising
+         trees we no longer make. Re-run both when the tree's look changes.
+         It shows THREE trees, not one: the claim is that every website grows
+         differently, and one specimen cannot evidence that. Absolute URL because
+         several platforms will not resolve a relative one. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Plants" />
     <meta property="og:title" content="Plants — every website grows differently" />
@@ -32,7 +33,7 @@
     <meta property="og:image" content="https://plants-three-eta.vercel.app/og.png" />
     <meta property="og:image:width" content="2400" />
     <meta property="og:image:height" content="1260" />
-    <meta property="og:image:alt" content="A small 3D tree with red flowers growing from a floating grass island." />
+    <meta property="og:image:alt" content="Three very different 3D trees side by side — a bare one grown from info.cern.ch, a blue-flowering one from gov.uk, and a white-blossomed night tree from linear.app." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Plants — every website grows differently" />
     <meta name="twitter:description" content="Paste a website address and watch a tree grow from its visual design. Unstyled HTML grows bare; a richly designed page grows lush and flowering." />
@@ -213,10 +214,79 @@
       .overlay.busy {
         grid-column: 1; grid-row: 3;
         align-self: end; justify-self: start;
-        flex-direction: row; align-items: center; gap: 9px;
+        align-items: flex-start; gap: 8px;
         margin-bottom: 78px;
       }
       .overlay.busy #msg { font-size: 14px; padding: 8px 13px; }
+      .status { display: flex; align-items: center; gap: 9px; }
+
+      /* --- the wait ---------------------------------------------------------- */
+      .waiting {
+        pointer-events: auto;
+        background: var(--surface-solid); border: 1px solid var(--edge);
+        border-radius: 12px; padding: 10px 12px 11px;
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        width: min(340px, calc(100vw - 48px));
+        text-align: left;
+      }
+      .waiting[hidden] { display: none; }
+      .bar {
+        position: relative; height: 16px; border-radius: 8px;
+        background: color-mix(in oklab, var(--ink) 9%, transparent);
+        overflow: hidden; margin-bottom: 9px;
+      }
+      .bar i {
+        position: absolute; inset: 0 auto 0 0; width: 0%;
+        background: color-mix(in oklab, var(--accent, #3d6b35) 55%, transparent);
+        border-radius: 8px; transition: width 260ms linear;
+      }
+      .bar b {
+        position: absolute; inset: 0; display: grid; place-items: center;
+        font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
+        color: var(--ink); opacity: 0.66; font-variant-numeric: tabular-nums;
+      }
+      .mw-label {
+        font-size: 10.5px; letter-spacing: 0.03em; text-transform: lowercase;
+        color: var(--muted); opacity: 0.85; margin-bottom: 7px;
+      }
+      .mw-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+      .mw-strip figure { margin: 0; text-align: center; }
+      .mw-strip img {
+        width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+        border-radius: 8px; border: 1px solid var(--edge);
+        background: color-mix(in oklab, var(--ink) 5%, transparent);
+      }
+      /* --- share ------------------------------------------------------------- */
+      .result-top { display: flex; align-items: stretch; }
+      .result-top .result-head { flex: 1 1 auto; }
+      .share-btn {
+        flex: 0 0 auto; align-self: center;
+        margin: 0 10px 0 2px; padding: 5px 11px;
+        font: inherit; font-size: 12px; font-weight: 600;
+        color: var(--accent); background: color-mix(in oklab, var(--accent) 12%, transparent);
+        border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
+        border-radius: 999px; cursor: pointer; white-space: nowrap;
+      }
+      .share-btn:hover { background: color-mix(in oklab, var(--accent) 20%, transparent); }
+      .result.example .share-btn { display: none; }
+      .share-sheet {
+        display: flex; flex-direction: column; gap: 2px;
+        padding: 6px; margin: 0 8px 8px;
+        border-top: 1px solid var(--edge);
+      }
+      .share-sheet[hidden] { display: none; }
+      .share-sheet button {
+        font: inherit; font-size: 13px; text-align: left;
+        padding: 7px 10px; border-radius: 8px;
+        border: 0; background: transparent; color: var(--ink); cursor: pointer;
+      }
+      .share-sheet button:hover { background: color-mix(in oklab, var(--ink) 7%, transparent); }
+      .share-sheet button[hidden] { display: none; }
+
+      .mw-strip figcaption {
+        font-size: 9px; color: var(--muted); margin-top: 3px;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
       /* The message sits over the scene — over a bare-earth island on a failure,
          over open sky otherwise. It carries its own ground either way. A judge
          put the rule: an image can refuse to pass judgment on a site, but it
@@ -333,17 +403,42 @@
            unyielding task. Reachable directly at /compare.html. -->
 
       <div class="overlay" id="overlay">
-        <div class="spinner" id="spinner" hidden></div>
-        <div id="msg">Paste a website address to grow its tree.</div>
+        <div class="status">
+          <div class="spinner" id="spinner" hidden></div>
+          <div id="msg">Paste a website address to grow its tree.</div>
+        </div>
+        <!-- THE WAIT IS 10-40 SECONDS AND IT USED TO BE A SPINNER.
+             The bar is not a guess dressed as progress: it is the BUDGET, the
+             same 50s the analyzer is actually working against, so when it fills
+             the request really does end. The seconds are the seconds. And the
+             strip is the product's own promise made visible at the one moment
+             the visitor has nothing to do — every one of those is a real tree
+             from a real measurement, not decoration. -->
+        <div class="waiting" id="waiting" hidden>
+          <div class="bar"><i id="barFill"></i><b id="elapsed">0s</b></div>
+          <div class="mw-label">meanwhile — these grew from other websites</div>
+          <div class="mw-strip" id="mwStrip"></div>
+        </div>
         <button type="button" id="retry" hidden>Try again</button>
       </div>
 
       <div class="result" id="result" hidden>
-        <button class="result-head" id="resultHead" type="button" aria-expanded="false">
-          <span class="domain" id="domain"></span>
-          <span class="stamp" id="stamp"></span>
-          <span class="chev">▲</span>
-        </button>
+        <div class="result-top">
+          <button class="result-head" id="resultHead" type="button" aria-expanded="false">
+            <span class="domain" id="domain"></span>
+            <span class="stamp" id="stamp"></span>
+            <span class="chev">▲</span>
+          </button>
+          <!-- Hidden on the example: there is nothing of the visitor's to share
+               until they have grown something. -->
+          <button class="share-btn" id="shareBtn" type="button" aria-haspopup="true" aria-expanded="false">Share</button>
+        </div>
+        <div class="share-sheet" id="shareSheet" hidden>
+          <button type="button" data-act="native" hidden>Share tree…</button>
+          <button type="button" data-act="save">Save image</button>
+          <button type="button" data-act="x">Post on X</button>
+          <button type="button" data-act="copy">Copy link</button>
+        </div>
         <div class="why-wrap">
           <ul class="why" id="whyList"></ul>
           <div class="note" id="cacheNote" hidden></div>

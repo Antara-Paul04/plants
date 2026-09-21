@@ -243,6 +243,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
 
   const clock = new THREE.Clock();
   let raf = 0;
+  let captureReq = null;
   function tick() {
     const t = clock.getElapsedTime();
     uniforms.time.value = t;
@@ -261,6 +262,16 @@ function mountTreeNew(canvas, dna, opts = {}) {
     resize();
     controls.update();
     if (shown) renderer.render(shown.env.scene, camera);
+    // A CAPTURE MUST HAPPEN IN THE SAME TASK AS THE DRAW. The context is created
+    // without preserveDrawingBuffer — deliberately, it costs on exactly the
+    // phones this project spent a night measuring — so the drawing buffer is
+    // gone once we return to the event loop, and a toDataURL from outside the
+    // render loop reads black. Serviced here, synchronously after render, it
+    // costs nothing on any frame that did not ask.
+    if (captureReq) {
+      const done = captureReq; captureReq = null;
+      try { done(shown ? canvas.toDataURL('image/png') : null); } catch (e) { done(null); }
+    }
     raf = requestAnimationFrame(tick);
   }
 
@@ -284,6 +295,12 @@ function mountTreeNew(canvas, dna, opts = {}) {
     /** 'day' | 'night' — the environment ON SCREEN; null before the first frame. See `show`. */
     get envName() { return shown ? shown.env.name : null; },
     scene: () => (shown ? shown.env.scene : null),
+    /**
+     * The scene as a PNG data URL, taken on the next frame. Resolves null if
+     * nothing is drawn. Used by the product's share button, so the image a
+     * person posts is the tree they are actually looking at.
+     */
+    capture() { return new Promise((res) => { captureReq = res; }); },
     camera,
     controls,
     renderer,
