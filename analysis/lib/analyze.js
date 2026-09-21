@@ -352,17 +352,42 @@ export async function analyzeUrl(url, opts = {}) {
   // The capture keeps its share of whatever budget it was given, rather than a
   // constant tuned for the default one.
   const shotMs = Math.round(SHOT_MS * (budget / BUDGET_MS));
-  const T0 = now();
-  const left = () => budget - (now() - T0);
+  const invoked = now();
 
   const u = normalizeUrl(url);
   if (!u) return fail(hostOf(url) || String(url || '').slice(0, 80), 'INVALID_URL');
   const domain = u.hostname.replace(/^www\./,'');
 
+  // THE BUDGET IS FOR READING THE SITE, NOT FOR STARTING A BROWSER.
+  //
+  // The clock used to start here, before getBrowser(), so a cold serverless
+  // start — where @sparticuz/chromium unpacks a browser into /tmp before Chrome
+  // can even launch — was charged to the website. Measured on a freshly deployed
+  // function: 9.2 s for info.cern.ch cold against 4.8 s warm, so the first
+  // visitor after a quiet period silently gave their site 4.4 s less than the
+  // next one. The budget is meant to bound how long we look at a page; it was
+  // bounding look-plus-launch, and launch varies by an order of magnitude.
+  //
+  // So launch first, then start the clock. `wallMs` is the separate, absolute
+  // cap from invocation: the platform kills the function at maxDuration and a
+  // killed function returns NOTHING, which is worse than our own TIMEOUT — the
+  // visitor gets a dead request instead of copy that explains itself.
+  try {
+    await getBrowser();
+  } catch (e) {
+    return fail(domain, 'INTERNAL', 'browser did not start: ' + String(e?.message || e).slice(0, 70));
+  }
+
+  const T0 = now();
+  const wallLeft = () => (opts.wallMs ? opts.wallMs - (now() - invoked) : Infinity);
+  const left = () => Math.min(budget - (now() - T0), wallLeft());
+  // Whichever runs out first is the real ceiling, and it is what the TIMEOUT says.
+  const ceiling = Math.max(1000, Math.min(budget, wallLeft()));
+
   // The per-step timeouts below are best-effort; this race is what actually guarantees
   // the ceiling. Without it stripe.com ran 34s against a 20s budget.
   let timer;
-  const deadline = new Promise(res => { timer = setTimeout(() => res(fail(domain, 'TIMEOUT', `exceeded ${budget}ms`)), budget); });
+  const deadline = new Promise(res => { timer = setTimeout(() => res(fail(domain, 'TIMEOUT', `exceeded ${ceiling}ms`)), ceiling); });
   try {
     return await Promise.race([runAnalysis(u, domain, budget, T0, left), deadline]);
   } finally { clearTimeout(timer); }

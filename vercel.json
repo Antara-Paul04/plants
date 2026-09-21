@@ -5,7 +5,7 @@
   "functions": {
     "api/grow.js": {
       "maxDuration": 60,
-      "memory": 1769
+      "memory": 2048
     }
   },
   "rewrites": [

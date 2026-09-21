@@ -44,7 +44,21 @@ export default async function handler(req, res) {
     // 45s sits inside maxDuration 60 with room for the response, and it is raised
     // HERE rather than in analyze.js so the local default — and every measurement
     // ever taken against it — is unchanged by construction.
-    const result = await analyzeUrl(url, { budgetMs: 45000 });
+    // 45s was the whole of the 60s maxDuration we dared use, and it was the
+    // wrong 45s: it started before the browser did. Reproduced on a freshly
+    // deployed (cold) function at concurrency 4 — 5 of 8 heavy sites grew, and
+    // all three failures were cut off EXACTLY at 45000ms with fifteen seconds of
+    // maxDuration unused. Concurrent invocations share an instance's CPU, so a
+    // site that reads in 24s alone takes 32s beside three others, and the budget
+    // was tuned on the warm, serial case.
+    //
+    // budgetMs is now the time the SITE gets, starting after the browser is up;
+    // wallMs is the absolute cap from invocation, which exists because the
+    // platform kills the function at maxDuration and a killed function returns
+    // nothing at all — no failure copy, no retry button, a dead request.
+    // 50 + a cold launch (~4.4s measured) + the response sits inside 55, which
+    // sits inside 60.
+    const result = await analyzeUrl(url, { budgetMs: 50000, wallMs: 55000 });
     if (!result || result.ok === false) {
       res.status(200).json({
         ok: false, live: true,
