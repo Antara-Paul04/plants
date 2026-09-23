@@ -983,6 +983,104 @@ function budSprayGeometry(r, col, scaleCol, terminal, size, look = {}) {
 }
 
 /** Winter carrier 1: accent-coloured buds on every twig — terminal sprays at the tips, lateral pairs along the wood. */
+/**
+ * SNOW, lying on the foliage.
+ *
+ * Winter had no snow in it. It was a thinned sage crown with pale buds on muted
+ * turf, which reads as "a slightly desaturated summer tree" rather than as a
+ * season — the state was carried entirely by colour grading, and colour grading
+ * is exactly what a viewer reads as "the lighting is a bit off".
+ *
+ * A cap is a squashed, jittered icosahedron: low-poly and lumpy, the same
+ * language as the stones and the island, so it belongs to this world rather than
+ * looking like a smooth primitive dropped into it. It sits ON the leaf cluster
+ * and half sinks into it, which is what stops it reading as a ball balanced on a
+ * twig.
+ *
+ * Denser toward the top of the crown, because that is where snow lands: the
+ * chance of a cap rises with height through the crown box rather than being a
+ * flat probability, so the underside of the tree stays clear.
+ */
+export function buildSnow(spots, r, opts = {}) {
+  const { amount = 0.45, size = 1, grade = null, color = 0xeaf1fa } = opts;
+  const group = new THREE.Group();
+  if (!spots.length) return { group, stats: { caps: 0, triangles: 0 } };
+
+  // crownBox returns { c, e } — centre and HALF-extent. `box.h` does not exist,
+  // and reading it gave span = NaN, so every probability test was `r() < NaN`,
+  // which is false: the builder ran, chose nothing, and returned an empty group
+  // that looks exactly like not being called at all.
+  const box = crownBox(spots);
+  const lo = box.c.y - box.e.y, span = Math.max(1e-6, box.e.y * 2);
+
+  const chosen = [];
+  for (const sp of spots) {
+    const up = clamp((sp.pos.y - lo) / span, 0, 1);
+    // Flat `amount` at the crown's top, tapering to a fifth of it underneath.
+    if (r() < amount * lerp(0.38, 1, up)) chosen.push(sp);
+  }
+  if (!chosen.length) return { group, stats: { caps: 0, triangles: 0 } };
+
+  // matte() carries `vertexColors: true` — every other builder here feeds it
+  // geometry that has a colour attribute, and without one the shader reads
+  // black and multiplies the whole cap to black. It has to be written in.
+  const top = new THREE.Color(color);
+  const under = new THREE.Color(color).lerp(new THREE.Color(0x9fb4cc), 0.55);
+  if (grade) { grade(top); grade(under); }
+
+  const VARIANTS = 3;
+  const geos = [];
+  for (let v = 0; v < VARIANTS; v++) {
+    const g = new THREE.IcosahedronGeometry(1, 1);
+    const pos = g.attributes.position;
+    const cols = [];
+    const c = new THREE.Color();
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+      const j = 0.82 + r() * 0.36;
+      // Squashed hard in Y: a drift, not a snowball.
+      pos.setXYZ(i, x * j, y * j * 0.58, z * j);
+      // Sky-facing snow is lit; the underside picks up the cold bounce from
+      // whatever it is lying on. Cheaper than a second material and it keeps the
+      // low-poly facets reading.
+      c.copy(under).lerp(top, clamp(y * 0.5 + 0.5, 0, 1));
+      cols.push(c.r, c.g, c.b);
+    }
+    g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
+    g.computeVertexNormals();
+    geos.push(g);
+  }
+
+  const mat = matte('snow-matte-v1');
+
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), sc = new THREE.Vector3(), p = new THREE.Vector3();
+  const buckets = geos.map(() => []);
+  chosen.forEach((sp, k) => buckets[k % VARIANTS].push(sp));
+  let triangles = 0;
+  geos.forEach((geo, v) => {
+    const items = buckets[v];
+    if (!items.length) { geo.dispose(); return; }
+    const im = new THREE.InstancedMesh(geo, mat, items.length);
+    im.castShadow = true; im.receiveShadow = true; im.frustumCulled = false;
+    items.forEach((sp, i) => {
+      const s = 0.29 * size * (sp.scale || 1) * (0.8 + r() * 0.45);
+      // ON TOP OF THE LEAF BALL, not inside it. A cluster is about 0.5 across —
+      // the same radius flowers are seated proud of — so a cap at 0.19 lifted by
+      // a third of itself was entirely buried in foliage and drew nothing. It
+      // sits at the top of the ball and sinks a little way in, which is what
+      // makes it read as lying on something rather than floating over it.
+      p.copy(sp.pos).addScaledVector(UP, 0.27 + s * 0.3);
+      q.setFromAxisAngle(UP, r() * Math.PI * 2);
+      sc.set(s, s, s);
+      im.setMatrixAt(i, m.compose(p, q, sc));
+    });
+    im.instanceMatrix.needsUpdate = true;
+    group.add(im);
+    triangles += (geo.index ? geo.index.count : geo.attributes.position.count) / 3 * items.length;
+  });
+  return { group, stats: { caps: chosen.length, triangles: Math.round(triangles) } };
+}
+
 export function buildBuds(spots, r, opts = {}) {
   const { primary = 0xf7a6b8, secondary = null, grade = null, size = 1, pale = null } = opts;
   const t0 = performance.now();

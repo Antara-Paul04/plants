@@ -211,7 +211,7 @@ function envTable(q) {
         // The sky sits DARKER than the lit tree, so the tree is the brightest thing
         // in the frame; still a little lighter toward the horizon, because that
         // band is what the shadow side is read against.
-        skyTop: 0x03050b, skyHorizon: 0x111a31, skyGround: 0x05070d,
+        skyTop: 0x03050b, skyHorizon: 0x0c1426, skyGround: 0x05070d,
         // THE ISLAND'S UNDERSIDE IS READ AGAINST THE SKY BELOW IT (L17). The night was
         // judged on a frame cropped at the turf, so nobody had seen the soil body at
         // night: it faces away from the moon, sits at the dim edge of the pool by
@@ -224,7 +224,14 @@ function envTable(q) {
         // lawn's own edge needs. Colour and contrast, not exposure; and only the VISIBLE
         // dome takes it (the image-based light has its own), so the lit tree is
         // untouched by construction. `nightGlow=0` is the night without it.
-        skyBelow: q.get('nightGlow') === '0' ? null : { color: 0x27396a, from: 0.3, to: 0.6 },
+        // TIGHTER AND DARKER THAN IT WAS (0x27396a, 0.3 -> 0.6). Judged in a boxed
+        // viewport it was a pool under the island; on a full-bleed page it is
+        // most of the lower half of the screen, and it read as a gradient
+        // artefact rather than as night — the brightest thing in frame after the
+        // tree. It now starts 33 degrees below the horizon instead of 17, so it
+        // still gives the island's underside something to be dark against
+        // without washing the sky the stars live in.
+        skyBelow: q.get('nightGlow') === '0' ? null : { color: 0x1b2a55, from: 0.55, to: 1.0 },
         glow: { color: 0xcdd9ff, power: 9, size: 6, dir: [-5.2, 7.4, 6.2] },
         // Near-white, from the front quarter: a saturated blue key is absorbed by
         // warm wood (black wood, wet blue sheen), and a pure backlight leaves a
@@ -328,11 +335,12 @@ function starField(ENV, radius, seed) {
       // Uniform on the sphere, then keep only what is above the horizon — a
       // rejection rather than a squashed distribution, which would crowd the
       // zenith.
-      let x, y, z;
-      do {
-        const u = rand() * 2 - 1, th = rand() * Math.PI * 2, r = Math.sqrt(1 - u * u);
-        x = r * Math.cos(th); y = u; z = r * Math.sin(th);
-      } while (y < 0.04);
+      // THE WHOLE DOME, not just above the horizon. There is no ground in this
+      // scene — the island floats — so "below the horizon" is still sky, and
+      // stopping the stars at y=0 drew a visible line across the frame with
+      // empty glowing blue underneath it.
+      const u = rand() * 2 - 1, th = rand() * Math.PI * 2, rr2 = Math.sqrt(1 - u * u);
+      const x = rr2 * Math.cos(th), y = u, z = rr2 * Math.sin(th);
       const d = new THREE.Vector3(x, y, z);
       pos.push(x * radius * 0.97, y * radius * 0.97, z * radius * 0.97);
       // Washed out near the moon, and a little cooler at the zenith than at the
@@ -584,7 +592,8 @@ const NORMAL_TERRAIN = { lo: 0x5e9e37, mid: 0x81c246, hi: 0xa8d95c, soilHi: 0xa0
 // as dna.js (TERRAIN.autumn / TERRAIN.winter) — one family.
 const SEASON_TERRAIN = {
   autumn: { lo: 0x8a8a3c, mid: 0xb09a44, hi: 0xd0b45e, soilHi: 0x9c7148, soilLo: 0x64514f },
-  winter: { lo: 0x6b7a5c, mid: 0x869070, hi: 0xa3ab8c, soilHi: 0x8e8076, soilLo: 0x615a60 },
+  // SNOW on top, soil still soil underneath — it is a covering, not a substance.
+  winter: { lo: 0xc4d0de, mid: 0xdde7f1, hi: 0xf3f8fd, soilHi: 0x8a8078, soilLo: 0x5d5860 },
 };
 const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8a7d6d, soilLo: 0x5d5859 };
 
@@ -819,7 +828,7 @@ export async function growTree(M, q, env, opts = {}) {
 
   // --- foliage, bloom, fruit -------------------------------------------------------
   const F = M.flowers;
-  const stats = { leaves: null, flowers: null, fruit: null, winter: null, contrast: null };
+  const stats = { leaves: null, flowers: null, fruit: null, winter: null, snow: null, contrast: null };
   let leafFall = null;
   let dbgSpots = null, dbgBloom = null;
   const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
@@ -859,15 +868,31 @@ export async function growTree(M, q, env, opts = {}) {
     // persistent BERRIES where the site has the fruit trait. `winter=buds|berries`
     // overrides; the default follows `fruit=1`.
     const spots = M.leaves.leafAttachments(skel.limbs, r, attach);
+    let snowSpots = null;
     if (!leafless) {
       // A thin sage crown. V0's winter kept real foliage for a reason that still
       // holds: winter must stay clearly distinct from BARE.
       // Thinned by taking every n-th twig, evenly, rather than by a random draw: a
       // winter crown is sparse all over, not moth-eaten in patches.
       const stride = Math.max(1, Math.round(1 / leafAmount));
-      const lv = M.leaves.buildLeaves(skel.limbs, r, { spots: spots.filter((_, i) => i % stride === 0), cluster });
+      snowSpots = spots.filter((_, i) => i % stride === 0);
+      const lv = M.leaves.buildLeaves(skel.limbs, r, { spots: snowSpots, cluster });
       tree.add(lv.group);
       stats.leaves = lv.stats;
+    }
+    // SNOW, on whatever there is to lie on. A leafy winter gets it on the
+    // clusters; a LEAFLESS one gets it on the bare twigs, which is the more
+    // iconic winter tree of the two and was getting none at all — the first
+    // version lived inside the `!leafless` branch and simply never ran for it.
+    // Graded with the BLOOM rule rather than the foliage one: foliage grading
+    // pulls toward sage, and sage snow is not snow. `snow=0` turns it off.
+    if (q.get('snow') !== '0') {
+      const sn = F.buildSnow(snowSpots || spots, r, {
+        grade: bloomGrade, size: num('snowSize', leafless ? 0.82 : 1),
+        amount: num('snowAmount', leafless ? 0.5 : 0.62),
+      });
+      tree.add(sn.group);
+      stats.snow = sn.stats;
     }
     const carrier = q.get('winter') ?? (q.get('fruit') === '1' ? 'berries' : 'buds');
     // A winter site may deliver NO colour at all (flowers: none => primary null, and
