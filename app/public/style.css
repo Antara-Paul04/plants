@@ -180,15 +180,6 @@ body.night {
 .share-button span {
   margin-left: 6px;
 }
-.interaction-hint {
-  font-size: 10px;
-  color: var(--muted);
-  text-align: center;
-  letter-spacing: 0.025em;
-}
-.interaction-hint span {
-  margin: 0 8px;
-}
 .dock {
   padding: 17px 19px 13px;
   background: var(--surface);
@@ -466,9 +457,6 @@ h2 {
     margin-top: 5px;
     padding-top: 6px;
   }
-  .interaction-hint {
-    font-size: 9px;
-  }
   .tree-label .eyebrow {
     display: none;
   }
@@ -480,4 +468,25 @@ h2 {
     animation: none !important;
     transition: none !important;
   }
+}
+@media (min-width: 1000px) {
+  .garden-controls {
+    left: 48px;
+    top: 50%;
+    bottom: auto;
+    transform: translateY(-50%);
+    width: 320px;
+    gap: 24px;
+  }
+  .result { align-items: flex-start; flex-direction: column; gap: 20px; padding: 0; }
+  .tree-label { gap: 10px; }
+  #domain {
+    font-size: 25px; white-space: normal; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  }
+  .tree-label .eyebrow { display: inline; }
+  .input-row { flex-direction: column; align-items: stretch; gap: 12px; }
+  #go { padding: 14px; }
+  .dock { padding: 21px; }
+  .footnote { text-align: left; }
 }

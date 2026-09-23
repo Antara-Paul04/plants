@@ -7,6 +7,9 @@ shell, explicit reading/building/error states, leaf hover response, tap/keyboard
 reactions, and motion controls. Taps now reuse autumn’s individual-leaf flight and
 landing on every leafy tree; the ambient breeze has a stronger calm floor. The old tree stays visible while another loads.
 The island's soil body now has a smooth curved profile and continuous shading.
+Laptop controls sit to the left of a larger tree; mobile retains the bottom dock.
+The visible drag hint is removed. Day trees have butterflies, night trees fireflies,
+both following the existing motion controls (D11).
 Public trait explanations and debug navigation have been removed (D11).
 A matching 404 page handles unknown routes and missing tree links, with a home link
 that works without JavaScript and a decorative, pausable living island. Blob misses

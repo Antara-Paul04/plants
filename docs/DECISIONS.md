@@ -308,3 +308,14 @@ irregular island outline and restrained earth palette remain the visual directio
 
 **EXPERIMENT.** A curved soil profile with continuous normals replaces the coarse
 bands and flat shading. Broad, subtle irregularity keeps the surface organic.
+
+### D11 laptop layout and wildlife — 2026-09-24
+
+**DECIDED — human request.** Give the tree more space on laptops by moving controls
+to the side, remove the visible drag instruction, and add small wildlife to scenes.
+This permits ambient animals despite the earlier restriction on decorative props.
+
+**EXPERIMENT.** At 1000px and wider, controls occupy a left rail and the camera fits
+the remaining screen. Day scenes have three butterflies; night scenes have ten
+softly glowing fireflies. These are atmosphere, not website measurements. They use
+the shared motion clock and pause/reduced-motion settings; no new public explanations.

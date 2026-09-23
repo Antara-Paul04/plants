@@ -13,7 +13,8 @@ const defer = () => {
   return { promise, resolve };
 };
 const flush = () => new Promise((r) => setImmediate(r));
-function setup() {
+function setup(options = {}) {
+  const fits = [];
   const builds = [],
     frames = [];
   class Vector {
@@ -100,7 +101,7 @@ function setup() {
       return built(q.site);
     },
     growEarth: () => built("earth"),
-    fitCamera() {},
+    fitCamera(_camera, _extents, aspect) { fits.push(aspect); },
     requestAnimationFrame: (fn) => {
       frames.push(fn);
       return frames.length;
@@ -109,9 +110,22 @@ function setup() {
   };
   vm.createContext(context);
   vm.runInContext(source + "\nthis.audit={mountIdle};", context);
-  const handle = context.audit.mountIdle(canvas);
-  return { handle, builds, frames, canvas };
+  const handle = context.audit.mountIdle(canvas, options);
+  return { handle, builds, frames, canvas, fits };
 }
+test('side controls reserve horizontal room and mobile returns to a centred frame', async () => {
+  let insets = { left: 320, right: 24, top: 40, bottom: 24 };
+  const t = setup({ viewportInsets: () => insets });
+  await t.handle.ready;
+  t.frames.shift()();
+  assert.equal(t.fits.at(-1), 456 / 536);
+  assert.equal(t.handle.camera.view.offsetX, -148);
+  insets = { top: 94, bottom: 200 };
+  t.frames.shift()();
+  assert.equal(t.fits.at(-1), 800 / 306);
+  assert.equal(t.handle.camera.view.offsetX, 0);
+  t.handle.dispose();
+});
 test("superseding a request cancels its renderer build before it swaps the scene", async () => {
   const t = setup();
   await t.handle.ready;

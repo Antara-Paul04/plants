@@ -200,9 +200,6 @@ function updateMotion() {
   tree?.setMotion(!motionPaused);
   $("motion").textContent = motionPaused ? "Play motion" : "Pause motion";
   $("motion").setAttribute("aria-pressed", String(motionPaused));
-  $("hint").textContent = motionPaused
-    ? "Drag to turn · Motion is paused"
-    : "Drag to turn · Tap to stir";
 }
 matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
   "change",
@@ -330,7 +327,9 @@ async function start() {
       motion: !motionPaused,
       onEnv: (name) =>
         document.body.classList.toggle("night", name === "night"),
-      viewportInsets: () => ({
+      viewportInsets: () => matchMedia('(min-width: 1000px)').matches ? ({
+        top: 48, bottom: 32, left: 420, right: 32,
+      }) : ({
         top: 94,
         bottom:
           document.querySelector(".garden-controls").getBoundingClientRect()

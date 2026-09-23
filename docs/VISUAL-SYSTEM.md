@@ -1046,3 +1046,23 @@ plus the Linear night example. These are desktop visual checks, not GPU benchmar
 sky, serif typography, living idle island and moss action. The copy and home link
 are static HTML; the decorative WebGL scene is optional, pausable and respects
 reduced motion. Responses retain status 404 and the page declares `noindex`.
+
+### Larger laptop scenes and wildlife — EXPERIMENT (2026-09-24)
+
+**DECIDED.** The human requested side controls on laptops, larger trees, no visible
+drag instruction and wildlife, with fireflies suggested for night scenes.
+
+**EXPERIMENT.** At 1000px the controls move to a 320px left rail. The full-screen
+canvas reserves horizontal space for that rail and uses the available height;
+postcards still use their own centred camera. Mobile keeps the bottom dock.
+
+**EXPERIMENT.** Three butterflies use curved wings and independent wing beats;
+ten night fireflies use small depth-tested glow sprites with slow drift and pulses.
+Separate seeded randomness leaves tree generation unchanged. They are added after
+foliage bounds and sway are measured and share the pausable renderer clock. Their
+geometry, materials and texture are released with the scene.
+
+**EXPERIMENT — checked.** Browser review covers Hacker News and Linear at 1366×768,
+the night scene at 390×844, and a centred shared postcard from the laptop layout.
+Regressions cover horizontal camera insets and deterministic, bounded wildlife flight.
+Real-phone GPU performance remains unmeasured.

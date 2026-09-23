@@ -237,16 +237,17 @@ function mountTreeNew(canvas, dna, opts = {}) {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     const inset = opts.viewportInsets?.() || { top: 0, bottom: 0 };
     const available = Math.max(h * .4, h - inset.top - inset.bottom);
-    const key = `${w}x${h}:${available}`;
+    const availableWidth = Math.max(w * .4, w - (inset.left || 0) - (inset.right || 0));
+    const key = `${w}x${h}:${available}:${availableWidth}:${inset.left || 0}:${inset.top}`;
     if (canvas.width !== Math.round(w * renderer.getPixelRatio()) ||
         canvas.height !== Math.round(h * renderer.getPixelRatio()) || lastFit !== key) {
       renderer.setSize(w, h, false);
       // A TALL frame is answered by stepping back, never by a wider lens (viewer.js).
       // `?fit=lens` is the fit as it was before that, for an A/B on a real site's tree.
-      fitCamera(camera, extents, w / Math.max(available, 1), DIST0, 1.14, url.get('fit') === 'lens' ? null : controls);
+      fitCamera(camera, extents, availableWidth / Math.max(available, 1), DIST0, 1.14, url.get('fit') === 'lens' ? null : controls);
       camera.fov = 2 * Math.atan(Math.tan(camera.fov * Math.PI / 360) * h / available) * 180 / Math.PI;
       camera.aspect = w / Math.max(h, 1);
-      camera.setViewOffset(w, h, 0, (inset.bottom - inset.top) / 2, w, h);
+      camera.setViewOffset(w, h, ((inset.right || 0) - (inset.left || 0)) / 2, (inset.bottom - inset.top) / 2, w, h);
       camera.updateProjectionMatrix();
       lastFit = key;
     }
