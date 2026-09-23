@@ -240,6 +240,32 @@ function failureText(failure, domain) {
   return [entry[0](d), entry[1]];
 }
 
+// --- a clock that only runs while you are looking ---------------------------
+// "grown in 404.5s" on a site that takes 17-38s. Nothing took seven minutes:
+// the tab was backgrounded partway through, and performance.now() is wall
+// clock, so it kept counting while the browser throttled the build to a crawl.
+// The number was true about the clock and false about the work, which is the
+// worse kind of wrong — it is the one figure we put in front of the visitor.
+//
+// This counts only the time the page was actually visible. It does not stop the
+// build stalling when you switch away — that is the browser's decision and not
+// ours to override — but it stops us reporting the stall as effort.
+function foregroundClock() {
+  let acc = 0, last = performance.now();
+  let visible = document.visibilityState === 'visible';
+  const onVis = () => {
+    const now = performance.now();
+    if (visible) acc += now - last;
+    visible = document.visibilityState === 'visible';
+    last = now;
+  };
+  document.addEventListener('visibilitychange', onVis);
+  return {
+    ms() { return acc + (visible ? performance.now() - last : 0); },
+    stop() { document.removeEventListener('visibilitychange', onVis); },
+  };
+}
+
 // --- share ----------------------------------------------------------------
 // THE IMAGE IS THE POINT. A link to this page previews a generic card, because
 // an og:image would have to be rendered per site by a crawler that will not wait
@@ -330,14 +356,14 @@ document.addEventListener('click', (e) => { if (!shareSheet.hidden && !shareShee
 // them is the only moving part, and it is CSS, so it survives the main thread
 // being blocked by the very build it is waiting for.
 const WAIT_BUDGET_MS = 50000;      // must track api/grow.js budgetMs
-let waitTimer = null;
+let waitTimer = null, waitClock = null;
 
 function startWaiting() {
   stopWaiting();
   waiting.hidden = false;
-  const t0 = performance.now();
+  waitClock = foregroundClock();
   const tick = () => {
-    const ms = performance.now() - t0;
+    const ms = waitClock.ms();
     barFill.style.width = Math.min(100, (ms / WAIT_BUDGET_MS) * 100).toFixed(1) + '%';
     elapsedEl.textContent = Math.round(ms / 1000) + 's';
   };
@@ -347,6 +373,7 @@ function startWaiting() {
 
 function stopWaiting() {
   if (waitTimer) { clearInterval(waitTimer); waitTimer = null; }
+  if (waitClock) { waitClock.stop(); waitClock = null; }
   waiting.hidden = true;
   barFill.style.width = '0%';
 }
@@ -368,7 +395,7 @@ async function grow(raw) {
   // Timed from here, not from the server's analysis alone. The wood is built by
   // marching cubes AFTER /api/grow returns, and that is the larger half of the
   // wait — reporting the analysis time told the user 2.9s while they sat for 13.
-  const t0 = performance.now();
+  const clock = foregroundClock();
   state('analyzing', 'Reading your website…');
   startWaiting();
   // The numbers are the real ones: a warm read is 4-8s, a cold function 15-30s,
@@ -448,7 +475,8 @@ async function grow(raw) {
   result.classList.remove('example');   // from here it is theirs, not ours
   setSky(tree?.envName ?? null);
   domainEl.textContent = data.domain;
-  stampEl.textContent = `grown in ${((performance.now() - t0) / 1000).toFixed(1)}s`;
+  stampEl.textContent = `grown in ${(clock.ms() / 1000).toFixed(1)}s`;
+  clock.stop();
   renderWhy(data.dna);
   cacheNote.hidden = data.live !== false;
   if (data.live === false) {

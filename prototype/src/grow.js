@@ -880,19 +880,44 @@ export async function growTree(M, q, env, opts = {}) {
       tree.add(lv.group);
       stats.leaves = lv.stats;
     }
-    // SNOW, on whatever there is to lie on. A leafy winter gets it on the
-    // clusters; a LEAFLESS one gets it on the bare twigs, which is the more
-    // iconic winter tree of the two and was getting none at all — the first
-    // version lived inside the `!leafless` branch and simply never ran for it.
-    // Graded with the BLOOM rule rather than the foliage one: foliage grading
-    // pulls toward sage, and sage snow is not snow. `snow=0` turns it off.
+    // SNOW IS A COVERING, NOT A SET OF OBJECTS.
+    //
+    // The first version added little white solids on top of the foliage and it
+    // read as quartz — faceted lumps perched on leaves. The technique every
+    // engine actually uses is a shader one: threshold the dot of the surface's
+    // WORLD normal with up, and blend the albedo toward snow where a face looks
+    // at the sky. It follows the real geometry, costs no triangles, and covers
+    // branches and leaves with the same rule.
+    //
+    // Applied to the BARK too, which is the half the old version could never do
+    // — snow on bare branches is most of what a winter tree looks like, and a
+    // leafless one now gets it where before it got nothing.
     if (q.get('snow') !== '0') {
-      const sn = F.buildSnow(snowSpots || spots, r, {
-        grade: bloomGrade, size: num('snowSize', leafless ? 0.82 : 1),
-        amount: num('snowAmount', leafless ? 0.5 : 0.62),
-      });
-      tree.add(sn.group);
-      stats.snow = sn.stats;
+      const sc = new THREE.Color(0xeef4fb);
+      if (bloomGrade) bloomGrade(sc);
+      // A LEAF IS A PLANE, so the whole of it faces one way and flips at once —
+      // at a low threshold that paints entire leaves solid white and reads as
+      // white foliage, not as snow on foliage. The band sits high and narrow so
+      // only near-level faces catch it, the noise is strong enough to vary
+      // WITHIN a leaf, and the blend stops short of pure white so the leaf's own
+      // colour still shows through what is lying on it.
+      const snowOpts = { color: [sc.r, sc.g, sc.b], amount: num('snowAmt', 0.82),
+        lo: num('snowLo', 0.46), hi: num('snowHi', 0.95), noise: num('snowNoise', 0.42) };
+      const done = new Set();
+      const dust = (o) => { for (const m of [o.material].flat()) {
+        if (!m || done.has(m)) return; done.add(m); M.util.applySnow(m, { ...snowOpts, key: 'snow-leaf' });
+      } };
+      tree.traverse(dust);
+      if (!done.has(bark)) { done.add(bark); M.util.applySnow(bark, { ...snowOpts, lo: num('snowLoBark', 0.3), hi: num('snowHiBark', 0.8), amount: num('snowAmtBark', 0.9), key: 'snow-bark' }); }
+      stats.snow = { shader: true, materials: done.size };
+      // The solid caps are OFF by default now. They still exist for the drifts
+      // that gather in a crown's crotches, which a surface shader cannot show,
+      // but they were the thing that looked wrong. `snowCaps=1` to see them.
+      if (q.get('snowCaps') === '1') {
+        const sn = F.buildSnow(snowSpots || spots, r, { grade: bloomGrade, size: num('snowSize', 1), amount: num('snowCapAmt', 0.3) });
+        tree.add(sn.group);
+        stats.snowCaps = sn.stats;
+      }
     }
     const carrier = q.get('winter') ?? (q.get('fruit') === '1' ? 'berries' : 'buds');
     // A winter site may deliver NO colour at all (flowers: none => primary null, and
