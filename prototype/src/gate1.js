@@ -120,7 +120,7 @@ function tick() {
 }
 tick();
 document.body.classList.add('ready');
-window.__gate1 = { skel, geo, thick, tris, wind: built.wind, uniforms, update: built.update, leafFall: stats.leafFall, faces: built.faces, leafStats: stats.leaves, flowerStats: stats.flowers, fruitStats: stats.fruit,
+window.__gate1 = { ground: stats.ground, skel, geo, thick, tris, wind: built.wind, uniforms, update: built.update, leafFall: stats.leafFall, faces: built.faces, leafStats: stats.leaves, flowerStats: stats.flowers, fruitStats: stats.fruit,
   spots: built.spots, bloomSites: built.bloomSites, contrastStats: stats.contrast, winterStats: stats.winter, P, camera, controls, scene, renderer,
   orders: Math.max(...skel.limbs.map((l) => l.depth)) + 1,
   primaries: skel.limbs.filter((l) => l.depth === 1).length };
