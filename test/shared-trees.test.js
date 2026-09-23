@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import treeHandler from '../api/tree.js';
 import {
   validateShare,
   saveTree,
@@ -31,6 +32,27 @@ const payload = () => ({
   camera: { position: [7, 5, 10], target: [0, 3, 0] },
   rendererVersion: 1,
   image: "data:image/png;base64," + header.toString("base64"),
+});
+test('missing shared trees serve the custom 404 and HEAD omits its body', async () => {
+  for (const method of ['GET', 'HEAD']) {
+    const response = {
+      headers: {},
+      setHeader(name, value) { this.headers[name] = value; },
+      status(code) { this.statusCode = code; return this; },
+      end(body) { this.body = body; },
+    };
+    await treeHandler({ method, query: { id: '0'.repeat(32) }, headers: { host: 'plants.example' } }, response);
+    assert.equal(response.statusCode, 404);
+    assert.equal(response.headers['Content-Type'], 'text/html; charset=utf-8');
+    assert.equal(response.headers['X-Robots-Tag'], 'noindex');
+    if (method === 'HEAD') assert.equal(response.body, undefined);
+    else {
+      const html = response.body.toString();
+      assert.ok(html.includes('A little off the path.'));
+      assert.ok(html.includes('href="/"'));
+      assert.ok(html.includes('src="/404.js"'));
+    }
+  }
 });
 test("share snapshot persists the full URL, DNA and camera and retries keep the same ID", async () => {
   const body = payload(),

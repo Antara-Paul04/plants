@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Page not found — Plants</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#dfe4df" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/404.css" />
+    <script type="importmap">
+      { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      } }
+    </script>
+  </head>
+  <body class="lost-page">
+    <header class="masthead">
+      <div>
+        <a class="lost-wordmark" href="/" aria-label="Plants home">plants<span class="wordmark-dot">.</span></a>
+        <p>a little life from any website</p>
+      </div>
+      <button id="motion" class="quiet-button" type="button" aria-pressed="false" hidden>Pause motion</button>
+    </header>
+    <main id="garden" aria-labelledby="lost-title">
+      <canvas id="scene" aria-hidden="true"></canvas>
+      <p class="lost-code" aria-label="Error 404">404</p>
+      <section class="lost-message">
+        <h1 id="lost-title">A little off the path.</h1>
+        <p>This page couldn’t be found.<br />There’s still a whole garden to grow.</p>
+        <a class="primary-action" href="/">Back to the garden <span aria-hidden="true">↗</span></a>
+      </section>
+    </main>
+    <script type="module" src="/404.js"></script>
+  </body>
+</html>

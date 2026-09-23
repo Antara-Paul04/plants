@@ -10,6 +10,7 @@
 import { createServer } from 'node:http';
 import shareHandler from '../api/share.js';
 import treeHandler from '../api/tree.js';
+import { sendNotFound } from '../lib/not-found.js';
 import { readFile, stat } from 'node:fs/promises';
 import { join, extname, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -85,17 +86,18 @@ const send = (res, code, body, type = 'application/json; charset=utf-8') => {
   res.end(typeof body === 'string' ? body : JSON.stringify(body));
 };
 
-async function serveStatic(res, baseDir, relPath) {
+async function serveStatic(req, res, baseDir, relPath) {
   const safe = normalize(relPath).replace(/^(\.\.[/\\])+/, '');
   const file = join(baseDir, safe);
   if (!file.startsWith(baseDir)) return send(res, 403, { error: 'forbidden' });
   try {
     const s = await stat(file);
-    if (s.isDirectory()) return serveStatic(res, baseDir, join(safe, 'index.html'));
+    if (s.isDirectory()) return serveStatic(req, res, baseDir, join(safe, 'index.html'));
     const body = await readFile(file);
     res.writeHead(200, { 'content-type': TYPES[extname(file)] || 'application/octet-stream' });
-    res.end(body);
+    res.end(req.method === 'HEAD' ? undefined : body);
   } catch {
+    if (req.method === 'GET' || req.method === 'HEAD') return sendNotFound(req, res);
     send(res, 404, { error: 'not found' });
   }
 }
@@ -213,17 +215,17 @@ const server = createServer(async (req, res) => {
 
   // The renderer is served straight out of the 3D domain — no copies, so the
   // app can never drift from the prototype.
-  if (path.startsWith('/tree/')) return serveStatic(res, join(ROOT, 'prototype/src'), path.slice('/tree/'.length));
+  if (path.startsWith('/tree/')) return serveStatic(req, res, join(ROOT, 'prototype/src'), path.slice('/tree/'.length));
 
   // The 3D domain's internal comparison grid, mounted as-is. It is a debug
   // view, not product UI — but it is the fastest way to see every corpus tree
   // at once, so it earns a route.
   if (path === '/compare.html' || path === '/compare') {
-    return serveStatic(res, join(ROOT, 'prototype'), 'compare.html');
+    return serveStatic(req, res, join(ROOT, 'prototype'), 'compare.html');
   }
-  if (path.startsWith('/src/')) return serveStatic(res, join(ROOT, 'prototype/src'), path.slice('/src/'.length));
+  if (path.startsWith('/src/')) return serveStatic(req, res, join(ROOT, 'prototype/src'), path.slice('/src/'.length));
 
-  return serveStatic(res, join(ROOT, 'app/public'), path === '/' ? 'index.html' : path);
+  return serveStatic(req, res, join(ROOT, 'app/public'), path === '/' ? 'index.html' : path);
 });
 
 server.listen(PORT, () => {

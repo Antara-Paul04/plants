@@ -1037,3 +1037,12 @@ The soil palette and matte material remain. A geometry regression checks every f
 orientation, every shared edge and every normal to prevent another hollow island.
 Browser checks cover the saved Hacker News tree from the front and a low orbit angle,
 plus the Linear night example. These are desktop visual checks, not GPU benchmarks.
+
+### A path back from 404 — EXPERIMENT (2026-09-23)
+
+**DECIDED — human request.** Provide a custom 404 page.
+
+**EXPERIMENT.** Unknown routes and missing shared-tree pages show the same garden
+sky, serif typography, living idle island and moss action. The copy and home link
+are static HTML; the decorative WebGL scene is optional, pausable and respects
+reduced motion. Responses retain status 404 and the page declares `noindex`.

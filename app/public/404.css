@@ -1,0 +1,65 @@
+.lost-page {
+  background: linear-gradient(#a8bdcc, #dfe4df 65%);
+  min-height: 100svh;
+}
+.lost-page .masthead { z-index: 1; }
+.lost-wordmark {
+  color: var(--ink);
+  text-decoration: none;
+  font: 500 44px/0.85 Georgia, "Times New Roman", serif;
+  letter-spacing: -2.8px;
+  pointer-events: auto;
+}
+.lost-page #scene { pointer-events: none; }
+.lost-code {
+  position: fixed;
+  inset: clamp(112px, 18svh, 180px) 0 auto;
+  margin: 0;
+  text-align: center;
+  font: 400 clamp(100px, 20svh, 176px)/1 Georgia, "Times New Roman", serif;
+  letter-spacing: -0.055em;
+  color: #64765e;
+  pointer-events: none;
+}
+.lost-message {
+  position: fixed;
+  left: 50%;
+  bottom: max(42px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  width: min(440px, calc(100% - 40px));
+  text-align: center;
+}
+.lost-message h1 {
+  font: 400 clamp(28px, 4vw, 36px)/1.15 Georgia, "Times New Roman", serif;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+.lost-message p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 14px 0 23px;
+}
+.lost-message .primary-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 46px;
+  text-decoration: none;
+  border-radius: 99px;
+  padding: 14px 22px;
+}
+@media (max-width: 600px) {
+  .lost-wordmark { font-size: 38px; }
+  .lost-message { bottom: max(30px, env(safe-area-inset-bottom)); }
+}
+@media (max-height: 620px) {
+  .lost-code { top: 96px; font-size: 90px; }
+  .lost-message { bottom: max(20px, env(safe-area-inset-bottom)); }
+  .lost-message h1 { font-size: 28px; }
+  .lost-message p { margin: 10px 0 16px; }
+}
+@media (max-height: 420px) and (min-width: 600px) {
+  .lost-code { display: none; }
+  .lost-message h1::before { content: "404 · "; }
+}

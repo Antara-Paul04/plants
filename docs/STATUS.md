@@ -8,6 +8,8 @@ reactions, and motion controls. Taps now reuse autumn’s individual-leaf flight
 landing on every leafy tree; the ambient breeze has a stronger calm floor. The old tree stays visible while another loads.
 The island's soil body now has a smooth curved profile and continuous shading.
 Public trait explanations and debug navigation have been removed (D11).
+A matching 404 page handles unknown routes and missing tree links, with a home link
+that works without JavaScript and a decorative, pausable living island.
 
 **EXPERIMENT.** Share creates a 1200×630 PNG of the displayed tree and stores its DNA,
 full URL and camera. `/t/:id` opens saved data without re-analysis and supplies initial

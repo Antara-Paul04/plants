@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { loadTree, loadTreeImage, treePage } from "../lib/shared-trees.js";
+import { sendNotFound } from "../lib/not-found.js";
 export const config = { maxDuration: 15 };
 export default async function handler(req, res) {
   if (!["GET", "HEAD"].includes(req.method)) return res.status(405).end();
@@ -30,7 +31,7 @@ export default async function handler(req, res) {
         .end(req.method === "HEAD" ? undefined : record.bytes);
     }
     const snapshot = await loadTree(id);
-    if (!snapshot) return res.status(404).send("This tree could not be found.");
+    if (!snapshot) return await sendNotFound(req, res);
     const template = await readFile(
       new URL("../app/public/index.html", import.meta.url),
       "utf8",
