@@ -417,27 +417,6 @@ function flowerClusterGeometry(r, grammar, primary, secondary, opts) {
   return g;
 }
 
-/**
- * A lumpy solid. The jitter is a function of POSITION, never a fresh random
- * number per vertex.
- *
- * three.js polyhedron geometry is non-indexed: every triangle carries its own
- * copy of each corner, so `pos * (0.9 + r() * 0.18)` moves the three copies of
- * a shared corner to three different places and tears the surface open. The
- * result is a cloud of shards that catches the key on every broken edge — it
- * reads as smashed ice, or as quartz. Keyed to the position instead, the copies
- * agree and the solid stays closed while still losing its sphere.
- */
-function lump(g, r, amp = 0.13) {
-  const a = r() * 10, b = r() * 10, c = r() * 10;
-  const pos = g.attributes.position;
-  for (let i = 0; i < pos.count; i++) {
-    const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-    const j = 1 + amp * Math.sin(x * 3.1 + a) * Math.sin(y * 2.7 + b) * Math.sin(z * 3.9 + c);
-    pos.setXYZ(i, x * j, y * j, z * j);
-  }
-}
-
 function matte(key) {
   const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: 1, metalness: 0, side: THREE.FrontSide });
   mat.onBeforeCompile = (shader) => {
@@ -1027,167 +1006,96 @@ function budSprayGeometry(r, col, scaleCol, terminal, size, look = {}) {
  */
 export function buildSnowOnLimbs(limbs, r, opts = {}) {
   const {
-    thickness = 1.7, grade = null, color = 0xf2f7fd,
-    minRadius = 0.012, maxRadius = 0.5, cut = 0.3, clearance = 1.12,
-    gap = 1.3, maxCaps = 900,
+    thickness = 0.2, arc = 1.3, seg = 9, grade = null,
+    color = 0xf2f7fd, minRadius = 0.012, maxRadius = 0.5, patch = 0.42, clearance = 1.12,
   } = opts;
   const group = new THREE.Group();
+  const top = new THREE.Color(color);
+  const side = new THREE.Color(color).lerp(new THREE.Color(0xc2d2e4), 0.45);
+  if (grade) { grade(top); grade(side); }
 
-  // CHUNKS, NOT A SHEET.
-  //
-  // The version before this swept a shell of triangles along the top of each
-  // limb. Rendered on its own it is a hollow curved sheet with two open ends —
-  // you can see straight into it — which is why it read as "rectangular
-  // bandages" wrapped round the branches. A cap can taper and still look like
-  // tape, because the thing that makes tape look like tape is that it has no
-  // volume.
-  //
-  // So: solids. The same lumpy squashed icosahedra the foliage caps are made
-  // of, laid along the upper side of each limb close enough to overlap, bedded
-  // deep enough into the wood that their lower halves never show. Overlapping
-  // solids merge into a drift by eye; a drift that thins out at its ends does
-  // it by shrinking, which snow actually does.
+  const pos = [], col = [], idx = [];
   const T = new THREE.Vector3(), U = new THREE.Vector3(), R = new THREE.Vector3();
-  const P = new THREE.Vector3(), A = new THREE.Vector3(), B = new THREE.Vector3();
-  const bx = new THREE.Vector3(), by = new THREE.Vector3(), bz = new THREE.Vector3();
+  const P = new THREE.Vector3(), c = new THREE.Color();
+  let base = 0;
 
-  // PASS ONE: samples at a fixed spacing along each limb, NOT one per skeleton
-  // node. A limb carries about a dozen nodes over its whole length, so anything
-  // keyed to nodes gives a handful of enormous blobs. Snow is placed by the
-  // metre, not by the vertex.
-  const caps = [];
   for (const L of limbs) {
     const ch = L.chain;
     if (!ch || ch.length < 3) continue;
+    // One noise phase per limb so neighbouring branches do not share a pattern.
     const ph = r() * 100;
-
-    const seg = [];
-    let total = 0;
-    for (let i = 0; i < ch.length - 1; i++) {
-      const d = ch[i].pos.distanceTo(ch[i + 1].pos);
-      seg.push({ at: total, len: d, i });
-      total += d;
-    }
-    if (total < 0.12) continue;
-
-    const rMid = ch[Math.floor(ch.length / 2)].r ?? 0.05;
-    const step = Math.max(0.1, rMid * gap);
-    const run = [];
-    for (let d = step * 0.5; d < total; d += step) {
-      // Walk to the segment holding this distance and interpolate.
-      let k = 0;
-      while (k < seg.length - 1 && seg[k].at + seg[k].len < d) k++;
-      const sgm = seg[k], u = sgm.len > 1e-9 ? (d - sgm.at) / sgm.len : 0;
-      const n0 = ch[sgm.i], n1 = ch[sgm.i + 1];
-      A.copy(n0.pos).lerp(n1.pos, u);
-      T.copy(n1.pos).sub(n0.pos);
-      if (T.lengthSq() < 1e-9) continue;
+    let prevRing = -1;
+    for (let i = 0; i < ch.length; i++) {
+      const a = ch[Math.max(0, i - 1)], b = ch[Math.min(ch.length - 1, i + 1)];
+      T.copy(b.pos).sub(a.pos);
+      if (T.lengthSq() < 1e-9) { prevRing = -1; continue; }
       T.normalize();
+      // World up, projected perpendicular to the branch: the direction snow sits.
       U.set(0, 1, 0).addScaledVector(T, -T.y);
-      if (U.lengthSq() < 1e-4) continue;       // a vertical limb has no "upper side"
+      if (U.lengthSq() < 1e-6) { prevRing = -1; continue; }   // branch is vertical
       U.normalize();
       R.crossVectors(T, U).normalize();
-      const rad = lerp(n0.r ?? 0.05, n1.r ?? 0.05, u);
-      if (rad < minRadius || rad > maxRadius) continue;
-      // A near-vertical stretch sheds its snow; a horizontal one holds all of it.
-      const steep = clamp((0.82 - Math.abs(T.y)) / 0.42, 0, 1);
-      if (steep < 0.05) continue;
-      const wob = Math.sin(d * 2.3 + ph) * 0.6 + Math.sin(d * 5.7 + ph * 1.7) * 0.4;
-      run.push({ p: A.clone(), T: T.clone(), U: U.clone(), R: R.clone(), rad, steep,
-        mask: wob * 0.5 + 0.5 });
-    }
 
-    // PASS TWO: contiguous stretches above the cut, each one swelling in the
-    // middle and shrinking to nothing at both of its own ends. Stopping dead is
-    // what gave the last version its square ends.
-    let i = 0;
-    while (i < run.length) {
-      if (run[i].mask <= cut) { i++; continue; }
-      let j = i;
-      while (j + 1 < run.length && run[j + 1].mask > cut) j++;
-      if (j > i) {
-        for (let k = i; k <= j; k++) {
-          const f = run[k];
-          const t = (k - i) / (j - i);
-          const bell = Math.sin(Math.PI * t);
-          const w = f.steep * (0.35 + 0.65 * bell);
-          if (w < 0.1) continue;
-          caps.push({ f, w });
+      const rad = ch[i].r ?? 0.05;
+      // STEEP WOOD SHEDS, and it has to reach zero. A floor of 0.35 put a slab of
+      // snow down the side of the TRUNK: a trunk is near-vertical but never
+      // exactly vertical, so `up projected perpendicular to the branch` is a
+      // short vector pointing sideways, and normalising it aims the cap at the
+      // trunk's flank. Zero above 0.8 kills that; full below 0.35 keeps the
+      // reaching branches these trees are mostly made of.
+      const steep = clamp((0.8 - Math.abs(T.y)) / 0.45, 0, 1);
+      const fit = rad < minRadius || rad > maxRadius ? 0 : 1;
+      const t01 = i / (ch.length - 1);
+      const ends = Math.min(1, Math.min(t01, 1 - t01) * 5);     // taper both ends
+      const n = Math.sin(t01 * 9.1 + ph) * 0.5 + Math.sin(t01 * 21.7 + ph * 1.7) * 0.5;
+      const broken = Math.max(0, n * 0.5 + 0.5 - patch) / Math.max(1e-6, 1 - patch);
+      const th = thickness * steep * fit * ends * broken;
+      if (th <= 0.001) { prevRing = -1; continue; }
+
+      const ring = pos.length / 3;
+      for (let k = 0; k < seg; k++) {
+        const ang = (k / (seg - 1) - 0.5) * 2 * arc;
+        // Thickest along the spine, zero at the edges: a cap bedded on the bark.
+        const w = Math.cos((ang / arc) * (Math.PI / 2));
+        // CLEARANCE. The rendered wood is NOT the skeleton radius: thick limbs
+        // come out of a smooth-blended signed distance field and the tubes carry
+        // a collar bulge on top of that, so a ridge placed at `rad` is inside
+        // the branch. The first attempt was entirely buried — visible only as
+        // pale slivers poking out behind the trunk.
+        const off = rad * clearance + th * w;
+        P.copy(ch[i].pos).addScaledVector(U, Math.cos(ang) * off).addScaledVector(R, Math.sin(ang) * off);
+        pos.push(P.x, P.y, P.z);
+        c.copy(side).lerp(top, w);
+        col.push(c.r, c.g, c.b);
+      }
+      if (prevRing >= 0) {
+        for (let k = 0; k < seg - 1; k++) {
+          const p0 = prevRing + k, p1 = prevRing + k + 1, q0 = ring + k, q1 = ring + k + 1;
+          idx.push(p0, q0, p1, p1, q0, q1);
         }
       }
-      i = j + 1;
+      prevRing = ring;
+      base = ring;
     }
   }
-  if (!caps.length) return { group, stats: { caps: 0, triangles: 0 } };
-  if (caps.length > maxCaps) {
-    const stride = caps.length / maxCaps;
-    const keep = [];
-    for (let k = 0; k < maxCaps; k++) keep.push(caps[Math.floor(k * stride)]);
-    caps.length = 0; caps.push(...keep);
-  }
+  if (!idx.length) return { group, stats: { triangles: 0 } };
 
-  const top = new THREE.Color(color);
-  const under = new THREE.Color(color).lerp(new THREE.Color(0xb9c8d8), 0.3);
-  if (grade) { grade(top); grade(under); }
-
-  // Three jittered variants, same recipe as the foliage caps: detail 2 so the
-  // facets never catch the key individually and read as quartz, and a jitter
-  // small enough to break the sphere without cutting planes into it.
-  const VARIANTS = 3;
-  const geos = [];
-  for (let v = 0; v < VARIANTS; v++) {
-    const g = new THREE.IcosahedronGeometry(1, 2);
-    lump(g, r, 0.15);
-    const pos = g.attributes.position;
-    const cols = [];
-    const c = new THREE.Color();
-    for (let idx = 0; idx < pos.count; idx++) {
-      c.copy(under).lerp(top, clamp(pos.getY(idx) * 0.5 + 0.5, 0, 1));
-      cols.push(c.r, c.g, c.b);
-    }
-    g.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
-    g.computeVertexNormals();
-    geos.push(g);
-  }
-
-  const mat = matte('snow-limb-v2');
-  const m = new THREE.Matrix4();
-  const buckets = geos.map(() => []);
-  caps.forEach((cp, k) => buckets[k % VARIANTS].push(cp));
-  let triangles = 0;
-  geos.forEach((geo, v) => {
-    const items = buckets[v];
-    if (!items.length) { geo.dispose(); return; }
-    const im = new THREE.InstancedMesh(geo, mat, items.length);
-    im.castShadow = true; im.receiveShadow = true; im.frustumCulled = false;
-    items.forEach((cp, i) => {
-      const f = cp.f, rad = f.rad;
-      const along = rad * (1.05 + r() * 0.5);
-            // WIDER THAN THE BRANCH. The rendered limb is fatter than the skeleton
-      // radius, so a lump at 1.0x the radius sits down inside the silhouette
-      // and reads as a white speck on the bark rather than snow lying on it.
-      // It has to overhang.
-      const across = rad * (1.45 + r() * 0.5);
-      const high = rad * thickness * cp.w * (0.85 + r() * 0.3);
-      // Bedded into the wood. The rendered limb is fatter than the skeleton
-      // radius, so the centre sits just inside the rendered surface and only
-      // the crown of each lump shows — the lower half is never drawn, which is
-      // what stops it reading as a separate object balanced on the branch.
-      P.copy(f.p).addScaledVector(f.U, rad * clearance * 0.45)
-        .addScaledVector(f.R, (r() - 0.5) * rad * 0.35)
-        .addScaledVector(f.T, (r() - 0.5) * rad * 0.4);
-      bx.copy(f.T).multiplyScalar(along);
-      by.copy(f.U).multiplyScalar(high);
-      bz.copy(f.R).multiplyScalar(across);
-      m.makeBasis(bx, by, bz);
-      m.setPosition(P);
-      im.setMatrixAt(i, m);
-    });
-    im.instanceMatrix.needsUpdate = true;
-    group.add(im);
-    triangles += (geo.index ? geo.index.count : geo.attributes.position.count) / 3 * items.length;
-  });
-  return { group, stats: { caps: caps.length, triangles: Math.round(triangles) } };
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  // DOUBLE-SIDED. A cap is an open shell one triangle thick, so with FrontSide
+  // every near-side ridge was culled and the only snow on screen was the INSIDE
+  // of the caps on the far side of the tree, showing through the gaps as pale
+  // vertical sheets. That is what "no snow, but odd grey shapes behind the
+  // trunk" was. It also matters from below, where you see a ridge's underside.
+  const snowMat = matte('snow-limb-v1');
+  snowMat.side = THREE.DoubleSide;
+  const mesh = new THREE.Mesh(g, snowMat);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  group.add(mesh);
+  return { group, stats: { triangles: idx.length / 3 } };
 }
 
 /**
@@ -1243,14 +1151,14 @@ export function buildSnow(spots, r, opts = {}) {
     // Snow is soft: rounder silhouette, and a jitter small enough to break the
     // sphere without cutting planes into it.
     const g = new THREE.IcosahedronGeometry(1, 2);
-    lump(g, r, 0.12);
     const pos = g.attributes.position;
     const cols = [];
     const c = new THREE.Color();
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+      const j = 0.93 + r() * 0.13;
       // Squashed hard in Y: a drift, not a snowball.
-      pos.setXYZ(i, x, y * 0.46, z);
+      pos.setXYZ(i, x * j, y * j * 0.46, z * j);
       // Sky-facing snow is lit; the underside picks up the cold bounce from
       // whatever it is lying on. Cheaper than a second material and it keeps the
       // low-poly facets reading.

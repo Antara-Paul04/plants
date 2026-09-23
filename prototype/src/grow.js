@@ -711,16 +711,10 @@ export async function growTree(M, q, env, opts = {}) {
     const hexOf = (v, d) => (v == null ? d : (v.isColor ? v.getHex() : v));
     const dormancy = num('dormancy', dormancyDefault);
     const terrain = {};
-    // DORMANCY BROWNS OFF A LIVING LAWN, and a season that ships its own ground
-    // is not one. Winter's terrain is SNOW; leafless winter runs at dormancy
-    // 0.82, so the snow was being dragged 82% of the way to an olive khaki and
-    // the ground came out as cold grass. Autumn is the same case — its ground is
-    // already the autumn reading. Dormancy applies to the normal palette only.
-    const seasonT = SEASON_TERRAIN[SEASON];
     for (const k of Object.keys(NORMAL_TERRAIN)) {
-      const base = new THREE.Color(hexOf(T0[k], (seasonT ?? NORMAL_TERRAIN)[k]));
+      const base = new THREE.Color(hexOf(T0[k], (SEASON_TERRAIN[SEASON] ?? NORMAL_TERRAIN)[k]));
       // A palette handed in by the host already has its own dormancy mixed in.
-      if (!opts.terrain && !seasonT) base.lerp(new THREE.Color(DORMANT_TERRAIN[k]), dormancy);
+      if (!opts.terrain) base.lerp(new THREE.Color(DORMANT_TERRAIN[k]), dormancy);
       terrain[k] = base;
     }
     // The ground answers to the trunk, in ALBEDO and before the environment grade —
@@ -903,9 +897,9 @@ export async function growTree(M, q, env, opts = {}) {
       if (bloomGrade) bloomGrade(sc);
       const ls = F.buildSnowOnLimbs(skel.limbs, r, {
         grade: bloomGrade,
-        thickness: num('snowThick', 1.7),
-        cut: num('snowCut', 0.3),
-        gap: num('snowGap', 1.3), clearance: num('snowClear', 1.12),
+        thickness: num('snowThick', 0.2),
+        patch: num('snowPatch', 0.42),
+        arc: num('snowArc', 1.3), clearance: num('snowClear', 1.12),
       });
       tree.add(ls.group);
       stats.snow = ls.stats;

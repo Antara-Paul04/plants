@@ -128,14 +128,10 @@ const TERRAIN = {
     lo: C(0x8a8a3c), mid: C(0xb09a44), hi: C(0xd0b45e),
     soilHi: C(0x9c7148), soilLo: C(0x64514f), rocks: 1.0,
   },
-  // SNOW on top, soil still soil underneath — it is a covering, not a substance.
-  // Matches grow.js SEASON_TERRAIN.winter; the prototype and the app must not
-  // disagree about what winter ground is. Thin, short blades: dead straw
-  // standing in a drift, not a white lawn.
   winter: {
-    grass: 11000, height: 0.55,
-    lo: C(0xc4d0de), mid: C(0xdde7f1), hi: C(0xf3f8fd),
-    soilHi: C(0x8a8078), soilLo: C(0x5d5860), rocks: 1.0,
+    grass: 19000, height: 0.74,
+    lo: C(0x6b7a5c), mid: C(0x869070), hi: C(0xa3ab8c),
+    soilHi: C(0x8e8076), soilLo: C(0x615a60), rocks: 1.0,
   },
 };
 
@@ -242,9 +238,6 @@ export function resolveDNA(input) {
   // thing in a living garden. A tree in leaf never triggers this, whatever its
   // terrain state says.
   const dormancy = bare ? DORMANCY.bare : bState === 'winter' ? DORMANCY.winter : 0;
-  // See the terrain block below: a ground that already carries its own season
-  // must not be browned off a second time.
-  const groundDormancy = (terrainKey === 'winter' || terrainKey === 'autumn') ? 0 : dormancy;
 
   // Leaf volume. Winter applies a floor so it can never reach zero — that
   // distinction is the whole concept, and a thin winter site must not silently
@@ -367,21 +360,13 @@ export function resolveDNA(input) {
     terrain: {
       // Dormancy is applied here, on top of whatever terrain state the contract
       // asked for, so it shifts tone and growth without replacing the state.
-      //
-      // COLOUR is the exception. Dormancy browns off a LIVING lawn, and a
-      // terrain that already ships its own season is not one: autumn ground is
-      // already autumn, and winter ground is snow. Winter runs at DORMANCY.winter
-      // (and at DORMANCY.bare when the tree is leafless), which dragged the snow
-      // most of the way to an olive khaki and turned it back into cold grass.
-      // Growth still follows dormancy — fewer, shorter blades is exactly right
-      // for straw standing in a drift.
       grass: Math.round(terrain.grass * (1 - 0.18 * dormancy)),
       height: terrain.height * (1 - 0.25 * dormancy),
-      lo: terrain.lo.clone().lerp(DORMANT.lo, groundDormancy),
-      mid: terrain.mid.clone().lerp(DORMANT.mid, groundDormancy),
-      hi: terrain.hi.clone().lerp(DORMANT.hi, groundDormancy),
-      soilHi: terrain.soilHi.clone().lerp(DORMANT.soilHi, groundDormancy),
-      soilLo: terrain.soilLo.clone().lerp(DORMANT.soilLo, groundDormancy),
+      lo: terrain.lo.clone().lerp(DORMANT.lo, dormancy),
+      mid: terrain.mid.clone().lerp(DORMANT.mid, dormancy),
+      hi: terrain.hi.clone().lerp(DORMANT.hi, dormancy),
+      soilHi: terrain.soilHi.clone().lerp(DORMANT.soilHi, dormancy),
+      soilLo: terrain.soilLo.clone().lerp(DORMANT.soilLo, dormancy),
       rockHi: ROCK.hi.clone().lerp(ROCK_DORMANT.hi, dormancy),
       rockLo: ROCK.lo.clone().lerp(ROCK_DORMANT.lo, dormancy),
       // Fallen petals only exist where there is blossom to fall. Autumn gets
