@@ -229,7 +229,26 @@ function envTable(q) {
         // Near-white, from the front quarter: a saturated blue key is absorbed by
         // warm wood (black wood, wet blue sheen), and a pure backlight leaves a
         // silhouette. A soft-edged SPOT, so the light pools and falls away.
-        key: { color: 0xc9d6ff, intensity: L.key, dir: [-5.2, 7.4, 6.2], shadowRadius: 1.6, spot: { angle: L.angle, penumbra: 1.0 } },
+        // A DIRECTIONAL KEY, not a spot. The moon is 384,000 km away; its light
+        // does not pool. A soft-edged spot was chosen to keep the tree brighter
+        // than its surroundings, and it worked, but a visible cone on the turf
+        // reads as a stage light rather than as night — "a random source of
+        // light on the tree". Separation now comes from where the light is and
+        // how dark everything else is, which is what the night rule said in the
+        // first place: colour, direction and contrast. `nightSpot=1` restores
+        // the pool for an A/B.
+        key: q.get('nightSpot') === '1'
+          ? { color: 0xc9d6ff, intensity: L.key, dir: [-5.2, 7.4, 6.2], shadowRadius: 1.6, spot: { angle: L.angle, penumbra: 1.0 } }
+          : { color: 0xc9d6ff, intensity: L.key * 0.42, dir: [-5.2, 7.4, 6.2], shadowRadius: 2.2, shadowMap: 2048 },
+        // A real sky, not an empty one. `stars=0` turns them off.
+        stars: q.get('stars') === '0' ? null : { layers: [
+          // The camera sees a narrow cone of the dome, so a few hundred stars
+          // over a whole hemisphere put about fifteen in frame. These counts are
+          // chosen for what lands in SHOT, not for what exists.
+          { count: 2300, size: 2.0, brightness: 0.55 },
+          { count: 620,  size: 3.0, brightness: 1.0  },
+          { count: 95,   size: 4.4, brightness: 1.6  },
+        ] },
         // The silver edge, from behind — an EDGE, not a second key.
         fill: { color: 0xdfe8ff, intensity: L.edge, dir: [5.2, 4.6, -7.0] },
         // A faint warm kicker keeps the wood reading as wood rather than slate.
@@ -262,6 +281,81 @@ export function gradeColor(c, G) {
   c.lerp(new THREE.Color(l, l, l), 1 - G.sat);
   c.lerp(new THREE.Color(G.tint).multiplyScalar(l * 1.4), G.tintAmt);
   return c.multiplyScalar(G.value);
+}
+
+/**
+ * STARS. Three layers of points rather than one, because a real sky is mostly
+ * faint stars with a few bright ones, and a single size reads as a texture.
+ *
+ * They are attenuated toward the moon: the sky within ~35 degrees of the key
+ * direction is washed out by it, which is true of an actual moonlit sky and is
+ * also what stops a bright star sitting inside the glow sphere.
+ *
+ * Points, not a shader on the dome: the dome is vertex-coloured and adding a
+ * fragment shader to it would mean re-authoring the gradient. sizeAttenuation
+ * is off so a star is a fixed pixel size however far the dome is pushed out.
+ */
+function starField(ENV, radius, seed) {
+  // Its own generator: createEnvironment has no module bag to borrow one from,
+  // and the sky must be the same sky every time the same scene is built.
+  let t = seed >>> 0;
+  const rand = () => {
+    t = (t + 0x6d2b79f5) >>> 0;
+    let x = Math.imul(t ^ (t >>> 15), 1 | t);
+    x = (x + Math.imul(x ^ (x >>> 7), 61 | x)) ^ x;
+    return ((x ^ (x >>> 14)) >>> 0) / 4294967296;
+  };
+  const group = new THREE.Group();
+  // One small round sprite, shared. A PointsMaterial dot is square by default,
+  // which is visible by the time a star is two pixels across.
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = 32;
+  const g2 = cv.getContext('2d');
+  const grd = g2.createRadialGradient(16, 16, 0, 16, 16, 16);
+  grd.addColorStop(0, 'rgba(255,255,255,1)');
+  grd.addColorStop(0.30, 'rgba(255,255,255,1)');
+  grd.addColorStop(0.55, 'rgba(255,255,255,0.55)');
+  grd.addColorStop(1, 'rgba(255,255,255,0)');
+  g2.fillStyle = grd; g2.fillRect(0, 0, 32, 32);
+  const sprite = new THREE.CanvasTexture(cv);
+
+  const moon = dirOf(ENV.glow.dir).normalize();
+  const LAYERS = ENV.stars.layers;
+  for (const L of LAYERS) {
+    const pos = [], col = [];
+    const c = new THREE.Color();
+    for (let i = 0; i < L.count; i++) {
+      // Uniform on the sphere, then keep only what is above the horizon — a
+      // rejection rather than a squashed distribution, which would crowd the
+      // zenith.
+      let x, y, z;
+      do {
+        const u = rand() * 2 - 1, th = rand() * Math.PI * 2, r = Math.sqrt(1 - u * u);
+        x = r * Math.cos(th); y = u; z = r * Math.sin(th);
+      } while (y < 0.04);
+      const d = new THREE.Vector3(x, y, z);
+      pos.push(x * radius * 0.97, y * radius * 0.97, z * radius * 0.97);
+      // Washed out near the moon, and a little cooler at the zenith than at the
+      // horizon, where the air would warm them.
+      const wash = 1 - 0.85 * Math.pow(Math.max(0, d.dot(moon)), 6);
+      const b = L.brightness * wash * (0.55 + rand() * 0.45);
+      c.setHex(rand() < 0.12 ? 0xffe9cf : rand() < 0.3 ? 0xcddcff : 0xffffff).multiplyScalar(b);
+      col.push(c.r, c.g, c.b);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    const mat = new THREE.PointsMaterial({
+      size: L.size, sizeAttenuation: false, vertexColors: true, map: sprite,
+      transparent: true, depthWrite: false, toneMapped: false,
+      blending: THREE.AdditiveBlending,
+    });
+    const pts = new THREE.Points(geo, mat);
+    pts.frustumCulled = false;
+    group.add(pts);
+  }
+  group.renderOrder = -1;   // behind everything, like the dome
+  return group;
 }
 
 function skyDome(ENV, radius, withGround) {
@@ -324,6 +418,11 @@ export function createEnvironment(renderer, q, P) {
   const scene = new THREE.Scene();
   const sky = skyDome(ENV, 60, false);
   scene.add(sky);
+  // Stars go in the VISIBLE scene only. The env scene above is what the PMREM
+  // samples to make the image-based light, and stars in there would light the
+  // tree — a few hundred additive points would quietly raise the ambient.
+  const stars = ENV.stars ? starField(ENV, 60, 0x5eed) : null;
+  if (stars) scene.add(stars);
   scene.environment = envRT.texture;
   scene.environmentIntensity = ENV.env * (P.env / 0.85);
 
@@ -360,6 +459,11 @@ export function createEnvironment(renderer, q, P) {
     gradeGround: (hex) => gradeColor(new THREE.Color(hex), ENV.ground),
     dispose() {
       sky.geometry.dispose(); sky.material.dispose();
+      if (stars) for (const pts of stars.children) {
+        pts.geometry.dispose();
+        pts.material.map?.dispose();
+        pts.material.dispose();
+      }
       envRT.dispose();
       for (const l of lights) { if (l.shadow && l.shadow.map) l.shadow.map.dispose(); l.dispose?.(); }
     },
