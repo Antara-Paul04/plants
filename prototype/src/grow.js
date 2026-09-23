@@ -592,8 +592,7 @@ const NORMAL_TERRAIN = { lo: 0x5e9e37, mid: 0x81c246, hi: 0xa8d95c, soilHi: 0xa0
 // as dna.js (TERRAIN.autumn / TERRAIN.winter) — one family.
 const SEASON_TERRAIN = {
   autumn: { lo: 0x8a8a3c, mid: 0xb09a44, hi: 0xd0b45e, soilHi: 0x9c7148, soilLo: 0x64514f },
-  // SNOW on top, soil still soil underneath — it is a covering, not a substance.
-  winter: { lo: 0xc4d0de, mid: 0xdde7f1, hi: 0xf3f8fd, soilHi: 0x8a8078, soilLo: 0x5d5860 },
+  winter: { lo: 0x6b7a5c, mid: 0x869070, hi: 0xa3ab8c, soilHi: 0x8e8076, soilLo: 0x615a60 },
 };
 const DORMANT_TERRAIN = { lo: 0x6b6f54, mid: 0x838661, hi: 0x9d9d79, soilHi: 0x8a7d6d, soilLo: 0x5d5859 };
 
@@ -828,7 +827,7 @@ export async function growTree(M, q, env, opts = {}) {
 
   // --- foliage, bloom, fruit -------------------------------------------------------
   const F = M.flowers;
-  const stats = { leaves: null, flowers: null, fruit: null, winter: null, snow: null, contrast: null };
+  const stats = { leaves: null, flowers: null, fruit: null, winter: null, contrast: null };
   let leafFall = null;
   let dbgSpots = null, dbgBloom = null;
   const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
@@ -868,49 +867,16 @@ export async function growTree(M, q, env, opts = {}) {
     // persistent BERRIES where the site has the fruit trait. `winter=buds|berries`
     // overrides; the default follows `fruit=1`.
     const spots = M.leaves.leafAttachments(skel.limbs, r, attach);
-    let snowSpots = null;
     if (!leafless) {
       // A thin sage crown. V0's winter kept real foliage for a reason that still
       // holds: winter must stay clearly distinct from BARE.
       // Thinned by taking every n-th twig, evenly, rather than by a random draw: a
       // winter crown is sparse all over, not moth-eaten in patches.
       const stride = Math.max(1, Math.round(1 / leafAmount));
-      snowSpots = spots.filter((_, i) => i % stride === 0);
-      const lv = M.leaves.buildLeaves(skel.limbs, r, { spots: snowSpots, cluster });
+      const thinned = spots.filter((_, i) => i % stride === 0);
+      const lv = M.leaves.buildLeaves(skel.limbs, r, { spots: thinned, cluster });
       tree.add(lv.group);
       stats.leaves = lv.stats;
-    }
-    // CHUNKS OF SNOW, NOT WHITE LEAVES.
-    //
-    // The world-normal shader that came before this is the right technique for
-    // terrain and the wrong one for a tree: a leaf is a plane, it has no top,
-    // and tinting it white just gives you white foliage. Snow on a tree has
-    // volume and it lies along the WOOD. So it is geometry again — but swept
-    // along the limbs this time, following each branch, rather than blobs
-    // dropped on the leaves.
-    //
-    // A light dusting stays on the BARK only, under the chunks, so the ridge
-    // beds into the branch instead of sitting on an untouched tan surface.
-    // Nothing is applied to the leaf material. `snow=0` turns it all off.
-    if (q.get('snow') !== '0') {
-      const sc = new THREE.Color(0xf2f7fd);
-      if (bloomGrade) bloomGrade(sc);
-      const ls = F.buildSnowOnLimbs(skel.limbs, r, {
-        grade: bloomGrade,
-        thickness: num('snowThick', 0.2),
-        patch: num('snowPatch', 0.42),
-        arc: num('snowArc', 1.3), clearance: num('snowClear', 1.12),
-      });
-      tree.add(ls.group);
-      stats.snow = ls.stats;
-      M.util.applySnow(bark, { color: [sc.r, sc.g, sc.b], amount: num('snowAmtBark', 0.45),
-        lo: num('snowLoBark', 0.45), hi: num('snowHiBark', 0.95), noise: num('snowNoise', 0.3), key: 'snow-bark' });
-      // Mounds where the foliage catches it, on top of the ridges on the wood.
-      if (q.get('snowCaps') !== '0' && snowSpots) {
-        const sn = F.buildSnow(snowSpots, r, { grade: bloomGrade, size: num('snowSize', 1), amount: num('snowCapAmt', 0.4) });
-        tree.add(sn.group);
-        stats.snowCaps = sn.stats;
-      }
     }
     const carrier = q.get('winter') ?? (q.get('fruit') === '1' ? 'berries' : 'buds');
     // A winter site may deliver NO colour at all (flowers: none => primary null, and
