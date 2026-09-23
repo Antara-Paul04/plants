@@ -1,0 +1,46 @@
+# WHAT VERCEL UPLOADS.
+#
+# Without this file Vercel uploads the whole repository on every deploy, and
+# references/experiments alone is 695 MB of evidence screenshots that neither
+# the app nor the reader ever opens. That is what exceeded the size limit.
+#
+# Nothing listed here is deleted. The evidence stays in git and stays published;
+# it just stops being shipped to the edge.
+#
+# What the deployment actually needs:
+#   app/          the server and app/public (the build's source, and
+#                 api/tree.js includeFiles reads app/public/{index,404}.html)
+#   api/ lib/     the functions and their helpers
+#   prototype/    src/ is copied to public/tree; compare.html is rewritten
+#   tools/        build-static.mjs runs at build time
+#   analysis/     lib/ and probe/ only — see below
+#   package.json package-lock.json vercel.json
+
+# Evidence archive: published in the repo, useless to the running app.
+references/
+
+# Prose.
+docs/
+*.md
+!README.md
+
+# Tests run in CI and locally, never on the edge.
+test/
+
+# The reader's captured screenshots and run output. api/grow.js imports only
+# analysis/lib/analyze.js, which pulls in probe/{measure,pixels,accent-regions}
+# and lib/mapping.js. The scripts that read shots/ and results/ are standalone
+# CLI tools that never run in a function.
+analysis/shots/
+analysis/results/
+analysis/node_modules/
+
+# Build output. ANCHORED: unanchored, `public/` also matches `app/public/`,
+# which is the build's SOURCE — excluding it took the homepage and every static
+# asset to 404. Same trap as the .gitignore entry that once refused
+# `git add app/public/...`. tools/build-static.mjs regenerates /public itself.
+/public/
+
+# Local only.
+node_modules/
+.git/
