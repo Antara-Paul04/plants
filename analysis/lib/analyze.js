@@ -335,7 +335,16 @@ function toFingerprint(m, pixels, accent, hasMotion) {
     accentConcentration:  +((accent && accent.concentration) || 0).toFixed(3),
     chromaticBins:        (design.chromaticBins ?? 0),
     hasVisibleMotion:     !!hasMotion,
-    palette: { ground: all.background, primary: design.primary || null, secondary: design.secondary || null },
+    // GROUND COMES FROM THE DESIGN, NOT FROM THE WHOLE FRAME — same rule the
+    // accent already follows, and for the same reason (D3: photographs are
+    // content). `ground` was the commonest pixel ANYWHERE, so a page whose
+    // pictures outweigh its own background got its pictures' colour.
+    // awwwards.com is the case: body background #f8f8f8, 78% of the frame taken
+    // by an embedded near-black screenshot of somebody else's site, ground read
+    // as #0f0f0f, and a light page grew a night tree. Falls back to the whole
+    // frame when there is no meaningful mask, exactly as the accent does.
+    palette: { ground: (useMask && masked.background) || all.background,
+               primary: design.primary || null, secondary: design.secondary || null },
     paletteSource: useMask ? 'media-masked' : 'whole-frame'
   };
 }
