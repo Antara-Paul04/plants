@@ -375,15 +375,16 @@ function fallingLeafGeometry() {
  *
  * @param instances  buildLeaves(...).instances — { variant, matrix, tint } per cluster
  * @param seats      buildLeaves(...).seats     — per variant, { matrix, size, color, shade } per leaf
+ * @param opts.automatic false => only shed on burst(t, point); use the same flight and landing
  * @param opts.ground (x, z) => the height a leaf rests at, or null where there is no ground
  */
 export function buildLeafFall(instances, seats, opts = {}) {
   const {
     count = 32, rate = 0.16, fallSpeed = 0.78, drift = 1.15, swing = 0.24,
-    ground = () => null, floor = -4.2, G = GUST,
+    ground = () => null, floor = -4.2, G = GUST, automatic = true,
   } = opts;
   const group = new THREE.Group();
-  if (!instances || !instances.length || !seats || seats.some((s) => !s || !s.length)) return { group, material: null, update() {}, stats: { pool: 0 } };
+  if (!instances || !instances.length || !seats || seats.some((s) => !s || !s.length)) return { group, material: null, update() {}, burst() {}, stats: { pool: 0 } };
 
   const material = killSpecular(new THREE.MeshStandardMaterial({
     color: 0xffffff, vertexColors: true, roughness: 1, metalness: 0, side: THREE.FrontSide,
@@ -420,9 +421,9 @@ export function buildLeafFall(instances, seats, opts = {}) {
   }
 
   /** Everything about the life leaf i began in gust g — computed once per life. */
-  function lifeOf(i, g) {
+  function lifeOf(i, g, origins = instances) {
     const h = (salt) => hash01(i * 101 + salt, g.n);
-    const inst = instances[Math.floor(h(1) * instances.length)];
+    const inst = origins[Math.floor(h(1) * origins.length)];
     const pool = seats[inst.variant];
     const seat = pool[Math.floor(h(2) * pool.length)];
     const L = { n: g.n, t0: shedAt(i, g), strength: g.strength, p0: new THREE.Vector3(), q0: new THREE.Quaternion(), s0: 1,
@@ -452,42 +453,74 @@ export function buildLeafFall(instances, seats, opts = {}) {
   }
 
   const lives = new Array(count).fill(null);
+  let burstId = 0, cursor = 0;
+  // Taps use the same leaf seats, flight and landing as autumn. A separate bounded
+  // pool means the ambient autumn cycle cannot overwrite a leaf halfway down.
+  function burst(t, point = null, amount = 7) {
+    if (automatic) return;
+    update(t);
+    let origins = instances;
+    if (point) {
+      origins = [...instances].sort((a, b) => {
+        const distance = item => point.distanceToSquared(p.setFromMatrixPosition(item.matrix));
+        return distance(a) - distance(b);
+      }).slice(0, Math.min(24, instances.length));
+    }
+    const event = { n: ++burstId + 100000, at: t, strength: 1 };
+    let released = 0;
+    for (let tried = 0; tried < count && released < Math.min(amount, count); tried++) {
+      const i = cursor++ % count;
+      if (lives[i]) continue; // rapid taps never erase a leaf in mid-flight
+      const j = released++;
+      const L = lives[i] = lifeOf(i, event, origins);
+      L.t0 = t + .32 * hash01(j, event.n);
+      mesh.setColorAt(i, L.color);
+    }
+    mesh.instanceColor.needsUpdate = true;
+    update(t);
+  }
+
   const HIDE = new THREE.Matrix4().makeScale(0, 0, 0);
 
   function update(t) {
     const N = Math.floor(t / G.slot);
     let colourChanged = false;
     for (let i = 0; i < count; i++) {
-      // The life it is in: the latest gust that took this leaf, at or before now.
-      let g = null;
-      for (let n = N + 1; n > N - SEARCH && !g; n--) { const s = sheds(i, n); if (s && shedAt(i, s) <= t) g = s; }
-      if (!g) { lives[i] = null; mesh.setMatrixAt(i, HIDE); continue; }
-      let L = lives[i];
-      if (!L || L.n !== g.n) { L = lives[i] = lifeOf(i, g); mesh.setColorAt(i, c.copy(L.color)); colourChanged = true; }
-
-      // When this pool slot is next needed, the leaf that is lying there gives it up.
-      let next = Infinity;
-      for (let n = g.n + 1; n <= N + 3 && next === Infinity; n++) { const s = sheds(i, n); if (s) next = shedAt(i, s); }
-      // No shed in sight is the COMMON case, and smoothstep(Infinity, Infinity, t) is NaN:
-      // a NaN scale is an invisible leaf, a NaN bounding box, and — through the extents —
-      // a NaN camera. It was all three before anyone looked at a picture.
-      const keep = next === Infinity ? 1 : 1 - smoothstep(next - 1.4, next - 0.3, t);
+      let L = lives[i], keep = 1;
+      if (automatic) {
+        // Latest natural gust at or before now; preserve autumn's deterministic cycle.
+        let g = null;
+        for (let n = N + 1; n > N - SEARCH && !g; n--) { const s = sheds(i, n); if (s && shedAt(i, s) <= t) g = s; }
+        if (!g) { lives[i] = null; mesh.setMatrixAt(i, HIDE); continue; }
+        if (!L || L.n !== g.n) { L = lives[i] = lifeOf(i, g); mesh.setColorAt(i, c.copy(L.color)); colourChanged = true; }
+        let next = Infinity;
+        for (let n = g.n + 1; n <= N + 3 && next === Infinity; n++) { const s = sheds(i, n); if (s) next = shedAt(i, s); }
+        // Never evaluate smoothstep(Infinity, Infinity, t): it yields NaN geometry.
+        keep = next === Infinity ? 1 : 1 - smoothstep(next - 1.4, next - 0.3, t);
+      } else {
+        if (!L || t < L.t0) { mesh.setMatrixAt(i, HIDE); continue; }
+        // A few seconds on the grass, then give the slot back without piling up.
+        const end = L.t0 + Math.min(18, L.landAge + 4);
+        if (t >= end) { lives[i] = null; mesh.setMatrixAt(i, HIDE); continue; }
+        keep = 1 - smoothstep(end - 1.4, end, t);
+      }
 
       const age = t - L.t0;
       if (age >= L.landAge) {
         p.copy(L.rest); q.copy(L.restQ);
       } else {
         flight(L, age, p);
-        if (p.y < floor) { mesh.setMatrixAt(i, HIDE); continue; }
+        if (p.y < floor) { if (!automatic) lives[i] = null; mesh.setMatrixAt(i, HIDE); continue; }
         q.setFromAxisAngle(L.spinAxis, L.spin * ease(age)).multiply(L.q0);
         // It settles onto the grass over its last third of a second rather than snapping flat.
         if (L.landAge !== Infinity) q.slerp(L.restQ, smoothstep(L.landAge - 0.35, L.landAge, age));
       }
       mesh.setMatrixAt(i, m4.compose(p, q, sc.setScalar(L.s0 * keep)));
     }
+    mesh.visible = automatic || lives.some(Boolean);
     mesh.instanceMatrix.needsUpdate = true;
     if (colourChanged && mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
   }
   update(0);
-  return { group, material, update, stats: { pool: count, rate, fallSpeed } };
+  return { group, material, update, burst, stats: { pool: count, rate, fallSpeed } };
 }

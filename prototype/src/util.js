@@ -180,7 +180,7 @@ export function hash01(a, b = 0) {
  * `decay` shape it (it arrives faster than it leaves), `skip` is how often a slot is
  * simply still.
  */
-export const GUST = { slot: 8, attack: 1.2, decay: 4.4, calm: 0.35, peak: 1.5, skip: 0.12 };
+export const GUST = { slot: 8, attack: 1.2, decay: 4.4, calm: 0.65, peak: 1.5, skip: 0.12 };
 
 /** Gust number n: when it peaks and how hard (0 = this slot is still). */
 export function gustSlot(n, G = GUST) {

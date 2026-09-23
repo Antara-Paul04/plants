@@ -648,11 +648,10 @@ export async function growTree(M, q, env, opts = {}) {
   // then exactly what they were before wind existed, which is what an A/B needs.
   // The uniforms are SHARED by every material of this tree and handed back, so a host
   // can change the wind on a finished tree instead of paying for another build.
-  // 0.09 is visual-3d's default and NOT an art-direction decision. V0's 0.045 was never
-  // art-directed either, and the human could not see it at all on the new tree — whose
-  // clusters now pivot about their seats instead of drifting whole, so less of each one
-  // moves. With gusts this is ~0.03 in the calm and ~0.135 at the height of a strong one.
-  const WIND = num('wind', 0.09);
+  // A readable breeze between gusts, requested by the human on 2026-09-23.
+  // The calm floor lives in util.GUST; neither amplitude nor weather needs a pointer.
+  // This is motion tuning only: attachment points and wood remain fixed.
+  const WIND = num('wind', 0.16);
   // W3, DECIDED by the human (2026-09-20): "leaves swaying is enough." The WOOD IS
   // RIGID — as V0's was — so the bark material is deliberately never given the hook,
   // and the trunk, the buttress and their cast shadow stay exactly where they are.
@@ -828,7 +827,18 @@ export async function growTree(M, q, env, opts = {}) {
   // --- foliage, bloom, fruit -------------------------------------------------------
   const F = M.flowers;
   const stats = { leaves: null, flowers: null, fruit: null, winter: null, contrast: null };
-  let leafFall = null;
+  let leafFall = null, tapFall = null, motionTime = 0;
+  const leafFallOptions = {
+    fallSpeed: num('fallSpeed', .78), drift: num('fallDrift', 1.15), swing: num('fallSwing', .24),
+    ground: P.showGround
+      ? (x, z) => { const rad = Math.hypot(x, z); return rad < M.island.radiusAt(Math.atan2(z, x)) * .96 ? M.island.topY(rad) + .07 : null; }
+      : () => null,
+  };
+  function addTapLeaves(leaves) {
+    tapFall = M.leaves.buildLeafFall(leaves.instances, leaves.seats, { ...leafFallOptions, count: 21, automatic: false });
+    tree.add(tapFall.group);
+  }
+
   let dbgSpots = null, dbgBloom = null;
   const bloomGrade = ENV.bloom ? (c) => gradeColor(c, ENV.bloom) : null;
   const leafGrade = ENV.foliage ? (c) => gradeColor(c, ENV.foliage) : null;
@@ -874,9 +884,9 @@ export async function growTree(M, q, env, opts = {}) {
       // winter crown is sparse all over, not moth-eaten in patches.
       const stride = Math.max(1, Math.round(1 / leafAmount));
       const thinned = spots.filter((_, i) => i % stride === 0);
-      const lv = M.leaves.buildLeaves(skel.limbs, r, { spots: thinned, cluster });
-      lv.group.traverse(o => { if (o.isInstancedMesh) o.userData.sheddable = true; });
-    tree.add(lv.group);
+      const lv = M.leaves.buildLeaves(skel.limbs, r, { spots: thinned, cluster, keepInstances: true });
+      tree.add(lv.group);
+      addTapLeaves(lv);
       stats.leaves = lv.stats;
     }
     const carrier = q.get('winter') ?? (q.get('fruit') === '1' ? 'berries' : 'buds');
@@ -960,29 +970,22 @@ export async function growTree(M, q, env, opts = {}) {
     });
     stats.contrast = { target: +contrast.target.toFixed(2), flowerL: contrast.flowerL, foliageL: contrast.foliageL };
 
-    // AUTUMN sheds when the wind blows (leaves.js, buildLeafFall). Only autumn builds
-    // any of it: every other tree pays nothing, not a draw call and not a uniform.
+    // Autumn sheds automatically. Every leafy tree also has a small tap-triggered
+    // pool, using the same per-leaf geometry, colour, flight and ground contact.
     const LEAF_FALL = SEASON === 'autumn' && wind !== null && q.get('leafFall') !== '0';
     const lv = M.leaves.buildLeaves(skel.limbs, r, {
       spots, cluster,
       siteValue: contrast.scale,
       siteScale: F.foliageScales(spots, bloomSites, FOL), shrink: new Set(bloomSites.map((i) => spots[i])),
       debugShrink: q.get('debug') === 'bloomleaves',
-      keepInstances: LEAF_FALL,
+      keepInstances: true,
     });
-    lv.group.traverse(o => { if (o.isInstancedMesh) o.userData.sheddable = true; });
     tree.add(lv.group);
+    addTapLeaves(lv);
     stats.leaves = lv.stats;
     if (LEAF_FALL) {
-      const isl = M.island;
       leafFall = M.leaves.buildLeafFall(lv.instances, lv.seats, {
-        count: num('fallPool', 32), rate: num('fallRate', 0.16), fallSpeed: num('fallSpeed', 0.78),
-        drift: num('fallDrift', 1.15), swing: num('fallSwing', 0.24),
-        // It rests ON the grass, a blade's height up; past the island's edge there is no
-        // ground, and a leaf shed from the overhanging rim falls out of the picture.
-        ground: P.showGround
-          ? (x, z) => { const rad = Math.hypot(x, z); return rad < isl.radiusAt(Math.atan2(z, x)) * 0.96 ? isl.topY(rad) + 0.07 : null; }
-          : () => null,
+        ...leafFallOptions, count: num('fallPool', 32), rate: num('fallRate', .16),
       });
       tree.add(leafFall.group);
       stats.leafFall = leafFall.stats;
@@ -1022,6 +1025,7 @@ export async function growTree(M, q, env, opts = {}) {
     // its own fall, and a leaf lying on the lawn does not sway with the crown.
     const done = new Set([bark]);
     if (leafFall && leafFall.material) done.add(leafFall.material);
+    if (tapFall && tapFall.material) done.add(tapFall.material);
     tree.traverse((o) => {
       for (const m of [o.material].flat()) {
         if (!m || done.has(m)) continue;
@@ -1082,10 +1086,10 @@ export async function growTree(M, q, env, opts = {}) {
 
   return {
     tree, ground, skel, geo, thick, P, extents, season: SEASON, wind, faces,
-    petalColor: q.get('fc') || null,
-    // Per-frame work, if this tree has any (autumn's falling leaves): update(t). A pure
-    // function of t, so a host may call it as often or as rarely as it likes.
-    update: leafFall ? (t) => leafFall.update(t) : null,
+    // Both kinds of fall follow the renderer's pausable clock. Input only schedules
+    // a release; individual trajectories remain independent of frame rate.
+    shedLeaves: (point) => tapFall?.burst(motionTime, point),
+    update: (t) => { motionTime = t; leafFall?.update(t); tapFall?.update(t); },
     cloud: P.showCloud ? new THREE.Points(new THREE.BufferGeometry().setFromPoints(skel.cloud), new THREE.PointsMaterial({ size: 0.04, color: 0xd06a6a })) : null,
     spots: dbgSpots, bloomSites: dbgBloom,
     stats: { ...stats, phases, ground: groundInfo, wind: wind && { amp: WIND, yLo: +wind.yLo.value.toFixed(2), yHi: +wind.yHi.value.toFixed(2), pin: WIND_PIN > 0 ? WIND_PIN : 0 }, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },

@@ -1009,3 +1009,19 @@ Evidence, instruments and every number: `references/experiments/wood-workers-202
   worker build by exactly the throttle (`woodWorkerRepeat=N` puts it back, as an instrument only).
 - **Not done:** a resolution tier for small screens (the only thing that cuts the work; it changes
   what a tree is — Lead: not tonight), and cheaper grooves (not bit-identical).
+
+
+### Tap leaves share autumn’s motion — EXPERIMENT (2026-09-23)
+
+**DECIDED.** The human requested the existing autumn fall for tap interactions and a
+visible ambient breeze even without the cursor. See the D11 motion refinement.
+
+**EXPERIMENT.** `buildLeafFall` now has an explicit-release mode using the exact same
+individual leaves, flight and ground contact. Ordinary foliage and winter foliage
+record their leaf seats too. Autumn keeps its automatic gust-driven pool alongside
+the bounded tap pool. Detached leaves never receive the canopy sway shader.
+
+**EXPERIMENT.** The breeze’s calm multiplier is 0.65 and tree sway amplitude 0.16.
+Both are ambient constants. Browser checks use the saved Hacker News tree and the
+repository’s `synthetic-autumn.example` fixture; these are visual checks on a desktop,
+not a performance measurement on a phone.

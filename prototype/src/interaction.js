@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { petalGeometry } from "./flowers.js";
 
 export const isTap = (start, end) =>
   !!start &&
@@ -20,9 +19,6 @@ export function treeInteractions(canvas, camera, controls, uniforms, getShown) {
     enabled = true,
     pulse = 0,
     lastTap = -Infinity;
-  let detached = null,
-    pieces = [],
-    elapsed = 0;
   const target = (uniforms.touchPoint = {
     value: new THREE.Vector3(0, -100, 0),
   });
@@ -48,83 +44,14 @@ export function treeInteractions(canvas, camera, controls, uniforms, getShown) {
     target.value.copy(point);
     return true;
   }
-  function clearPieces() {
-    if (!detached) return;
-    detached.removeFromParent();
-    detached.geometry.dispose();
-    detached.material.dispose();
-    detached = null;
-    pieces = [];
-  }
-  function shed() {
-    clearPieces();
-    const shown = getShown(),
-      built = shown?.built;
-    if (!built?.tree || (built.season !== "autumn" && !built.stats?.flowers))
-      return;
-    // Reuse the project's own botanical geometry rather than inventing particles.
-    let source = null;
-    built.tree.traverse((o) => {
-      if (!source && o.isInstancedMesh && o.userData.sheddable) source = o;
-    });
-    if (!source) return;
-    const flowering = built.season !== "autumn";
-    const bloomSites = flowering ? built.bloomSites || [] : [];
-    const count = Math.min(7, flowering ? bloomSites.length : source.count);
-    if (!count) return;
-    const geometry = flowering
-      ? petalGeometry({ length: 0.17, width: 0.75, cup: 0.25 })
-      : source.geometry.clone();
-    const material = flowering
-      ? new THREE.MeshStandardMaterial({
-          color: built.petalColor
-            ? "#" + built.petalColor.replace("#", "")
-            : "#eee4ca",
-          roughness: 1,
-          side: THREE.DoubleSide,
-        })
-      : source.material.clone();
-    material.transparent = true;
-    // Do not carry the canopy's pinned sway onto detached leaves.
-    material.onBeforeCompile = () => {};
-    material.customProgramCacheKey = () => "detached-leaf-v1";
-    detached = new THREE.InstancedMesh(geometry, material, count);
-    detached.frustumCulled = false;
-    shown.env.scene.add(detached);
-    built.tree.updateMatrixWorld(true);
-    const matrix = new THREE.Matrix4();
-    pieces = Array.from({ length: count }, (_, i) => {
-      source.getMatrixAt(
-        Math.floor(((i + 0.5) * source.count) / count),
-        matrix,
-      );
-      matrix.premultiply(source.matrixWorld);
-      const position = new THREE.Vector3(),
-        rotation = new THREE.Quaternion(),
-        scale = new THREE.Vector3();
-      matrix.decompose(position, rotation, scale);
-      if (flowering) {
-        position
-          .copy(
-            built.spots[
-              bloomSites[Math.floor(((i + 0.5) * bloomSites.length) / count)]
-            ].pos,
-          )
-          .applyMatrix4(built.tree.matrixWorld);
-        scale.setScalar(1);
-      }
-      return { position, rotation, scale, phase: i * 1.73 };
-    });
-    elapsed = 0;
-  }
   function stir() {
     if (!enabled) return;
     const shown = getShown();
     if (!shown?.built?.tree) return;
     pulse = 1;
     const now = performance.now();
-    if (now - lastTap > 1600) {
-      shed();
+    if (now - lastTap > 900) {
+      shown.built.shedLeaves?.(target.value);
       lastTap = now;
     }
   }
@@ -185,10 +112,6 @@ export function treeInteractions(canvas, camera, controls, uniforms, getShown) {
     ["keydown", onKey],
   ];
   for (const [name, fn] of events) canvas.addEventListener(name, fn);
-  const matrix = new THREE.Matrix4(),
-    p = new THREE.Vector3(),
-    q = new THREE.Quaternion(),
-    axis = new THREE.Vector3(1, 0.3, 0.5).normalize();
   return {
     stir,
     setEnabled(value) {
@@ -197,13 +120,12 @@ export function treeInteractions(canvas, camera, controls, uniforms, getShown) {
         hovering = false;
         pulse = 0;
         strength.value = 0;
-        clearPieces();
       }
     },
     reset() {
-      clearPieces();
       hovering = false;
       pulse = 0;
+      lastTap = -Infinity;
       strength.value = 0;
     },
     update(dt) {
@@ -211,32 +133,9 @@ export function treeInteractions(canvas, camera, controls, uniforms, getShown) {
       strength.value +=
         ((hovering ? 0.75 : 0) + pulse * 2.6 - strength.value) *
         (1 - Math.exp(-dt * 9));
-      if (!detached || !enabled) return;
-      elapsed += dt;
-      if (elapsed > 3.4) {
-        clearPieces();
-        return;
-      }
-      materialOpacity(detached.material, elapsed);
-      pieces.forEach((it, i) => {
-        p.copy(it.position);
-        p.y -= elapsed * 0.72;
-        p.x += Math.sin(elapsed * 2 + it.phase) * elapsed * 0.18;
-        p.z += elapsed * 0.13;
-        q.setFromAxisAngle(axis, elapsed * 1.4 + it.phase).multiply(
-          it.rotation,
-        );
-        matrix.compose(p, q, it.scale);
-        detached.setMatrixAt(i, matrix);
-      });
-      detached.instanceMatrix.needsUpdate = true;
     },
     dispose() {
-      clearPieces();
       for (const [name, fn] of events) canvas.removeEventListener(name, fn);
     },
   };
-}
-function materialOpacity(material, t) {
-  material.opacity = Math.min(1, Math.max(0, (3.4 - t) / 0.7));
 }

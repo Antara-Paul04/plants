@@ -282,3 +282,20 @@ miniature scenes. This is an implementation for human review, not a new fixed ar
 **OPEN.** Saved images are immutable; saved interactive geometry uses renderer
 contract version 1. Future changes to DNA interpretation or geometry need a versioned
 renderer/migration policy before shipping. Do not silently reinterpret old snapshots.
+
+
+### D11 motion refinement — 2026-09-23
+
+**DECIDED — human request.** Tap-triggered leaves should fall like the existing autumn
+leaves, with a breeze that is visible without cursor interaction.
+
+**EXPERIMENT.** Every leafy tree now uses the same individual-leaf seats, geometry,
+colours, accelerating fall, sideways flutter, tumbling and turf contact as autumn.
+The earlier cluster/petal tap overlay is removed. A separate 21-leaf pool accepts
+seven leaves per tap, so tapping cannot interrupt the automatic autumn pool and
+repeated taps cannot grow an unbounded pile. Pausing freezes both on the renderer clock.
+
+**EXPERIMENT.** Foliage sway amplitude is 0.16 and the calm gust multiplier is 0.65;
+the existing gust timing and peak multiplier remain. These are visual tuning values,
+not website measurements. They keep a gentle breeze visible between stronger gusts.
+Wood remains rigid, and reduced-motion preferences still start paused.

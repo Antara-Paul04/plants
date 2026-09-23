@@ -4,7 +4,8 @@
 
 **EXPERIMENT — implemented on `codex/living-trees`, 2026-09-23.** A quieter responsive
 shell, explicit reading/building/error states, leaf hover response, tap/keyboard
-reactions, and motion controls. The old tree stays visible while another loads.
+reactions, and motion controls. Taps now reuse autumn’s individual-leaf flight and
+landing on every leafy tree; the ambient breeze has a stronger calm floor. The old tree stays visible while another loads.
 Public trait explanations and debug navigation have been removed (D11).
 
 **EXPERIMENT.** Share creates a 1200×630 PNG of the displayed tree and stores its DNA,
@@ -14,7 +15,8 @@ HTML OG/X metadata. Blob storage is connected; local development uses `tmp/share
 **EXPERIMENT — verified.** Automated regressions cover analysis scopes, optional
 motion sampling, browser recovery, cancellation/deadlines, URL handling, same-brand
 checks, link-free pages, stale renderer builds, capture queues, reduced motion,
-share validation, storage and metadata. Browser checks cover live HN generation,
+share validation, storage and metadata. Leaf-fall regressions cover original colour/size,
+landing, frame-rate independence, bounded repeated taps and automatic autumn shedding. Browser checks cover live HN generation,
 share/reopen, desktop, 390×844 and 320×568 layouts, and day/night scenes. Blob write/read
 was also exercised with an actual renderer postcard. The Vercel preview passed live
 generation, rotated-tree sharing, public initial-HTML metadata and PNG retrieval. See `npm test` and the PR checks.

@@ -18,10 +18,14 @@ test("motion pause suppresses reactions and listeners are cleaned up", () => {
     };
   const camera = new THREE.PerspectiveCamera(),
     controls = { target: new THREE.Vector3(), update() {} };
+  let releases = 0;
   const uniforms = {},
     shown = {
       built: {
         tree: new THREE.Group(),
+        shedLeaves() {
+          releases++;
+        },
         extents: { targetY: 3 },
         stats: {},
         season: "normal",
@@ -37,10 +41,12 @@ test("motion pause suppresses reactions and listeners are cleaned up", () => {
   interaction.stir();
   interaction.update(0.1);
   assert.ok(uniforms.touchStrength.value > 0);
+  assert.equal(releases, 1);
   interaction.setEnabled(false);
   interaction.stir();
   interaction.update(0.1);
   assert.equal(uniforms.touchStrength.value, 0);
+  assert.equal(releases, 1);
   interaction.dispose();
   assert.equal(events.size, 0);
 });
