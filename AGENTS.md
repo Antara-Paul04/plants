@@ -124,6 +124,26 @@ taken before you build on it. A measurement with no instrument recorded is an an
 
 This rule is descriptive of mistakes already made, not a hypothetical. Four for four.
 
+### R13. Never deploy from the CLI. Push to `main`.
+
+The Vercel project is Git-connected and its **production branch is `main`**. A push
+to `main` deploys production on its own. Running `vercel deploy --prod` on top builds
+the SAME commit a second time.
+
+In one day this cost 56 deployments — 29 CLI and 27 Git, mostly duplicates of each
+other. Each `plants` deployment parks its own copy of the function bundle, and that
+bundle is ~76 MB because `@sparticuz/chromium` ships a 58 MB compressed browser.
+124 retained deployments put Functions Storage at 11.66 GB against a 10 GB limit, and
+the account stopped accepting new ones. Deployment count is not the scarce resource;
+the storage each deployment holds for 30 days is.
+
+So: land work on `main` and let the push deploy it. Do not run `vercel deploy`.
+
+A corollary, learned the same day: work parked on a side branch never reaches
+production by itself. `codex/living-trees` built fourteen PREVIEW deployments and the
+live site only carried its work because someone forced it there from the CLI. If it is
+meant to be live, it belongs on `main`.
+
 ---
 
 ## 3. Operating model
