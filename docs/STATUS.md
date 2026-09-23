@@ -2,6 +2,8 @@
 
 ## Current work
 
+**DECIDED.** Public name: **Site Bonsai** (D12), live at `sitebonsai.vercel.app`.
+
 **EXPERIMENT — implemented on `codex/living-trees`, 2026-09-23.** A quieter responsive
 shell, explicit reading/building/error states, leaf hover response, tap/keyboard
 reactions, and motion controls. Taps now reuse autumn’s individual-leaf flight and

@@ -119,6 +119,8 @@ test("shared page supplies unique initial HTML metadata and escapes embedded dat
   const html = treePage(template, snapshot, id, "https://plants.example");
   assert.ok(html.includes(`https://plants.example/t/${id}/image.png`));
   assert.ok(html.includes("summary_large_image"));
+  assert.ok(html.includes('og:site_name" content="Site Bonsai"'));
+  assert.ok(html.includes('grew this tree — Site Bonsai</title>'));
   assert.ok(html.includes("window.__PLANTS_TREE__="));
   assert.ok(!html.includes("<script>alert(1)</script>"));
   assert.ok(!html.includes("sitebonsai.vercel.app/og.png"));

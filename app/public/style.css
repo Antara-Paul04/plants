@@ -102,7 +102,7 @@ body.night {
     500 44px/0.85 Georgia,
     "Times New Roman",
     serif;
-  letter-spacing: -2.8px;
+  letter-spacing: -1.7px;
   margin: 0;
 }
 .wordmark-dot {
@@ -389,7 +389,7 @@ h2 {
     top: max(22px, env(safe-area-inset-top));
   }
   .masthead h1 {
-    font-size: 38px;
+    font-size: 30px;
   }
   .masthead p {
     font-size: 10px;

@@ -69,7 +69,7 @@ function setTheme(dna) {
 
 function commit(data, { example = false, shared = false } = {}) {
   current = { ...data, example };
-  document.title = example ? "Plants — a little life from any website" : `${data.domain} grew this tree — Plants`;
+  document.title = example ? "Site Bonsai — a little life from any website" : `${data.domain} grew this tree — Site Bonsai`;
   setTheme(data.dna);
   $("domain").textContent = data.domain;
   $("caption").textContent = example

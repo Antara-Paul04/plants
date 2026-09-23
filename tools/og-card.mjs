@@ -66,7 +66,7 @@ await page.setContent(`<style>
     overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 <div class="scene"></div>
-<div class="type"><h1>Plants</h1><div class="tag">every website grows differently</div></div>
+<div class="type"><h1>Site Bonsai</h1><div class="tag">every website grows differently</div></div>
 <div class="foot"><div class="lbl">same tool, three other sites</div>
   <div class="mini">${MINI.map(s => `<figure><img src="data:image/jpeg;base64,${b64(s)}"><figcaption>${s}</figcaption></figure>`).join('')}</div>
 </div>`);

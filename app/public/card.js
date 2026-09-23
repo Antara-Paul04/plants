@@ -11,7 +11,7 @@ export async function makeCard(frame, domain, night) {
   ctx.drawImage(image, 0, 0, 1200, 630);
   ctx.fillStyle = night ? "#eeeede" : "#2e3b2e";
   ctx.font = "42px Georgia, serif";
-  ctx.fillText("plants.", 50, 62);
+  ctx.fillText("site bonsai.", 50, 62);
   ctx.font = "18px system-ui, sans-serif";
   ctx.fillStyle = night ? "#cbd6c0" : "#52644d";
   ctx.fillText("a little life from any website", 52, 93);

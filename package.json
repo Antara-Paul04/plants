@@ -1,5 +1,5 @@
 {
-  "name": "plants",
+  "name": "site-bonsai",
   "private": true,
   "type": "module",
   "description": "Paste a website URL, get a tree grown from its visual design.",

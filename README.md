@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="docs/images/hero.png" alt="The Plants web app: a 3D tree covered in red blossom on a floating grass island, with an input box reading art.yale.edu" width="840">
+<img src="docs/images/hero.png" alt="The Site Bonsai web app: a 3D tree covered in red blossom on a floating grass island, with an input box reading art.yale.edu" width="840">
 
-# 🌳 plants
+# 🌳 Site Bonsai
 
 ### Paste a website. Watch a tree grow out of it.
 

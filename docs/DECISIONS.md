@@ -322,3 +322,10 @@ the shared motion clock and pause/reduced-motion settings; no new public explana
 
 **DECIDED — superseding human request, 2026-09-24.** Remove both butterflies and
 fireflies. Retain the laptop layout, ambient breeze and tap-triggered leaf fall.
+
+## D12 — Site Bonsai
+
+**DECIDED — human request, 2026-09-24.** The project is named **Site Bonsai**.
+Public wordmarks, page titles, metadata, new postcards and the homepage social image
+use this name. The existing `sitebonsai.vercel.app` address remains the production URL.
+Previously saved postcard images remain immutable.
