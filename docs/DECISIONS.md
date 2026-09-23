@@ -329,3 +329,15 @@ fireflies. Retain the laptop layout, ambient breeze and tap-triggered leaf fall.
 Public wordmarks, page titles, metadata, new postcards and the homepage social image
 use this name. The existing `sitebonsai.vercel.app` address remains the production URL.
 Previously saved postcard images remain immutable.
+
+## D13 — Shareable cards, clips and always-on garden motion
+
+**Status: DECIDED — human direction, 2026-09-24.** Replace the vague share-card
+question with sitebonsai.vercel.app, improve the composition and button alignment,
+and offer a short video of the tree. Remove the pause button and reduced-motion
+preference handling. Internal pauses while creating still images remain.
+
+**EXPERIMENT.** The new card pairs editorial text with a right-aligned tree. Video
+exports six seconds at 1200×630 using the same composition; MP4 is preferred when
+the browser can encode it, with WebM fallback. Clips download locally and must be
+attached manually to an X post. Existing saved postcards remain immutable.

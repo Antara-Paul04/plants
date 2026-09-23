@@ -6,7 +6,7 @@
 
 **EXPERIMENT — implemented on `codex/living-trees`, 2026-09-23.** A quieter responsive
 shell, explicit reading/building/error states, leaf hover response, tap/keyboard
-reactions, and motion controls. Taps now reuse autumn’s individual-leaf flight and
+reactions. Taps now reuse autumn’s individual-leaf flight and
 landing on every leafy tree; the ambient breeze has a stronger calm floor. The old tree stays visible while another loads.
 The island's soil body now has a smooth curved profile and continuous shading.
 Night stars are sparse and faint; softer moonlight reduces the bright silver rim.
@@ -15,16 +15,19 @@ The visible drag hint is removed. Butterflies and fireflies were removed at the
 human's request; ambient breeze and tap-triggered leaf fall remain (D11).
 Public trait explanations and debug navigation have been removed (D11).
 A matching 404 page handles unknown routes and missing tree links, with a home link
-that works without JavaScript and a decorative, pausable living island. Blob misses
+that works without JavaScript and a decorative living island. Blob misses
 are recognized by SDK error type; storage failures retain their error response.
 
 **EXPERIMENT.** Share creates a 1200×630 PNG of the displayed tree and stores its DNA,
-full URL and camera. `/t/:id` opens saved data without re-analysis and supplies initial
+full URL and camera. The redesigned card uses a left text column, tree on the right,
+and sitebonsai.vercel.app. Sharing also offers a six-second video download with playback
+preview (MP4 where supported, WebM fallback). Pause controls and OS reduced-motion
+handling are removed at the human’s request. `/t/:id` opens saved data without re-analysis and supplies initial
 HTML OG/X metadata. Blob storage is connected; local development uses `tmp/shared-trees`.
 
 **EXPERIMENT — verified.** Automated regressions cover analysis scopes, optional
 motion sampling, browser recovery, cancellation/deadlines, URL handling, same-brand
-checks, link-free pages, stale renderer builds, capture queues, reduced motion,
+checks, link-free pages, stale renderer builds, capture queues,
 share validation, storage and metadata. Leaf-fall regressions cover original colour/size,
 landing, frame-rate independence, bounded repeated taps and automatic autumn shedding. Browser checks cover live HN generation,
 share/reopen, desktop, 390×844 and 320×568 layouts, and day/night scenes. Blob write/read

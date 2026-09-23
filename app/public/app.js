@@ -1,5 +1,5 @@
 import { mountIdle } from "/tree/main.js";
-import { makeCard } from "/card.js";
+import { makeCard, paintCard } from "/card.js";
 
 const $ = (id) => document.getElementById(id);
 const input = $("url"),
@@ -16,7 +16,7 @@ let tree,
   shareGeneration = 0;
 let busy = false,
   shareFile = null,
-  motionPaused = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  motionPaused = false;
 const initialSnapshot = window.__PLANTS_TREE__;
 
 function setState(phase, message, retry = false) {
@@ -192,22 +192,7 @@ $("form").addEventListener("submit", (e) => {
 });
 input.addEventListener("input", () => input.removeAttribute("aria-invalid"));
 $("retry").addEventListener("click", () => grow(lastRaw));
-$("motion").addEventListener("click", () => {
-  motionPaused = !motionPaused;
-  updateMotion();
-});
-function updateMotion() {
-  tree?.setMotion(!motionPaused);
-  $("motion").textContent = motionPaused ? "Play motion" : "Pause motion";
-  $("motion").setAttribute("aria-pressed", String(motionPaused));
-}
-matchMedia("(prefers-reduced-motion: reduce)").addEventListener(
-  "change",
-  (e) => {
-    motionPaused = e.matches;
-    updateMotion();
-  },
-);
+function updateMotion() { tree?.setMotion(!motionPaused); }
 
 function closeShare() {
   ++shareGeneration;
@@ -228,6 +213,8 @@ dialog.addEventListener("click", (e) => {
 });
 dialog.addEventListener("close", () => {
   ++shareGeneration;
+  $("videoPreview").pause();
+  if (videoUrl) { URL.revokeObjectURL(videoUrl); videoUrl = null; }
   tree?.setMotion(!motionPaused);
 });
 $("shareBtn").addEventListener("click", async () => {
@@ -235,6 +222,9 @@ $("shareBtn").addEventListener("click", async () => {
   const mine = ++shareGeneration,
     snapshot = current;
   shareFile = null;
+  $("videoPreview").pause();
+  $("videoPreview").removeAttribute("src");
+  $("videoPreview").hidden = true;
   dialog.showModal();
   tree.setMotion(false);
   $("sharePreview").hidden = true;
@@ -246,9 +236,10 @@ $("shareBtn").addEventListener("click", async () => {
   $("copyLink").disabled = true;
   $("copyLink").textContent = "Copy link";
   $("saveImage").disabled = true;
+  $("saveVideo").disabled = true;
   try {
     const camera = tree.getPose();
-    const frame = await tree.capture({ width: 1200, height: 630 });
+    const frame = await tree.capture({ width: 1200, height: 630, card: true });
     const card = await makeCard(
       frame,
       snapshot.domain,
@@ -260,10 +251,11 @@ $("shareBtn").addEventListener("click", async () => {
     $("previewStatus").hidden = true;
     shareFile = new File(
       [await (await fetch(card)).blob()],
-      `plants-${snapshot.domain}.png`,
+      `site-bonsai-${snapshot.domain}.png`,
       { type: "image/png" },
     );
     $("saveImage").disabled = false;
+    $("saveVideo").disabled = !window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream;
     const response = await fetch("/api/share", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -317,6 +309,69 @@ $("saveImage").addEventListener("click", () => {
   a.download = shareFile.name;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+});
+
+let recording = false, videoUrl = null;
+$("saveVideo").addEventListener("click", async () => {
+  if (recording || !current) return;
+  const mine = shareGeneration, snapshot = current;
+  const button = $("saveVideo");
+  recording = true; button.disabled = true;
+  const canvas = document.createElement("canvas");
+  canvas.width = 1200; canvas.height = 630;
+  const ctx = canvas.getContext("2d");
+  let stream, recorder;
+  try {
+    const mime = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']
+      .find(type => MediaRecorder.isTypeSupported(type));
+    if (!mime) throw new Error('Video recording is unavailable in this browser.');
+    const draw = () => tree.capture({ width: 1200, height: 630, card: true,
+      draw: frame => paintCard(ctx, frame, snapshot.domain, tree.envName === 'night') });
+    if (!await draw()) throw new Error('Could not capture the tree.');
+    stream = canvas.captureStream(24);
+    recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6000000 });
+    const chunks = [];
+    recorder.ondataavailable = event => { if (event.data.size) chunks.push(event.data); };
+    const stopped = new Promise((resolve, reject) => {
+      recorder.onstop = resolve;
+      recorder.onerror = () => reject(new Error('Video recording failed.'));
+    });
+    stopped.catch(() => {}); // The main path reports errors after stopping.
+    // Resume the garden while recording the animated card.
+    tree.setMotion(true);
+    recorder.start();
+    const start = performance.now();
+    while (performance.now() - start < 6000 && mine === shareGeneration && !document.hidden) {
+      const left = Math.max(1, Math.ceil((6000 - (performance.now() - start)) / 1000));
+      button.textContent = `Recording… ${left}s`;
+      $("shareStatus").textContent = 'Making a six-second clip. Keep this tab open.';
+      if (!await draw()) throw new Error('Could not capture the tree.');
+      await new Promise(resolve => setTimeout(resolve, 1000 / 24));
+    }
+    recorder.stop();
+    await stopped;
+    if (mine !== shareGeneration) return;
+    if (document.hidden) throw new Error('Recording stopped. Keep this tab open and try again.');
+    const blob = new Blob(chunks, { type: recorder.mimeType });
+    if (!blob.size) throw new Error('The clip was empty. Please try again.');
+    const link = document.createElement('a');
+    if (videoUrl) URL.revokeObjectURL(videoUrl);
+    videoUrl = URL.createObjectURL(blob);
+    link.href = videoUrl;
+    $("videoPreview").src = link.href;
+    $("videoPreview").hidden = false;
+    $("sharePreview").hidden = true;
+    link.download = `site-bonsai-${snapshot.domain}.${mime.startsWith('video/mp4') ? 'mp4' : 'webm'}`;
+    link.click();
+    $("shareStatus").textContent = 'Clip saved. Attach it to your post on X.';
+  } catch (error) {
+    if (mine === shareGeneration) $("shareStatus").textContent = error.message || 'Could not record. Please try again.';
+  } finally {
+    if (recorder?.state === 'recording') recorder.stop();
+    stream?.getTracks().forEach(track => track.stop());
+    tree?.setMotion(dialog.open ? false : !motionPaused);
+    recording = false; button.disabled = false; button.textContent = 'Save video';
+  }
 });
 
 async function start() {

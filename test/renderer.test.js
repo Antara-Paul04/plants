@@ -159,3 +159,16 @@ test("disposing resolves outstanding captures and cancels pending builds", async
   assert.equal(await a, null);
   assert.equal(await t.handle.capture(), null);
 });
+test("video frames are drawn at export size before restoring the live canvas", async () => {
+  const t = setup();
+  await t.handle.ready;
+  let captured;
+  const frame = t.handle.capture({ width: 1200, height: 630, card: true,
+    draw: canvas => { captured = [canvas.width, canvas.height]; } });
+  t.frames.shift()();
+  assert.equal(await frame, true);
+  assert.deepEqual(captured, [1200, 630]);
+  assert.equal(t.canvas.width, 800);
+  assert.equal(t.canvas.height, 600);
+  t.handle.dispose();
+});

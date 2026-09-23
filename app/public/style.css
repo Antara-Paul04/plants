@@ -317,7 +317,7 @@ dialog {
   border: 1px solid var(--edge);
   border-radius: 26px;
   padding: 24px;
-  width: min(540px, calc(100% - 24px));
+  width: min(720px, calc(100% - 24px));
   max-height: calc(100dvh - 24px);
   box-shadow: 0 24px 100px #0003;
   overflow: auto;
@@ -356,7 +356,7 @@ h2 {
   display: grid;
   place-items: center;
 }
-.card-preview img {
+.card-preview img, .card-preview video {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -373,7 +373,7 @@ h2 {
 }
 .share-actions {
   display: grid;
-  grid-template-columns: 1.15fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 }
 .share-actions button,
@@ -475,14 +475,6 @@ h2 {
     display: none;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-}
 @media (min-width: 1000px) {
   .garden-controls {
     left: 48px;
@@ -504,3 +496,8 @@ h2 {
   .dock { padding: 21px; }
   .footnote { text-align: left; }
 }
+
+.close-button { display: grid; place-items: center; padding: 0; flex: 0 0 36px; }
+.close-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.share-actions a, .share-actions button { display: flex; align-items: center; justify-content: center; min-height: 46px; }
+@media (max-width: 600px) { .share-actions a { grid-column: auto; } }

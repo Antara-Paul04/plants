@@ -298,12 +298,13 @@ function mountTreeNew(canvas, dna, opts = {}) {
         shot.position.sub(controls.target).normalize().multiplyScalar(DIST0).add(controls.target);
         fitCamera(shot, extents, width / height, DIST0, 1.2, rig);
         shot.lookAt(rig.target);
-        shot.setViewOffset(width, height, 0, 24, width, height); // leave room for the postcard caption
+        shot.setViewOffset(width, height, request.options?.card ? -width * 0.16 : 0, request.options?.card ? 0 : 24, width, height);
         const ratio = renderer.getPixelRatio();
         try {
           renderer.setPixelRatio(1); renderer.setSize(width, height, false);
           renderer.render(shown.env.scene, shot);
-          request.resolve(canvas.toDataURL('image/png'));
+          if (request.options.draw) { request.options.draw(canvas); request.resolve(true); }
+          else request.resolve(canvas.toDataURL('image/png'));
         } finally {
           renderer.setPixelRatio(ratio); lastFit = ''; resize();
           renderer.render(shown.env.scene, camera);

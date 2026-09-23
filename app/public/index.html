@@ -59,14 +59,7 @@
           <h1>site bonsai<span class="wordmark-dot">.</span></h1>
           <p>a little life from any website</p>
         </div>
-        <button
-          id="motion"
-          class="quiet-button"
-          type="button"
-          aria-pressed="false"
-        >
-          Pause motion
-        </button>
+
       </header>
       <div class="garden-controls">
         <section class="result" id="result" hidden aria-label="Your tree">
@@ -122,11 +115,12 @@
           class="close-button"
           aria-label="Close share dialog"
         >
-          ×
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
         </button>
       </div>
       <div class="card-preview">
         <img id="sharePreview" alt="Your tree’s share card" hidden />
+        <video id="videoPreview" controls playsinline loop hidden aria-label="Your tree video"></video>
         <p id="previewStatus" role="status">Making your postcard…</p>
       </div>
       <p id="shareStatus" role="status">Your tree, just as you left it.</p>
@@ -137,10 +131,11 @@
           target="_blank"
           rel="noopener noreferrer"
           aria-disabled="true"
-          >Share on X ↗</a
+          >Share on X</a
         >
         <button id="copyLink" type="button" disabled>Copy link</button>
         <button id="saveImage" type="button" disabled>Save image</button>
+        <button id="saveVideo" type="button" disabled>Save video</button>
       </div>
     </dialog>
     <script type="module" src="/app.js"></script>
