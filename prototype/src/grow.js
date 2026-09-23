@@ -232,34 +232,22 @@ function envTable(q) {
         // still gives the island's underside something to be dark against
         // without washing the sky the stars live in.
         skyBelow: q.get('nightGlow') === '0' ? null : { color: 0x1b2a55, from: 0.55, to: 1.0 },
-        glow: { color: 0xcdd9ff, power: 9, size: 6, dir: [-5.2, 7.4, 6.2] },
-        // Near-white, from the front quarter: a saturated blue key is absorbed by
-        // warm wood (black wood, wet blue sheen), and a pure backlight leaves a
-        // silhouette. A soft-edged SPOT, so the light pools and falls away.
-        // A DIRECTIONAL KEY, not a spot. The moon is 384,000 km away; its light
-        // does not pool. A soft-edged spot was chosen to keep the tree brighter
-        // than its surroundings, and it worked, but a visible cone on the turf
-        // reads as a stage light rather than as night — "a random source of
-        // light on the tree". Separation now comes from where the light is and
-        // how dark everything else is, which is what the night rule said in the
-        // first place: colour, direction and contrast. `nightSpot=1` restores
-        // the pool for an A/B.
+        glow: { color: 0xd4dcf0, power: 3.2, size: 10, dir: [-5.2, 7.4, 6.2] },
+        // Broad, quiet moonlight. Keep the rear light below the front key so
+        // pale leaves and flowers do not acquire a bright silver outline.
+        // `nightSpot=1` retains the older spotlight for debug comparisons.
         key: q.get('nightSpot') === '1'
-          ? { color: 0xc9d6ff, intensity: L.key, dir: [-5.2, 7.4, 6.2], shadowRadius: 1.6, spot: { angle: L.angle, penumbra: 1.0 } }
-          : { color: 0xc9d6ff, intensity: L.key * 0.42, dir: [-5.2, 7.4, 6.2], shadowRadius: 2.2, shadowMap: 2048 },
-        // A real sky, not an empty one. `stars=0` turns them off.
+          ? { color: 0xd4dcf0, intensity: L.key, dir: [-5.2, 7.4, 6.2], shadowRadius: 1.6, spot: { angle: L.angle, penumbra: 1.0 } }
+          : { color: 0xd4dcf0, intensity: L.key * 0.28, dir: [-5.2, 7.4, 6.2], shadowRadius: 2.2, shadowMap: 2048 },
+        // Sparse, faint points stay behind the tree visually. `stars=0` hides them.
         stars: q.get('stars') === '0' ? null : { layers: [
-          // The camera sees a narrow cone of the dome, so a few hundred stars
-          // over a whole hemisphere put about fifteen in frame. These counts are
-          // chosen for what lands in SHOT, not for what exists.
-          { count: 2300, size: 2.0, brightness: 0.55 },
-          { count: 620,  size: 3.0, brightness: 1.0  },
-          { count: 95,   size: 4.4, brightness: 1.6  },
+          { count: 1000, size: 1.2, brightness: 0.14 },
+          { count: 180,  size: 1.7, brightness: 0.22 },
+          { count: 16,   size: 2.2, brightness: 0.32 },
         ] },
-        // The silver edge, from behind — an EDGE, not a second key.
-        fill: { color: 0xdfe8ff, intensity: L.edge, dir: [5.2, 4.6, -7.0] },
-        // A faint warm kicker keeps the wood reading as wood rather than slate.
-        rim: { color: 0xffc890, intensity: L.kick, dir: [7.0, 1.8, 3.0] },
+        fill: { color: 0xdfe8ff, intensity: L.edge * 0.28, dir: [5.2, 4.6, -7.0] },
+        // A trace of warmth preserves the wood without a second obvious light.
+        rim: { color: 0xffc890, intensity: L.kick * 0.5, dir: [7.0, 1.8, 3.0] },
         ground: { sat: 0.5, value: L.ground, tint: 0x5f7fae, tintAmt: 0.2 },
         // Desaturated toward sage, but kept clearly GREEN: all the way to silver
         // reads as frost, which is a season and not a time of day.

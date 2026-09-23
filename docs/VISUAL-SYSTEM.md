@@ -1075,3 +1075,15 @@ existing tree motion remain.
 uses a softly tinted rounded surface and accent underline on focus, replacing the
 hard rectangular outline. The underline remains visible for keyboard navigation
 in both day and night themes.
+
+### Night refinement — 2026-09-24
+
+**DECIDED.** The human wants stars to recede behind the tree and less artificial
+light on night trees. This supersedes the previous night brightness tuning.
+
+**EXPERIMENT.** Reduced star density, point size and brightness; reduced direct
+moonlight and especially rear fill; broadened the environment emitter while
+reducing its power and blue saturation. Exposure and the under-island sky remain
+unchanged. Visually checked Linear's gallery tree at 1280×720 from the default
+and a rotated view. This is a focused visual check, not a multi-seed measurement
+or human approval of the exact light levels.
