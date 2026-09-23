@@ -9,7 +9,9 @@ shell, explicit reading/building/error states, leaf hover response, tap/keyboard
 reactions. Taps now reuse autumn’s individual-leaf flight and
 landing on every leafy tree; the ambient breeze has a stronger calm floor. The old tree stays visible while another loads.
 The island's soil body now has a smooth curved profile and continuous shading.
-Night stars are sparse and faint; softer moonlight reduces the bright silver rim.
+Night stars are sparse and faint; a brighter blue sky and diffuse fill restore
+tree visibility while retaining the soft rim. Flower meshes use smaller open
+cluster sprays and finer centres (visual tuning remains experimental).
 Laptop controls sit to the left of a larger tree; mobile retains the bottom dock.
 The visible drag hint is removed. Butterflies and fireflies were removed at the
 human's request; ambient breeze and tap-triggered leaf fall remain (D11).

@@ -211,7 +211,7 @@ function envTable(q) {
         // The sky sits DARKER than the lit tree, so the tree is the brightest thing
         // in the frame; still a little lighter toward the horizon, because that
         // band is what the shadow side is read against.
-        skyTop: 0x03050b, skyHorizon: 0x0c1426, skyGround: 0x05070d,
+        skyTop: 0x0c1525, skyHorizon: 0x26364b, skyGround: 0x111c2b,
         // THE ISLAND'S UNDERSIDE IS READ AGAINST THE SKY BELOW IT (L17). The night was
         // judged on a frame cropped at the turf, so nobody had seen the soil body at
         // night: it faces away from the moon, sits at the dim edge of the pool by
@@ -255,6 +255,7 @@ function envTable(q) {
         // Bloom and fruit carry the WEBSITE's colour, so they keep more of it than the
         // leaves do: a little cooled, barely desaturated.
         bloom: { sat: 0.9, value: L.leaf * 1.2, tint: 0xa9c6dc, tintAmt: 0.06 },
+        ambient: { sky: 0xd6e0ee, ground: 0x737d79, intensity: 0.6 },
         env: L.env, exposure: L.exp, tone: 'aces',
       };
     })(),
@@ -441,6 +442,10 @@ export function createEnvironment(renderer, q, P) {
   scene.add(key, key.target);
 
   const lights = [key];
+  if (ENV.ambient) {
+    const a = new THREE.HemisphereLight(ENV.ambient.sky, ENV.ambient.ground, ENV.ambient.intensity);
+    scene.add(a); lights.push(a);
+  }
   for (const L of [ENV.fill, ENV.rim]) {
     if (!L) continue;
     const d = new THREE.DirectionalLight(L.color, L.intensity);
