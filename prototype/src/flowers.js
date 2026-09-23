@@ -1002,7 +1002,7 @@ function budSprayGeometry(r, col, scaleCol, terminal, size, look = {}) {
  * flat probability, so the underside of the tree stays clear.
  */
 export function buildSnow(spots, r, opts = {}) {
-  const { amount = 0.45, size = 1, grade = null, color = 0xeaf1fa } = opts;
+  const { amount = 0.72, size = 1, grade = null, color = 0xeaf1fa } = opts;
   const group = new THREE.Group();
   if (!spots.length) return { group, stats: { caps: 0, triangles: 0 } };
 
@@ -1017,7 +1017,7 @@ export function buildSnow(spots, r, opts = {}) {
   for (const sp of spots) {
     const up = clamp((sp.pos.y - lo) / span, 0, 1);
     // Flat `amount` at the crown's top, tapering to a fifth of it underneath.
-    if (r() < amount * lerp(0.38, 1, up)) chosen.push(sp);
+    if (r() < amount * lerp(0.45, 1, up)) chosen.push(sp);
   }
   if (!chosen.length) return { group, stats: { caps: 0, triangles: 0 } };
 
@@ -1025,21 +1025,25 @@ export function buildSnow(spots, r, opts = {}) {
   // geometry that has a colour attribute, and without one the shader reads
   // black and multiplies the whole cap to black. It has to be written in.
   const top = new THREE.Color(color);
-  const under = new THREE.Color(color).lerp(new THREE.Color(0x9fb4cc), 0.55);
+  const under = new THREE.Color(color).lerp(new THREE.Color(0xb9c8d8), 0.3);
   if (grade) { grade(top); grade(under); }
 
   const VARIANTS = 3;
   const geos = [];
   for (let v = 0; v < VARIANTS; v++) {
-    const g = new THREE.IcosahedronGeometry(1, 1);
+    // DETAIL 2, NOT 1. At detail 1 the facets are large enough to catch the key
+    // individually and the cap reads as a chunk of quartz — "what snow is this".
+    // Snow is soft: rounder silhouette, and a jitter small enough to break the
+    // sphere without cutting planes into it.
+    const g = new THREE.IcosahedronGeometry(1, 2);
     const pos = g.attributes.position;
     const cols = [];
     const c = new THREE.Color();
     for (let i = 0; i < pos.count; i++) {
       const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-      const j = 0.82 + r() * 0.36;
+      const j = 0.93 + r() * 0.13;
       // Squashed hard in Y: a drift, not a snowball.
-      pos.setXYZ(i, x * j, y * j * 0.58, z * j);
+      pos.setXYZ(i, x * j, y * j * 0.46, z * j);
       // Sky-facing snow is lit; the underside picks up the cold bounce from
       // whatever it is lying on. Cheaper than a second material and it keeps the
       // low-poly facets reading.
@@ -1063,13 +1067,16 @@ export function buildSnow(spots, r, opts = {}) {
     const im = new THREE.InstancedMesh(geo, mat, items.length);
     im.castShadow = true; im.receiveShadow = true; im.frustumCulled = false;
     items.forEach((sp, i) => {
-      const s = 0.29 * size * (sp.scale || 1) * (0.8 + r() * 0.45);
+      const s = 0.20 * size * (sp.scale || 1) * (0.82 + r() * 0.4);
       // ON TOP OF THE LEAF BALL, not inside it. A cluster is about 0.5 across —
       // the same radius flowers are seated proud of — so a cap at 0.19 lifted by
       // a third of itself was entirely buried in foliage and drew nothing. It
       // sits at the top of the ball and sinks a little way in, which is what
       // makes it read as lying on something rather than floating over it.
-      p.copy(sp.pos).addScaledVector(UP, 0.27 + s * 0.3);
+      // BEDDED INTO the cluster, not perched on it. Sitting proud made each cap
+      // a separate object balanced on the leaves; sunk to about the top of the
+      // leaf ball it reads as snow that has settled there.
+      p.copy(sp.pos).addScaledVector(UP, 0.17 + s * 0.25);
       q.setFromAxisAngle(UP, r() * Math.PI * 2);
       sc.set(s, s, s);
       im.setMatrixAt(i, m.compose(p, q, sc));
