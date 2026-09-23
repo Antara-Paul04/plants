@@ -4,10 +4,12 @@ import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import treeHandler from '../api/tree.js';
+import { MockAgent, getGlobalDispatcher, setGlobalDispatcher } from 'undici';
 import {
   validateShare,
   saveTree,
   loadTree,
+  loadTreeImage,
   treePage,
 } from "../lib/shared-trees.js";
 const directory = await mkdtemp(join(tmpdir(), "plants-test-"));
@@ -52,6 +54,29 @@ test('missing shared trees serve the custom 404 and HEAD omits its body', async 
       assert.ok(html.includes('href="/"'));
       assert.ok(html.includes('src="/404.js"'));
     }
+  }
+});
+test('Blob missing records and images are 404s, while access failures remain errors', async () => {
+  const original = getGlobalDispatcher();
+  const agent = new MockAgent();
+  agent.disableNetConnect();
+  setGlobalDispatcher(agent);
+  process.env.BLOB_READ_WRITE_TOKEN = 'test-token';
+  process.env.VERCEL_BLOB_API_URL = 'https://blob.test';
+  try {
+    const pool = agent.get('https://blob.test');
+    for (const read of [loadTree, loadTreeImage]) {
+      pool.intercept({ path: /.*/, method: 'GET' }).reply(404, { error: { code: 'not_found' } });
+      assert.equal(await read('0'.repeat(32)), null);
+    }
+    pool.intercept({ path: /.*/, method: 'GET' }).reply(403, { error: { code: 'forbidden' } });
+    await assert.rejects(loadTree('0'.repeat(32)), /Access denied/);
+    agent.assertNoPendingInterceptors();
+  } finally {
+    delete process.env.BLOB_READ_WRITE_TOKEN;
+    delete process.env.VERCEL_BLOB_API_URL;
+    setGlobalDispatcher(original);
+    await agent.close();
   }
 });
 test("share snapshot persists the full URL, DNA and camera and retries keep the same ID", async () => {

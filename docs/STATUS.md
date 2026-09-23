@@ -9,7 +9,8 @@ landing on every leafy tree; the ambient breeze has a stronger calm floor. The o
 The island's soil body now has a smooth curved profile and continuous shading.
 Public trait explanations and debug navigation have been removed (D11).
 A matching 404 page handles unknown routes and missing tree links, with a home link
-that works without JavaScript and a decorative, pausable living island.
+that works without JavaScript and a decorative, pausable living island. Blob misses
+are recognized by SDK error type; storage failures retain their error response.
 
 **EXPERIMENT.** Share creates a 1200×630 PNG of the displayed tree and stores its DNA,
 full URL and camera. `/t/:id` opens saved data without re-analysis and supplies initial
