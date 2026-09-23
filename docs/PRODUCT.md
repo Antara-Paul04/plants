@@ -11,6 +11,7 @@ See [AGENTS.md](../AGENTS.md) for the confidence labels used throughout
 ## Concept
 
 **DECIDED — human request, 2026-09-24.** The project is called **Site Bonsai** (D12).
+The footer credits `@antzmakesstuff` and links to `https://x.com/antzmakesstuff`.
 
 **DECIDED.** Enter a website URL and receive a unique, stylized 3D tree derived from
 that website's visual design.

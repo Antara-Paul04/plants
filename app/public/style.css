@@ -289,6 +289,17 @@ body.night .dock[data-state="error"] #status {
   color: var(--muted);
   opacity: 0.85;
 }
+.footnote a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--edge);
+  text-underline-offset: 3px;
+}
+.footnote a:hover,
+.footnote a:focus-visible {
+  color: var(--ink);
+  text-decoration-color: currentColor;
+}
 .notice {
   position: fixed;
   left: 50%;
@@ -451,9 +462,6 @@ h2 {
   .garden-controls {
     gap: 7px;
     bottom: 8px;
-  }
-  .footnote {
-    display: none;
   }
   .dock {
     padding-top: 10px;
