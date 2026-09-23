@@ -47,19 +47,28 @@ off the same debug page at the same default azimuth, which happens to be that
 tree's worst face. Same seed, by view: `6.8 · 27.2 · 29.4 · 31.2 · 6.3 · 23.0 ·
 30.4 · 20.4`. A thing that is meant to be orbited has to be measured round.
 
-**Autumn exists and is unreachable.** There is a complete autumn — burnt sienna
-into amber into gold, turf that has leaves on it, leaves that let go when the
-wind gusts. It is finished, it works, and no real website has ever triggered it.
-Autumn needs warm hues to dominate a palette that is genuinely varied, and those
-two things turn out to be nearly exclusive on the web: sites that read as warm
-are warm because *one* colour dominates, and sites with a rich palette dilute
-their warmth by having one. `ikea.com` comes closest and is a good joke about
-measurement — visibly blue and yellow, but mask out the photography and what
-remains reads as 100% warm, over twelve times the colour coverage the rule asks
-for. It clears both thresholds by miles and fails on a technicality
-that exists precisely to stop sites like it: a warm *share* read off a single
-hue is meaningless, so we require at least two. Nobody has seen the falling
-leaves.
+**Red was not a warm colour.** There is a complete autumn in here — burnt
+sienna into amber into gold, turf with leaves lying on it, leaves that let go
+when the wind gusts — and for a long time almost nothing triggered it. The
+thresholds were blamed. Then the web was blamed for not being autumn-coloured.
+Both wrong: `warm` had been defined as hue 10–55, which is amber and orange.
+Autumn is made of rust and crimson and burnt sienna, which live at 345–10, and
+none of them were counted. Not counted *lightly* — counted as **zero**.
+`cnn.com`'s `#801e1e` sits at hue 0 and scored 0.000 warm. `pinterest.com` at
+351: 0.000. An orange-red masthead like Smashing Magazine's managed 0.143
+against a bar of 0.55.
+
+The band wraps through red now, and `smashingmagazine.com` became the first real
+website to grow an autumn tree. It did not flood the world with them — of
+sixteen sites measured, three qualify. `cnn.com` scores a perfect warm share
+under the new band and *still* does not get autumn, because it is a white page
+with a red logo and the colour-coverage floor catches it. That floor was always
+working. The band was not.
+
+`ikea.com` is the other joke about measurement: blue and yellow to look at, but
+mask out the photography and what remains reads as 100% warm. It measured ten
+hue bins on one machine and one hue bin on the server minutes later — same site,
+different pictures in the carousel.
 
 **A website cannot always express its colour.** Photographs are content, not
 design, so they are masked out before the palette is read — otherwise every
