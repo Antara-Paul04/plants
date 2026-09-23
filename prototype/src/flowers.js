@@ -984,6 +984,121 @@ function budSprayGeometry(r, col, scaleCol, terminal, size, look = {}) {
 
 /** Winter carrier 1: accent-coloured buds on every twig — terminal sprays at the tips, lateral pairs along the wood. */
 /**
+ * CHUNKS OF SNOW, lying along the branches.
+ *
+ * Two earlier attempts were wrong in opposite directions. Little white solids
+ * dropped on the foliage read as quartz — faceted lumps perched on leaves. A
+ * world-normal shader that blends the albedo toward white is the technique every
+ * engine uses, and it is genuinely correct for terrain, but on a tree it just
+ * makes the leaves white: a leaf is a plane, it has no top, and paint has no
+ * volume. Snow on a tree is a THING, and it lies along the wood.
+ *
+ * So this sweeps a cap over the upper side of each limb — a ridge that follows
+ * the branch, thickest along its spine and thinning to nothing at the edges
+ * where it meets the bark, so it beds onto the wood instead of floating over it.
+ *
+ * Three things make it behave like snow rather than like a tube:
+ *   - a HORIZONTAL branch holds snow and a vertical one sheds it, so thickness
+ *     falls away with the branch's own steepness;
+ *   - it is PATCHY, broken along the limb by noise, because a continuous white
+ *     pipe down every branch is a pipe;
+ *   - it tapers out at both ends of a run rather than stopping square.
+ */
+export function buildSnowOnLimbs(limbs, r, opts = {}) {
+  const {
+    thickness = 0.2, arc = 1.3, seg = 9, grade = null,
+    color = 0xf2f7fd, minRadius = 0.012, maxRadius = 0.5, patch = 0.42, clearance = 1.12,
+  } = opts;
+  const group = new THREE.Group();
+  const top = new THREE.Color(color);
+  const side = new THREE.Color(color).lerp(new THREE.Color(0xc2d2e4), 0.45);
+  if (grade) { grade(top); grade(side); }
+
+  const pos = [], col = [], idx = [];
+  const T = new THREE.Vector3(), U = new THREE.Vector3(), R = new THREE.Vector3();
+  const P = new THREE.Vector3(), c = new THREE.Color();
+  let base = 0;
+
+  for (const L of limbs) {
+    const ch = L.chain;
+    if (!ch || ch.length < 3) continue;
+    // One noise phase per limb so neighbouring branches do not share a pattern.
+    const ph = r() * 100;
+    let prevRing = -1;
+    for (let i = 0; i < ch.length; i++) {
+      const a = ch[Math.max(0, i - 1)], b = ch[Math.min(ch.length - 1, i + 1)];
+      T.copy(b.pos).sub(a.pos);
+      if (T.lengthSq() < 1e-9) { prevRing = -1; continue; }
+      T.normalize();
+      // World up, projected perpendicular to the branch: the direction snow sits.
+      U.set(0, 1, 0).addScaledVector(T, -T.y);
+      if (U.lengthSq() < 1e-6) { prevRing = -1; continue; }   // branch is vertical
+      U.normalize();
+      R.crossVectors(T, U).normalize();
+
+      const rad = ch[i].r ?? 0.05;
+      // STEEP WOOD SHEDS, and it has to reach zero. A floor of 0.35 put a slab of
+      // snow down the side of the TRUNK: a trunk is near-vertical but never
+      // exactly vertical, so `up projected perpendicular to the branch` is a
+      // short vector pointing sideways, and normalising it aims the cap at the
+      // trunk's flank. Zero above 0.8 kills that; full below 0.35 keeps the
+      // reaching branches these trees are mostly made of.
+      const steep = clamp((0.8 - Math.abs(T.y)) / 0.45, 0, 1);
+      const fit = rad < minRadius || rad > maxRadius ? 0 : 1;
+      const t01 = i / (ch.length - 1);
+      const ends = Math.min(1, Math.min(t01, 1 - t01) * 5);     // taper both ends
+      const n = Math.sin(t01 * 9.1 + ph) * 0.5 + Math.sin(t01 * 21.7 + ph * 1.7) * 0.5;
+      const broken = Math.max(0, n * 0.5 + 0.5 - patch) / Math.max(1e-6, 1 - patch);
+      const th = thickness * steep * fit * ends * broken;
+      if (th <= 0.001) { prevRing = -1; continue; }
+
+      const ring = pos.length / 3;
+      for (let k = 0; k < seg; k++) {
+        const ang = (k / (seg - 1) - 0.5) * 2 * arc;
+        // Thickest along the spine, zero at the edges: a cap bedded on the bark.
+        const w = Math.cos((ang / arc) * (Math.PI / 2));
+        // CLEARANCE. The rendered wood is NOT the skeleton radius: thick limbs
+        // come out of a smooth-blended signed distance field and the tubes carry
+        // a collar bulge on top of that, so a ridge placed at `rad` is inside
+        // the branch. The first attempt was entirely buried — visible only as
+        // pale slivers poking out behind the trunk.
+        const off = rad * clearance + th * w;
+        P.copy(ch[i].pos).addScaledVector(U, Math.cos(ang) * off).addScaledVector(R, Math.sin(ang) * off);
+        pos.push(P.x, P.y, P.z);
+        c.copy(side).lerp(top, w);
+        col.push(c.r, c.g, c.b);
+      }
+      if (prevRing >= 0) {
+        for (let k = 0; k < seg - 1; k++) {
+          const p0 = prevRing + k, p1 = prevRing + k + 1, q0 = ring + k, q1 = ring + k + 1;
+          idx.push(p0, q0, p1, p1, q0, q1);
+        }
+      }
+      prevRing = ring;
+      base = ring;
+    }
+  }
+  if (!idx.length) return { group, stats: { triangles: 0 } };
+
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  // DOUBLE-SIDED. A cap is an open shell one triangle thick, so with FrontSide
+  // every near-side ridge was culled and the only snow on screen was the INSIDE
+  // of the caps on the far side of the tree, showing through the gaps as pale
+  // vertical sheets. That is what "no snow, but odd grey shapes behind the
+  // trunk" was. It also matters from below, where you see a ridge's underside.
+  const snowMat = matte('snow-limb-v1');
+  snowMat.side = THREE.DoubleSide;
+  const mesh = new THREE.Mesh(g, snowMat);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  group.add(mesh);
+  return { group, stats: { triangles: idx.length / 3 } };
+}
+
+/**
  * SNOW, lying on the foliage.
  *
  * Winter had no snow in it. It was a thinned sage crown with pale buds on muted

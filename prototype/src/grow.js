@@ -880,41 +880,34 @@ export async function growTree(M, q, env, opts = {}) {
       tree.add(lv.group);
       stats.leaves = lv.stats;
     }
-    // SNOW IS A COVERING, NOT A SET OF OBJECTS.
+    // CHUNKS OF SNOW, NOT WHITE LEAVES.
     //
-    // The first version added little white solids on top of the foliage and it
-    // read as quartz — faceted lumps perched on leaves. The technique every
-    // engine actually uses is a shader one: threshold the dot of the surface's
-    // WORLD normal with up, and blend the albedo toward snow where a face looks
-    // at the sky. It follows the real geometry, costs no triangles, and covers
-    // branches and leaves with the same rule.
+    // The world-normal shader that came before this is the right technique for
+    // terrain and the wrong one for a tree: a leaf is a plane, it has no top,
+    // and tinting it white just gives you white foliage. Snow on a tree has
+    // volume and it lies along the WOOD. So it is geometry again — but swept
+    // along the limbs this time, following each branch, rather than blobs
+    // dropped on the leaves.
     //
-    // Applied to the BARK too, which is the half the old version could never do
-    // — snow on bare branches is most of what a winter tree looks like, and a
-    // leafless one now gets it where before it got nothing.
+    // A light dusting stays on the BARK only, under the chunks, so the ridge
+    // beds into the branch instead of sitting on an untouched tan surface.
+    // Nothing is applied to the leaf material. `snow=0` turns it all off.
     if (q.get('snow') !== '0') {
-      const sc = new THREE.Color(0xeef4fb);
+      const sc = new THREE.Color(0xf2f7fd);
       if (bloomGrade) bloomGrade(sc);
-      // A LEAF IS A PLANE, so the whole of it faces one way and flips at once —
-      // at a low threshold that paints entire leaves solid white and reads as
-      // white foliage, not as snow on foliage. The band sits high and narrow so
-      // only near-level faces catch it, the noise is strong enough to vary
-      // WITHIN a leaf, and the blend stops short of pure white so the leaf's own
-      // colour still shows through what is lying on it.
-      const snowOpts = { color: [sc.r, sc.g, sc.b], amount: num('snowAmt', 0.82),
-        lo: num('snowLo', 0.46), hi: num('snowHi', 0.95), noise: num('snowNoise', 0.42) };
-      const done = new Set();
-      const dust = (o) => { for (const m of [o.material].flat()) {
-        if (!m || done.has(m)) return; done.add(m); M.util.applySnow(m, { ...snowOpts, key: 'snow-leaf' });
-      } };
-      tree.traverse(dust);
-      if (!done.has(bark)) { done.add(bark); M.util.applySnow(bark, { ...snowOpts, lo: num('snowLoBark', 0.3), hi: num('snowHiBark', 0.8), amount: num('snowAmtBark', 0.9), key: 'snow-bark' }); }
-      stats.snow = { shader: true, materials: done.size };
-      // The solid caps are OFF by default now. They still exist for the drifts
-      // that gather in a crown's crotches, which a surface shader cannot show,
-      // but they were the thing that looked wrong. `snowCaps=1` to see them.
-      if (q.get('snowCaps') === '1') {
-        const sn = F.buildSnow(snowSpots || spots, r, { grade: bloomGrade, size: num('snowSize', 1), amount: num('snowCapAmt', 0.3) });
+      const ls = F.buildSnowOnLimbs(skel.limbs, r, {
+        grade: bloomGrade,
+        thickness: num('snowThick', 0.2),
+        patch: num('snowPatch', 0.42),
+        arc: num('snowArc', 1.3), clearance: num('snowClear', 1.12),
+      });
+      tree.add(ls.group);
+      stats.snow = ls.stats;
+      M.util.applySnow(bark, { color: [sc.r, sc.g, sc.b], amount: num('snowAmtBark', 0.45),
+        lo: num('snowLoBark', 0.45), hi: num('snowHiBark', 0.95), noise: num('snowNoise', 0.3), key: 'snow-bark' });
+      // Mounds where the foliage catches it, on top of the ridges on the wood.
+      if (q.get('snowCaps') !== '0' && snowSpots) {
+        const sn = F.buildSnow(snowSpots, r, { grade: bloomGrade, size: num('snowSize', 1), amount: num('snowCapAmt', 0.4) });
         tree.add(sn.group);
         stats.snowCaps = sn.stats;
       }
