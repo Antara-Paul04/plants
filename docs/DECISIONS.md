@@ -319,3 +319,6 @@ This permits ambient animals despite the earlier restriction on decorative props
 the remaining screen. Day scenes have three butterflies; night scenes have ten
 softly glowing fireflies. These are atmosphere, not website measurements. They use
 the shared motion clock and pause/reduced-motion settings; no new public explanations.
+
+**DECIDED — superseding human request, 2026-09-24.** Remove both butterflies and
+fireflies. Retain the laptop layout, ambient breeze and tap-triggered leaf fall.

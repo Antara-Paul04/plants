@@ -24,7 +24,7 @@ import * as THREE from 'three';
 // graph: three consecutive edits once silently never reached the page. `?v=2`,
 // `?v=3` ... on a debug page and the page cannot lie to you. (The product's
 // server sends `cache-control: no-store`, so it needs no token.)
-const MODULE_NAMES = ['util', 'branching', 'limbmesh', 'bark', 'woodsdf', 'leaves', 'flowers', 'island', 'wildlife'];
+const MODULE_NAMES = ['util', 'branching', 'limbmesh', 'bark', 'woodsdf', 'leaves', 'flowers', 'island'];
 export async function loadModules(bust = '') {
   const mods = await Promise.all(MODULE_NAMES.map((n) => import(`./${n}.js${bust}`)));
   return Object.fromEntries(MODULE_NAMES.map((n, i) => [n, mods[i]]));
@@ -1083,17 +1083,13 @@ export async function growTree(M, q, env, opts = {}) {
   }
   const extents = { height: size.y * 1.12, width: Math.max(size.x, size.z) * 1.12, targetY: box.min.y + size.y * 0.55 };
   const tris = (geo ? geo.index.count / 3 : 0) + (thick.geometry ? thick.geometry.attributes.position.count / 3 : 0);
-  // Add after the canopy's bounds and sway are measured: animals fly on their own.
-  const wildlife = M.wildlife.buildWildlife({ seed: P.seed, night: env.name === 'night',
-    width: Math.max(size.x, size.z, 4.8), height: size.y });
-  ground.add(wildlife.group);
 
   return {
     tree, ground, skel, geo, thick, P, extents, season: SEASON, wind, faces,
     // Both kinds of fall follow the renderer's pausable clock. Input only schedules
     // a release; individual trajectories remain independent of frame rate.
     shedLeaves: (point) => tapFall?.burst(motionTime, point),
-    update: (t) => { motionTime = t; leafFall?.update(t); tapFall?.update(t); wildlife.update(t); },
+    update: (t) => { motionTime = t; leafFall?.update(t); tapFall?.update(t); },
     cloud: P.showCloud ? new THREE.Points(new THREE.BufferGeometry().setFromPoints(skel.cloud), new THREE.PointsMaterial({ size: 0.04, color: 0xd06a6a })) : null,
     spots: dbgSpots, bloomSites: dbgBloom,
     stats: { ...stats, phases, ground: groundInfo, wind: wind && { amp: WIND, yLo: +wind.yLo.value.toFixed(2), yHi: +wind.yHi.value.toFixed(2), pin: WIND_PIN > 0 ? WIND_PIN : 0 }, tris, growMs: tGrow, meshMs: tMesh, field: thick.geometry ? thick.geometry.userData.stats : null },

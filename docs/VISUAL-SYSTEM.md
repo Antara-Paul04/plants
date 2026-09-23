@@ -1066,3 +1066,7 @@ geometry, materials and texture are released with the scene.
 the night scene at 390×844, and a centred shared postcard from the laptop layout.
 Regressions cover horizontal camera insets and deterministic, bounded wildlife flight.
 Real-phone GPU performance remains unmeasured.
+
+**DECIDED — superseding human request, 2026-09-24.** The wildlife experiment above
+is removed, including its renderer module. The larger laptop composition and
+existing tree motion remain.
