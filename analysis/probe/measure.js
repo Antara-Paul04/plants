@@ -12,7 +12,7 @@ export function measurePage(opts) {
     document.documentElement.scrollHeight, document.body ? document.body.scrollHeight : 0
   );
   // Two analysis scopes so we can answer "how much page do we need?" (Q13) with data.
-  const scopes = { v1: Math.min(docH, VH), v3: Math.min(docH, VH * 3), full: docH };
+  const scopes = { v1: Math.min(docH, VH), v2: Math.min(docH, VH * 2), v3: Math.min(docH, VH * 3), full: docH };
 
   const SKIP = new Set(['SCRIPT','STYLE','META','LINK','HEAD','NOSCRIPT','TITLE','BASE','TEMPLATE','BR','WBR']);
   const UA_LINK_COLORS = new Set(['rgb(0, 0, 238)','rgb(0, 0, 255)','rgb(85, 26, 139)','rgb(0, 0, 204)']);
@@ -370,12 +370,12 @@ export function measurePage(opts) {
 
   // opts.only === 'v3' -> skip the v1 and full passes (the live path needs only v3).
   // Values are identical either way; this only avoids recomputing what nobody reads.
-  const onlyV3 = opts && opts.only === 'v3';
+  const only = opts && ['v1', 'v2', 'v3'].includes(opts.only) ? opts.only : null;
   return {
     viewport: { w: VW, h: VH }, docHeight: Math.round(docH),
     title: document.title || '', url: location.href,
-    scopes: onlyV3
-      ? { v3: analyse(scopes.v3, 'viewport3') }
+    scopes: only
+      ? { [only]: analyse(scopes[only], 'viewport' + only.slice(1)) }
       : {
           v1: analyse(scopes.v1, 'viewport1'),
           v3: analyse(scopes.v3, 'viewport3'),

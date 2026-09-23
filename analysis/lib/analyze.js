@@ -70,64 +70,65 @@ async function getBrowser() {
   if (_browser && _browser.isConnected()) return _browser;
   if (_starting) return _starting;
   _starting = (async () => {
-    // LOCAL first: a Chrome already on this machine, which is what every
-    // measurement in this repo was taken against. SERVERLESS second: a lambda has
-    // no browser and no writable filesystem outside /tmp, so @sparticuz/chromium
-    // unpacks one at first launch and reports where it put it — which is why
-    // PLANTS_CHROME is checked but deliberately NOT existence-tested.
-    let exe = CHROME;
-    let extra = [];
-    let launchEnv;
-    if (!exe) {
-      // THE LIB BUNDLE IS ONLY EXTRACTED IF IT BELIEVES IT IS ON LAMBDA, and it
-      // decides from AWS_EXECUTION_ENV / AWS_LAMBDA_JS_RUNTIME. Vercel runs on
-      // Lambda but does not set either in the shape it looks for, so it unpacked
-      // chromium WITHOUT its shared libraries and the browser died on
-      // "libnss3.so: cannot open shared object file" — surfacing, unhelpfully, as
-      // "Target page, context or browser has been closed".
-      //
-      // Declaring the runtime is what makes it extract al2023.tar.br. Node 20 and
-      // 22 are both Amazon Linux 2023, which is what Vercel's Node runtime is.
-      // Set BEFORE the import, because the module reads it at load.
-      process.env.AWS_LAMBDA_JS_RUNTIME ??= 'nodejs20.x';
-      const mod = await import('@sparticuz/chromium').catch(() => null);
-      if (!mod) throw new Error('no Chrome binary found — set PLANTS_CHROME, or install @sparticuz/chromium');
-      const pkg = mod.default ?? mod;
-      exe = await pkg.executablePath();
-      // ITS ARGS ARE FOR PUPPETEER AND TWO OF THEM BREAK PLAYWRIGHT.
-      //
-      //   --single-process   puppeteer tolerates it; playwright connects to a
-      //                      separate browser process and the launch dies with
-      //                      "Target page, context or browser has been closed".
-      //   --headless='shell' playwright adds its own headless flag, and two
-      //                      disagreeing ones is not a configuration.
-      //
-      // Everything else — /dev/shm, gpu, sandbox, the lambda's whole survival
-      // kit — is kept. Their --disable-features ALREADY carries IsolateOrigins
-      // and site-per-process, which is what ours used to add: a second
-      // --disable-features does not merge with the first, it replaces it, so
-      // appending ours silently threw away the rest of their list.
-      extra = (pkg.args ?? []).filter((a) =>
-        !a.startsWith('--single-process') && !a.startsWith('--headless'));
-      // AND ITS SHARED LIBRARIES. executablePath() unpacks chromium AND a lib
-      // bundle into /tmp and points process.env.LD_LIBRARY_PATH at it — but
-      // playwright spawns the browser with an env of its own, so the child never
-      // saw it and died with "libnss3.so: cannot open shared object file",
-      // surfacing as the far less helpful "Target page, context or browser has
-      // been closed". Pass it through explicitly.
-      launchEnv = { ...process.env, LD_LIBRARY_PATH: process.env.LD_LIBRARY_PATH };
-    }
-    _browser = await chromium.launch({
-      executablePath: exe, headless: true,
-      ...(launchEnv ? { env: launchEnv } : {}),
-      // Ours are appended only when they are not already covered: on the
-      // serverless path IsolateOrigins/site-per-process come from the list above.
-      args: [...extra, '--hide-scrollbars','--mute-audio','--font-render-hinting=none',
-             ...(extra.length ? [] : ['--disable-features=IsolateOrigins,site-per-process'])]
-    });
-    _browser.on('disconnected', () => { _browser = null; _scratch = null; });
-    _starting = null;
-    return _browser;
+    try {
+      // LOCAL first: a Chrome already on this machine, which is what every
+      // measurement in this repo was taken against. SERVERLESS second: a lambda has
+      // no browser and no writable filesystem outside /tmp, so @sparticuz/chromium
+      // unpacks one at first launch and reports where it put it — which is why
+      // PLANTS_CHROME is checked but deliberately NOT existence-tested.
+      let exe = CHROME;
+      let extra = [];
+      let launchEnv;
+      if (!exe) {
+        // THE LIB BUNDLE IS ONLY EXTRACTED IF IT BELIEVES IT IS ON LAMBDA, and it
+        // decides from AWS_EXECUTION_ENV / AWS_LAMBDA_JS_RUNTIME. Vercel runs on
+        // Lambda but does not set either in the shape it looks for, so it unpacked
+        // chromium WITHOUT its shared libraries and the browser died on
+        // "libnss3.so: cannot open shared object file" — surfacing, unhelpfully, as
+        // "Target page, context or browser has been closed".
+        //
+        // Declaring the runtime is what makes it extract al2023.tar.br. Node 20 and
+        // 22 are both Amazon Linux 2023, which is what Vercel's Node runtime is.
+        // Set BEFORE the import, because the module reads it at load.
+        process.env.AWS_LAMBDA_JS_RUNTIME ??= 'nodejs20.x';
+        const mod = await import('@sparticuz/chromium').catch(() => null);
+        if (!mod) throw new Error('no Chrome binary found — set PLANTS_CHROME, or install @sparticuz/chromium');
+        const pkg = mod.default ?? mod;
+        exe = await pkg.executablePath();
+        // ITS ARGS ARE FOR PUPPETEER AND TWO OF THEM BREAK PLAYWRIGHT.
+        //
+        //   --single-process   puppeteer tolerates it; playwright connects to a
+        //                      separate browser process and the launch dies with
+        //                      "Target page, context or browser has been closed".
+        //   --headless='shell' playwright adds its own headless flag, and two
+        //                      disagreeing ones is not a configuration.
+        //
+        // Everything else — /dev/shm, gpu, sandbox, the lambda's whole survival
+        // kit — is kept. Their --disable-features ALREADY carries IsolateOrigins
+        // and site-per-process, which is what ours used to add: a second
+        // --disable-features does not merge with the first, it replaces it, so
+        // appending ours silently threw away the rest of their list.
+        extra = (pkg.args ?? []).filter((a) =>
+          !a.startsWith('--single-process') && !a.startsWith('--headless'));
+        // AND ITS SHARED LIBRARIES. executablePath() unpacks chromium AND a lib
+        // bundle into /tmp and points process.env.LD_LIBRARY_PATH at it — but
+        // playwright spawns the browser with an env of its own, so the child never
+        // saw it and died with "libnss3.so: cannot open shared object file",
+        // surfacing as the far less helpful "Target page, context or browser has
+        // been closed". Pass it through explicitly.
+        launchEnv = { ...process.env, LD_LIBRARY_PATH: process.env.LD_LIBRARY_PATH };
+      }
+      _browser = await chromium.launch({
+        executablePath: exe, headless: true, timeout: 25000,
+        ...(launchEnv ? { env: launchEnv } : {}),
+        // Ours are appended only when they are not already covered: on the
+        // serverless path IsolateOrigins/site-per-process come from the list above.
+        args: [...extra, '--hide-scrollbars','--mute-audio','--font-render-hinting=none',
+               ...(extra.length ? [] : ['--disable-features=IsolateOrigins,site-per-process'])]
+      });
+      _browser.on('disconnected', () => { _browser = null; _scratch = null; });
+      return _browser;
+    } finally { _starting = null; }
   })();
   return _starting;
 }
@@ -279,10 +280,10 @@ const sameBrand = (a, b) => {
   // language subdomain was caught by it, which is most of Wikipedia.
   const ra = registrable(a);
   if (ra && ra === registrable(b)) return true;
-  const la = a.split('.')[0], lb = b.split('.')[0];
-  if (!la || !lb || la.length < 3 || lb.length < 3) return false;
-  // A global brand redirecting to its own country site: nike.com -> nike.in.
-  return la === lb || la.includes(lb) || lb.includes(la);
+  // Country redirects may keep the same registrable brand label. Substring
+  // matches and shared subdomains (app.*) are not evidence of the same brand.
+  const la = ra.split('.')[0], lb = registrable(b).split('.')[0];
+  return la.length >= 3 && la === lb;
 };
 
 // What is at this address, according to the server rather than the browser?
@@ -358,53 +359,39 @@ async function scratchDiff(frames) {
 
 export async function analyzeUrl(url, opts = {}) {
   const budget = opts.budgetMs || BUDGET_MS;
-  // The capture keeps its share of whatever budget it was given, rather than a
-  // constant tuned for the default one.
-  const shotMs = Math.round(SHOT_MS * (budget / BUDGET_MS));
-  const invoked = now();
-
   const u = normalizeUrl(url);
-  if (!u) return fail(hostOf(url) || String(url || '').slice(0, 80), 'INVALID_URL');
+  if (!u) return fail(hostOf(url) || String(url || '').slice(0,80), 'INVALID_URL');
   const domain = u.hostname.replace(/^www\./,'');
-
-  // THE BUDGET IS FOR READING THE SITE, NOT FOR STARTING A BROWSER.
-  //
-  // The clock used to start here, before getBrowser(), so a cold serverless
-  // start — where @sparticuz/chromium unpacks a browser into /tmp before Chrome
-  // can even launch — was charged to the website. Measured on a freshly deployed
-  // function: 9.2 s for info.cern.ch cold against 4.8 s warm, so the first
-  // visitor after a quiet period silently gave their site 4.4 s less than the
-  // next one. The budget is meant to bound how long we look at a page; it was
-  // bounding look-plus-launch, and launch varies by an order of magnitude.
-  //
-  // So launch first, then start the clock. `wallMs` is the separate, absolute
-  // cap from invocation: the platform kills the function at maxDuration and a
-  // killed function returns NOTHING, which is worse than our own TIMEOUT — the
-  // visitor gets a dead request instead of copy that explains itself.
-  try {
-    await getBrowser();
-  } catch (e) {
-    return fail(domain, 'INTERNAL', 'browser did not start: ' + String(e?.message || e).slice(0, 70));
+  const invoked = now(), wallMs = opts.wallMs || budget + 30000;
+  const abort = new AbortController();
+  let wallTimer, siteTimer, resolveDeadline;
+  const deadline = new Promise(resolve => { resolveDeadline = resolve; });
+  const cancel = () => { abort.abort(); resolveDeadline(fail(domain,'TIMEOUT','analysis cancelled or budget exceeded')); };
+  opts.signal?.addEventListener('abort', cancel, { once:true });
+  wallTimer = setTimeout(cancel, wallMs);
+  if (opts.signal?.aborted) cancel();
+  const work = (async () => {
+    try { await getBrowser(); }
+    catch (e) { return fail(domain,'INTERNAL','browser did not start: ' + String(e?.message || e).slice(0,70)); }
+    if (abort.signal.aborted) return fail(domain,'TIMEOUT');
+    const T0 = now();
+    const left = () => Math.min(budget - (now()-T0), wallMs - (now()-invoked));
+    siteTimer = setTimeout(cancel, Math.max(1,left()));
+    return runAnalysis(u, domain, budget, T0, left, { ...opts, allowHttpFallback: !/^https:\/\//i.test(String(url).trim()) }, abort.signal);
+  })();
+  try { return await Promise.race([work, deadline]); }
+  finally {
+    clearTimeout(wallTimer); clearTimeout(siteTimer);
+    opts.signal?.removeEventListener('abort',cancel);
   }
-
-  const T0 = now();
-  const wallLeft = () => (opts.wallMs ? opts.wallMs - (now() - invoked) : Infinity);
-  const left = () => Math.min(budget - (now() - T0), wallLeft());
-  // Whichever runs out first is the real ceiling, and it is what the TIMEOUT says.
-  const ceiling = Math.max(1000, Math.min(budget, wallLeft()));
-
-  // The per-step timeouts below are best-effort; this race is what actually guarantees
-  // the ceiling. Without it stripe.com ran 34s against a 20s budget.
-  let timer;
-  const deadline = new Promise(res => { timer = setTimeout(() => res(fail(domain, 'TIMEOUT', `exceeded ${ceiling}ms`)), ceiling); });
-  try {
-    return await Promise.race([runAnalysis(u, domain, budget, T0, left), deadline]);
-  } finally { clearTimeout(timer); }
 }
 
-async function runAnalysis(u, domain, budget, T0, left) {
+async function runAnalysis(u, domain, budget, T0, left, opts, signal) {
+  const shotMs = Math.round(SHOT_MS * (budget / BUDGET_MS));
 
   let ctx, page;
+  const close = () => ctx?.close().catch(() => {});
+  signal.addEventListener('abort', close, { once:true });
   const t = {};
   try {
     const browser = await getBrowser();
@@ -415,6 +402,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
       // URL gives everyone the same tree. It changes what adaptive sites look like.
       colorScheme: 'light', locale: 'en-US', ignoreHTTPSErrors: true
     });
+    if (signal.aborted) { await close(); return fail(domain,'TIMEOUT'); }
     page = await ctx.newPage();
     page.on('pageerror', () => {});
     page.on('dialog', d => d.dismiss().catch(() => {}));
@@ -434,14 +422,14 @@ async function runAnalysis(u, domain, budget, T0, left) {
         resp = await page.goto(u.href, { waitUntil: 'commit', timeout: firstNav });
       } catch (e1) {
         const preCommit = /Timeout|ERR_CONNECTION_TIMED_OUT|ERR_ADDRESS_UNREACHABLE/.test(String(e1.message));
-        if (preCommit && u.protocol === 'https:' && left() > 6000) {
+        if (preCommit && opts.allowHttpFallback && u.protocol === 'https:' && left() > 6000) {
           const httpUrl = 'http://' + u.host + u.pathname + u.search;
           resp = await page.goto(httpUrl, { waitUntil: 'commit', timeout: Math.max(3000, Math.min(8000, left() - 5000)) });
           t.httpFallback = true;
         } else { throw e1; }
       }
       // commit only means headers; wait for a document we can actually read
-      await page.waitForFunction(() => document.readyState !== 'loading' && !!document.body,
+      await page.waitForFunction(() => document.readyState !== 'loading' && !!document.body, null,
         { timeout: Math.max(1000, Math.min(READY_MS, left() - 5000)), polling: 200 }).catch(() => {});
     } catch (e) { navErr = String(e.message || e).split('\n')[0]; }
     t.load = now() - tNav;
@@ -621,7 +609,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
         const identical = lastFrame && Buffer.compare(lastFrame, f) === 0;
         if (grew) quiet = 0;                       // still arriving
         else if (identical) quiet++;               // nothing moved at all
-        else quiet = Math.max(quiet, 0);
+        else quiet = 0;
         lastSize = Math.max(lastSize, f.length);
         lastFrame = f;
         if (quiet >= 2) break;                     // two consecutive identical frames
@@ -655,19 +643,12 @@ async function runAnalysis(u, domain, budget, T0, left) {
       if (h2 && !sameBrand(h2, domain)) {
         return fail(domain, 'REDIRECTED', 'navigated to ' + h2);
       }
-      // A page with NO LINKS AT ALL is not a website. This is the discriminator that
-      // survives info.cern.ch, which is the case that must survive: cern is genuinely
-      // unstyled HTML and has 25 links, 49 elements, 983 characters. The block pages have
-      // ZERO links — tesla 3 elements / 191 chars, adidas 15 boxes / 1127 chars.
-      // "Small" cannot be the test; "not a site" can.
-      if (post.links === 0 && post.chars < 1500 && post.boxes < 20) {
-        // A notice page has PAINTED its notice. An app shell that never rendered has not,
-        // and calling that "blocked" tells the user something false about the site.
-        const painted = (lastSig && lastSig.painted) || 0;
-        const unpainted = painted < (VW * VH * 0.02);
-        return fail(domain, unpainted ? 'NOT_RENDERED' : 'BLOCKED',
-          unpainted ? `nothing painted (${post.chars} chars, ${post.boxes} boxes) — the page did not render, it is not refusing us`
-                    : `no links, ${post.chars} chars, ${post.boxes} boxes — a notice page, not a website`);
+      // A legitimate single-screen site may have no links. Only treat an
+      // unpainted, nearly empty shell as incomplete; block pages need evidence
+      // from status or interstitial content, checked above.
+      if (post.links === 0 && post.chars < 50 && post.boxes < 5 &&
+          ((lastSig && lastSig.painted) || 0) < VW * VH * .02) {
+        return fail(domain, 'NOT_RENDERED', 'the page did not paint readable content');
       }
     }
 
@@ -686,7 +667,7 @@ async function runAnalysis(u, domain, budget, T0, left) {
 
     // ---- measure rendered DOM (~20ms) — no motion sampling
     const tDom = now();
-    const m = await page.evaluate(measurePage, { only: 'v3' });
+    let m = await page.evaluate(measurePage, { only: 'v3' });
     t.domEval = now() - tDom;
 
     // ---- motion (boolean only; the magnitude is NOT exposed — it was rejected at 19x
@@ -755,6 +736,10 @@ async function runAnalysis(u, domain, budget, T0, left) {
     t.captureScope = captureScope;
     if (captureScope === 'v2') clipH = Math.min(m.docHeight, VH * 2);
     else if (captureScope === 'v1') clipH = VH;
+    if (captureScope !== 'v3') {
+      const measured = await page.evaluate(measurePage, { only: captureScope });
+      m = { ...measured, scopes: { v3: measured.scopes[captureScope] } };
+    }
     t.screenshot = now() - tShot;
 
     const tPix = now();
@@ -789,11 +774,12 @@ async function runAnalysis(u, domain, budget, T0, left) {
     }
 
     t.total = now() - T0;
-    return { ok: true, domain, url: finalUrl, settleReason: t.settleReason, captureScope, httpFallback: !!t.httpFallback, fingerprint: toFingerprint(m, pixels, accent, hasMotion), timingMs: t };
+    return { ok: true, domain, url: post?.url || page.url() || finalUrl, settleReason: t.settleReason, captureScope, httpFallback: !!t.httpFallback, fingerprint: toFingerprint(m, pixels, accent, hasMotion), timingMs: t };
   } catch (e) {
     const msg = String(e && e.message || e).split('\n')[0];
     return fail(domain, /Timeout|timeout/.test(msg) ? 'TIMEOUT' : 'INTERNAL', msg);
   } finally {
+    signal.removeEventListener('abort', close);
     if (ctx) await ctx.close().catch(() => {});
   }
 }
