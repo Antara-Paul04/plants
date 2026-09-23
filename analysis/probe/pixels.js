@@ -118,8 +118,19 @@ export async function analysePixels(arg) {
     const chromaticBins = eligible.length;
     // WARM share of chromatic coverage (bin centres 22.5/37.5/52.5 -> amber..rust).
     // Same definition as probe/hue.js so live and batch agree. Feeds the AUTUMN gate.
+    // WARM share of chromatic coverage, and the band WRAPS THROUGH RED.
+    //
+    // It used to be 10-55 — amber and orange only — which excluded the most
+    // autumnal hue there is. Measured against real brands: cnn.com's #801e1e
+    // sits at hue 0 and pinterest.com's #ec415b at 351, and both scored exactly
+    // ZERO warm; smashingmagazine.com, an orange-red masthead, scored 0.143.
+    // Burnt sienna, rust and crimson are the colours autumn is made of and none
+    // of them were counted.
+    //
+    // 345 rather than 340 at the low end so true pinks and magentas stay out —
+    // airbnb's #de2f5f at 344 is a pink, not a rust.
     let warm = 0;
-    for (const [hk, e] of hueBins) { const c = hk + 7.5; if (c >= 10 && c <= 55) warm += e.n; }
+    for (const [hk, e] of hueBins) { const c = hk + 7.5; if (c >= 345 || c <= 55) warm += e.n; }
 
     return {
       background: bgHex,
