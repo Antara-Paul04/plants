@@ -6,14 +6,14 @@
 
 ### Paste a website. Watch a tree grow out of it.
 
-[![Live](https://img.shields.io/badge/🌱_live-plants--three--eta.vercel.app-3f6b3a?style=for-the-badge)](https://plants-three-eta.vercel.app)
+[![Live](https://img.shields.io/badge/🌱_live-sitebonsai.vercel.app-3f6b3a?style=for-the-badge)](https://sitebonsai.vercel.app)
 
 [![Stars](https://img.shields.io/github/stars/Antara-Paul04/plants?style=flat-square&color=3f6b3a&labelColor=2b2926)](https://github.com/Antara-Paul04/plants/stargazers)
 [![Last commit](https://img.shields.io/github/last-commit/Antara-Paul04/plants?style=flat-square&color=8ab37f&labelColor=2b2926)](https://github.com/Antara-Paul04/plants/commits)
 [![three.js](https://img.shields.io/badge/three.js-r169-2b2926?style=flat-square&logo=three.js&logoColor=white)](https://threejs.org)
 [![Playwright](https://img.shields.io/badge/Playwright-headless-2b2926?style=flat-square&logo=playwright&logoColor=white)](https://playwright.dev)
 
-**[🌐 Try it](https://plants-three-eta.vercel.app)** · [⚡ Run it locally](#-quick-start) · [🧬 How it works](#-how-a-website-becomes-a-tree) · [📚 Docs](#-docs)
+**[🌐 Try it](https://sitebonsai.vercel.app)** · [⚡ Run it locally](#-quick-start) · [🧬 How it works](#-how-a-website-becomes-a-tree) · [📚 Docs](#-docs)
 
 </div>
 

@@ -18,7 +18,7 @@ autumn, winter, night — grown from that site's Botanical DNA.
 node app/server.js     # → http://localhost:5170
 ```
 
-**It is also live**, at <https://plants-three-eta.vercel.app>, growing trees from
+**It is also live**, at <https://sitebonsai.vercel.app>, growing trees from
 a browser it does not own. The page opens on a real tree from `app/public/
 gallery.json` — DNA measured by the ordinary analyzer — labelled as an example
 until the visitor grows their own.
