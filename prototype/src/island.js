@@ -234,35 +234,34 @@ export function buildIsland(r, params = {}) {
   // Holds its width for a shoulder before tapering to a soft point. Tapering
   // immediately made the island read as a lawn floating on a shadow.
   const sidePos = [], sideIdx = [], sideCol = [];
-  const LV = [
-    { t: 0.0, yy: 0.0, k: 1.0 },
-    { t: 0.1, yy: -0.26, k: 1.01 },
-    { t: 0.24, yy: -0.58, k: 0.99 },
-    { t: 0.42, yy: -0.96, k: 0.9 },
-    { t: 0.64, yy: -1.38, k: 0.72 },
-    { t: 0.84, yy: -1.74, k: 0.46 },
-    { t: 1.0, yy: -DEPTH, k: 0.18 },
-  ];
+  // Interpolate the shoulder and belly instead of joining seven coarse bands.
+  // The last controls flatten the underside's tangent into a rounded tip.
+  const profile = new THREE.CatmullRomCurve3([
+    [1.01, 0], [1.01, -0.26], [0.99, -0.58], [0.9, -0.96],
+    [0.72, -1.38], [0.46, -1.74], [0.18, -1.99],
+    [0.075, -2.073], [0, -DEPTH - 0.14],
+  ].map(([k, y]) => new THREE.Vector3(k * ISLAND_R, y, 0)));
   const soilHi = tp.soilHi;
   const soilLo = tp.soilLo;
-  const SSEG = 42; // chunkier than the grass ring — we want visible facets
-  for (const lv of LV) {
+  const SSEG = SEG, SIDE_RINGS = 32;
+  for (let l = 0; l < SIDE_RINGS; l++) {
+    const p = profile.getPointAt(l / SIDE_RINGS);
+    const t = clamp(-p.y / (DEPTH + 0.14), 0, 1);
+    const relief = smoothstep(0, 0.16, t) * (1 - smoothstep(0.8, 1, t));
     for (let i = 0; i < SSEG; i++) {
       const a = (i / SSEG) * Math.PI * 2;
-      const n = noise3(Math.cos(a) * 2.1, lv.t * 3.4, Math.sin(a) * 2.1);
+      const n = noise3(Math.cos(a) * 2.1, t * 3.4, Math.sin(a) * 2.1);
       // The TOP ring meets the turf exactly: no noise, the dome's own rim height,
-      // and a hair wider than the dome (whose rim is at 0.995) so this coarser
-      // 42-gon's chords never cut inside it. With noise on this ring there was a
-      // hairline crack between turf and soil — invisible while the island was
-      // inside-out, because the far wall showed through it; sky once it was not.
-      const top = lv.t === 0;
-      const rad = top ? radiusAt(a) * 1.01 : radiusAt(a) * lv.k * (1 + n * 0.085 * (0.25 + lv.t));
-      sidePos.push(Math.cos(a) * rad, top ? topY(radiusAt(a)) : lv.yy + n * 0.05, Math.sin(a) * rad);
-      const c = soilHi.clone().lerp(soilLo, clamp(lv.t * 1.35, 0, 1));
+      // and a hair wider than the dome (0.995). Matching its angular samples
+      // keeps their outlines together. Fade relief away at the rim and tip.
+      const rad = radiusAt(a) * (p.x / ISLAND_R) * (1 + n * 0.045 * relief);
+      const y = p.y + topY(radiusAt(a)) * (1 - smoothstep(0, 0.16, t)) + n * 0.025 * relief;
+      sidePos.push(Math.cos(a) * rad, y, Math.sin(a) * rad);
+      const c = soilHi.clone().lerp(soilLo, clamp(t * 1.35, 0, 1));
       sideCol.push(c.r, c.g, c.b);
     }
   }
-  for (let l = 0; l < LV.length - 1; l++) {
+  for (let l = 0; l < SIDE_RINGS - 1; l++) {
     const a0 = l * SSEG, b0 = a0 + SSEG;
     for (let i = 0; i < SSEG; i++) {
       const j = (i + 1) % SSEG;
@@ -272,7 +271,7 @@ export function buildIsland(r, params = {}) {
   const tipI = sidePos.length / 3;
   sidePos.push(0, -DEPTH - 0.14, 0);
   sideCol.push(soilLo.r, soilLo.g, soilLo.b);
-  const last = (LV.length - 1) * SSEG;
+  const last = (SIDE_RINGS - 1) * SSEG;
   for (let i = 0; i < SSEG; i++) sideIdx.push(last + i, tipI, last + ((i + 1) % SSEG));
   // A CAP under the turf. The turf's rim (0.995) and this body's top ring (1.01)
   // do not share triangles, so between them there is a thin open slot all the way
@@ -290,8 +289,9 @@ export function buildIsland(r, params = {}) {
   sideGeo.computeVertexNormals();
   const sideMesh = new THREE.Mesh(
     sideGeo,
-    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.96, flatShading: true })
+    new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, metalness: 0 })
   );
+  sideMesh.name = 'soilBody';
   sideMesh.castShadow = true;
   sideMesh.receiveShadow = true;
   group.add(sideMesh);

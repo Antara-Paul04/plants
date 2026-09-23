@@ -1025,3 +1025,15 @@ the bounded tap pool. Detached leaves never receive the canopy sway shader.
 Both are ambient constants. Browser checks use the saved Hacker News tree and the
 repository’s `synthetic-autumn.example` fixture; these are visual checks on a desktop,
 not a performance measurement on a phone.
+
+### Smooth soil body — EXPERIMENT (2026-09-23)
+
+**DECIDED.** The human rejected the base's low-poly appearance (D11 base refinement).
+
+**EXPERIMENT.** The soil uses a curved shoulder and rounded underside, sampled in
+32 rings with 96 angular segments, and smooth normals. The turf seam retains its
+matched height and slight overlap; low-amplitude relief fades out at rim and tip.
+The soil palette and matte material remain. A geometry regression checks every face's
+orientation, every shared edge and every normal to prevent another hollow island.
+Browser checks cover the saved Hacker News tree from the front and a low orbit angle,
+plus the Linear night example. These are desktop visual checks, not GPU benchmarks.

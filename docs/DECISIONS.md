@@ -299,3 +299,12 @@ repeated taps cannot grow an unbounded pile. Pausing freezes both on the rendere
 the existing gust timing and peak multiplier remain. These are visual tuning values,
 not website measurements. They keep a gentle breeze visible between stronger gusts.
 Wood remains rigid, and reduced-motion preferences still start paused.
+
+### D11 base refinement — 2026-09-23
+
+**DECIDED — human request.** Remove the low-poly appearance of the tree's base.
+This supersedes the soil body's deliberately visible facets. The grassy rim,
+irregular island outline and restrained earth palette remain the visual direction.
+
+**EXPERIMENT.** A curved soil profile with continuous normals replaces the coarse
+bands and flat shading. Broad, subtle irregularity keeps the surface organic.

@@ -6,6 +6,7 @@
 shell, explicit reading/building/error states, leaf hover response, tap/keyboard
 reactions, and motion controls. Taps now reuse autumn’s individual-leaf flight and
 landing on every leafy tree; the ambient breeze has a stronger calm floor. The old tree stays visible while another loads.
+The island's soil body now has a smooth curved profile and continuous shading.
 Public trait explanations and debug navigation have been removed (D11).
 
 **EXPERIMENT.** Share creates a 1200×630 PNG of the displayed tree and stores its DNA,
