@@ -23,6 +23,7 @@
 // host that wants to hold its "growing" state until the tree is really there.
 
 import * as THREE from 'three';
+import { treeInteractions } from './interaction.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { buildTreeScene } from './build.js';
 import { makeRenderer, makeScene, fitCamera, animateDrift } from './viewer.js';
@@ -65,7 +66,7 @@ export function mountEarth(canvas, opts = {}) {
 function mountTreeNew(canvas, dna, opts = {}) {
   const { autoRotate = true } = opts;
   const renderer = makeRenderer(canvas);
-  const url = pageParams();
+  const url = opts.allowQueryParams === false ? new URLSearchParams() : pageParams();
   // `gust` makes the wind WEATHER — it comes and goes (util.js, gustAt) — and every
   // swaying thing in the scene answers to the one number, the grass included. `?gust=0`
   // is the constant sway; `?wind=0` drops it too, so the lawn, like the tree, is then
@@ -92,7 +93,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
   controls.maxDistance = 22;
   controls.minPolarAngle = 0.35;
   controls.maxPolarAngle = Math.PI * 0.52;
-  controls.autoRotate = autoRotate;
+  controls.autoRotate = autoRotate && opts.motion !== false;
   controls.autoRotateSpeed = 0.42;
 
   // What is on screen now, and what is being grown to replace it.
@@ -101,6 +102,9 @@ function mountTreeNew(canvas, dna, opts = {}) {
   let extents = { height: 8, width: 8, targetY: 3.4 };
   let lastFit = '';
   let reveal = null;    // { t0, group }
+  let motionEnabled = opts.motion !== false;
+  const interaction = treeInteractions(canvas, camera, controls, uniforms, () => shown);
+  interaction.setEnabled(motionEnabled);
 
   // Everything that goes on screen goes through here, so a host hears about the SKY
   // changing at the moment it changes. The shell sets its own text against that sky
@@ -109,6 +113,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
   // until the new tree is whole, and its sky stays with it.
   function show(next) {
     const was = shown ? shown.env.name : null;
+    interaction.reset();
     shown = next;
     if (next.env.name !== was && opts.onEnv) opts.onEnv(next.env.name);
   }
@@ -162,7 +167,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
       env.apply();
       show({ env, built });
       frame(ex);
-      reveal = opts.reveal === false ? null : { t0: performance.now(), group: built.tree };
+      reveal = opts.reveal === false || !motionEnabled ? null : { t0: performance.now(), group: built.tree };
       // Free what was on screen. `scene.remove()` frees no GPU memory on its own, so
       // a swap without this leaks a whole tree every time. An island that was shown
       // early for a build that was then superseded has no `built` — only a ground.
@@ -230,27 +235,40 @@ function mountTreeNew(canvas, dna, opts = {}) {
 
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
-    const key = `${w}x${h}`;
+    const inset = opts.viewportInsets?.() || { top: 0, bottom: 0 };
+    const available = Math.max(h * .4, h - inset.top - inset.bottom);
+    const key = `${w}x${h}:${available}`;
     if (canvas.width !== Math.round(w * renderer.getPixelRatio()) ||
         canvas.height !== Math.round(h * renderer.getPixelRatio()) || lastFit !== key) {
       renderer.setSize(w, h, false);
       // A TALL frame is answered by stepping back, never by a wider lens (viewer.js).
       // `?fit=lens` is the fit as it was before that, for an A/B on a real site's tree.
-      fitCamera(camera, extents, w / Math.max(h, 1), DIST0, undefined, url.get('fit') === 'lens' ? null : controls);
+      fitCamera(camera, extents, w / Math.max(available, 1), DIST0, 1.14, url.get('fit') === 'lens' ? null : controls);
+      camera.fov = 2 * Math.atan(Math.tan(camera.fov * Math.PI / 360) * h / available) * 180 / Math.PI;
+      camera.aspect = w / Math.max(h, 1);
+      camera.setViewOffset(w, h, 0, (inset.bottom - inset.top) / 2, w, h);
+      camera.updateProjectionMatrix();
       lastFit = key;
     }
   }
 
-  const clock = new THREE.Clock();
   let raf = 0;
-  let captureReq = null;
+  let captureRequests = [];
+  let motionTime = 0, lastTick = performance.now();
+  let disposed = false;
   function tick() {
-    const t = clock.getElapsedTime();
+    if (disposed) return;
+    const stamp = performance.now();
+    const dt = Math.min(.05, (stamp - lastTick) / 1000); lastTick = stamp;
+    if (document.hidden) { raf = requestAnimationFrame(tick); return; }
+    if (motionEnabled) motionTime += dt;
+    const t = motionTime;
     uniforms.time.value = t;
+    interaction.update(motionEnabled ? dt : 0);
     if (uniforms.gust && gustAt) uniforms.gust.value = gustAt(t);
     // A tree with per-frame work of its own (autumn's falling leaves). A pure function
     // of t, so a frame that is late or skipped costs nothing but that frame.
-    if (shown && shown.built && shown.built.update) shown.built.update(t);
+    if (motionEnabled && shown && shown.built && shown.built.update) shown.built.update(t);
     if (reveal) {
       // The tree SETTLES in rather than popping: 0.4 s, a few percent of scale.
       // Not a growth animation — there is none this round — just not a jump cut.
@@ -268,9 +286,28 @@ function mountTreeNew(canvas, dna, opts = {}) {
     // gone once we return to the event loop, and a toDataURL from outside the
     // render loop reads black. Serviced here, synchronously after render, it
     // costs nothing on any frame that did not ask.
-    if (captureReq) {
-      const done = captureReq; captureReq = null;
-      try { done(shown ? canvas.toDataURL('image/png') : null); } catch (e) { done(null); }
+    const queue = captureRequests; captureRequests = [];
+    for (const request of queue) {
+      try {
+        if (!shown) { request.resolve(null); continue; }
+        if (!request.options?.width) { request.resolve(canvas.toDataURL('image/png')); continue; }
+        const width = request.options.width, height = request.options.height;
+        const shot = camera.clone(); shot.clearViewOffset();
+        const rig = { target: controls.target.clone(), minDistance: 8, maxDistance: 22 };
+        shot.position.sub(controls.target).normalize().multiplyScalar(DIST0).add(controls.target);
+        fitCamera(shot, extents, width / height, DIST0, 1.2, rig);
+        shot.lookAt(rig.target);
+        shot.setViewOffset(width, height, 0, 24, width, height); // leave room for the postcard caption
+        const ratio = renderer.getPixelRatio();
+        try {
+          renderer.setPixelRatio(1); renderer.setSize(width, height, false);
+          renderer.render(shown.env.scene, shot);
+          request.resolve(canvas.toDataURL('image/png'));
+        } finally {
+          renderer.setPixelRatio(ratio); lastFit = ''; resize();
+          renderer.render(shown.env.scene, camera);
+        }
+      } catch (error) { request.resolve(null); }
     }
     raf = requestAnimationFrame(tick);
   }
@@ -282,7 +319,7 @@ function mountTreeNew(canvas, dna, opts = {}) {
     if (resumeTimer) clearTimeout(resumeTimer);
   });
   controls.addEventListener('end', () => {
-    resumeTimer = setTimeout(() => (controls.autoRotate = autoRotate), 2500);
+    resumeTimer = setTimeout(() => (controls.autoRotate = autoRotate && motionEnabled), 2500);
   });
 
   const handle = {
@@ -300,11 +337,19 @@ function mountTreeNew(canvas, dna, opts = {}) {
      * nothing is drawn. Used by the product's share button, so the image a
      * person posts is the tree they are actually looking at.
      */
-    capture() { return new Promise((res) => { captureReq = res; }); },
+    capture(options) { return disposed ? Promise.resolve(null) : new Promise(resolve => captureRequests.push({ resolve, options })); },
+    cancelPending() { if (pending) { pending.abort.abort(); pending = null; } },
+    setMotion(enabled) { motionEnabled = enabled; controls.autoRotate = autoRotate && enabled; interaction.setEnabled(enabled); if (!enabled && reveal) { reveal.group.scale.setScalar(1); reveal = null; } },
+    getPose() { return { position: camera.position.toArray(), target: controls.target.toArray() }; },
+    setPose(pose) { if (!pose) return; camera.position.fromArray(pose.position); controls.target.fromArray(pose.target); controls.update(); },
+    stir() { interaction.stir(); },
     camera,
     controls,
     renderer,
     dispose() {
+      disposed = true; interaction.dispose();
+      for (const request of captureRequests) request.resolve(null);
+      captureRequests = [];
       cancelAnimationFrame(raf);
       if (resumeTimer) clearTimeout(resumeTimer);
       if (pending) pending.abort.abort();

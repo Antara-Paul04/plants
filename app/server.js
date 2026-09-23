@@ -2,18 +2,21 @@
 //
 //   URL -> analysis -> fingerprint -> botanical DNA -> 3D tree
 //
-// Zero dependencies of its own. Analysis brings Playwright; the renderer is
+// Analysis uses Playwright; shared postcards use Vercel Blob. The renderer is
 // static ES modules served straight from prototype/src.
 //
 // Run:  node app/server.js      then open http://localhost:5170
 
 import { createServer } from 'node:http';
+import shareHandler from '../api/share.js';
+import treeHandler from '../api/tree.js';
 import { readFile, stat } from 'node:fs/promises';
 import { join, extname, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(fileURLToPath(import.meta.url), '..', '..');
 const PORT = Number(process.env.PORT) || 5170;
+if (!process.env.VERCEL && !process.env.PLANTS_SHARE_DIR) process.env.PLANTS_SHARE_DIR = join(ROOT, 'tmp', 'shared-trees');
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -21,6 +24,7 @@ const TYPES = {
   '.json': 'application/json; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.png': 'image/png',
+  '.jpg': 'image/jpeg',
   '.svg': 'image/svg+xml',
 };
 
@@ -76,20 +80,6 @@ function normalizeUrl(raw, scheme) {
   return u;
 }
 
-// Connection-level failures only. A site that resets on https may still serve
-// plain http — bettermotherfuckingwebsite.com is exactly this case, and it is
-// one of our clearest examples of deliberate minimalism, so it is worth the
-// retry. Never downgrades a URL the user explicitly typed as https.
-//
-// TIMEOUT IS NOT IN THIS SET, and used to be. A navigation timeout is not a
-// connection-level failure: the server answered, we simply gave up waiting for
-// domcontentloaded on a heavy DOM. Plain http cannot do better than https at
-// that — it is the same page and the same bytes. All the retry bought was a
-// second full 8s attempt before the user was told anything, so nike.com took
-// 18-25s to report a failure the analyzer already knew about at 8s. An honest
-// FAST failure beats a slow one, and this was neither fast nor informative.
-const RETRYABLE = new Set(['UNREACHABLE', 'CONNECTION_RESET', 'DNS', 'NAV_FAILED']);
-
 const send = (res, code, body, type = 'application/json; charset=utf-8') => {
   res.writeHead(code, { 'content-type': type, 'cache-control': 'no-store' });
   res.end(typeof body === 'string' ? body : JSON.stringify(body));
@@ -110,13 +100,13 @@ async function serveStatic(res, baseDir, relPath) {
   }
 }
 
-const readBody = (req) =>
+const readBody = (req, limit = 64 * 1024) =>
   new Promise((resolve, reject) => {
     let n = 0;
     const chunks = [];
     req.on('data', (c) => {
       n += c.length;
-      if (n > 64 * 1024) { reject(new Error('body too large')); req.destroy(); return; }
+      if (n > limit) { reject(new Error('body too large')); req.destroy(); return; }
       chunks.push(c);
     });
     req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
@@ -133,7 +123,7 @@ async function grow(req, res) {
   if (!u) {
     return send(res, 400, {
       ok: false,
-      failure: { code: 'invalid_url', message: "That doesn't look like a website address. Try something like stripe.com." },
+      failure: { code: 'INVALID_URL', message: "That doesn't look like a website address. Try something like stripe.com." },
     });
   }
   const domain = u.hostname.replace(/^www\./, '');
@@ -143,19 +133,9 @@ async function grow(req, res) {
 
   if (mod) {
     try {
-      let result = await mod.analyzeUrl(u.toString());
-
-      if ((!result || result.ok === false) && !u.hadScheme) {
-        const code = String(result?.failure?.code || '').toUpperCase();
-        if (RETRYABLE.has(code)) {
-          const httpUrl = normalizeUrl(payload.url, 'http');
-          if (httpUrl) {
-            console.log(`  ${domain}: https ${code} — retrying over http`);
-            const retry = await mod.analyzeUrl(httpUrl.toString());
-            if (retry && retry.ok !== false) result = retry;
-          }
-        }
-      }
+      const abort = new AbortController();
+      res.on('close', () => { if (!res.writableEnded) abort.abort(); });
+      const result = await mod.analyzeUrl(payload.url, { signal: abort.signal });
 
       if (!result || result.ok === false) {
         const f = (result && result.failure) || { code: 'analysis_failed', message: 'We could not read that website.' };
@@ -165,7 +145,7 @@ async function grow(req, res) {
       return send(res, 200, {
         ok: true, live: true, domain,
         url: result.url || u.toString(),
-        fingerprint: result.fingerprint,
+        captureScope: result.captureScope,
         dna,
         timingMs: Date.now() - started,
       });
@@ -173,7 +153,7 @@ async function grow(req, res) {
       console.error('analyze failed:', err.message);
       return send(res, 200, {
         ok: false, live: true, domain,
-        failure: { code: 'analysis_error', message: 'Something went wrong while reading that website.' },
+        failure: { code: 'INTERNAL', message: 'Something went wrong while reading that website.' },
       });
     }
   }
@@ -191,9 +171,8 @@ async function grow(req, res) {
   }
   return send(res, 200, {
     ok: true, live: false, domain,
-    fingerprint: hit.fingerprint || null,
+    url: u.toString(),
     dna: hit.dna,
-    why: hit.why || null,
     timingMs: Date.now() - started,
   });
 }
@@ -202,6 +181,18 @@ async function grow(req, res) {
 const server = createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const path = url.pathname;
+
+  // Small adapter keeps local and deployed share behavior identical.
+  res.status = code => { res.statusCode = code; return res; };
+  res.json = data => { res.setHeader('Content-Type','application/json'); res.end(JSON.stringify(data)); return res; };
+  res.send = data => { res.end(data); return res; };
+  if (path === '/api/share') {
+    try { req.body = await readBody(req, 3 * 1024 * 1024); }
+    catch { return res.status(413).json({ ok:false,error:'Postcard too large.' }); }
+    return shareHandler(req,res);
+  }
+  const shared = path.match(/^\/t\/([a-f0-9]{32})(\/image\.png)?$/);
+  if (shared) { req.query = { id:shared[1], image:shared[2] ? '1' : '0' }; return treeHandler(req,res); }
 
   if (req.method === 'POST' && path === '/api/grow') return grow(req, res);
 

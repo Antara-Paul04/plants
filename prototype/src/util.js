@@ -92,6 +92,7 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
   // grass included, because it is the same weather. A bag without it (V0's) compiles
   // the shader it always did, to the byte.
   const gust = uniforms.gust ?? null;
+  const touch = !local && uniforms.touchPoint && uniforms.touchStrength;
   const AMP = gust ? '( uSwayAmp * uSwayGust )' : 'uSwayAmp';
   const prior = Object.hasOwn(material, 'onBeforeCompile') ? material.onBeforeCompile : null;
   const priorKey = Object.hasOwn(material, 'customProgramCacheKey') ? material.customProgramCacheKey
@@ -109,10 +110,12 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
     shader.uniforms.uSwayHi = U(yHi);
     if (pinned) shader.uniforms.uSwayPin = U(pin);
     if (gust) shader.uniforms.uSwayGust = gust;
+    if (touch) { shader.uniforms.uTouchPoint = uniforms.touchPoint; shader.uniforms.uTouchStrength = uniforms.touchStrength; }
     shader.vertexShader =
       'uniform float uTime;\nuniform float uSwayAmp;\nuniform float uSwaySpeed;\n' +
       'uniform float uSwayLo;\nuniform float uSwayHi;\n' + (pinned ? 'uniform float uSwayPin;\n' : '') +
-      (gust ? 'uniform float uSwayGust;\n' : '') + shader.vertexShader;
+      (gust ? 'uniform float uSwayGust;\n' : '') +
+      (touch ? 'uniform vec3 uTouchPoint;\nuniform float uTouchStrength;\n' : '') + shader.vertexShader;
     const mask = local
       // grass: bend from the blade's own root, scaled by local height
       ? `float m = clamp(position.y, 0.0, 1.0); m = m * m;`
@@ -133,14 +136,15 @@ export function applySway(material, uniforms, { amp = 0.045, speed = 0.85, yLo =
       float s = sin( uTime * uSwaySpeed + ph ) * 0.6
               + sin( uTime * uSwaySpeed * 1.57 + ph * 1.7 ) * 0.4;
       float c = cos( uTime * uSwaySpeed * 0.77 + ph * 0.8 );
-      wp.x += s * ${AMP} * m;
+      ${touch ? 'float touch = uTouchStrength * exp(-dot(wp.xyz - uTouchPoint, wp.xyz - uTouchPoint) / 3.5);' : 'float touch = 0.0;'}
+      wp.x += (s * ${AMP} + sin(uTime * 8.0 + ph) * touch * 0.13) * m;
       wp.z += c * ${AMP} * 0.7 * m;
       vec4 mvPosition = modelViewMatrix * wp;
       gl_Position = projectionMatrix * mvPosition;
       `
     );
   };
-  const swayKey = (local ? 'sway-local' : pinned ? 'sway-world-pin' : 'sway-world') + (gust ? '-gust' : '');
+  const swayKey = (local ? 'sway-local' : pinned ? 'sway-world-pin' : 'sway-world') + (gust ? '-gust' : '') + (touch ? '-touch' : '');
   material.customProgramCacheKey = priorKey ? () => `${priorKey.call(material)}+${swayKey}` : () => swayKey;
 }
 

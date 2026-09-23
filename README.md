@@ -29,8 +29,9 @@ densely it fills the frame, whether it has a colour of its own and whether that
 colour is scattered or pooled. Those measurements become **Botanical DNA**, and
 the DNA grows the tree.
 
-🔒 Same address, same tree, every time. No database, no accounts, nothing stored —
-the seed is the domain name.
+**DECIDED.** No accounts. A domain seeds the tree; changes to a website can change
+its measured DNA. Sharing saves that moment’s tree and postcard so its link can
+reopen without another website capture.
 
 ---
 
@@ -79,7 +80,8 @@ Nobody picks these. They fall out of the measurements.
 ## ⚡ Quick start
 
 ```bash
-node app/server.js
+npm install
+npm run dev
 ```
 
 Open **http://localhost:5170** and paste something in.
@@ -90,6 +92,30 @@ Open **http://localhost:5170** and paste something in.
 
 Needs Node and a Chrome on the machine (`PLANTS_CHROME` overrides the path).
 The browser is reused between reads, so the first site is slow and the rest are not.
+
+### Sharing and checks
+
+**EXPERIMENT.** Hover over leaves, tap/press Space to stir, and drag/use arrow keys
+to turn. “Pause motion” freezes automatic and reactive movement; reduced-motion
+preferences start paused. Public UI does not explain the website-to-tree mapping.
+
+**EXPERIMENT.** “Share tree” creates a preview, an X intent link, a copyable saved
+URL, and a downloadable PNG. The X link points to `/t/:id`; its initial HTML includes
+the tree’s own OG/Twitter image. No tweet is posted automatically.
+
+**DECIDED — setup.** Local shares use ignored `tmp/shared-trees/`. On Vercel, connect a
+**public Blob store** to Preview and Production; its `BLOB_READ_WRITE_TOKEN` is read by
+the API. See `.env.example`. No secret belongs in client JavaScript. Missing storage
+returns a recoverable sharing error, and the image can still be downloaded.
+
+```bash
+npm test       # Node regressions; mocked browser boundaries, real Three interaction math
+npm run build  # assemble the static shell and renderer in public/
+```
+
+**OPEN.** The PNG is immutable, while interactive snapshots use renderer contract v1.
+Preserve that contract or retain versioned renderer assets before changing geometry.
+X decides when to fetch/cache cards; a public deployment is required for crawlers.
 
 ---
 

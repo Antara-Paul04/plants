@@ -2,365 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Plants — every website grows differently</title>
-    <meta name="description" content="Paste a website address and watch a tree grow from its visual design — how much styling it has, how dense it is, what colour it is. Every website grows differently." />
-    <!-- The SVG is the source of truth; the rasters exist because it is not
-         enough alone. Safari has never reliably used an SVG favicon, browsers
-         and crawlers request /favicon.ico whatever the markup says, and iOS
-         wants apple-touch-icon.png for "Add to Home Screen". All three were
-         404s. Generated from the SVG by tools/icons.mjs. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Plants — a little life from any website</title>
+    <meta
+      name="description"
+      content="Give a website a little life. Grow a tree, stir its leaves, and share your own tiny world."
+    />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#dbe4ea" />
-
-    <!-- THE LINK PREVIEW IS THE WHOLE FIRST IMPRESSION for a product that is
-         entirely a picture. Without these a shared link is a bare URL with no
-         card at all, which reads as broken — and the most likely way anyone
-         arrives here is a link someone posted.
-         og.png is built BY THE PRODUCT (tools/og-card.mjs renders the hero live
-         and composes it with thumbnails from tools/thumbs.mjs), so the card
-         cannot drift into advertising trees we no longer make. Re-run both when
-         the tree's look changes. A hero and a footnote rather than three equal
-         thumbnails: one large tree is what stops a scroll, and the three small
-         ones carry the claim that websites differ without competing with it.
-         Absolute URL because several platforms will not resolve a relative one. -->
+    <meta name="theme-color" content="#e7ebe5" />
+    <!-- share-meta:start -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Plants" />
-    <meta property="og:title" content="Plants — every website grows differently" />
-    <meta property="og:description" content="Paste a website address and watch a tree grow from its visual design. Unstyled HTML grows bare; a richly designed page grows lush and flowering." />
+    <meta
+      property="og:title"
+      content="Plants — a little life from any website"
+    />
+    <meta
+      property="og:description"
+      content="Every website grows differently. What will yours become?"
+    />
     <meta property="og:url" content="https://sitebonsai.vercel.app/" />
     <meta property="og:image" content="https://sitebonsai.vercel.app/og.png" />
-    <meta property="og:image:width" content="2400" />
-    <meta property="og:image:height" content="1260" />
-    <meta property="og:image:alt" content="A large 3D tree covered in red blossom on a floating grass island, beside the words Plants — every website grows differently, with three much smaller and very different trees below." />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Plants — every website grows differently" />
-    <meta name="twitter:description" content="Paste a website address and watch a tree grow from its visual design. Unstyled HTML grows bare; a richly designed page grows lush and flowering." />
+    <meta
+      name="twitter:title"
+      content="Plants — a little life from any website"
+    />
     <meta name="twitter:image" content="https://sitebonsai.vercel.app/og.png" />
-    <style>
-      /* THE SCENE IS THE PAGE.
-         The tree used to live in a rounded box on a cream page. It is now the
-         page: the canvas is fixed to the viewport, its sky IS the background,
-         and every control floats over it. Nothing has a page-coloured surface
-         behind it any more, so everything here has to stay legible over a sky
-         that ranges from pale daylight to near-black night. */
-      :root {
-        color-scheme: light dark;
-        --ink: #2b2926;
-        --muted: rgba(43, 41, 38, 0.62);
-        --surface: rgba(252, 250, 246, 0.82);
-        --surface-solid: rgba(252, 250, 246, 0.94);
-        --edge: rgba(43, 41, 38, 0.13);
-        --accent: #3f6b3a;
-        --accent-ink: #fff;
-      }
-      /* NIGHT. The environment state is known to app.js from the DNA, so the UI
-         is told rather than guessing from a screenshot. Without this the whole
-         interface disappears on an 11-of-56 slice of the corpus. */
-      body.night {
-        --ink: #f2efe9;
-        --muted: rgba(242, 239, 233, 0.66);
-        --surface: rgba(18, 22, 30, 0.72);
-        --surface-solid: rgba(18, 22, 30, 0.88);
-        --edge: rgba(242, 239, 233, 0.17);
-        --accent: #7fa978;
-        --accent-ink: #0e1218;
-      }
-
-      * { box-sizing: border-box; }
-      html, body { margin: 0; height: 100%; overflow: hidden; }
-      body {
-        color: var(--ink);
-        background: #dfe4ea;           /* only ever seen for one frame before the sky paints */
-        font: 15px/1.55 ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
-        -webkit-font-smoothing: antialiased;
-      }
-
-      /* The canvas is the page, not an element on it. */
-      #scene {
-        position: fixed; inset: 0;
-        width: 100%; height: 100%;
-        display: block;
-        z-index: 0;
-      }
-
-      /* Everything else floats. The layer ignores pointer events so the scene
-         stays draggable everywhere except on an actual control. */
-      .ui {
-        position: fixed; inset: 0;
-        z-index: 1;
-        pointer-events: none;
-        padding: max(18px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right))
-                 max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
-        display: grid;
-        grid-template-columns: auto auto;
-        grid-template-rows: auto 1fr auto;
-        gap: 14px;
-      }
-      .ui > * { pointer-events: auto; }
-
-      .wordmark {
-        grid-column: 1; grid-row: 1;
-        align-self: start; justify-self: start;
-        font-size: 14px; font-weight: 620; letter-spacing: -0.01em;
-        color: var(--muted);
-        user-select: none;
-      }
-      /* The promise, said once. A visitor arriving from a link meets a tree and
-         the word "Plants" and has no reason to connect them; this is the
-         sentence that does it. Quiet enough to ignore on every later visit. */
-      .wordmark b { display: block; font-weight: 400; font-size: 12px; opacity: 0.75; margin-top: 2px; }
-
-      /* --- the dock: input, bottom-left ------------------------------------
-         Bottom-LEFT rather than centre because the trunk and island occupy the
-         lower middle of every composition, and the crown the upper middle. The
-         lower corners are the only reliably empty region across states. */
-      .dock {
-        grid-column: 1; grid-row: 3;
-        align-self: end; justify-self: start;
-        display: flex; flex-direction: column; gap: 8px;
-        max-width: min(420px, calc(100vw - 36px));
-      }
-
-      form { display: flex; gap: 7px; }
-      input {
-        flex: 1; min-width: 0;
-        padding: 10px 13px;
-        font: inherit; color: var(--ink);
-        background: var(--surface);
-        border: 1px solid var(--edge);
-        border-radius: 10px;
-        outline: none;
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-      }
-      input::placeholder { color: var(--muted); }
-      input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(63,107,58,.18); }
-      button {
-        padding: 10px 15px;
-        font: inherit; font-weight: 560;
-        color: var(--accent-ink); background: var(--accent);
-        border: 0; border-radius: 10px; cursor: pointer;
-        white-space: nowrap;
-      }
-      button:hover:not(:disabled) { filter: brightness(1.08); }
-      button:disabled { opacity: .55; cursor: default; }
-
-
-      /* --- the reading panel: bottom-right ---------------------------------
-         "Why this tree?" is the intellectual payoff and must not be buried, but
-         it also must not be furniture. Collapsed it is one line — the domain and
-         how long it took. Expanded it is the reasoning. */
-      .result {
-        grid-column: 2; grid-row: 3;
-        align-self: end; justify-self: end;
-        max-width: min(360px, calc(100vw - 36px));
-        background: var(--surface); border: 1px solid var(--edge);
-        border-radius: 13px; overflow: hidden;
-        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      }
-      .result[hidden] { display: none; }
-      .result-head {
-        display: flex; align-items: baseline; gap: 7px;
-        width: 100%; padding: 10px 13px;
-        background: transparent; border: 0; border-radius: 0;
-        color: var(--ink); font: inherit; text-align: left; cursor: pointer;
-      }
-      .result-head:hover { background: rgba(127,127,127,.08); filter: none; }
-      .domain { font-weight: 600; font-size: 15px; }
-      .stamp { color: var(--muted); font-size: 12px; font-weight: 400; }
-      .chev { margin-left: auto; color: var(--muted); font-size: 11px; transition: transform .18s; }
-      .result.open .chev { transform: rotate(180deg); }
-
-      .why-wrap { display: none; padding: 0 13px 12px; }
-      .result.open .why-wrap { display: block; }
-      .why { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
-      .why li { display: flex; gap: 8px; align-items: baseline; font-size: 13px; }
-      .why b { font-weight: 560; min-width: 104px; }
-      .why span { color: var(--muted); }
-      .swatches { display: flex; gap: 4px; margin-left: 2px; }
-      .sw { width: 12px; height: 12px; border-radius: 3px; border: 1px solid rgba(127,127,127,.35); }
-
-      /* --- status, centred -------------------------------------------------- */
-      .overlay {
-        grid-column: 1 / -1; grid-row: 2;
-        align-self: center; justify-self: center;
-        display: flex; flex-direction: column;
-        align-items: center; gap: 10px; text-align: center;
-        color: var(--muted);
-        pointer-events: none;
-      }
-      .overlay[hidden] { display: none; }
-      .overlay #retry { pointer-events: auto; }
-      /* WHILE GROWING, the status moves out of the middle. The canvas keeps the
-         PREVIOUS tree up until the new one is whole (the renderer's swap
-         discipline — no empty frame between two trees), so a centred card reads
-         as a finished result with a loading message stamped across it. That is
-         the same confusion as the false-completion bug, arriving from the other
-         direction. Idle and failure keep the centre: there the middle of the
-         frame is genuinely empty and the message IS the content. */
-      .overlay.busy {
-        grid-column: 1; grid-row: 3;
-        align-self: end; justify-self: start;
-        align-items: flex-start; gap: 8px;
-        margin-bottom: 78px;
-      }
-      .overlay.busy #msg { font-size: 14px; padding: 8px 13px; }
-      .status { display: flex; align-items: center; gap: 9px; }
-
-      /* --- the wait ---------------------------------------------------------- */
-      .waiting {
-        pointer-events: none;
-        display: flex; align-items: center; gap: 12px;
-        background: var(--surface-solid); border: 1px solid var(--edge);
-        border-radius: 14px; padding: 10px 16px 10px 10px;
-        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      }
-      .waiting[hidden] { display: none; }
-
-      .sprout { width: 54px; height: 45px; overflow: visible; flex: 0 0 auto; }
-      .sprout .soil {
-        fill: color-mix(in oklab, var(--ink) 16%, transparent);
-      }
-      /* animation-fill-mode: backwards is not a detail here. Without it, an
-         element waiting out its delay renders at its NATURAL size — so every
-         leaf was fully open before its animation began and the plant appeared
-         complete from the first frame. Nothing read as growth at all. */
-      .sprout .stem {
-        fill: none; stroke: var(--accent); stroke-width: 3.2; stroke-linecap: round;
-        transform-box: fill-box; transform-origin: 50% 100%;
-        animation: stem 3.6s cubic-bezier(.3,.7,.35,1) infinite backwards;
-      }
-      .sprout .leaf { fill: var(--accent); transform-box: fill-box; }
-      .sprout .l1 { transform-origin: 100% 100%; animation: leaf 3.6s cubic-bezier(.3,.7,.35,1) infinite .78s backwards; }
-      .sprout .l2 { transform-origin: 0% 100%;   animation: leaf 3.6s cubic-bezier(.3,.7,.35,1) infinite 1.12s backwards; }
-      .sprout .l3 { transform-origin: 100% 100%; animation: leaf 3.6s cubic-bezier(.3,.7,.35,1) infinite 1.46s backwards; }
-      .sprout .bud {
-        fill: color-mix(in oklab, var(--accent) 55%, #fff);
-        transform-box: fill-box; transform-origin: 50% 50%;
-        animation: bud 3.6s cubic-bezier(.34,1.5,.5,1) infinite 1.82s backwards;
-      }
-      /* Each part grows, holds while the rest catches up, then the whole plant
-         fades and the next one starts. One loop, four delays. */
-      @keyframes stem {
-        0%   { transform: scaleY(0.04); opacity: 0; }
-        8%   { opacity: 1; }
-        46%  { transform: scaleY(1); }
-        84%  { transform: scaleY(1);    opacity: 1; }
-        96%, 100% { transform: scaleY(1); opacity: 0; }
-      }
-      @keyframes leaf {
-        0%   { transform: scale(0) rotate(-26deg); opacity: 0; }
-        5%   { opacity: 1; }
-        26%  { transform: scale(1) rotate(0deg); }
-        74%  { transform: scale(1) rotate(0deg); opacity: 1; }
-        88%, 100% { transform: scale(1) rotate(0deg); opacity: 0; }
-      }
-      @keyframes bud {
-        0%   { transform: scale(0); opacity: 0; }
-        6%   { opacity: 1; }
-        22%  { transform: scale(1); }
-        70%  { transform: scale(1); opacity: 1; }
-        84%, 100% { transform: scale(1); opacity: 0; }
-      }
-      /* Someone who has asked for less motion gets a still sapling, not a
-         stutter — the wait still has its seconds and its bar. */
-      @media (prefers-reduced-motion: reduce) {
-        .sprout .stem, .sprout .leaf, .sprout .bud { animation: none; opacity: 1; }
-        .sprout .stem { transform: scaleY(1); }
-      }
-
-      .wait-meta { display: flex; align-items: center; gap: 9px; min-width: 128px; }
-      .track {
-        position: relative; flex: 1; height: 3px; border-radius: 2px;
-        background: color-mix(in oklab, var(--ink) 12%, transparent); overflow: hidden;
-      }
-      .track i {
-        position: absolute; inset: 0 auto 0 0; width: 0%;
-        background: var(--accent); border-radius: 2px;
-        transition: width 260ms linear;
-      }
-      .wait-meta b {
-        font-size: 11px; font-weight: 600; color: var(--muted);
-        font-variant-numeric: tabular-nums; min-width: 26px; text-align: right;
-      }
-
-      /* --- share ------------------------------------------------------------- */
-      .result-top { display: flex; align-items: stretch; }
-      .result-top .result-head { flex: 1 1 auto; }
-      .share-btn {
-        flex: 0 0 auto; align-self: center;
-        margin: 0 10px 0 2px; padding: 5px 11px;
-        font: inherit; font-size: 12px; font-weight: 600;
-        color: var(--accent); background: color-mix(in oklab, var(--accent) 12%, transparent);
-        border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent);
-        border-radius: 999px; cursor: pointer; white-space: nowrap;
-      }
-      .share-btn:hover { background: color-mix(in oklab, var(--accent) 20%, transparent); }
-      .result.example .share-btn { display: none; }
-      .share-sheet {
-        display: flex; flex-direction: column; gap: 2px;
-        padding: 6px; margin: 0 8px 8px;
-        border-top: 1px solid var(--edge);
-      }
-      .share-sheet[hidden] { display: none; }
-      .share-sheet button {
-        font: inherit; font-size: 13px; text-align: left;
-        padding: 7px 10px; border-radius: 8px;
-        border: 0; background: transparent; color: var(--ink); cursor: pointer;
-      }
-      .share-sheet button:hover { background: color-mix(in oklab, var(--ink) 7%, transparent); }
-      .share-sheet button[hidden] { display: none; }
-
-      /* The message sits over the scene — over a bare-earth island on a failure,
-         over open sky otherwise. It carries its own ground either way. A judge
-         put the rule: an image can refuse to pass judgment on a site, but it
-         cannot say "we could not read this" — that sentence has to be carried by
-         the copy, so the copy must be legible whatever is behind it. */
-      #msg {
-        background: var(--surface-solid); border: 1px solid var(--edge);
-        border-radius: 12px; padding: 11px 17px; max-width: min(34em, calc(100vw - 48px));
-        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      }
-      .overlay.failed #msg { color: #b4453a; }
-      body.night .overlay.failed #msg { color: #f2938a; }
-      #retry {
-        padding: 7px 16px; font-size: 14px; font-weight: 500;
-        color: var(--ink); background: var(--surface-solid);
-        border: 1px solid var(--edge); border-radius: 999px;
-      }
-
-      .note {
-        margin-top: 9px; padding: 7px 10px; font-size: 12px;
-        color: var(--muted); border: 1px solid var(--edge); border-radius: 9px;
-      }
-      .note[hidden] { display: none; }
-
-      footer {
-        grid-column: 2; grid-row: 1;
-        align-self: start; justify-self: end;
-        font-size: 12px; color: var(--muted);
-      }
-      footer a { color: inherit; }
-
-      /* Phones: one column, the panel above the dock, both full width. A 9:19
-         viewport is the opposite framing problem from a wide desktop and the
-         corners stop being distinct places. */
-      @media (max-width: 640px) {
-        .ui { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto auto; gap: 10px; }
-        .wordmark { grid-column: 1; grid-row: 1; }
-        footer { display: none; }
-        .overlay { grid-column: 1; grid-row: 2; }
-        .result { grid-column: 1; grid-row: 3; justify-self: stretch; max-width: none; }
-        .dock { grid-column: 1; grid-row: 4; max-width: none; }
-      }
-    </style>
-    <!-- The renderer is imported from /tree/, which imports bare "three". Without
-         this map the module graph never resolves and the scene never mounts —
-         which on a full-bleed page is not a broken canvas in a box, it is a
-         blank website. -->
+    <!-- share-meta:end -->
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <script type="importmap">
       {
         "imports": {
@@ -369,127 +44,108 @@
         }
       }
     </script>
-
-    <!-- THE MODULE GRAPH WAS DISCOVERED ONE LEVEL AT A TIME.
-         Nothing here changes what loads — only when the browser learns it needs
-         it. Cold, the browser parsed index.html, fetched app.js, parsed THAT to
-         learn about /tree/main.js, parsed that to learn about three, and only
-         then opened a connection to a second origin for 261 KB of it. Four
-         round trips deep before the largest file on the page starts, and on a
-         phone a round trip is not free.
-         preconnect opens the jsdelivr connection (DNS + TCP + TLS: 125 ms from
-         this laptop, far more on cellular) while index.html is still being read.
-         modulepreload declares the whole graph up front so it is fetched in one
-         parallel wave instead of a staircase. Every file listed is one the page
-         loads on EVERY visit — this is not speculative loading.
-         Measured cause: the build is ~5s of a 15-20s opening frame at 6x
-         throttle; the rest is this. -->
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js" crossorigin />
-    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/utils/BufferGeometryUtils.js" crossorigin />
-    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/objects/MarchingCubes.js" crossorigin />
-    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js" crossorigin />
     <link rel="modulepreload" href="/tree/main.js" />
-    <link rel="modulepreload" href="/tree/dna-params.js" />
-    <link rel="modulepreload" href="/tree/dna.js" />
-    <link rel="modulepreload" href="/tree/build.js" />
-    <link rel="modulepreload" href="/tree/viewer.js" />
-    <link rel="modulepreload" href="/tree/foliage.js" />
     <link rel="modulepreload" href="/tree/grow.js" />
-    <link rel="modulepreload" href="/tree/util.js" />
-    <link rel="modulepreload" href="/tree/tree.js" />
-    <link rel="modulepreload" href="/tree/island.js" />
-    <link rel="modulepreload" href="/tree/branching.js" />
-    <link rel="modulepreload" href="/tree/limbmesh.js" />
-    <link rel="modulepreload" href="/tree/bark.js" />
-    <link rel="modulepreload" href="/tree/woodsdf.js" />
-    <link rel="modulepreload" href="/tree/woodfield.js" />
-    <link rel="modulepreload" href="/tree/leaves.js" />
-    <link rel="modulepreload" href="/tree/flowers.js" />
   </head>
   <body>
-    <canvas id="scene"></canvas>
-
-    <div class="ui">
-      <div class="wordmark">Plants<b>every website grows differently</b></div>
-      <!-- NO LINK TO /compare.html. It is still there and still works, and the
-           team should keep using it — but it is a debug harness, not a page for
-           visitors. README already says "that view is for us, not for users",
-           so the public link was the thing contradicting the decision, not its
-           removal. It renders with the OLD v0 engine, so the twelve trees in it
-           do not look like the one a visitor just grew (different bark, crown,
-           grass and rocks from the same DNA); it prints triangle counts, leaf
-           and blossom counts, a detail figure and a snapshot timestamp; it is
-           titled "(internal)"; and it blocks the main thread for 4.5-6s in one
-           unyielding task. Reachable directly at /compare.html. -->
-
-      <div class="overlay" id="overlay">
-        <div class="status">
-          <div id="msg">Paste a website address to grow its tree.</div>
+    <main id="garden">
+      <canvas
+        id="scene"
+        tabindex="0"
+        aria-label="Interactive tree. Drag to turn, use arrow keys to orbit, or press Space to stir its leaves."
+      ></canvas>
+      <header class="masthead">
+        <div>
+          <h1>plants<span class="wordmark-dot">.</span></h1>
+          <p>a little life from any website</p>
         </div>
-        <!-- THE WAIT IS 10-40 SECONDS AND IT USED TO BE A SPINNER.
-             The bar is not a guess dressed as progress: it is the BUDGET, the
-             same 50s the analyzer is actually working against, so when it fills
-             the request really does end. The seconds are the seconds. And the
-             strip is the product's own promise made visible at the one moment
-             the visitor has nothing to do — every one of those is a real tree
-             from a real measurement, not decoration. -->
-        <div class="waiting" id="waiting" hidden>
-          <!-- A SAPLING, GROWING, ON LOOP. Pure CSS on transform and opacity and
-               nothing else, because the thing we are waiting FOR — the wood
-               build — blocks the main thread for seconds at a time. A
-               JavaScript animation would stutter at precisely the moment it is
-               on screen; transform and opacity keep running on the compositor
-               while the main thread is busy, so this stays smooth through the
-               jank. It is also the only honest metaphor available: something is
-               being grown. -->
-          <svg class="sprout" viewBox="0 0 72 60" aria-hidden="true">
-            <ellipse class="soil" cx="36" cy="52" rx="19" ry="4.6"/>
-            <path class="stem" d="M36 52 C 35.2 44, 36.6 38, 36 27"/>
-            <path class="leaf l1" d="M36 41 C 28 40, 23 35, 22.5 30 C 29 30, 34.5 34, 36 41 Z"/>
-            <path class="leaf l2" d="M36 36 C 44 35, 49 30, 49.5 25 C 43 25, 37.5 29, 36 36 Z"/>
-            <path class="leaf l3" d="M36 30 C 30 28.5, 26.5 24, 26.5 19.5 C 32 20, 35.2 24, 36 30 Z"/>
-            <circle class="bud" cx="36" cy="25" r="4.2"/>
-          </svg>
-          <div class="wait-meta">
-            <div class="track"><i id="barFill"></i></div>
-            <b id="elapsed">0s</b>
+        <button
+          id="motion"
+          class="quiet-button"
+          type="button"
+          aria-pressed="false"
+        >
+          Pause motion
+        </button>
+      </header>
+      <div class="garden-controls">
+        <section class="result" id="result" hidden aria-label="Your tree">
+          <div class="tree-label">
+            <span id="caption" class="eyebrow">GROWN FROM</span
+            ><span id="domain"></span>
           </div>
-        </div>
-        <button type="button" id="retry" hidden>Try again</button>
-      </div>
-
-      <div class="result" id="result" hidden>
-        <div class="result-top">
-          <button class="result-head" id="resultHead" type="button" aria-expanded="false">
-            <span class="domain" id="domain"></span>
-            <span class="stamp" id="stamp"></span>
-            <span class="chev">▲</span>
+          <button
+            id="shareBtn"
+            class="share-button"
+            type="button"
+            aria-haspopup="dialog"
+          >
+            Share tree <span aria-hidden="true">↗</span>
           </button>
-          <!-- Hidden on the example: there is nothing of the visitor's to share
-               until they have grown something. -->
-          <button class="share-btn" id="shareBtn" type="button" aria-haspopup="true" aria-expanded="false">Share</button>
+        </section>
+        <div class="interaction-hint" id="hint">
+          Drag to turn <span aria-hidden="true">·</span> Tap to stir
         </div>
-        <div class="share-sheet" id="shareSheet" hidden>
-          <button type="button" data-act="native" hidden>Share tree…</button>
-          <button type="button" data-act="save">Save image</button>
-          <button type="button" data-act="x">Post on X</button>
-          <button type="button" data-act="copy">Copy link</button>
-        </div>
-        <div class="why-wrap">
-          <ul class="why" id="whyList"></ul>
-          <div class="note" id="cacheNote" hidden></div>
-        </div>
+        <section class="dock" aria-label="Grow a tree">
+          <form id="form" novalidate>
+            <label for="url">Plant a website</label>
+            <div class="input-row">
+              <input
+                id="url"
+                type="text"
+                inputmode="url"
+                placeholder="your-website.com"
+                autocomplete="url"
+                spellcheck="false"
+                aria-describedby="status"
+              />
+              <button id="go" type="submit">
+                Grow a tree <span aria-hidden="true">↗</span>
+              </button>
+            </div>
+          </form>
+          <div class="status-row">
+            <span id="status" role="status" aria-live="polite"
+              >Every website grows differently.</span
+            ><button id="retry" type="button" hidden>Try again</button>
+          </div>
+        </section>
+        <p class="footnote">a small corner of the internet, growing</p>
       </div>
-
-      <div class="dock">
-        <form id="form">
-          <input id="url" type="text" placeholder="news.ycombinator.com" autocomplete="off" spellcheck="false" autofocus />
-          <button id="go" type="submit">Grow</button>
-        </form>
+      <div class="notice" id="notice" role="status" hidden></div>
+    </main>
+    <dialog id="shareDialog" aria-labelledby="shareTitle">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">A LITTLE SOMETHING TO KEEP</span>
+          <h2 id="shareTitle">Send a little life.</h2>
+        </div>
+        <button
+          id="closeShare"
+          class="close-button"
+          aria-label="Close share dialog"
+        >
+          ×
+        </button>
       </div>
-    </div>
-
+      <div class="card-preview">
+        <img id="sharePreview" alt="Your tree’s share card" hidden />
+        <p id="previewStatus" role="status">Making your postcard…</p>
+      </div>
+      <p id="shareStatus" role="status">Your tree, just as you left it.</p>
+      <div class="share-actions">
+        <a
+          id="postX"
+          class="primary-action"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-disabled="true"
+          >Share on X ↗</a
+        >
+        <button id="copyLink" type="button" disabled>Copy link</button>
+        <button id="saveImage" type="button" disabled>Save image</button>
+      </div>
+    </dialog>
     <script type="module" src="/app.js"></script>
   </body>
 </html>

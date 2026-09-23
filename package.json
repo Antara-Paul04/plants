@@ -3,9 +3,20 @@
   "private": true,
   "type": "module",
   "description": "Paste a website URL, get a tree grown from its visual design.",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
-    "playwright-core": "^1.63.0",
-    "@sparticuz/chromium": "^131.0.0"
+    "@sparticuz/chromium": "^131.0.0",
+    "@vercel/blob": "^2.8.0",
+    "playwright-core": "^1.63.0"
+  },
+  "devDependencies": {
+    "three": "0.169.0"
+  },
+  "scripts": {
+    "dev": "node app/server.js",
+    "build": "node tools/build-static.mjs",
+    "test": "node --test test/*.test.js"
   }
 }

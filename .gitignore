@@ -76,3 +76,4 @@ references/experiments/retest-*/*.png
 node_modules/
 .vercel/
 .vercel
+.env*.local

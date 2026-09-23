@@ -6,9 +6,24 @@
     "api/grow.js": {
       "maxDuration": 60,
       "memory": 2048
+    },
+    "api/tree.js": {
+      "includeFiles": "app/public/index.html",
+      "maxDuration": 15
+    },
+    "api/share.js": {
+      "maxDuration": 30
     }
   },
   "rewrites": [
+    {
+      "source": "/t/:id/image.png",
+      "destination": "/api/tree?id=:id&image=1"
+    },
+    {
+      "source": "/t/:id",
+      "destination": "/api/tree?id=:id"
+    },
     {
       "source": "/favicon.ico",
       "destination": "/favicon.png"

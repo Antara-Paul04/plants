@@ -254,3 +254,31 @@ budget, spendable from outside, one request at a time.
 **Known and not closed:** DNS rebinding. A public hostname whose A record points into
 private space still gets one navigation, because the check is on the name rather than on
 what it resolves to.
+
+
+---
+
+## D11 — A living tree and its own share card
+
+**Status: DECIDED, human direction, 2026-09-23.** The human requested small animations,
+hover interactions, a tree-specific X card, UI that suits the tree, and removal of
+public explanations. This supersedes D9’s “Why this tree?” panel and the earlier
+exclusion of persistence for the narrow purpose of shared snapshots. Accounts,
+public galleries and gardening mechanics remain outside the current scope.
+
+**DECIDED.** Sharing captures the actual renderer output into a 1200×630 PNG. A saved
+`/t/:id` URL serves per-tree metadata in initial HTML so social crawlers do not need
+JavaScript. DNA, source URL and camera are saved alongside the image; opening the link
+does not repeat analysis. Vercel Blob stores shared assets; local development uses disk.
+
+**EXPERIMENT.** Hover adds local foliage movement. Taps and Space produce a brief
+foliage response; flowering/autumn trees release a few petals/leaves. Dragging and
+multi-touch do not count as taps. Reduced-motion preference disables automatic and
+reactive movement; the person can explicitly enable it. Trunks stay rigid.
+
+**EXPERIMENT.** Matte cream/moss/clay controls and a serif wordmark fit the existing
+miniature scenes. This is an implementation for human review, not a new fixed art rule.
+
+**OPEN.** Saved images are immutable; saved interactive geometry uses renderer
+contract version 1. Future changes to DNA interpretation or geometry need a versioned
+renderer/migration policy before shipping. Do not silently reinterpret old snapshots.

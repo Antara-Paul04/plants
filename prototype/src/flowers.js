@@ -48,7 +48,7 @@ const UP = new THREE.Vector3(0, 1, 0);
  * inner (upper) face toward +Z. Obovate — a narrow claw, widest past the
  * middle, a blunt rounded end — and cupped toward +Z both along and across.
  */
-function petalGeometry(opts = {}) {
+export function petalGeometry(opts = {}) {
   const { length = 1, width = 0.8, cup = 0.3, rows = 4, wide = false } = opts;
   const cols = wide ? [-1, -0.5, 0, 0.5, 1] : [-1, 0, 1];
   const pos = [], tt = [], idx = [];

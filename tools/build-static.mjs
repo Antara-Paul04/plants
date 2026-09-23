@@ -18,8 +18,8 @@ await mkdir(OUT, { recursive: true });
 await cp('app/public', OUT, { recursive: true });
 await cp('prototype/src', `${OUT}/tree`, { recursive: true });
 
-// The comparison grid is an internal view and the product links to it from the
-// corner of every screen — so when it broke, it broke in public.
+// Keep the comparison grid available for internal rendering checks. The product
+// no longer links to debug views.
 //
 // It was copied verbatim and its one script tag says `./src/compare.js`. That is
 // correct where the prototype is served, because there the prototype root IS the

@@ -70,6 +70,9 @@ believe we want; it has not been tested.
 - a URL input
 - the resulting 3D tree
 - the ability to try another website
+- subtle idle motion, leaf hover response, and tap/keyboard reactions
+- a saved tree link and a postcard of the actual tree for sharing
+- a quiet interface that follows the tree’s day/night and seasonal palette
 
 **Explicitly NOT in V0:**
 
@@ -97,9 +100,9 @@ Some are genuinely appealing later; none of them are now.
 | Which website characteristics we extract | See [WEBSITE-ANALYSIS.md](WEBSITE-ANALYSIS.md) |
 | Which tree parameters exist, and their ranges | See [TREE-SYSTEM.md](TREE-SYSTEM.md) |
 | The visual style / art direction | See [VISUAL-SYSTEM.md](VISUAL-SYSTEM.md) — requires human taste judgment |
-| The technology and 3D approach | Nothing chosen. No framework, no renderer, no libraries. |
-| Interaction details | Can the user orbit the tree? Zoom? Is it static? Is there any input beyond the URL? |
-| Whether terrain or a base is represented | Is the tree floating, potted, on soil, on an island, on nothing? |
+| Additional species | The current renderer has one broad family. |
+| Motion tuning | Small interactions are approved; the exact strengths remain an experiment. |
+| Real-device performance | Responsive browser checks are not a budget-phone performance measurement. |
 
 Additional open questions live in [STATUS.md](STATUS.md).
 
@@ -112,3 +115,18 @@ little tree appears, and it feels like it genuinely belongs to that website.
 
 If we ever have to choose between "the mapping is rigorous" and "the tree is
 delightful", the delight wins. That is the point of the project.
+
+
+## Current experience
+
+**DECIDED — human direction, 2026-09-23.** Show the tree without public trait
+explanations, swatches, or a “Why this tree?” panel. Small animations and hover
+interactions should make it feel alive; surrounding controls should suit its aesthetic.
+
+**DECIDED.** Sharing should feature the generated tree itself. Persist the postcard,
+website URL, DNA and camera when someone shares. A recipient opens this snapshot
+without rerunning website analysis. The immutable image is the social preview.
+
+**EXPERIMENT.** The current shell uses quiet cream/moss surfaces by day and dark
+botanical surfaces by night. Motion can be paused, starts paused for reduced-motion
+preferences, and stops rendering while the page is hidden. Wood remains rigid.

@@ -875,7 +875,8 @@ export async function growTree(M, q, env, opts = {}) {
       const stride = Math.max(1, Math.round(1 / leafAmount));
       const thinned = spots.filter((_, i) => i % stride === 0);
       const lv = M.leaves.buildLeaves(skel.limbs, r, { spots: thinned, cluster });
-      tree.add(lv.group);
+      lv.group.traverse(o => { if (o.isInstancedMesh) o.userData.sheddable = true; });
+    tree.add(lv.group);
       stats.leaves = lv.stats;
     }
     const carrier = q.get('winter') ?? (q.get('fruit') === '1' ? 'berries' : 'buds');
@@ -969,6 +970,7 @@ export async function growTree(M, q, env, opts = {}) {
       debugShrink: q.get('debug') === 'bloomleaves',
       keepInstances: LEAF_FALL,
     });
+    lv.group.traverse(o => { if (o.isInstancedMesh) o.userData.sheddable = true; });
     tree.add(lv.group);
     stats.leaves = lv.stats;
     if (LEAF_FALL) {
@@ -1080,6 +1082,7 @@ export async function growTree(M, q, env, opts = {}) {
 
   return {
     tree, ground, skel, geo, thick, P, extents, season: SEASON, wind, faces,
+    petalColor: q.get('fc') || null,
     // Per-frame work, if this tree has any (autumn's falling leaves): update(t). A pure
     // function of t, so a host may call it as often or as rarely as it likes.
     update: leafFall ? (t) => leafFall.update(t) : null,
