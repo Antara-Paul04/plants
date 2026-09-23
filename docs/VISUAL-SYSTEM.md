@@ -1070,3 +1070,8 @@ Real-phone GPU performance remains unmeasured.
 **DECIDED — superseding human request, 2026-09-24.** The wildlife experiment above
 is removed, including its renderer module. The larger laptop composition and
 existing tree motion remain.
+
+**EXPERIMENT — human-requested focus refinement, 2026-09-24.** The website field
+uses a softly tinted rounded surface and accent underline on focus, replacing the
+hard rectangular outline. The underline remains visible for keyboard navigation
+in both day and night themes.
