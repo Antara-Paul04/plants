@@ -2,6 +2,15 @@
 
 ## Current work
 
+**EXPERIMENT — local preview.** `/card-preview.html` explores a portrait, two-sided
+collectible share card from the human’s references, with a centred rotating Pinterest
+tree and a green colour variation of the selected holographic back. Page-wide mouse movement
+tilts the card and moves its foil highlight. Clicking the card flips it; the separate rotation buttons are removed. A large Share button below the flip hint saves the front PNG and exposes copy-link,
+X and image-download actions. Creators see “Share this card” only. Saved `/t/:id`
+links open the recipient view with the saved DNA and “Plant your tree” instead of
+sharing controls; that link returns home. This remains local, not deployed;
+the main garden’s existing share dialog/video exporter is still separate. See `design-qa.md`.
+
 **DECIDED.** Public name: **Site Bonsai** (D12), live at `sitebonsai.vercel.app`.
 
 **EXPERIMENT — implemented on `codex/living-trees`, 2026-09-23.** A quieter responsive

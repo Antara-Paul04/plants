@@ -8,7 +8,7 @@
       "memory": 2048
     },
     "api/tree.js": {
-      "includeFiles": "app/public/{index,404}.html",
+      "includeFiles": "app/public/{index,card-preview,404}.html",
       "maxDuration": 15
     },
     "api/share.js": {
