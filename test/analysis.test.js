@@ -261,3 +261,47 @@ test("a rendered page does not need hyperlinks to be a website", async () => {
   const t = setup({ noLinks: true });
   assert.equal((await t.context.audit.analyzeUrl("example.com")).ok, true);
 });
+
+// A SUBDOMAIN IS THE SITE. The product's whole claim is "this is YOUR site,
+// measured", so reducing the host anyone typed to its registrable domain
+// measures a different website and reports success. news.ycombinator.com is Hacker
+// News; ycombinator.com is Y Combinator's orange marketing site. docs.python.org
+// is the docs; python.org is the project home. info.cern.ch — the first example in
+// the README and the case the whole bare-tree design exists to serve — answers 200
+// on its own and only fails once it has been rewritten to cern.ch, which redirects
+// to home.cern and trips the REDIRECTED guard.
+//
+// Production was once observed doing exactly this while every branch in the
+// repository held the correct code, so this test pins the behaviour rather than
+// trusting that nobody reintroduces it.
+test("normalisation keeps the exact host that was typed", () => {
+  const { normalizeUrl } = setup().context.audit;
+  for (const host of [
+    "news.ycombinator.com",
+    "info.cern.ch",
+    "docs.python.org",
+    "developer.mozilla.org",
+    "en.wikipedia.org",
+    "blog.cloudflare.com",
+    "antara.github.io",
+  ]) {
+    assert.equal(normalizeUrl(host).hostname, host, `${host} must not be reduced`);
+    // `domain` is derived straight from the normalised hostname; only `www.` goes.
+    assert.equal(normalizeUrl(host).hostname.replace(/^www\./, ""), host);
+  }
+  // www is the one label that may be dropped, and an apex host is untouched.
+  assert.equal(normalizeUrl("www.ycombinator.com").hostname.replace(/^www\./, ""), "ycombinator.com");
+  assert.equal(normalizeUrl("simonwillison.net").hostname, "simonwillison.net");
+});
+
+// The registrable reduction is for COMPARING brands across a redirect, never for
+// deciding what to fetch. Keeping it correct is what lets the test above be safe.
+test("sameBrand compares registrable domains without rewriting the target", () => {
+  const { sameBrand } = setup().context.audit;
+  assert.equal(sameBrand("www.example.com", "example.com"), true);
+  assert.equal(sameBrand("example.co.uk", "www.example.co.uk"), true);
+  // A subdomain and its parent are the same brand — that is the guard doing its
+  // job on a redirect, and it is not a licence to fetch the parent instead.
+  assert.equal(sameBrand("news.ycombinator.com", "ycombinator.com"), true);
+  assert.equal(sameBrand("example.com", "somethingelse.com"), false);
+});
