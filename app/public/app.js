@@ -1,5 +1,5 @@
 import { mountIdle } from "/tree/main.js";
-import { makeCard, paintCard } from "/card.js";
+import { frontImage, paintFront } from "/card-front.js";
 
 const $ = (id) => document.getElementById(id);
 const input = $("url"),
@@ -239,12 +239,16 @@ $("shareBtn").addEventListener("click", async () => {
   $("saveVideo").disabled = true;
   try {
     const camera = tree.getPose();
-    const frame = await tree.capture({ width: 1200, height: 630, card: true });
-    const card = await makeCard(
-      frame,
-      snapshot.domain,
-      tree.envName === "night",
-    );
+    // ONE IMAGE, THREE SURFACES. This value becomes the sheet preview, the file
+    // behind Save image, and — posted to /api/share — the og:image that X and
+    // Reddit render. It was the old full-bleed card while the collectible one
+    // existed but was only ever reachable after someone clicked through, so the
+    // good card was the one nobody saw first.
+    //
+    // frontImage captures 900x870 rather than 1200x630 and without `card: true`:
+    // the tree sits in a portrait window in the middle of the card, so it must be
+    // centred, not offset to one side for a landscape layout.
+    const card = await frontImage(tree, snapshot);
     if (mine !== shareGeneration) return;
     $("sharePreview").src = card;
     $("sharePreview").hidden = false;
@@ -325,8 +329,8 @@ $("saveVideo").addEventListener("click", async () => {
     const mime = ['video/mp4', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm']
       .find(type => MediaRecorder.isTypeSupported(type));
     if (!mime) throw new Error('Video recording is unavailable in this browser.');
-    const draw = () => tree.capture({ width: 1200, height: 630, card: true,
-      draw: frame => paintCard(ctx, frame, snapshot.domain, tree.envName === 'night') });
+    const draw = () => tree.capture({ width: 900, height: 870,
+      draw: frame => paintFront(ctx, frame, snapshot.domain, snapshot.dna.seed) });
     if (!await draw()) throw new Error('Could not capture the tree.');
     stream = canvas.captureStream(24);
     recorder = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 6000000 });
