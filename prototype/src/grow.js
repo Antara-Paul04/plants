@@ -211,7 +211,15 @@ function envTable(q) {
         // The sky sits DARKER than the lit tree, so the tree is the brightest thing
         // in the frame; still a little lighter toward the horizon, because that
         // band is what the shadow side is read against.
-        skyTop: 0x03050b, skyHorizon: 0x0c1426, skyGround: 0x05070d,
+        // MEASURED, 1200x630 (the share card's own aspect), sky sampled top-right
+        // clear of the tree. The shipped sky read 3.5/255 mean with a 3.1 gradient
+        // from zenith to horizon — not a dark sky, a flat black rectangle with a
+        // tree on it, and at timeline size a share card that looks like a failed
+        // image. Lifting it all the way (24.6, gradient 17.5) fixed the card and
+        // stopped being night: it reads as dusk. This is the midpoint of those two,
+        // and it is the one that was picked by eye, not by the numbers:
+        //   mean 11.9, zenith 7.7 -> horizon 17.9.
+        skyTop: 0x070d18, skyHorizon: 0x192538, skyGround: 0x0b111c,
         // THE ISLAND'S UNDERSIDE IS READ AGAINST THE SKY BELOW IT (L17). The night was
         // judged on a frame cropped at the turf, so nobody had seen the soil body at
         // night: it faces away from the moon, sits at the dim edge of the pool by
@@ -232,6 +240,10 @@ function envTable(q) {
         // still gives the island's underside something to be dark against
         // without washing the sky the stars live in.
         skyBelow: q.get('nightGlow') === '0' ? null : { color: 0x1b2a55, from: 0.55, to: 1.0 },
+        // A HEMISPHERE FILL so the shadow side is not a single dead value. Half the
+        // 0.6 the unshipped restoration used: at 0.6 it lifts the whole scene into
+        // the dusk reading above.
+        ambient: { sky: 0xd6e0ee, ground: 0x737d79, intensity: 0.3 },
         glow: { color: 0xd4dcf0, power: 3.2, size: 10, dir: [-5.2, 7.4, 6.2] },
         // Broad, quiet moonlight. Keep the rear light below the front key so
         // pale leaves and flowers do not acquire a bright silver outline.
@@ -241,9 +253,14 @@ function envTable(q) {
           : { color: 0xd4dcf0, intensity: L.key * 0.28, dir: [-5.2, 7.4, 6.2], shadowRadius: 2.2, shadowMap: 2048 },
         // Sparse, faint points stay behind the tree visually. `stars=0` hides them.
         stars: q.get('stars') === '0' ? null : { layers: [
-          { count: 1000, size: 1.2, brightness: 0.14 },
-          { count: 180,  size: 1.7, brightness: 0.22 },
-          { count: 16,   size: 2.2, brightness: 0.32 },
+          // QUIETING THESE WENT PAST RESTRAINED INTO ABSENT. Count fell 60%, size
+          // 45% and brightness 75% at once, and compounded that is a sky with no
+          // star visible anywhere in frame. Structure has to come from somewhere,
+          // and stars are the half of it that costs no exposure: restored, the
+          // brightest pixel goes 86 -> 220 while the sky mean barely moves.
+          { count: 2300, size: 2.0, brightness: 0.55 },
+          { count: 620,  size: 3.0, brightness: 1.0  },
+          { count: 95,   size: 4.4, brightness: 1.6  },
         ] },
         fill: { color: 0xdfe8ff, intensity: L.edge * 0.28, dir: [5.2, 4.6, -7.0] },
         // A trace of warmth preserves the wood without a second obvious light.
@@ -441,6 +458,12 @@ export function createEnvironment(renderer, q, P) {
   scene.add(key, key.target);
 
   const lights = [key];
+  // Only night declares one. A directional key alone leaves every shadowed face at
+  // the same dead value, which is the other half of why the old night read flat.
+  if (ENV.ambient) {
+    const a = new THREE.HemisphereLight(ENV.ambient.sky, ENV.ambient.ground, ENV.ambient.intensity);
+    scene.add(a); lights.push(a);
+  }
   for (const L of [ENV.fill, ENV.rim]) {
     if (!L) continue;
     const d = new THREE.DirectionalLight(L.color, L.intensity);
