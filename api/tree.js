@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     const snapshot = await loadTree(id);
     if (!snapshot) return await sendNotFound(req, res);
     const template = await readFile(
-      new URL("../app/public/index.html", import.meta.url),
+      new URL("../app/public/card-preview.html", import.meta.url),
       "utf8",
     );
     const host = req.headers.host;
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
       .end(
         req.method === "HEAD"
           ? undefined
-          : treePage(template, snapshot, id, origin),
+          : treePage(template.replace('data-card-view="creator"', 'data-card-view="recipient"'), snapshot, id, origin),
       );
   } catch (error) {
     console.error("shared tree:", error.message);

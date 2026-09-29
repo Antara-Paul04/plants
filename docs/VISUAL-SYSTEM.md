@@ -1087,3 +1087,18 @@ reducing its power and blue saturation. Exposure and the under-island sky remain
 unchanged. Visually checked Linear's gallery tree at 1280×720 from the default
 and a rotated view. This is a focused visual check, not a multi-seed measurement
 or human approval of the exact light levels.
+
+### Night readability and lighter blossoms — 2026-09-24
+
+**DECIDED.** The human found the previous night pass too dark and rejected the
+chunky red flowers. Keep stars quiet while restoring tree visibility.
+
+**EXPERIMENT.** Night now has a blue horizon and diffuse hemisphere fill; the
+reduced direct rim stays. Cluster blooms are smaller, more open five-flower
+sprays with finer centres and smoother petal meshes. Upright blooms open further;
+pendant petals also have smoother subdivisions. Reviewed Linear at two angles
+and a synthetic red cluster tree at 1280×720. Exact tuning awaits human feedback.
+
+**OPEN.** A pink, leafless blossom tree is not supported: the existing bare
+foliage state disables flowers. The human asked whether one can occur; no new
+DNA state or website mapping has been introduced.

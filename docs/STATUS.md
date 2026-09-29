@@ -2,6 +2,15 @@
 
 ## Current work
 
+**EXPERIMENT — local preview.** `/card-preview.html` explores a portrait, two-sided
+collectible share card from the human’s references, with a centred rotating Pinterest
+tree and a green colour variation of the selected holographic back. Page-wide mouse movement
+tilts the card and moves its foil highlight. Clicking the card flips it; the separate rotation buttons are removed. A large Share button below the flip hint saves the front PNG and exposes copy-link,
+X and image-download actions. Creators see “Share this card” only. Saved `/t/:id`
+links open the recipient view with the saved DNA and “Plant your tree” instead of
+sharing controls; that link returns home. This remains local, not deployed;
+the main garden’s existing share dialog/video exporter is still separate. See `design-qa.md`.
+
 **DECIDED.** Public name: **Site Bonsai** (D12), live at `sitebonsai.vercel.app`.
 
 **EXPERIMENT — implemented on `codex/living-trees`, 2026-09-23.** A quieter responsive
@@ -9,7 +18,9 @@ shell, explicit reading/building/error states, leaf hover response, tap/keyboard
 reactions. Taps now reuse autumn’s individual-leaf flight and
 landing on every leafy tree; the ambient breeze has a stronger calm floor. The old tree stays visible while another loads.
 The island's soil body now has a smooth curved profile and continuous shading.
-Night stars are sparse and faint; softer moonlight reduces the bright silver rim.
+Night stars are sparse and faint; a brighter blue sky and diffuse fill restore
+tree visibility while retaining the soft rim. Flower meshes use smaller open
+cluster sprays and finer centres (visual tuning remains experimental).
 Laptop controls sit to the left of a larger tree; mobile retains the bottom dock.
 The visible drag hint is removed. Butterflies and fireflies were removed at the
 human's request; ambient breeze and tap-triggered leaf fall remain (D11).

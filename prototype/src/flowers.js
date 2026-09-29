@@ -49,7 +49,7 @@ const UP = new THREE.Vector3(0, 1, 0);
  * middle, a blunt rounded end — and cupped toward +Z both along and across.
  */
 export function petalGeometry(opts = {}) {
-  const { length = 1, width = 0.8, cup = 0.3, rows = 4, wide = false } = opts;
+  const { length = 1, width = 0.8, cup = 0.3, rows = 7, wide = true } = opts;
   const cols = wide ? [-1, -0.5, 0, 0.5, 1] : [-1, 0, 1];
   const pos = [], tt = [], idx = [];
   for (let i = 0; i <= rows; i++) {
@@ -168,19 +168,19 @@ function flowerParts(r, col, o) {
 }
 
 const GRAMMARS = {
-  // Open five-petalled flowers packed over a dome. The dome is the mass; the
-  // flowers overlap, so the cluster is one pale mound and not nine separate discs.
+  // A small spray of open five-petalled blossoms. Space the flowers so
+  // individual petals remain readable instead of forming a heavy cup.
   cluster(r, col, s) {
     const parts = [];
-    const n = 8;
+    const n = 5;
     for (let i = 0; i < n; i++) {
       const f = (i + 0.5) / n;
       const pol = lerp(0.1, 1.45, Math.pow(f, 0.8));
       const az = i * GOLDEN + rr(r, -0.2, 0.2);
       const dir = new THREE.Vector3(Math.sin(pol) * Math.cos(az), Math.cos(pol), Math.sin(pol) * Math.sin(az));
       const m = frame(dir, UP).multiply(new THREE.Matrix4().makeRotationY(r() * 6.28));
-      m.setPosition(dir.clone().multiplyScalar(0.2 * s).add(new THREE.Vector3(0, 0.05 * s, 0)));
-      const ps = flowerParts(r, col, { petals: 5, open: 1.12, length: 0.2 * s * rr(r, 0.9, 1.1), width: 0.95, cup: 0.22, eye: 0.034 * s, rows: 4 });
+      m.setPosition(dir.clone().multiplyScalar(0.18 * s).add(new THREE.Vector3(0, 0.05 * s, 0)));
+      const ps = flowerParts(r, col, { petals: 5, open: 1.42, length: 0.15 * s * rr(r, 0.9, 1.1), width: 1.1, cup: 0.09, eye: 0.013 * s, rows: 8, wide: true });
       for (const p of ps) { p.applyMatrix4(m); parts.push(p); }
     }
     return { parts, centre: new THREE.Vector3(0, 0.02 * s, 0), hang: false };
@@ -200,7 +200,7 @@ const GRAMMARS = {
       const len = 0.44 * s * (i === 0 ? 1.08 : rr(r, 0.78, 0.95));
       // No eye: the inner whorl closes over the axis, so a centre is never seen — and
       // the star's arms pierced the goblet wall from inside.
-      const ps = flowerParts(r, col, { petals: 6, inner: 3, open: 0.62, length: len, width: 0.6, cup: 0.36, eye: 0, rows: 6, wide: true });
+      const ps = flowerParts(r, col, { petals: 6, inner: 3, open: 0.88, length: len * 0.85, width: 0.72, cup: 0.18, eye: 0, rows: 8, wide: true });
       for (const p of ps) { p.applyMatrix4(m); parts.push(p); }
     }
     return { parts, centre: new THREE.Vector3(0, 0.2 * s, 0), hang: false };
@@ -242,7 +242,7 @@ const GRAMMARS = {
         // harmless while every petal paled to its edge, but once dark petals went solid a
         // raceme read as a column of flat squares. Narrower, more cupped, one more row,
         // and a wider value range from floret to floret so the column has depth.
-        const ps = flowerParts(r, isBud ? bud : col, { petals: 4, open: lerp(0.9, 0.38, f), length: size, width: 0.78, cup: 0.62, eye: 0, rows: 3, shadeLo: 0.8, shadeHi: 1.1 });
+        const ps = flowerParts(r, isBud ? bud : col, { petals: 4, open: lerp(0.9, 0.38, f), length: size, width: 0.78, cup: 0.62, eye: 0, rows: 5, shadeLo: 0.8, shadeHi: 1.1 });
         for (const p of ps) { p.applyMatrix4(m); parts.push(p); }
       }
       spines.push({ len, ox, oz });
